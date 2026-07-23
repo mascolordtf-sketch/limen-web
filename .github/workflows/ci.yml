@@ -3,13 +3,10 @@ name: Phase 0 verification
 on:
   push:
     branches:
-      - '**'
+      - main
   pull_request:
     branches:
       - main
-
-permissions:
-  contents: write
 
 jobs:
   verify:
@@ -20,19 +17,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Node.js with npm cache
+        if: ${{ hashFiles('package-lock.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
       - name: Set up Node.js
+        if: ${{ hashFiles('package-lock.json') == '' }}
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Bootstrap package lockfile when missing
-        if: ${{ hashFiles('package-lock.json') == '' }}
-        run: |
-          npm install --package-lock-only
-          echo "LOCKFILE_GENERATED=true" >> "$GITHUB_ENV"
-
-      - name: Install dependencies
+      - name: Install dependencies from lockfile
+        if: ${{ hashFiles('package-lock.json') != '' }}
         run: npm ci
+
+      - name: Install dependencies without lockfile
+        if: ${{ hashFiles('package-lock.json') == '' }}
+        run: npm install
 
       - name: Run lint
         run: npm run lint
@@ -42,12 +46,3 @@ jobs:
 
       - name: Run build
         run: npm run build
-
-      - name: Commit generated lockfile
-        if: ${{ github.event_name == 'push' && env.LOCKFILE_GENERATED == 'true' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
-          git commit -m "Add lockfile and verify Phase 0"
-          git push origin HEAD:${{ github.ref_name }}
