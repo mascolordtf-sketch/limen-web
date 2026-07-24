@@ -549,7 +549,7 @@
     color .22s ease,
     background .22s ease,
     opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
-    transform var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms);
+    transform .22s ease;
 }
 
 .origin01-motion-ready [data-motion-level="protagonist"] {
