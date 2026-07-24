@@ -145,6 +145,8 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
   return (
     <main className={`origin01 ${hasEntered ? 'origin01--entered' : ''}`}>
+      {hasMusic && invitation.music?.src ? <audio ref={audioRef} src={invitation.music.src} loop preload="none" /> : null}
+
       {!hasEntered ? (
         <section className="origin01-threshold" aria-labelledby="origin01-threshold-title">
           <p className="origin01-demo-label">{invitation.demoLabel}</p>
@@ -162,13 +164,10 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
         <div ref={experienceRef} className="origin01-experience" aria-labelledby="origin01-welcome-title" tabIndex={-1}>
           <p className="origin01-demo-label origin01-demo-label--fixed">{invitation.demoLabel}</p>
 
-        {hasMusic && invitation.music?.src ? (
-          <>
-            <audio ref={audioRef} src={invitation.music.src} loop preload="none" />
-            <button type="button" className="origin01-music" onClick={toggleMusic} aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}>
-              {isPlaying ? 'Pausar' : 'Música'}
-            </button>
-          </>
+        {hasMusic ? (
+          <button type="button" className="origin01-music" onClick={toggleMusic} aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}>
+            {isPlaying ? 'Pausar' : 'Música'}
+          </button>
         ) : null}
 
         <section className="origin01-section origin01-welcome" aria-labelledby="origin01-welcome-title">
