@@ -529,6 +529,11 @@
 /* Invitation */
 
 .origin01-experience {
+  --origin-motion-ease-opacity: cubic-bezier(.4, 0, .2, 1);
+  --origin-motion-ease-spatial: cubic-bezier(.22, 1, .36, 1);
+  --origin-motion-duration-protagonist: 1.04s;
+  --origin-motion-duration-content: .78s;
+  --origin-motion-duration-action: .5s;
   width: 100%;
   overflow: clip;
   color: var(--origin-ink);
@@ -540,28 +545,28 @@
 .origin01-motion-ready [data-motion] {
   opacity: 0;
   transition:
-    opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
-    transform var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms);
+    opacity var(--origin-motion-duration) var(--origin-motion-ease-opacity) var(--origin-motion-delay, 0ms),
+    transform var(--origin-motion-duration) var(--origin-motion-ease-spatial) var(--origin-motion-delay, 0ms);
 }
 
 .origin01-motion-ready .origin01-button[data-motion] {
   transition:
     color .22s ease,
     background .22s ease,
-    opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
+    opacity var(--origin-motion-duration) var(--origin-motion-ease-opacity) var(--origin-motion-delay, 0ms),
     transform .22s ease;
 }
 
 .origin01-motion-ready [data-motion-level="protagonist"] {
-  --origin-motion-duration: .88s;
+  --origin-motion-duration: var(--origin-motion-duration-protagonist);
 }
 
 .origin01-motion-ready [data-motion-level="content"] {
-  --origin-motion-duration: .64s;
+  --origin-motion-duration: var(--origin-motion-duration-content);
 }
 
 .origin01-motion-ready [data-motion-level="action"] {
-  --origin-motion-duration: .44s;
+  --origin-motion-duration: var(--origin-motion-duration-action);
 }
 
 .origin01-motion-ready [data-motion-delay="follow"] {
@@ -589,23 +594,23 @@
 }
 
 .origin01-motion-ready [data-motion="scale"] {
-  transform: scale(.98);
+  transform: scale(.978);
 }
 
 .origin01-motion-ready [data-motion="left"] {
-  transform: translate3d(-16px, 0, 0);
+  transform: translate3d(-22px, 0, 0);
 }
 
 .origin01-motion-ready [data-motion="right"] {
-  transform: translate3d(16px, 0, 0);
+  transform: translate3d(22px, 0, 0);
 }
 
 .origin01-motion-ready [data-motion="up"] {
-  transform: translate3d(0, 12px, 0);
+  transform: translate3d(0, 18px, 0);
 }
 
 .origin01-motion-ready [data-motion="depth"] {
-  transform: scale(.98);
+  transform: scale(.965);
 }
 
 .origin01-motion-ready [data-motion]:where(.origin01-motion-visible) {

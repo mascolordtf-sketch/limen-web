@@ -269,10 +269,10 @@ export function Origin01Invitation({
     const experience = experienceRef.current
     const motionMap = [
       { selector: '.origin01-countdown-panel__surface > .origin01-kicker, .origin01-countdown-panel__surface > h2', motion: 'up', level: 'content' },
-      { selector: '.origin01-countdown', motion: 'fade', level: 'content', delay: 'follow' },
-      { selector: '.origin01-message__card', motion: 'fade', level: 'content' },
+      { selector: '.origin01-countdown', motion: 'depth', level: 'content', delay: 'follow' },
+      { selector: '.origin01-message__card', motion: 'up', level: 'content' },
       { selector: '.origin01-info > .origin01-section-heading', motion: 'up', level: 'content' },
-      { selector: '.origin01-info__surface', motion: 'fade', level: 'content', delay: 'follow' },
+      { selector: '.origin01-info__surface', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-info > .origin01-actions', motion: 'scale', level: 'action', delay: 'action' },
       { selector: '.origin01-dress__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-dress__content', motion: 'right', level: 'content', delay: 'follow' },
@@ -281,11 +281,11 @@ export function Origin01Invitation({
       { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
-      { selector: '.origin01-gift__content', motion: 'fade', level: 'content', delay: 'follow' },
+      { selector: '.origin01-gift__content', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-rsvp', motion: 'up', level: 'content' },
       { selector: '.origin01-rsvp > .origin01-button', motion: 'scale', level: 'action', delay: 'action' },
       { selector: '.origin01-closing__content', motion: 'up', level: 'protagonist' },
-      { selector: '.origin01-closing__share', motion: 'fade', level: 'action', delay: 'final-action' },
+      { selector: '.origin01-closing__share', motion: 'up', level: 'action', delay: 'final-action' },
     ] as const
     const motionElements = motionMap.flatMap(({ selector, motion, level, ...timing }) =>
       Array.from(experience.querySelectorAll<HTMLElement>(selector)).map((element) => {
@@ -310,7 +310,7 @@ export function Origin01Invitation({
           observer.unobserve(entry.target)
         })
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+      { rootMargin: '0px 0px -18% 0px', threshold: 0.08 },
     )
 
     motionElements.forEach((element) => observer.observe(element))
