@@ -1,13 +1,15 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { origin01Invitation } from '../features/invitations/data/origin01'
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
 
 export function DemoPage() {
   const { code } = useParams()
+  const [searchParams] = useSearchParams()
 
   if (code === origin01Invitation.code) {
-    return <Origin01Invitation invitation={origin01Invitation} />
+    const audience = searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist'
+    return <Origin01Invitation invitation={origin01Invitation} audience={audience} />
   }
 
   return (
