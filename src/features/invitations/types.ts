@@ -15,6 +15,7 @@ export type InvitationGift = {
   accountLabel: string
   accountValue: string
   demoNote: string
+  image?: InvitationImage
 }
 
 export type InvitationRsvp = {

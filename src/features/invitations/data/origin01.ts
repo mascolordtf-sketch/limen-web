@@ -25,9 +25,21 @@ export const origin01Invitation: InvitationData = {
     dressCode: 'Elegante',
   },
   gallery: [
-    { alt: 'Retrato editorial abstracto en tonos marfil y arcilla', title: 'El sueño' },
-    { alt: 'Detalle sereno de luz cálida sobre una superficie textil', title: 'La espera' },
-    { alt: 'Composición editorial mínima con sombra suave', title: 'El comienzo' },
+    {
+      src: '/images/origin-01/hero-valentina.webp',
+      alt: 'Retrato editorial de Valentina con vestido rosa dorado y luz cálida',
+      title: 'El sueño',
+    },
+    {
+      src: '/images/origin-01/dress-detail.webp',
+      alt: 'Detalle del vestido rosa dorado iluminado suavemente',
+      title: 'La espera',
+    },
+    {
+      src: '/images/origin-01/closing-valentina.webp',
+      alt: 'Valentina sonriendo bajo una luz cálida al final de la invitación',
+      title: 'El comienzo',
+    },
   ],
   rsvp: {
     message: 'Hola, confirmo mi asistencia a Mis 15 de Valentina.',
@@ -42,5 +54,9 @@ export const origin01Invitation: InvitationData = {
     accountLabel: 'Alias de demostración',
     accountValue: 'VALENTINA.DEMO.LIMEN',
     demoNote: 'Datos de ejemplo. No corresponden a una cuenta real.',
+    image: {
+      src: '/images/origin-01/gift-still-life.webp',
+      alt: 'Caja de regalo rosa champagne con cinta satinada y luces cálidas',
+    },
   },
 }

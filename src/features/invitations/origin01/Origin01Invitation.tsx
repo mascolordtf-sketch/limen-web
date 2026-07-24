@@ -87,8 +87,8 @@ function Countdown({ startsAt }: { startsAt: string }) {
   const items = [
     ['Días', countdown.days],
     ['Horas', countdown.hours],
-    ['Minutos', countdown.minutes],
-    ['Segundos', countdown.seconds],
+    ['Min', countdown.minutes],
+    ['Seg', countdown.seconds],
   ] as const
 
   return (
@@ -103,14 +103,31 @@ function Countdown({ startsAt }: { startsAt: string }) {
   )
 }
 
-function GalleryImage({ image, index }: { image: InvitationImage; index: number }) {
-  if (image.src) {
-    return <img src={image.src} alt={image.alt} loading="lazy" />
+function InvitationImageAsset({
+  image,
+  className,
+  eager = false,
+  decorative = false,
+}: {
+  image?: InvitationImage
+  className: string
+  eager?: boolean
+  decorative?: boolean
+}) {
+  if (image?.src) {
+    return (
+      <img
+        className={className}
+        src={image.src}
+        alt={decorative ? '' : image.alt}
+        aria-hidden={decorative || undefined}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchPriority={eager ? 'high' : 'auto'}
+      />
+    )
   }
 
-  return (
-    <div className={`origin01-gallery__placeholder origin01-gallery__placeholder--${index + 1}`} role="img" aria-label={image.alt} />
-  )
+  return <div className={`${className} origin01-image-placeholder`} role="img" aria-label={image?.alt ?? 'Imagen editorial'} />
 }
 
 export function Origin01Invitation({ invitation }: { invitation: InvitationData }) {
@@ -123,6 +140,8 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
   const whatsappUrl = buildWhatsAppUrl(invitation)
   const musicSrc = invitation.music ? invitation.music.src ?? defaultMusicSrc : undefined
   const hasMusic = Boolean(musicSrc)
+  const coverImage = invitation.gallery[0]
+  const closingImage = invitation.gallery[2] ?? coverImage
 
   const enterInvitation = () => {
     setHasEntered(true)
@@ -152,12 +171,18 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
       {!hasEntered ? (
         <section className="origin01-threshold" aria-labelledby="origin01-threshold-title">
-          <p className="origin01-demo-label">{invitation.demoLabel}</p>
-          <div className="origin01-threshold__card">
-            <p className="origin01-kicker">Origin 01</p>
+          <div className="origin01-threshold__glow" aria-hidden="true" />
+          <div className="origin01-threshold__topline" aria-hidden="true">
+            <span>LIMEN</span>
+            <span>Origin 01</span>
+          </div>
+          <div className="origin01-threshold__content">
+            <p className="origin01-kicker">El primer instante</p>
             <h1 id="origin01-threshold-title">{invitation.thresholdPhrase}</h1>
-            <button type="button" onClick={enterInvitation} className="origin01-button origin01-button--dark">
-              Entrar
+            <p className="origin01-threshold__intro">Esta historia está a punto de abrirse.</p>
+            <button type="button" onClick={enterInvitation} className="origin01-enter">
+              <span>Entrar</span>
+              <span aria-hidden="true">↓</span>
             </button>
           </div>
         </section>
@@ -167,93 +192,155 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
         <div ref={experienceRef} className="origin01-experience" aria-labelledby="origin01-welcome-title" tabIndex={-1}>
           <p className="origin01-demo-label origin01-demo-label--fixed">{invitation.demoLabel}</p>
 
-        {hasMusic ? (
-          <button type="button" className="origin01-music" onClick={toggleMusic} aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}>
-            {isPlaying ? 'Pausar' : 'Música'}
-          </button>
-        ) : null}
+          {hasMusic ? (
+            <button
+              type="button"
+              className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
+              onClick={toggleMusic}
+              aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+              aria-pressed={isPlaying}
+            >
+              <span className="origin01-music__bars" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+              <span>{isPlaying ? 'Pausar' : 'Música'}</span>
+            </button>
+          ) : null}
 
-        <section className="origin01-section origin01-welcome" aria-labelledby="origin01-welcome-title">
-          <p className="origin01-kicker">Bienvenida</p>
-          <h2 id="origin01-welcome-title">{invitation.welcome.title}</h2>
-          <p>{invitation.welcome.body}</p>
-        </section>
-
-        <section className="origin01-hero" aria-labelledby="origin01-hero-title">
-          <div className="origin01-hero__image" role="img" aria-label="Composición editorial abstracta en tonos cálidos para la invitación" />
-          <div className="origin01-hero__content">
-            <p className="origin01-kicker">{invitation.event.celebration}</p>
-            <h1 id="origin01-hero-title">{invitation.event.name}</h1>
-            <p className="origin01-date">{invitation.event.dateLabel}</p>
-            <p className="origin01-phrase">{invitation.mainPhrase}</p>
-          </div>
-        </section>
-
-        <section className="origin01-section" aria-labelledby="origin01-countdown-title">
-          <p className="origin01-kicker">Falta</p>
-          <h2 id="origin01-countdown-title">Para empezar la noche</h2>
-          <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} />
-        </section>
-
-        <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
-          <p className="origin01-kicker">Un mensaje</p>
-          <h2 id="origin01-message-title">{invitation.personalMessage}</h2>
-        </section>
-
-        <section className="origin01-section origin01-info" aria-labelledby="origin01-info-title">
-          <p className="origin01-kicker">Celebración</p>
-          <h2 id="origin01-info-title">Información del evento</h2>
-          <dl>
-            <div><dt>Fecha</dt><dd>{invitation.event.dateLabel}</dd></div>
-            <div><dt>Hora</dt><dd>{invitation.event.timeLabel}</dd></div>
-            <div><dt>Lugar</dt><dd>{invitation.event.venue}</dd></div>
-            <div><dt>Dirección</dt><dd>{invitation.event.address}</dd></div>
-          </dl>
-          <div className="origin01-actions">
-            <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">Cómo llegar</a>
-            <a className="origin01-button" href={calendarUrl} target="_blank" rel="noreferrer">Agregar al calendario</a>
-          </div>
-        </section>
-
-        <section className="origin01-section origin01-dress" aria-labelledby="origin01-dress-title">
-          <p className="origin01-kicker">Código de vestimenta</p>
-          <h2 id="origin01-dress-title">{invitation.event.dressCode}</h2>
-          <p>Una noche para vestir con calma, presencia y celebración.</p>
-        </section>
-
-        <section className="origin01-section origin01-gallery" aria-labelledby="origin01-gallery-title">
-          <p className="origin01-kicker">Historia</p>
-          <h2 id="origin01-gallery-title">Pequeños instantes antes del comienzo</h2>
-          <div className="origin01-gallery__grid">
-            {invitation.gallery.map((image, index) => (
-              <figure key={`${image.alt}-${index}`}>
-                <GalleryImage image={image} index={index} />
-                {image.title ? <figcaption>{image.title}</figcaption> : null}
-              </figure>
-            ))}
-          </div>
-        </section>
-
-        <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
-          <p className="origin01-kicker">Asistencia</p>
-          <h2 id="origin01-rsvp-title">¿Nos acompañás?</h2>
-          <a className="origin01-button origin01-button--dark" href={whatsappUrl} target="_blank" rel="noreferrer">Confirmar asistencia</a>
-          {invitation.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.rsvp.demoNote}</p> : null}
-        </section>
-
-        {invitation.gift ? (
-          <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">
-            <p className="origin01-kicker">Detalle opcional</p>
-            <h2 id="origin01-gift-title">{invitation.gift.title}</h2>
-            <p>{invitation.gift.description}</p>
-            <div><span>{invitation.gift.accountLabel}</span><strong>{invitation.gift.accountValue}</strong></div>
-            <small>{invitation.gift.demoNote}</small>
+          <section className="origin01-section origin01-welcome" aria-labelledby="origin01-welcome-title">
+            <div className="origin01-welcome__line" aria-hidden="true" />
+            <p className="origin01-kicker">Origin 01 · El primer instante</p>
+            <h2 id="origin01-welcome-title">{invitation.welcome.title}</h2>
+            <p className="origin01-welcome__body">{invitation.welcome.body}</p>
+            <p className="origin01-welcome__whisper">Esto empieza con vos.</p>
           </section>
-        ) : null}
+
+          <section className="origin01-hero" aria-labelledby="origin01-hero-title">
+            <InvitationImageAsset image={coverImage} className="origin01-hero__image" eager />
+            <div className="origin01-hero__veil" aria-hidden="true" />
+            <div className="origin01-hero__content">
+              <p className="origin01-kicker">{invitation.event.celebration}</p>
+              <h1 id="origin01-hero-title">{invitation.event.name}</h1>
+              <p className="origin01-hero__date">{invitation.event.dateLabel}</p>
+              <p className="origin01-hero__phrase">{invitation.mainPhrase}</p>
+            </div>
+            <span className="origin01-hero__scroll" aria-hidden="true">Descubrí la historia ↓</span>
+          </section>
+
+          <section className="origin01-section origin01-countdown-panel" aria-labelledby="origin01-countdown-title">
+            <p className="origin01-kicker">El tiempo se acerca</p>
+            <h2 id="origin01-countdown-title">Falta menos para una noche inolvidable.</h2>
+            <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} />
+          </section>
+
+          <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
+            <p className="origin01-kicker">Una invitación</p>
+            <span className="origin01-message__quote" aria-hidden="true">“</span>
+            <h2 id="origin01-message-title">{invitation.personalMessage}</h2>
+            <span className="origin01-message__signature">{invitation.event.name}</span>
+          </section>
+
+          <section className="origin01-section origin01-info" aria-labelledby="origin01-info-title">
+            <div className="origin01-section-heading">
+              <p className="origin01-kicker">Cuándo y dónde</p>
+              <h2 id="origin01-info-title">Guardá este momento.</h2>
+            </div>
+            <div className="origin01-info__grid">
+              <article className="origin01-info__card">
+                <span className="origin01-info__index">01</span>
+                <p>Fecha</p>
+                <strong>{invitation.event.dateLabel}</strong>
+                <span>{invitation.event.timeLabel} hs</span>
+              </article>
+              <article className="origin01-info__card">
+                <span className="origin01-info__index">02</span>
+                <p>Lugar</p>
+                <strong>{invitation.event.venue}</strong>
+                <span>{invitation.event.address}</span>
+              </article>
+            </div>
+            <div className="origin01-actions">
+              <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">
+                Ver ubicación
+              </a>
+              <a className="origin01-button" href={calendarUrl} target="_blank" rel="noreferrer">
+                Agendar fecha
+              </a>
+            </div>
+          </section>
+
+          <section className="origin01-dress" aria-labelledby="origin01-dress-title">
+            <div className="origin01-dress__media">
+              <InvitationImageAsset image={invitation.gallery[1]} className="origin01-dress__image" />
+            </div>
+            <div className="origin01-dress__content">
+              <p className="origin01-kicker">Dress code</p>
+              <h2 id="origin01-dress-title">{invitation.event.dressCode}</h2>
+              <p>Una noche especial merece que vengas como más te gusta: con presencia, alegría y ganas de celebrar.</p>
+              <span>La elegancia también es sentirse uno mismo.</span>
+            </div>
+          </section>
+
+          <section className="origin01-section origin01-gallery" aria-labelledby="origin01-gallery-title">
+            <div className="origin01-section-heading">
+              <p className="origin01-kicker">Antes del comienzo</p>
+              <h2 id="origin01-gallery-title">Instantes que ya son parte de la historia.</h2>
+            </div>
+            <div className="origin01-gallery__grid">
+              {invitation.gallery.map((image, index) => (
+                <figure className={`origin01-gallery__item origin01-gallery__item--${index + 1}`} key={`${image.alt}-${index}`}>
+                  <InvitationImageAsset image={image} className="origin01-gallery__image" />
+                  {image.title ? (
+                    <figcaption>
+                      <span>0{index + 1}</span>
+                      {image.title}
+                    </figcaption>
+                  ) : null}
+                </figure>
+              ))}
+            </div>
+          </section>
+
+          {invitation.gift ? (
+            <section className="origin01-gift" aria-labelledby="origin01-gift-title">
+              <div className="origin01-gift__media">
+                <InvitationImageAsset image={invitation.gift.image} className="origin01-gift__image" />
+              </div>
+              <div className="origin01-gift__content">
+                <p className="origin01-kicker">Un detalle</p>
+                <h2 id="origin01-gift-title">{invitation.gift.title}</h2>
+                <p>{invitation.gift.description}</p>
+                <div className="origin01-gift__account">
+                  <span>{invitation.gift.accountLabel}</span>
+                  <strong>{invitation.gift.accountValue}</strong>
+                </div>
+                <small>{invitation.gift.demoNote}</small>
+              </div>
+            </section>
+          ) : null}
+
+          <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
+            <div className="origin01-rsvp__sparkles" aria-hidden="true" />
+            <p className="origin01-kicker">Nos encantaría que estés</p>
+            <h2 id="origin01-rsvp-title">¿Compartimos esta noche?</h2>
+            <p>Confirmá tu asistencia para que podamos esperarte.</p>
+            <a className="origin01-button origin01-button--light" href={whatsappUrl} target="_blank" rel="noreferrer">
+              Confirmar por WhatsApp
+            </a>
+            {invitation.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.rsvp.demoNote}</p> : null}
+          </section>
 
           <section className="origin01-closing" aria-labelledby="origin01-closing-title">
-            <h2 id="origin01-closing-title">{invitation.closing}</h2>
-            <p>LIMEN</p>
+            <InvitationImageAsset image={closingImage} className="origin01-closing__image" decorative />
+            <div className="origin01-closing__veil" aria-hidden="true" />
+            <div className="origin01-closing__content">
+              <p className="origin01-kicker">El comienzo</p>
+              <h2 id="origin01-closing-title">{invitation.closing}</h2>
+              <span className="origin01-closing__name">{invitation.event.name}</span>
+              <p className="origin01-closing__brand">Origin 01 · LIMEN</p>
+            </div>
           </section>
         </div>
       ) : null}
