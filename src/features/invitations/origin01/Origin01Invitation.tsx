@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { InvitationData, InvitationImage } from '../types'
 import './origin01.css'
@@ -262,6 +262,61 @@ export function Origin01Invitation({
 
     return () => window.clearTimeout(timeoutId)
   }, [phase])
+
+  useLayoutEffect(() => {
+    if (!invitationIsVisible || !experienceRef.current) return
+
+    const experience = experienceRef.current
+    const motionMap = [
+      { selector: '.origin01-countdown-panel__surface > .origin01-kicker, .origin01-countdown-panel__surface > h2', motion: 'up', level: 'content' },
+      { selector: '.origin01-countdown', motion: 'fade', level: 'content', delay: 'follow' },
+      { selector: '.origin01-message__card', motion: 'fade', level: 'content' },
+      { selector: '.origin01-info > .origin01-section-heading', motion: 'up', level: 'content' },
+      { selector: '.origin01-info__surface', motion: 'fade', level: 'content', delay: 'follow' },
+      { selector: '.origin01-info > .origin01-actions', motion: 'scale', level: 'action', delay: 'action' },
+      { selector: '.origin01-dress__media', motion: 'depth', level: 'protagonist' },
+      { selector: '.origin01-dress__content', motion: 'right', level: 'content', delay: 'follow' },
+      { selector: '.origin01-gallery > .origin01-section-heading', motion: 'up', level: 'content' },
+      { selector: '.origin01-gallery__item--1', motion: 'depth', level: 'protagonist', delay: 'follow' },
+      { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
+      { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
+      { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
+      { selector: '.origin01-gift__content', motion: 'fade', level: 'content', delay: 'follow' },
+      { selector: '.origin01-rsvp', motion: 'up', level: 'content' },
+      { selector: '.origin01-rsvp > .origin01-button', motion: 'scale', level: 'action', delay: 'action' },
+      { selector: '.origin01-closing__content', motion: 'up', level: 'protagonist' },
+      { selector: '.origin01-closing__share', motion: 'fade', level: 'action', delay: 'final-action' },
+    ] as const
+    const motionElements = motionMap.flatMap(({ selector, motion, level, ...timing }) =>
+      Array.from(experience.querySelectorAll<HTMLElement>(selector)).map((element) => {
+        element.dataset.motion = motion
+        element.dataset.motionLevel = level
+        if ('delay' in timing) element.dataset.motionDelay = timing.delay
+        return element
+      }))
+
+    experience.classList.add('origin01-motion-ready')
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      motionElements.forEach((element) => element.classList.add('origin01-motion-visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('origin01-motion-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+    )
+
+    motionElements.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [invitationIsVisible])
 
   const playMusic = () => {
     if (!audioRef.current) return

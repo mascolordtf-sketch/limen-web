@@ -536,6 +536,83 @@
   animation: origin01-invitation-arrives 1.1s cubic-bezier(.22, 1, .36, 1) both;
 }
 
+/* A restrained, GPU-friendly vocabulary for one-time scroll entrances. */
+.origin01-motion-ready [data-motion] {
+  opacity: 0;
+  transition:
+    opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
+    transform var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms);
+}
+
+.origin01-motion-ready .origin01-button[data-motion] {
+  transition:
+    color .22s ease,
+    background .22s ease,
+    opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
+    transform .22s ease;
+}
+
+.origin01-motion-ready [data-motion-level="protagonist"] {
+  --origin-motion-duration: .88s;
+}
+
+.origin01-motion-ready [data-motion-level="content"] {
+  --origin-motion-duration: .64s;
+}
+
+.origin01-motion-ready [data-motion-level="action"] {
+  --origin-motion-duration: .44s;
+}
+
+.origin01-motion-ready [data-motion-delay="follow"] {
+  --origin-motion-delay: 90ms;
+}
+
+.origin01-motion-ready [data-motion-delay="gallery-second"] {
+  --origin-motion-delay: 120ms;
+}
+
+.origin01-motion-ready [data-motion-delay="gallery-third"] {
+  --origin-motion-delay: 180ms;
+}
+
+.origin01-motion-ready [data-motion-delay="action"] {
+  --origin-motion-delay: 140ms;
+}
+
+.origin01-motion-ready [data-motion-delay="final-action"] {
+  --origin-motion-delay: 180ms;
+}
+
+.origin01-motion-ready [data-motion="fade"] {
+  transform: none;
+}
+
+.origin01-motion-ready [data-motion="scale"] {
+  transform: scale(.98);
+}
+
+.origin01-motion-ready [data-motion="left"] {
+  transform: translate3d(-16px, 0, 0);
+}
+
+.origin01-motion-ready [data-motion="right"] {
+  transform: translate3d(16px, 0, 0);
+}
+
+.origin01-motion-ready [data-motion="up"] {
+  transform: translate3d(0, 12px, 0);
+}
+
+.origin01-motion-ready [data-motion="depth"] {
+  transform: scale(.98);
+}
+
+.origin01-motion-ready [data-motion]:where(.origin01-motion-visible) {
+  opacity: 1;
+  transform: none;
+}
+
 .origin01-section {
   width: 100%;
   padding: 5.5rem 1rem;
@@ -1426,13 +1503,11 @@
 @keyframes origin01-soft-reveal {
   from {
     opacity: 0;
-    filter: blur(5px);
     transform: translateY(12px);
   }
 
   to {
     opacity: 1;
-    filter: blur(0);
     transform: none;
   }
 }
@@ -1486,14 +1561,10 @@
 @keyframes origin01-invitation-arrives {
   from {
     opacity: 0;
-    filter: blur(4px);
-    transform: translateY(18px) scale(.992);
   }
 
   to {
     opacity: 1;
-    filter: blur(0);
-    transform: none;
   }
 }
 
@@ -1623,5 +1694,10 @@
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+  }
+
+  .origin01-motion-ready [data-motion] {
+    opacity: 1;
+    transform: none;
   }
 }
