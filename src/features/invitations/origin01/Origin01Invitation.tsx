@@ -13,8 +13,8 @@ type CountdownValue = {
 
 const calendarDate = (isoDate: string) => new Date(isoDate).toISOString().replace(/[-:]/g, '').replace('.000', '')
 
-const getCountdown = (targetTime: number): CountdownValue => {
-  const distance = targetTime - Date.now()
+const getCountdown = (targetTime: number, currentTime = Date.now()): CountdownValue => {
+  const distance = targetTime - currentTime
 
   if (distance <= 0) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0, completed: true }
@@ -56,7 +56,7 @@ function buildWhatsAppUrl(invitation: InvitationData) {
 
 function Countdown({ startsAt }: { startsAt: string }) {
   const targetTime = useMemo(() => new Date(startsAt).getTime(), [startsAt])
-  const getSnapshot = useCallback(() => Math.min(Math.floor(Date.now() / 1_000), Math.floor(targetTime / 1_000)), [targetTime])
+  const getSnapshot = useCallback(() => Math.min(Math.floor(Date.now() / 1_000) * 1_000, targetTime), [targetTime])
   const subscribe = useCallback(
     (notify: () => void) => {
       if (targetTime <= Date.now()) {
@@ -75,8 +75,8 @@ function Countdown({ startsAt }: { startsAt: string }) {
     },
     [targetTime],
   )
-  const currentSecond = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
-  const countdown = useMemo(() => getCountdown(targetTime), [currentSecond, targetTime])
+  const currentTime = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  const countdown = useMemo(() => getCountdown(targetTime, currentTime), [currentTime, targetTime])
 
   if (countdown.completed) {
     return <p className="origin01-countdown-complete">Este momento ya empezó. Gracias por haber sido parte.</p>
@@ -145,19 +145,22 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
   return (
     <main className={`origin01 ${hasEntered ? 'origin01--entered' : ''}`}>
-      <section className="origin01-threshold" aria-labelledby="origin01-threshold-title" hidden={hasEntered}>
-        <p className="origin01-demo-label">{invitation.demoLabel}</p>
-        <div className="origin01-threshold__card">
-          <p className="origin01-kicker">Origin 01</p>
-          <h1 id="origin01-threshold-title">{invitation.thresholdPhrase}</h1>
-          <button type="button" onClick={enterInvitation} className="origin01-button origin01-button--dark">
-            Entrar
-          </button>
-        </div>
-      </section>
+      {!hasEntered ? (
+        <section className="origin01-threshold" aria-labelledby="origin01-threshold-title">
+          <p className="origin01-demo-label">{invitation.demoLabel}</p>
+          <div className="origin01-threshold__card">
+            <p className="origin01-kicker">Origin 01</p>
+            <h1 id="origin01-threshold-title">{invitation.thresholdPhrase}</h1>
+            <button type="button" onClick={enterInvitation} className="origin01-button origin01-button--dark">
+              Entrar
+            </button>
+          </div>
+        </section>
+      ) : null}
 
-      <div ref={experienceRef} className="origin01-experience" aria-hidden={!hasEntered} tabIndex={-1}>
-        <p className="origin01-demo-label origin01-demo-label--fixed">{invitation.demoLabel}</p>
+      {hasEntered ? (
+        <div ref={experienceRef} className="origin01-experience" aria-labelledby="origin01-welcome-title" tabIndex={-1}>
+          <p className="origin01-demo-label origin01-demo-label--fixed">{invitation.demoLabel}</p>
 
         {hasMusic && invitation.music?.src ? (
           <>
@@ -246,11 +249,12 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
           </section>
         ) : null}
 
-        <section className="origin01-closing" aria-labelledby="origin01-closing-title">
-          <h2 id="origin01-closing-title">{invitation.closing}</h2>
-          <p>LIMEN</p>
-        </section>
-      </div>
+          <section className="origin01-closing" aria-labelledby="origin01-closing-title">
+            <h2 id="origin01-closing-title">{invitation.closing}</h2>
+            <p>LIMEN</p>
+          </section>
+        </div>
+      ) : null}
     </main>
   )
 }
