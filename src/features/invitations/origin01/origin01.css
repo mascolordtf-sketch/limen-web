@@ -542,7 +542,14 @@
   transition:
     opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
     transform var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms);
-  will-change: opacity, transform;
+}
+
+.origin01-motion-ready .origin01-button[data-motion] {
+  transition:
+    color .22s ease,
+    background .22s ease,
+    opacity var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms),
+    transform var(--origin-motion-duration) cubic-bezier(.22, 1, .36, 1) var(--origin-motion-delay, 0ms);
 }
 
 .origin01-motion-ready [data-motion-level="protagonist"] {
@@ -601,10 +608,9 @@
   transform: scale(.98);
 }
 
-.origin01-motion-ready [data-motion].origin01-motion-visible {
+.origin01-motion-ready [data-motion]:where(.origin01-motion-visible) {
   opacity: 1;
   transform: none;
-  will-change: auto;
 }
 
 .origin01-section {
@@ -1555,12 +1561,10 @@
 @keyframes origin01-invitation-arrives {
   from {
     opacity: 0;
-    transform: scale(.96);
   }
 
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -1695,6 +1699,5 @@
   .origin01-motion-ready [data-motion] {
     opacity: 1;
     transform: none;
-    will-change: auto;
   }
 }
