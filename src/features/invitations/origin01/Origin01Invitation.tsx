@@ -3,6 +3,8 @@ import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 're
 import type { InvitationData, InvitationImage } from '../types'
 import './origin01.css'
 
+const defaultMusicSrc = '/audio/origin-01-demo.mp3'
+
 type CountdownValue = {
   days: number
   hours: number
@@ -119,7 +121,8 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
-  const hasMusic = Boolean(invitation.music?.src)
+  const musicSrc = invitation.music ? invitation.music.src ?? defaultMusicSrc : undefined
+  const hasMusic = Boolean(musicSrc)
 
   const enterInvitation = () => {
     setHasEntered(true)
@@ -145,7 +148,7 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
   return (
     <main className={`origin01 ${hasEntered ? 'origin01--entered' : ''}`}>
-      {hasMusic && invitation.music?.src ? <audio ref={audioRef} src={invitation.music.src} loop preload="none" /> : null}
+      {hasMusic && musicSrc ? <audio ref={audioRef} src={musicSrc} loop preload="auto" /> : null}
 
       {!hasEntered ? (
         <section className="origin01-threshold" aria-labelledby="origin01-threshold-title">
