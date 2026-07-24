@@ -52,9 +52,9 @@ npm run preview
 
 ## Estado actual
 
-El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye estructura de rutas, estilos globales, una página inicial temporal y páginas placeholder para las secciones principales.
+El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye estructura de rutas, estilos globales, una página inicial temporal, páginas placeholder para las secciones principales y la primera demostración funcional Origin 01 en `/demo/LMN-015-001`.
 
-Todavía no incluye catálogo real, plantillas de invitación, integración de contacto, identidad visual final ni datos de producto.
+Todavía no incluye catálogo real, integración de contacto, identidad visual final ni datos de producto definitivos.
 
 ## No objetivos de esta fase
 

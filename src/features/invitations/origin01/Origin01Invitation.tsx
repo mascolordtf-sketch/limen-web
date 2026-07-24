@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { InvitationData, InvitationImage } from '../types'
 import './origin01.css'
@@ -37,7 +37,7 @@ function buildMapsUrl(invitation: InvitationData) {
 
 function buildCalendarUrl(invitation: InvitationData) {
   const start = calendarDate(invitation.event.startsAt)
-  const end = calendarDate(new Date(new Date(invitation.event.startsAt).getTime() + 5 * 60 * 60 * 1_000).toISOString())
+  const end = calendarDate(invitation.event.endsAt)
   const params = new URLSearchParams({
     action: 'TEMPLATE',
     text: `${invitation.event.celebration} de ${invitation.event.name}`,
@@ -50,20 +50,33 @@ function buildCalendarUrl(invitation: InvitationData) {
 }
 
 function buildWhatsAppUrl(invitation: InvitationData) {
-  const message = `Hola, confirmo mi asistencia a ${invitation.event.celebration} de ${invitation.event.name}.`
-  return `https://wa.me/?text=${encodeURIComponent(message)}`
+  const recipient = invitation.rsvp.recipientPhone ?? ''
+  return `https://wa.me/${recipient}?text=${encodeURIComponent(invitation.rsvp.message)}`
 }
 
 function Countdown({ startsAt }: { startsAt: string }) {
   const targetTime = useMemo(() => new Date(startsAt).getTime(), [startsAt])
-  const [countdown, setCountdown] = useState(() => getCountdown(targetTime))
+  const getSnapshot = useCallback(() => Math.min(Math.floor(Date.now() / 1_000), Math.floor(targetTime / 1_000)), [targetTime])
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      if (targetTime <= Date.now()) {
+        return () => undefined
+      }
 
-  useEffect(() => {
-    setCountdown(getCountdown(targetTime))
-    const intervalId = window.setInterval(() => setCountdown(getCountdown(targetTime)), 1_000)
+      const intervalId = window.setInterval(() => {
+        notify()
 
-    return () => window.clearInterval(intervalId)
-  }, [targetTime])
+        if (targetTime <= Date.now()) {
+          window.clearInterval(intervalId)
+        }
+      }, 1_000)
+
+      return () => window.clearInterval(intervalId)
+    },
+    [targetTime],
+  )
+  const currentSecond = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  const countdown = useMemo(() => getCountdown(targetTime), [currentSecond, targetTime])
 
   if (countdown.completed) {
     return <p className="origin01-countdown-complete">Este momento ya empezó. Gracias por haber sido parte.</p>
@@ -102,6 +115,7 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
   const [hasEntered, setHasEntered] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const experienceRef = useRef<HTMLDivElement | null>(null)
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
@@ -109,6 +123,8 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
   const enterInvitation = () => {
     setHasEntered(true)
+    window.requestAnimationFrame(() => experienceRef.current?.focus())
+
     if (audioRef.current) {
       void audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false))
     }
@@ -140,7 +156,7 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
         </div>
       </section>
 
-      <div className="origin01-experience" aria-hidden={!hasEntered}>
+      <div ref={experienceRef} className="origin01-experience" aria-hidden={!hasEntered} tabIndex={-1}>
         <p className="origin01-demo-label origin01-demo-label--fixed">{invitation.demoLabel}</p>
 
         {hasMusic && invitation.music?.src ? (
@@ -154,15 +170,15 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
 
         <section className="origin01-section origin01-welcome" aria-labelledby="origin01-welcome-title">
           <p className="origin01-kicker">Bienvenida</p>
-          <h2 id="origin01-welcome-title">{invitation.welcome.split('\n')[0]}</h2>
-          <p>{invitation.welcome.split('\n').slice(1).join(' ')}</p>
+          <h2 id="origin01-welcome-title">{invitation.welcome.title}</h2>
+          <p>{invitation.welcome.body}</p>
         </section>
 
         <section className="origin01-hero" aria-labelledby="origin01-hero-title">
           <div className="origin01-hero__image" role="img" aria-label="Composición editorial abstracta en tonos cálidos para la invitación" />
           <div className="origin01-hero__content">
             <p className="origin01-kicker">{invitation.event.celebration}</p>
-            <h2 id="origin01-hero-title">{invitation.event.name}</h2>
+            <h1 id="origin01-hero-title">{invitation.event.name}</h1>
             <p className="origin01-date">{invitation.event.dateLabel}</p>
             <p className="origin01-phrase">{invitation.mainPhrase}</p>
           </div>
@@ -171,7 +187,7 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
         <section className="origin01-section" aria-labelledby="origin01-countdown-title">
           <p className="origin01-kicker">Falta</p>
           <h2 id="origin01-countdown-title">Para empezar la noche</h2>
-          <Countdown startsAt={invitation.event.startsAt} />
+          <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} />
         </section>
 
         <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
@@ -217,6 +233,7 @@ export function Origin01Invitation({ invitation }: { invitation: InvitationData 
           <p className="origin01-kicker">Asistencia</p>
           <h2 id="origin01-rsvp-title">¿Nos acompañás?</h2>
           <a className="origin01-button origin01-button--dark" href={whatsappUrl} target="_blank" rel="noreferrer">Confirmar asistencia</a>
+          {invitation.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.rsvp.demoNote}</p> : null}
         </section>
 
         {invitation.gift ? (

@@ -17,10 +17,17 @@ export type InvitationGift = {
   demoNote: string
 }
 
+export type InvitationRsvp = {
+  recipientPhone?: string
+  message: string
+  demoNote?: string
+}
+
 export type InvitationEvent = {
   name: string
   celebration: string
   startsAt: string
+  endsAt: string
   timeZone: string
   dateLabel: string
   timeLabel: string
@@ -29,16 +36,22 @@ export type InvitationEvent = {
   dressCode: string
 }
 
+export type InvitationWelcome = {
+  title: string
+  body: string
+}
+
 export type InvitationData = {
   code: string
   demoLabel: string
   thresholdPhrase: string
   mainPhrase: string
-  welcome: string
+  welcome: InvitationWelcome
   personalMessage: string
   closing: string
   event: InvitationEvent
   gallery: InvitationImage[]
+  rsvp: InvitationRsvp
   music?: InvitationMusic
   gift?: InvitationGift
 }
