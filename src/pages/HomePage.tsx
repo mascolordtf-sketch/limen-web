@@ -15,10 +15,10 @@ export function HomePage() {
         </p>
         <div className="mt-9 flex flex-col gap-3 sm:flex-row">
           <Link
-            to="/catalogo"
+            to="/demo/LMN-015-001"
             className="inline-flex min-h-12 items-center justify-center rounded-full bg-stone-950 px-6 py-3 text-base font-medium text-white shadow-sm shadow-stone-950/10 transition hover:bg-stone-800 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-stone-950"
           >
-            Ver estructura inicial
+            Ver invitación demo
           </Link>
           <Link
             to="/contacto"
