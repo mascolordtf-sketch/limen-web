@@ -192,7 +192,7 @@ function Countdown({ startsAt }: { startsAt: string }) {
     <div className="origin01-countdown" aria-label="Cuenta regresiva para la celebración">
       {items.map(([label, value]) => (
         <div className="origin01-countdown__item" key={label}>
-          <strong>{String(value).padStart(2, '0')}</strong>
+          <strong key={`${label}-${value}`}>{String(value).padStart(2, '0')}</strong>
           <span>{label}</span>
         </div>
       ))}
@@ -263,6 +263,39 @@ export function Origin01Invitation({
     return () => window.clearTimeout(timeoutId)
   }, [phase])
 
+  useEffect(() => {
+    if (!invitationIsVisible || !experienceRef.current) return
+
+    const revealElements = Array.from(
+      experienceRef.current.querySelectorAll<HTMLElement>('[data-origin-reveal]'),
+    )
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reducedMotion || !('IntersectionObserver' in window)) {
+      revealElements.forEach((element) => element.classList.add('origin01-is-visible'))
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+
+          entry.target.classList.add('origin01-is-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      {
+        rootMargin: '0px 0px -12% 0px',
+        threshold: 0.12,
+      },
+    )
+
+    revealElements.forEach((element) => observer.observe(element))
+
+    return () => observer.disconnect()
+  }, [invitationIsVisible])
+
   const playMusic = () => {
     if (!audioRef.current) return
 
@@ -324,7 +357,33 @@ export function Origin01Invitation({
 
   return (
     <main className={`origin01 origin01--${phase}`}>
-      {hasMusic && musicSrc ? <audio ref={audioRef} src={musicSrc} loop preload="auto" /> : null}
+      {hasMusic && musicSrc ? (
+        <audio
+          ref={audioRef}
+          src={musicSrc}
+          loop
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
+      ) : null}
+
+      {hasMusic && phase !== 'prelude' ? (
+        <button
+          type="button"
+          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
+          onClick={toggleMusic}
+          aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+          aria-pressed={isPlaying}
+        >
+          <span className="origin01-music__halo" aria-hidden="true" />
+          <span className="origin01-music__bars" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        </button>
+      ) : null}
 
       {phase === 'prelude' ? (
         <section className="origin01-prelude" aria-labelledby="origin01-prelude-title">
@@ -395,22 +454,6 @@ export function Origin01Invitation({
             Demo LIMEN
           </p>
 
-          {hasMusic ? (
-            <button
-              type="button"
-              className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
-              onClick={toggleMusic}
-              aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
-              aria-pressed={isPlaying}
-            >
-              <span className="origin01-music__bars" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-            </button>
-          ) : null}
-
           <section className="origin01-hero" aria-labelledby="origin01-hero-title">
             <InvitationImageAsset image={coverImage} className="origin01-hero__image" eager />
             <div className="origin01-hero__veil" aria-hidden="true" />
@@ -418,7 +461,7 @@ export function Origin01Invitation({
               <span>Origin 01</span>
               <span>El primer instante</span>
             </div>
-            <div className="origin01-hero__content">
+            <div className="origin01-hero__content origin01-reveal origin01-reveal--hero" data-origin-reveal>
               <p className="origin01-kicker">{invitation.event.celebration}</p>
               <h1 id="origin01-hero-title">{invitation.event.name}</h1>
               <p className="origin01-hero__date">{invitation.event.dateLabel}</p>
@@ -428,7 +471,7 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-section origin01-countdown-panel" aria-labelledby="origin01-countdown-title">
-            <div className="origin01-countdown-panel__surface">
+            <div className="origin01-countdown-panel__surface origin01-reveal" data-origin-reveal>
               <p className="origin01-kicker">El tiempo se acerca</p>
               <h2 id="origin01-countdown-title">Falta menos para una noche inolvidable.</h2>
               <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} />
@@ -436,7 +479,7 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
-            <div className="origin01-message__card">
+            <div className="origin01-message__card origin01-reveal" data-origin-reveal>
               <p className="origin01-kicker">Una invitación</p>
               <span className="origin01-message__quote" aria-hidden="true">“</span>
               <h2 id="origin01-message-title">{invitation.personalMessage}</h2>
@@ -445,11 +488,11 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-section origin01-info" aria-labelledby="origin01-info-title">
-            <div className="origin01-section-heading">
+            <div className="origin01-section-heading origin01-reveal" data-origin-reveal>
               <p className="origin01-kicker">Cuándo y dónde</p>
               <h2 id="origin01-info-title">Guardá este momento.</h2>
             </div>
-            <div className="origin01-info__surface">
+            <div className="origin01-info__surface origin01-reveal" data-origin-reveal>
               <article className="origin01-info__row">
                 <span className="origin01-icon-wrap"><OriginIcon name="calendar" /></span>
                 <div>
@@ -467,7 +510,7 @@ export function Origin01Invitation({
                 </div>
               </article>
             </div>
-            <div className="origin01-actions">
+            <div className="origin01-actions origin01-reveal" data-origin-reveal>
               <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">
                 <OriginIcon name="route" />
                 Ver ubicación
@@ -480,10 +523,10 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-dress" aria-labelledby="origin01-dress-title">
-            <div className="origin01-dress__media">
+            <div className="origin01-dress__media origin01-reveal origin01-reveal--image" data-origin-reveal>
               <InvitationImageAsset image={invitation.gallery[1]} className="origin01-dress__image" />
             </div>
-            <div className="origin01-dress__content">
+            <div className="origin01-dress__content origin01-reveal" data-origin-reveal>
               <span className="origin01-feature-icon"><OriginIcon name="hanger" /></span>
               <p className="origin01-kicker">Dress code</p>
               <h2 id="origin01-dress-title">{invitation.event.dressCode}</h2>
@@ -493,13 +536,17 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-section origin01-gallery" aria-labelledby="origin01-gallery-title">
-            <div className="origin01-section-heading">
+            <div className="origin01-section-heading origin01-reveal" data-origin-reveal>
               <p className="origin01-kicker">Antes del comienzo</p>
               <h2 id="origin01-gallery-title">Instantes que ya son parte de la historia.</h2>
             </div>
             <div className="origin01-gallery__grid">
               {invitation.gallery.map((image, index) => (
-                <figure className={`origin01-gallery__item origin01-gallery__item--${index + 1}`} key={`${image.alt}-${index}`}>
+                <figure
+                  className={`origin01-gallery__item origin01-gallery__item--${index + 1} origin01-reveal origin01-reveal--image`}
+                  data-origin-reveal
+                  key={`${image.alt}-${index}`}
+                >
                   <InvitationImageAsset image={image} className="origin01-gallery__image" />
                   {image.title ? (
                     <figcaption>
@@ -514,7 +561,7 @@ export function Origin01Invitation({
 
           {invitation.gift ? (
             <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">
-              <div className="origin01-gift__card">
+              <div className="origin01-gift__card origin01-reveal" data-origin-reveal>
                 <div className="origin01-gift__media">
                   <InvitationImageAsset image={invitation.gift.image} className="origin01-gift__image" />
                 </div>
@@ -533,7 +580,11 @@ export function Origin01Invitation({
             </section>
           ) : null}
 
-          <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
+          <section
+            className="origin01-section origin01-rsvp origin01-reveal"
+            data-origin-reveal
+            aria-labelledby="origin01-rsvp-title"
+          >
             <div className="origin01-rsvp__sparkles" aria-hidden="true" />
             <span className="origin01-feature-icon origin01-feature-icon--rsvp"><OriginIcon name="message" /></span>
             <p className="origin01-kicker">Nos encantaría que estés</p>
@@ -549,7 +600,7 @@ export function Origin01Invitation({
           <section className="origin01-closing" aria-labelledby="origin01-closing-title">
             <InvitationImageAsset image={closingImage} className="origin01-closing__image" decorative />
             <div className="origin01-closing__veil" aria-hidden="true" />
-            <div className="origin01-closing__content">
+            <div className="origin01-closing__content origin01-reveal" data-origin-reveal>
               <p className="origin01-kicker">El comienzo</p>
               <h2 id="origin01-closing-title">{invitation.closing}</h2>
               <span className="origin01-closing__name">{invitation.event.name}</span>
