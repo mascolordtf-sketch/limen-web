@@ -37,7 +37,8 @@
   --origin-muted: var(--origin-text-muted);
   --origin-hairline: var(--origin-border);
   --origin-script: var(--origin-accent-font);
-  min-height: 100dvh;
+  /* Keep the page floor stable when mobile browser chrome expands or collapses. */
+  min-height: 100svh;
   overflow-x: clip;
   color: var(--origin-ink);
   background: var(--origin-ink);
@@ -810,9 +811,8 @@
 
 .origin01-hero {
   position: relative;
-  min-height: 100vh;
+  /* `dvh` changes during scroll-direction toolbar transitions and moved every section below the hero. */
   min-height: 100svh;
-  min-height: 100dvh;
   display: flex;
   overflow: hidden;
   align-items: flex-end;
