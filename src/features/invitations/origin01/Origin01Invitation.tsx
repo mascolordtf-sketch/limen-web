@@ -15,7 +15,7 @@ type CountdownValue = {
 
 type EntryPhase = 'prelude' | 'envelope' | 'opening' | 'invitation'
 type InvitationAudience = 'protagonist' | 'guest'
-type IconName = 'calendar' | 'calendarPlus' | 'clock' | 'gift' | 'hanger' | 'message' | 'pin' | 'route' | 'share'
+type IconName = 'calendar' | 'calendarPlus' | 'check' | 'clock' | 'copy' | 'error' | 'gift' | 'hanger' | 'message' | 'pause' | 'pin' | 'play' | 'route' | 'share'
 
 const calendarDate = (isoDate: string) => new Date(isoDate).toISOString().replace(/[-:]/g, '').replace('.000', '')
 
@@ -75,7 +75,7 @@ function buildEnvelopeDate(invitation: InvitationData) {
 function OriginIcon({ name }: { name: IconName }) {
   const commonProps = {
     'aria-hidden': true,
-    className: 'origin01-icon',
+    className: `origin01-icon origin01-icon--${name}`,
     fill: 'none',
     viewBox: '0 0 24 24',
   } as const
@@ -83,8 +83,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'calendar' || name === 'calendarPlus') {
     return (
       <svg {...commonProps}>
-        <path d="M6.75 3.75v3m10.5-3v3M4.5 9h15M5.75 5.25h12.5A1.75 1.75 0 0 1 20 7v11.25A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25V7a1.75 1.75 0 0 1 1.75-1.75Z" />
-        {name === 'calendarPlus' ? <path d="M12 12v5m-2.5-2.5h5" /> : <path d="M8 12.25h2m2 0h2m2 0h.01M8 16h2m2 0h2" />}
+        <rect className="origin01-icon__calendar-frame" x="4" y="5.25" width="16" height="14.75" rx="1.75" />
+        <path className="origin01-icon__calendar-binding" d="M6.75 3.75v3m10.5-3v3M4.5 9h15" />
+        {name === 'calendarPlus' ? <path className="origin01-icon__calendar-mark origin01-icon__action-detail" d="M12 12v5m-2.5-2.5h5" /> : <><path className="origin01-icon__calendar-dates" d="M8 12.25h2m2 0h2m2 0h.01M8 16h2m2 0h2" /><circle className="origin01-icon__calendar-mark" cx="13" cy="16" r="1.45" /></>}
       </svg>
     )
   }
@@ -92,8 +93,26 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'clock') {
     return (
       <svg {...commonProps}>
-        <circle cx="12" cy="12" r="8.25" />
-        <path d="M12 7.75V12l3 1.75" />
+        <circle className="origin01-icon__clock-face" cx="12" cy="12" r="8.25" />
+        <path className="origin01-icon__clock-hands" d="M12 7.75V12l3 1.75" />
+      </svg>
+    )
+  }
+
+  if (name === 'copy' || name === 'check' || name === 'error') {
+    return (
+      <svg {...commonProps}>
+        {name === 'copy' ? (
+          <><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></>
+        ) : name === 'check' ? <path d="m5 12.5 4.25 4.25L19 7" /> : <><circle cx="12" cy="12" r="8" /><path d="m9.5 9.5 5 5m0-5-5 5" /></>}
+      </svg>
+    )
+  }
+
+  if (name === 'play' || name === 'pause') {
+    return (
+      <svg {...commonProps}>
+        {name === 'play' ? <path className="origin01-icon__primary" d="m9 6 9 6-9 6Z" /> : <path className="origin01-icon__primary" d="M9 7v10M15 7v10" />}
       </svg>
     )
   }
@@ -101,7 +120,10 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'gift') {
     return (
       <svg {...commonProps}>
-        <path d="M4 10.25h16v9H4zM3.25 6.75h17.5v3.5H3.25zM12 6.75V19.25M12 6.75H8.6a2.1 2.1 0 1 1 0-4.2c2.3 0 3.4 4.2 3.4 4.2Zm0 0h3.4a2.1 2.1 0 1 0 0-4.2c-2.3 0-3.4 4.2-3.4 4.2Z" />
+        <path className="origin01-icon__gift-box" d="M4.5 10h15v10h-15Z" />
+        <path className="origin01-icon__gift-lid" d="M3.5 7h17v3h-17" />
+        <path className="origin01-icon__gift-ribbon" d="M12 7v13" />
+        <path className="origin01-icon__gift-bow" d="M12 7H8.75a2.15 2.15 0 1 1 .05-4.3C10.85 2.7 12 7 12 7Zm0 0h3.25a2.15 2.15 0 1 0-.05-4.3C13.15 2.7 12 7 12 7Z" />
       </svg>
     )
   }
@@ -109,7 +131,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'hanger') {
     return (
       <svg {...commonProps}>
-        <path d="M9.8 6.2a2.2 2.2 0 1 1 3.62 1.68c-.86.73-1.42 1.16-1.42 2.12M12 10l8.1 6.15a1.05 1.05 0 0 1-.64 1.85H4.54a1.05 1.05 0 0 1-.64-1.85L12 10Z" />
+        <path className="origin01-icon__hanger-hook" d="M9.8 6.2a2.2 2.2 0 1 1 3.62 1.68C12.56 8.61 12 9.04 12 10" />
+        <path className="origin01-icon__hanger-body" d="m12 10 8.1 6.15a1.05 1.05 0 0 1-.64 1.85H4.54a1.05 1.05 0 0 1-.64-1.85L12 10Z" />
+        <path className="origin01-icon__hanger-detail" d="M8 15.6h8" />
       </svg>
     )
   }
@@ -117,8 +141,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'message') {
     return (
       <svg {...commonProps}>
-        <path d="M20 11.5a7.5 7.5 0 0 1-11.3 6.47L4 19.25l1.3-4.38A7.5 7.5 0 1 1 20 11.5Z" />
-        <path d="m9.1 11.7 1.8 1.8 4-4" />
+        <path className="origin01-icon__message-bubble" d="M20 11.5a7.5 7.5 0 0 1-11.3 6.47L4 19.25l1.3-4.38A7.5 7.5 0 1 1 20 11.5Z" />
+        <path className="origin01-icon__message-line" d="M8.6 10h6.8M8.6 13h4.8" />
+        <circle className="origin01-icon__message-response" cx="16.8" cy="15.7" r="1.35" />
       </svg>
     )
   }
@@ -126,8 +151,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'pin') {
     return (
       <svg {...commonProps}>
-        <path d="M19 10c0 5.25-7 10-7 10s-7-4.75-7-10a7 7 0 1 1 14 0Z" />
-        <circle cx="12" cy="10" r="2.25" />
+        <ellipse className="origin01-icon__pin-ring" cx="12" cy="20.25" rx="3.5" ry="1.15" />
+        <path className="origin01-icon__pin-body" d="M19 10c0 5.25-7 10-7 10s-7-4.75-7-10a7 7 0 1 1 14 0Z" />
+        <circle className="origin01-icon__pin-center" cx="12" cy="10" r="2.25" />
       </svg>
     )
   }
@@ -236,10 +262,14 @@ export function Origin01Invitation({
 }) {
   const [phase, setPhase] = useState<EntryPhase>(audience === 'guest' ? 'envelope' : 'prelude')
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isMusicLoading, setIsMusicLoading] = useState(false)
+  const [isMusicFailed, setIsMusicFailed] = useState(false)
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [shareStatus, setShareStatus] = useState('')
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const envelopeRef = useRef<HTMLButtonElement | null>(null)
   const experienceRef = useRef<HTMLDivElement | null>(null)
+  const copyResetRef = useRef<number | null>(null)
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
@@ -263,6 +293,10 @@ export function Origin01Invitation({
     return () => window.clearTimeout(timeoutId)
   }, [phase])
 
+  useEffect(() => () => {
+    if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
+  }, [])
+
   useLayoutEffect(() => {
     if (!invitationIsVisible || !experienceRef.current) return
 
@@ -272,20 +306,23 @@ export function Origin01Invitation({
       { selector: '.origin01-countdown', motion: 'depth', level: 'content', delay: 'follow' },
       { selector: '.origin01-message__card', motion: 'up', level: 'content' },
       { selector: '.origin01-info > .origin01-section-heading', motion: 'up', level: 'content' },
-      { selector: '.origin01-info__surface', motion: 'up', level: 'content', delay: 'follow' },
+      { selector: '.origin01-info__surface', motion: 'fade', level: 'content', delay: 'follow' },
       { selector: '.origin01-info > .origin01-actions', motion: 'scale', level: 'action', delay: 'action' },
       { selector: '.origin01-dress__media', motion: 'depth', level: 'protagonist' },
-      { selector: '.origin01-dress__content', motion: 'right', level: 'content', delay: 'follow' },
+      { selector: '.origin01-dress__content > .origin01-kicker, .origin01-dress__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
+      { selector: '.origin01-dress__content > p:not(.origin01-kicker), .origin01-dress__note', motion: 'fade', level: 'content', delay: 'supporting' },
       { selector: '.origin01-gallery > .origin01-section-heading', motion: 'up', level: 'content' },
       { selector: '.origin01-gallery__item--1', motion: 'depth', level: 'protagonist', delay: 'follow' },
       { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
-      { selector: '.origin01-gift__content', motion: 'up', level: 'content', delay: 'follow' },
-      { selector: '.origin01-rsvp', motion: 'up', level: 'content' },
-      { selector: '.origin01-rsvp > .origin01-button', motion: 'scale', level: 'action', delay: 'action' },
+      { selector: '.origin01-gift__content > .origin01-kicker, .origin01-gift__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
+      { selector: '.origin01-gift__content > p:not(.origin01-kicker), .origin01-gift__account, .origin01-gift__content > small', motion: 'fade', level: 'content', delay: 'supporting' },
+      { selector: '.origin01-rsvp > .origin01-kicker, .origin01-rsvp > h2', motion: 'up', level: 'content', delay: 'editorial' },
+      { selector: '.origin01-rsvp > p:not(.origin01-kicker), .origin01-rsvp > .origin01-button', motion: 'fade', level: 'action', delay: 'supporting' },
       { selector: '.origin01-closing__content', motion: 'up', level: 'protagonist' },
       { selector: '.origin01-closing__share', motion: 'up', level: 'action', delay: 'final-action' },
+      { selector: '[data-icon-motion]', motion: 'icon', level: 'content' },
     ] as const
     const motionElements = motionMap.flatMap(({ selector, motion, level, ...timing }) =>
       Array.from(experience.querySelectorAll<HTMLElement>(selector)).map((element) => {
@@ -310,7 +347,7 @@ export function Origin01Invitation({
           observer.unobserve(entry.target)
         })
       },
-      { rootMargin: '0px 0px -18% 0px', threshold: 0.08 },
+      { rootMargin: '0px 0px -10% 0px', threshold: 0.16 },
     )
 
     motionElements.forEach((element) => observer.observe(element))
@@ -319,9 +356,29 @@ export function Origin01Invitation({
   }, [invitationIsVisible])
 
   const playMusic = () => {
-    if (!audioRef.current) return
+    const audio = audioRef.current
+    if (!audio) return
 
-    void audioRef.current.play().catch(() => setIsPlaying(false))
+    if (!audio.paused && !audio.ended) {
+      setIsPlaying(true)
+      setIsMusicLoading(false)
+      setIsMusicFailed(false)
+      return
+    }
+
+    setIsMusicLoading(true)
+    setIsMusicFailed(false)
+    void audio.play().then(
+      () => {
+        setIsPlaying(true)
+        setIsMusicLoading(false)
+      },
+      () => {
+        setIsPlaying(false)
+        setIsMusicLoading(false)
+        setIsMusicFailed(true)
+      },
+    )
   }
 
   const revealEnvelope = () => {
@@ -376,6 +433,19 @@ export function Origin01Invitation({
     }
   }
 
+  const copyGiftAccount = async () => {
+    if (!invitation.gift) return
+    if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable')
+      await navigator.clipboard.writeText(invitation.gift.accountValue)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('error')
+    }
+    copyResetRef.current = window.setTimeout(() => setCopyStatus('idle'), 2_400)
+  }
+
   return (
     <main className={`origin01 origin01--${phase}`}>
       {hasMusic && musicSrc ? (
@@ -384,23 +454,27 @@ export function Origin01Invitation({
           src={musicSrc}
           loop
           preload="auto"
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPlay={() => setIsMusicFailed(false)}
+          onPause={() => { setIsPlaying(false); setIsMusicLoading(false) }}
+          onPlaying={() => { setIsPlaying(true); setIsMusicLoading(false); setIsMusicFailed(false) }}
+          onWaiting={() => setIsMusicLoading(true)}
+          onCanPlay={() => setIsMusicLoading(false)}
+          onEnded={() => { setIsPlaying(false); setIsMusicLoading(false) }}
+          onError={() => { setIsPlaying(false); setIsMusicLoading(false); setIsMusicFailed(true) }}
         />
       ) : null}
 
       {hasMusic && phase !== 'prelude' ? (
         <button
           type="button"
-          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
+          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''} ${isMusicLoading ? 'origin01-music--loading' : ''} ${isMusicFailed ? 'origin01-music--failed' : ''}`}
           onClick={toggleMusic}
-          aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+          aria-label={isMusicLoading ? 'Cargando música' : isMusicFailed ? 'Reintentar música' : isPlaying ? 'Pausar música' : 'Reproducir música'}
           aria-pressed={isPlaying}
+          aria-busy={isMusicLoading}
         >
-          <span className="origin01-music__bars" aria-hidden="true">
-            <i />
-            <i />
-            <i />
+          <span className="origin01-music__symbol" aria-hidden="true">
+            <OriginIcon name={isPlaying ? 'pause' : 'play'} />
           </span>
         </button>
       ) : null}
@@ -514,15 +588,15 @@ export function Origin01Invitation({
             </div>
             <div className="origin01-info__surface">
               <article className="origin01-info__row">
-                <span className="origin01-icon-wrap"><OriginIcon name="calendar" /></span>
+                <span className="origin01-icon-wrap" data-icon-motion="calendar"><OriginIcon name="calendar" /></span>
                 <div>
                   <p>Fecha</p>
                   <strong>{invitation.event.dateLabel}</strong>
-                  <span className="origin01-info__meta"><OriginIcon name="clock" /> {invitation.event.timeLabel} hs</span>
+                  <span className="origin01-info__meta"><span className="origin01-clock-mark" data-icon-motion="clock"><OriginIcon name="clock" /></span> {invitation.event.timeLabel} hs</span>
                 </div>
               </article>
               <article className="origin01-info__row">
-                <span className="origin01-icon-wrap"><OriginIcon name="pin" /></span>
+                <span className="origin01-icon-wrap" data-icon-motion="pin"><OriginIcon name="pin" /></span>
                 <div>
                   <p>Lugar</p>
                   <strong>{invitation.event.venue}</strong>
@@ -547,7 +621,7 @@ export function Origin01Invitation({
               <InvitationImageAsset image={invitation.gallery[1]} className="origin01-dress__image" />
             </div>
             <div className="origin01-dress__content">
-              <span className="origin01-feature-icon"><OriginIcon name="hanger" /></span>
+              <span className="origin01-feature-icon" data-icon-motion="hanger"><OriginIcon name="hanger" /></span>
               <p className="origin01-kicker">Dress code</p>
               <h2 id="origin01-dress-title">{invitation.event.dressCode}</h2>
               <p>Una noche especial merece que vengas como más te gusta: con presencia, alegría y ganas de celebrar.</p>
@@ -582,13 +656,22 @@ export function Origin01Invitation({
                   <InvitationImageAsset image={invitation.gift.image} className="origin01-gift__image" />
                 </div>
                 <div className="origin01-gift__content">
-                  <span className="origin01-feature-icon origin01-feature-icon--light"><OriginIcon name="gift" /></span>
+                  <span className="origin01-feature-icon origin01-feature-icon--light" data-icon-motion="gift"><OriginIcon name="gift" /></span>
                   <p className="origin01-kicker">Un detalle</p>
                   <h2 id="origin01-gift-title">{invitation.gift.title}</h2>
                   <p>{invitation.gift.description}</p>
                   <div className="origin01-gift__account">
                     <span>{invitation.gift.accountLabel}</span>
                     <strong>{invitation.gift.accountValue}</strong>
+                    <button type="button" className={`origin01-copy origin01-copy--${copyStatus}`} onClick={copyGiftAccount} aria-label="Copiar alias">
+                      <span className="origin01-copy__icons" aria-hidden="true">
+                        <OriginIcon name="copy" />
+                        <OriginIcon name="check" />
+                        <OriginIcon name="error" />
+                      </span>
+                      <span className="origin01-copy__label">{copyStatus === 'copied' ? 'Copiado' : copyStatus === 'error' ? 'No se pudo copiar' : 'Copiar alias'}</span>
+                    </button>
+                    <span className="origin01-sr-only" aria-live="polite">{copyStatus === 'copied' ? 'Alias copiado' : copyStatus === 'error' ? 'No se pudo copiar el alias' : ''}</span>
                   </div>
                   <small>{invitation.gift.demoNote}</small>
                 </div>
@@ -598,7 +681,7 @@ export function Origin01Invitation({
 
           <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
             <div className="origin01-rsvp__sparkles" aria-hidden="true" />
-            <span className="origin01-feature-icon origin01-feature-icon--rsvp"><OriginIcon name="message" /></span>
+            <span className="origin01-feature-icon origin01-feature-icon--rsvp" data-icon-motion="message"><OriginIcon name="message" /></span>
             <p className="origin01-kicker">Nos encantaría que estés</p>
             <h2 id="origin01-rsvp-title">¿Compartimos esta noche?</h2>
             <p>Confirmá tu asistencia para que podamos esperarte.</p>
