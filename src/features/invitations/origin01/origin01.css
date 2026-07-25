@@ -8,6 +8,7 @@
   --origin-blush: #e4cbd1;
   --origin-mist: #eee5e6;
   --origin-cream: #f3efea;
+  --origin-old-rose: #d7b7bb;
   --origin-paper: #faf7f2;
   --origin-surface: #f8f4ef;
   --origin-gold: #c9a86f;
@@ -647,6 +648,11 @@
   padding-left: 1rem;
 }
 
+.origin01-experience {
+  position: relative;
+  background: var(--origin-old-rose);
+}
+
 .origin01-section-heading {
   max-width: 47rem;
   margin-bottom: 2.4rem;
@@ -694,7 +700,7 @@
 }
 
 .origin01-demo-label--fixed {
-  position: fixed;
+  position: absolute;
   top: max(.72rem, env(safe-area-inset-top));
   left: .72rem;
   z-index: 30;
@@ -864,7 +870,7 @@
 
 .origin01-countdown-panel {
   padding-top: 2.25rem;
-  padding-bottom: 3.25rem;
+  padding-bottom: 0;
   color: var(--origin-paper);
   background: var(--origin-cream);
 }
@@ -958,11 +964,11 @@
 /* Letter */
 
 .origin01-message {
-  padding-top: 2.75rem;
-  padding-bottom: 3.75rem;
+  padding-top: 0;
+  padding-bottom: 0;
   background:
     radial-gradient(circle at 100% 0, rgba(185, 127, 146, .1), transparent 24rem),
-    var(--origin-paper);
+    var(--origin-cream);
 }
 
 .origin01-message__card {
@@ -972,7 +978,7 @@
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  padding: 4.4rem .35rem 3.7rem;
+  padding: 4.4rem .35rem 2rem;
 }
 
 .origin01-message__card::before {
@@ -1017,9 +1023,9 @@
 /* Event details */
 
 .origin01-info {
-  padding-top: 4rem;
-  padding-bottom: 4.5rem;
-  background: var(--origin-cream);
+  padding-top: 2.75rem;
+  padding-bottom: 2.5rem;
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 2.75rem);
 }
 
 .origin01-info > * {
@@ -1196,7 +1202,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4.8rem 1.25rem 5.3rem;
+  padding: 4.8rem 1.25rem 2rem;
 }
 
 .origin01-feature-icon {
@@ -1249,9 +1255,9 @@
 /* Gallery */
 
 .origin01-gallery {
-  padding-top: 4.5rem;
-  padding-bottom: 3.5rem;
-  background: var(--origin-mist);
+  padding-top: 3rem;
+  padding-bottom: 0;
+  background: linear-gradient(to bottom, var(--origin-plum-deep), var(--origin-cream) 3rem);
 }
 
 .origin01-gallery > * {
@@ -1305,9 +1311,9 @@
 /* Gift */
 
 .origin01-gift {
-  padding-top: 3rem;
+  padding-top: 3.25rem;
   padding-bottom: 2rem;
-  background: var(--origin-cream);
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 3rem);
 }
 
 .origin01-gift__card {
@@ -1393,7 +1399,7 @@
   position: relative;
   width: calc(100% - 2rem);
   overflow: hidden;
-  margin: 0 1rem 1rem;
+  margin: 0 1rem;
   border-radius: 2.2rem;
   padding-top: 4.25rem;
   padding-bottom: 4.25rem;
@@ -1676,27 +1682,30 @@
 
   .origin01-countdown-panel {
     padding-top: 4rem;
-    padding-bottom: 5rem;
+    padding-bottom: 0;
   }
 
   .origin01-message {
-    padding-top: 4.5rem;
-    padding-bottom: 5rem;
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .origin01-info {
-    padding-top: 6rem;
-    padding-bottom: 6.5rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 4rem);
   }
 
   .origin01-gallery {
-    padding-top: 6rem;
-    padding-bottom: 5rem;
+    padding-top: 4rem;
+    padding-bottom: 0;
+    background: linear-gradient(to bottom, var(--origin-plum-deep), var(--origin-cream) 4rem);
   }
 
   .origin01-gift {
-    padding-top: 5rem;
+    padding-top: 4rem;
     padding-bottom: 3rem;
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 4rem);
   }
 
   .origin01-hero__content,
@@ -1737,7 +1746,7 @@
   }
 
   .origin01-dress__content {
-    padding: 6rem 3rem;
+    padding: 6rem 3rem 3rem;
   }
 
   .origin01-gallery__grid {
@@ -1775,7 +1784,7 @@
   .origin01-rsvp {
     width: calc(100% - 4rem);
     max-width: 78rem;
-    margin: 0 auto 2rem;
+    margin: 0 auto;
     padding-top: 6rem;
     padding-bottom: 6rem;
   }
