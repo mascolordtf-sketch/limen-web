@@ -643,7 +643,8 @@
 
 .origin01-section {
   width: 100%;
-  padding: 5.5rem 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
 }
 
 .origin01-section-heading {
@@ -766,7 +767,9 @@
 
 .origin01-hero {
   position: relative;
+  min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   overflow: hidden;
   align-items: flex-end;
@@ -860,6 +863,8 @@
 /* Countdown surface */
 
 .origin01-countdown-panel {
+  padding-top: 2.25rem;
+  padding-bottom: 3.25rem;
   color: var(--origin-paper);
   background: var(--origin-cream);
 }
@@ -953,6 +958,8 @@
 /* Letter */
 
 .origin01-message {
+  padding-top: 2.75rem;
+  padding-bottom: 3.75rem;
   background:
     radial-gradient(circle at 100% 0, rgba(185, 127, 146, .1), transparent 24rem),
     var(--origin-paper);
@@ -961,12 +968,11 @@
 .origin01-message__card {
   position: relative;
   width: min(100%, 60rem);
-  min-height: 38rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  padding: 4.4rem .35rem;
+  padding: 4.4rem .35rem 3.7rem;
 }
 
 .origin01-message__card::before {
@@ -1011,6 +1017,8 @@
 /* Event details */
 
 .origin01-info {
+  padding-top: 4rem;
+  padding-bottom: 4.5rem;
   background: var(--origin-cream);
 }
 
@@ -1241,6 +1249,8 @@
 /* Gallery */
 
 .origin01-gallery {
+  padding-top: 4.5rem;
+  padding-bottom: 3.5rem;
   background: var(--origin-mist);
 }
 
@@ -1295,6 +1305,8 @@
 /* Gift */
 
 .origin01-gift {
+  padding-top: 3rem;
+  padding-bottom: 2rem;
   background: var(--origin-cream);
 }
 
@@ -1310,7 +1322,7 @@
 }
 
 .origin01-gift__media {
-  min-height: 31rem;
+  height: clamp(15rem, 67vw, 20rem);
 }
 
 .origin01-gift__image {
@@ -1324,7 +1336,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4rem 1.25rem;
+  padding: 3.25rem 1.25rem;
 }
 
 .origin01-feature-icon--light {
@@ -1381,8 +1393,10 @@
   position: relative;
   width: calc(100% - 2rem);
   overflow: hidden;
-  margin: 1rem;
+  margin: 0 1rem 1rem;
   border-radius: 2.2rem;
+  padding-top: 4.25rem;
+  padding-bottom: 4.25rem;
   text-align: center;
   color: var(--origin-paper);
   background:
@@ -1629,6 +1643,21 @@
     letter-spacing: .15em;
     white-space: nowrap;
   }
+
+  .origin01-demo-label--fixed {
+    top: max(.55rem, env(safe-area-inset-top));
+    left: .55rem;
+    padding: .44rem .55rem;
+    font-size: .5rem;
+    letter-spacing: .1em;
+  }
+
+  .origin01-music {
+    top: max(.55rem, env(safe-area-inset-top));
+    right: .55rem;
+    width: 2.9rem;
+    height: 2.9rem;
+  }
 }
 
 @media (min-width: 700px) {
@@ -1639,7 +1668,33 @@
   }
 
   .origin01-section {
-    padding: 7.5rem 3rem;
+    padding-right: 3rem;
+    padding-left: 3rem;
+  }
+
+  .origin01-countdown-panel {
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+  }
+
+  .origin01-message {
+    padding-top: 4.5rem;
+    padding-bottom: 5rem;
+  }
+
+  .origin01-info {
+    padding-top: 6rem;
+    padding-bottom: 6.5rem;
+  }
+
+  .origin01-gallery {
+    padding-top: 6rem;
+    padding-bottom: 5rem;
+  }
+
+  .origin01-gift {
+    padding-top: 5rem;
+    padding-bottom: 3rem;
   }
 
   .origin01-hero__content,
@@ -1707,6 +1762,7 @@
   }
 
   .origin01-gift__media {
+    height: auto;
     min-height: 48rem;
   }
 
@@ -1717,7 +1773,9 @@
   .origin01-rsvp {
     width: calc(100% - 4rem);
     max-width: 78rem;
-    margin: 2rem auto;
+    margin: 0 auto 2rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 }
 
