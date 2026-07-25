@@ -2454,12 +2454,15 @@
 
 .origin01-trivia__next {
   width: min(100%, 20rem);
-  transition: opacity .3s ease, transform .3s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1));
+  transition: background .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease;
 }
 
 .origin01-trivia__next:disabled {
-  opacity: .55;
   cursor: default;
+  border-color: var(--origin-border);
+  background: var(--origin-photo-surface);
+  color: var(--origin-text-muted);
+  box-shadow: none;
 }
 
 .origin01-trivia__action-hint {
@@ -2645,7 +2648,6 @@
     animation: none !important;
   }
 
-  .origin01-trivia__next,
   .origin01-trivia__action-hint {
     transition: none !important;
   }
