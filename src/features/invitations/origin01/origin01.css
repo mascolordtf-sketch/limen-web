@@ -353,6 +353,7 @@
 .origin01-envelope-button {
   position: relative;
   width: min(84vw, 23rem);
+  aspect-ratio: 1.42 / 1;
   display: block;
   border: 0;
   border-radius: 1.25rem;
@@ -377,10 +378,9 @@
 }
 
 .origin01-envelope {
-  position: relative;
-  width: 100%;
+  position: absolute;
+  inset: 0;
   display: block;
-  aspect-ratio: 1.42 / 1;
   filter: drop-shadow(0 26px 38px rgba(33, 23, 28, .34));
   transform-style: preserve-3d;
   transition: transform .35s cubic-bezier(.22, 1, .36, 1);
