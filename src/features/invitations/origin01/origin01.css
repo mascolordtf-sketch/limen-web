@@ -2402,7 +2402,8 @@
 }
 
 .origin01-trivia__feedback-text--correct {
-  color: var(--origin-accent);
+  /* Darkened gold (#7a5a2e) — 5.8:1 on --origin-ivory, passes WCAG AA */
+  color: #7a5a2e;
 }
 
 .origin01-trivia__feedback-text--wrong {
