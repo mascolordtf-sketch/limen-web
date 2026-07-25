@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
-import type { InvitationData, InvitationImage } from '../types'
+import type { InvitationData, InvitationImage, InvitationTrivia } from '../types'
 import './origin01.css'
 
 const defaultMusicSrc = '/audio/origin-01-demo.mp3'
@@ -15,7 +15,7 @@ type CountdownValue = {
 
 type EntryPhase = 'prelude' | 'envelope' | 'opening' | 'invitation'
 type InvitationAudience = 'protagonist' | 'guest'
-type IconName = 'calendar' | 'calendarPlus' | 'clock' | 'gift' | 'hanger' | 'message' | 'pin' | 'route' | 'share'
+type IconName = 'calendar' | 'calendarPlus' | 'clock' | 'gift' | 'hanger' | 'message' | 'pin' | 'route' | 'share' | 'sparkle'
 
 const calendarDate = (isoDate: string) => new Date(isoDate).toISOString().replace(/[-:]/g, '').replace('.000', '')
 
@@ -150,6 +150,14 @@ function OriginIcon({ name }: { name: IconName }) {
     )
   }
 
+  if (name === 'sparkle') {
+    return (
+      <svg {...commonProps}>
+        <path d="M12 3.5l1.8 5.2L19 10.5l-5.2 1.8L12 17.5l-1.8-5.2L5 10.5l5.2-1.8L12 3.5Z" />
+      </svg>
+    )
+  }
+
   return null
 }
 
@@ -227,6 +235,127 @@ function InvitationImageAsset({
   return <div className={`${className} origin01-image-placeholder`} role="img" aria-label={image?.alt ?? 'Imagen editorial'} />
 }
 
+
+function Trivia({ trivia }: { trivia: InvitationTrivia }) {
+  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [selectedOption, setSelectedOption] = useState<number | null>(null)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [score, setScore] = useState(0)
+  const [isComplete, setIsComplete] = useState(false)
+
+  const question = trivia.questions[currentQuestion]
+  const totalQuestions = trivia.questions.length
+  const isCorrect = selectedOption !== null && selectedOption === question.answerIndex
+
+  const handleSelect = (index: number) => {
+    if (showFeedback) return
+
+    setSelectedOption(index)
+    setShowFeedback(true)
+
+    if (index === question.answerIndex) {
+      setScore((s) => s + 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (currentQuestion + 1 >= totalQuestions) {
+      setIsComplete(true)
+      return
+    }
+
+    setCurrentQuestion((q) => q + 1)
+    setSelectedOption(null)
+    setShowFeedback(false)
+  }
+
+  const handleRestart = () => {
+    setCurrentQuestion(0)
+    setSelectedOption(null)
+    setShowFeedback(false)
+    setScore(0)
+    setIsComplete(false)
+  }
+
+  if (isComplete) {
+    const tier = trivia.resultTiers.find((t) => score >= t.minScore) ?? trivia.resultTiers[trivia.resultTiers.length - 1]
+
+    return (
+      <div className="origin01-trivia__result">
+        <span className="origin01-feature-icon origin01-feature-icon--trivia"><OriginIcon name="sparkle" /></span>
+        <p className="origin01-kicker">Tu puntaje</p>
+        <div className="origin01-trivia__score">
+          {score}<span>/{totalQuestions}</span>
+        </div>
+        <h3 className="origin01-trivia__result-title">{tier.title}</h3>
+        <p className="origin01-trivia__result-message">{tier.message}</p>
+        <button type="button" className="origin01-button origin01-button--dark" onClick={handleRestart}>
+          <OriginIcon name="sparkle" />
+          Jugar de nuevo
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="origin01-trivia__game">
+      <div className="origin01-trivia__progress">
+        <span>Pregunta {currentQuestion + 1} de {totalQuestions}</span>
+        <div className="origin01-trivia__progress-bar">
+          <div className="origin01-trivia__progress-fill" style={{ width: `${((currentQuestion) / totalQuestions) * 100}%` }} />
+        </div>
+      </div>
+
+      <h3 className="origin01-trivia__question">{question.prompt}</h3>
+
+      <div className="origin01-trivia__options" role="group" aria-label={question.prompt}>
+        {question.options.map((option, index) => {
+          const isSelected = selectedOption === index
+          const isAnswer = index === question.answerIndex
+          let className = 'origin01-trivia__option'
+
+          if (showFeedback) {
+            if (isAnswer) {
+              className += ' origin01-trivia__option--correct'
+            } else if (isSelected) {
+              className += ' origin01-trivia__option--incorrect'
+            } else {
+              className += ' origin01-trivia__option--dimmed'
+            }
+          }
+
+          return (
+            <button
+              key={option}
+              type="button"
+              className={className}
+              onClick={() => handleSelect(index)}
+              disabled={showFeedback}
+              aria-pressed={isSelected || undefined}
+            >
+              <span className="origin01-trivia__option-label">{String.fromCharCode(65 + index)}</span>
+              <span>{option}</span>
+              {showFeedback && isAnswer ? <span className="origin01-trivia__option-mark" aria-hidden="true">✓</span> : null}
+              {showFeedback && isSelected && !isAnswer ? <span className="origin01-trivia__option-mark" aria-hidden="true">✕</span> : null}
+            </button>
+          )
+        })}
+      </div>
+
+      {showFeedback ? (
+        <div className="origin01-trivia__feedback">
+          <p className={isCorrect ? 'origin01-trivia__feedback--correct' : 'origin01-trivia__feedback--wrong'}>
+            {isCorrect ? '¡Correcto!' : `La respuesta correcta es: ${question.options[question.answerIndex]}`}
+          </p>
+          <button type="button" className="origin01-button origin01-button--dark" onClick={handleNext}>
+            {currentQuestion + 1 >= totalQuestions ? 'Ver resultados' : 'Siguiente pregunta'}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
 export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
@@ -280,6 +409,8 @@ export function Origin01Invitation({
       { selector: '.origin01-gallery__item--1', motion: 'depth', level: 'protagonist', delay: 'follow' },
       { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
+      { selector: '.origin01-trivia > .origin01-section-heading', motion: 'up', level: 'content' },
+      { selector: '.origin01-trivia__surface', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-gift__content', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-rsvp', motion: 'up', level: 'content' },
@@ -574,6 +705,19 @@ export function Origin01Invitation({
               ))}
             </div>
           </section>
+
+          {invitation.trivia ? (
+            <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
+              <div className="origin01-section-heading">
+                <p className="origin01-kicker">Un juego</p>
+                <h2 id="origin01-trivia-title">{invitation.trivia.title}</h2>
+              </div>
+              <div className="origin01-trivia__surface">
+                <p className="origin01-trivia__subtitle">{invitation.trivia.subtitle}</p>
+                <Trivia trivia={invitation.trivia} />
+              </div>
+            </section>
+          ) : null}
 
           {invitation.gift ? (
             <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">

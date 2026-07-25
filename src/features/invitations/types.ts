@@ -42,6 +42,25 @@ export type InvitationWelcome = {
   body: string
 }
 
+export type TriviaQuestion = {
+  prompt: string
+  options: string[]
+  answerIndex: number
+}
+
+export type TriviaResultTier = {
+  minScore: number
+  title: string
+  message: string
+}
+
+export type InvitationTrivia = {
+  title: string
+  subtitle: string
+  questions: TriviaQuestion[]
+  resultTiers: TriviaResultTier[]
+}
+
 export type InvitationData = {
   code: string
   demoLabel: string
@@ -55,4 +74,5 @@ export type InvitationData = {
   rsvp: InvitationRsvp
   music?: InvitationMusic
   gift?: InvitationGift
+  trivia?: InvitationTrivia
 }

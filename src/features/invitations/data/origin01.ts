@@ -59,4 +59,57 @@ export const origin01Invitation: InvitationData = {
       alt: 'Caja de regalo rosa champagne con cinta satinada y luces cálidas',
     },
   },
+  trivia: {
+    title: '¿Cuánto la conocés?',
+    subtitle: 'Cinco preguntas para descubrir cuán cerca estás de Valentina.',
+    questions: [
+      {
+        prompt: '¿Cuál es el color favorito de Valentina?',
+        options: ['Azul marino', 'Rosa dorado', 'Verde esmeralda', 'Violeta'],
+        answerIndex: 1,
+      },
+      {
+        prompt: '¿Qué instrumento tocaba Valentina de chica?',
+        options: ['Piano', 'Violín', 'Guitarra', 'Flauta'],
+        answerIndex: 0,
+      },
+      {
+        prompt: '¿Cuál es el postre que Valentina no puede resistir?',
+        options: ['Tiramisú', 'Macarons', 'Chocotorta', 'Helado de frutilla'],
+        answerIndex: 2,
+      },
+      {
+        prompt: '¿Qué sueña Valentina para su futuro?',
+        options: ['Viajar por el mundo', 'Estudiar arte', 'Ser diseñadora', 'Vivir en la playa'],
+        answerIndex: 0,
+      },
+      {
+        prompt: '¿Con quién quiere bailar Valentina esta noche?',
+        options: ['Con su mamá', 'Con su mejor amiga', 'Con todos', 'Con su papá'],
+        answerIndex: 2,
+      },
+    ],
+    resultTiers: [
+      {
+        minScore: 5,
+        title: '¡La conocés de memoria!',
+        message: 'Sos parte del corazón más cercano de Valentina. No hay secreto que se te escape.',
+      },
+      {
+        minScore: 3,
+        title: '¡La conocés bien!',
+        message: 'Sabés mucho sobre Valentina. Algunas cosas todavía quedan para descubrir juntas esta noche.',
+      },
+      {
+        minScore: 1,
+        title: 'Hay mucho por descubrir',
+        message: 'Valentina tiene un mundo entero para compartir con vos. Esta noche es el comienzo perfecto.',
+      },
+      {
+        minScore: 0,
+        title: '¡A ponerse al día!',
+        message: 'No pasa nada. Esta noche es la oportunidad ideal para conocer a Valentina como nunca.',
+      },
+    ],
+  },
 }
