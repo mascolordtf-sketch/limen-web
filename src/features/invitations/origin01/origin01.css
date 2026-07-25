@@ -791,6 +791,21 @@
   border: 1px solid rgba(245, 239, 231, .25);
   border-radius: inherit;
   content: "";
+  animation: origin01-music-breath 3.6s ease-in-out infinite;
+}
+
+.origin01-music--playing { border-color: rgba(245, 239, 231, .34); }
+.origin01-music--failed { border-color: var(--origin-old-rose); }
+.origin01-music--loading::before {
+  position: absolute;
+  right: .35rem;
+  bottom: .35rem;
+  width: .34rem;
+  height: .34rem;
+  border-radius: 50%;
+  background: var(--origin-accent);
+  content: "";
+  animation: origin01-loading-dot 1.1s ease-in-out infinite;
 }
 
 .origin01-hero {
@@ -1129,6 +1144,10 @@
   height: 1rem;
 }
 
+.origin01-clock-mark {
+  display: inline-flex;
+}
+
 .origin01-actions {
   display: grid;
   gap: .7rem;
@@ -1161,6 +1180,7 @@
 .origin01-button .origin01-icon {
   width: 1.15rem;
   height: 1.15rem;
+  transition: opacity var(--origin-icon-response-duration) ease, transform var(--origin-icon-response-duration) var(--origin-icon-ease);
 }
 
 .origin01-button:hover {
@@ -1168,12 +1188,20 @@
 }
 
 .origin01-button:active {
-  transform: scale(.985);
+  opacity: .88;
 }
 
 .origin01-button:active .origin01-icon--pin,
 .origin01-button:active .origin01-icon--share {
   transform: translate3d(1px, -1px, 0);
+}
+
+.origin01-button:active .origin01-icon--calendarPlus .origin01-icon__action-detail {
+  transform: scale(1.08);
+}
+
+.origin01-button:active .origin01-icon--message .origin01-icon__message-line {
+  opacity: .58;
 }
 
 .origin01-button--dark {
@@ -1233,20 +1261,24 @@
 }
 
 .origin01-feature-icon {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 4.4rem;
+  height: 4.4rem;
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.4rem;
+  align-self: center;
+  margin-bottom: 1.8rem;
+  border: 1px solid rgba(216, 184, 188, .3);
+  border-radius: 1.55rem;
   color: var(--origin-blush);
+  background: radial-gradient(circle, rgba(216, 184, 188, .1), transparent 72%);
 }
 
 .origin01-feature-icon .origin01-icon {
-  width: 2.7rem;
-  height: 2.7rem;
-  stroke-width: 1.3;
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 1.4;
 }
 
 .origin01-dress h2 {
@@ -1374,6 +1406,8 @@
 
 .origin01-feature-icon--light {
   color: var(--origin-plum);
+  border-color: rgba(91, 48, 69, .18);
+  background: radial-gradient(circle, rgba(216, 184, 188, .28), transparent 72%);
 }
 
 .origin01-gift__content > p:not(.origin01-kicker) {
@@ -1412,11 +1446,14 @@
 }
 
 .origin01-copy {
+  width: max-content;
+  min-width: 10.5rem;
   min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
   gap: .45rem;
-  margin-top: .9rem;
+  justify-content: center;
+  margin: .9rem auto 0;
   border: 1px solid var(--origin-divider);
   border-radius: .85rem;
   padding: .6rem .8rem;
@@ -1427,28 +1464,42 @@
   transition: color var(--origin-icon-response-duration) ease, background var(--origin-icon-response-duration) ease, transform var(--origin-icon-response-duration) ease;
 }
 
-.origin01-copy > span {
+.origin01-copy__label {
   color: inherit;
   font-size: .61rem;
 }
 
-.origin01-copy .origin01-icon { width: 1rem; height: 1rem; }
+.origin01-copy__icons { position: relative; width: 1rem; height: 1rem; flex: 0 0 auto; }
+.origin01-copy .origin01-icon { position: absolute; inset: 0; width: 1rem; height: 1rem; opacity: 0; transform: scale(.82); transition: opacity var(--origin-icon-response-duration) ease, transform var(--origin-icon-response-duration) var(--origin-icon-ease); }
+.origin01-copy--idle .origin01-icon--copy,
+.origin01-copy--copied .origin01-icon--check,
+.origin01-copy--error .origin01-icon--error { opacity: 1; transform: none; }
 .origin01-copy:active { transform: scale(.98); }
-.origin01-copy--success { color: var(--origin-cream); background: var(--origin-plum); }
+.origin01-copy--copied { color: var(--origin-cream); background: var(--origin-plum); }
+.origin01-copy--copied .origin01-icon--check { stroke-dasharray: 24; animation: origin01-copy-check .35s var(--origin-icon-ease) both; }
+.origin01-copy--error { color: var(--origin-wine-deep); border-color: var(--origin-old-rose); background: rgba(216, 184, 188, .22); }
 .origin01-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 
 /* One-time, meaning-led gestures begin only after the shared viewport entrance. */
-[data-icon-motion].origin01-motion-visible .origin01-icon__detail {
-  animation: origin01-icon-detail var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
-}
-
-[data-icon-motion="pin"].origin01-motion-visible .origin01-icon {
-  animation: origin01-icon-pin var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
-}
-
-[data-icon-motion="hanger"].origin01-motion-visible .origin01-icon {
-  animation: origin01-icon-dress var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
-}
+[data-icon-motion="calendar"].origin01-motion-visible .origin01-icon__calendar-binding { animation: origin01-calendar-binding var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both; }
+[data-icon-motion="calendar"].origin01-motion-visible .origin01-icon__calendar-frame { animation: origin01-calendar-frame .42s var(--origin-icon-ease) both; }
+[data-icon-motion="calendar"].origin01-motion-visible .origin01-icon__calendar-dates { animation: origin01-calendar-dates .4s var(--origin-icon-ease) .28s both; }
+[data-icon-motion="calendar"].origin01-motion-visible .origin01-icon__calendar-mark { animation: origin01-calendar-mark .42s var(--origin-icon-ease) .42s both; }
+[data-icon-motion="clock"].origin01-motion-visible .origin01-icon__clock-face { animation: origin01-clock-face var(--origin-icon-gesture-duration) var(--origin-icon-ease) both; }
+[data-icon-motion="clock"].origin01-motion-visible .origin01-icon__clock-hands { transform-origin: 12px 12px; animation: origin01-clock-hands .58s var(--origin-icon-ease) .18s both; }
+[data-icon-motion="pin"].origin01-motion-visible .origin01-icon__pin-body,
+[data-icon-motion="pin"].origin01-motion-visible .origin01-icon__pin-center { animation: origin01-pin-settle var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both; }
+[data-icon-motion="pin"].origin01-motion-visible .origin01-icon__pin-ring { animation: origin01-pin-ring .52s var(--origin-icon-ease) .38s both; }
+[data-icon-motion="hanger"].origin01-motion-visible .origin01-icon__hanger-hook { animation: origin01-hanger-hook .38s var(--origin-icon-ease) .12s both; }
+[data-icon-motion="hanger"].origin01-motion-visible .origin01-icon__hanger-body { animation: origin01-hanger-body .56s var(--origin-icon-ease) .28s both; }
+[data-icon-motion="hanger"].origin01-motion-visible .origin01-icon__hanger-detail { animation: origin01-hanger-detail .34s var(--origin-icon-ease) .58s both; }
+[data-icon-motion="gift"].origin01-motion-visible .origin01-icon__gift-box { animation: origin01-gift-box .42s var(--origin-icon-ease) .1s both; }
+[data-icon-motion="gift"].origin01-motion-visible .origin01-icon__gift-lid { animation: origin01-gift-lid .48s var(--origin-icon-ease) .32s both; }
+[data-icon-motion="gift"].origin01-motion-visible .origin01-icon__gift-ribbon,
+[data-icon-motion="gift"].origin01-motion-visible .origin01-icon__gift-bow { animation: origin01-gift-bow .48s var(--origin-icon-ease) .52s both; }
+[data-icon-motion="message"].origin01-motion-visible .origin01-icon__message-bubble { animation: origin01-message-bubble .46s var(--origin-icon-ease) .1s both; }
+[data-icon-motion="message"].origin01-motion-visible .origin01-icon__message-line { animation: origin01-message-line .46s var(--origin-icon-ease) .34s both; }
+[data-icon-motion="message"].origin01-motion-visible .origin01-icon__message-response { animation: origin01-message-response .38s var(--origin-icon-ease) .56s both; }
 
 .origin01-gift small {
   max-width: 30rem;
@@ -1468,7 +1519,7 @@
   margin: 0 1rem 1.75rem;
   border-radius: 2.2rem;
   padding-top: 4.25rem;
-  padding-bottom: 4.25rem;
+  padding-bottom: 3.85rem;
   text-align: center;
   color: var(--origin-paper);
   background:
@@ -1486,7 +1537,9 @@
 }
 
 .origin01-feature-icon--rsvp {
-  width: 2.75rem !important;
+  width: 4.65rem;
+  height: 4.65rem;
+  margin-bottom: 1.7rem;
   color: var(--origin-blush);
 }
 
@@ -1699,9 +1752,26 @@
   }
 }
 
-@keyframes origin01-icon-detail { from { opacity: 0; stroke-dasharray: 28; stroke-dashoffset: 28; } to { opacity: 1; stroke-dasharray: 28; stroke-dashoffset: 0; } }
-@keyframes origin01-icon-pin { 0% { transform: translateY(-3px); } 65% { transform: translateY(1px); } 100% { transform: none; } }
-@keyframes origin01-icon-dress { 0% { opacity: .35; clip-path: inset(0 0 100%); } 100% { opacity: 1; clip-path: inset(0); } }
+@keyframes origin01-calendar-frame { from { opacity: .25; stroke-dasharray: 58; stroke-dashoffset: 58; } to { opacity: 1; stroke-dasharray: 58; stroke-dashoffset: 0; } }
+@keyframes origin01-calendar-binding { from { opacity: .25; stroke-dasharray: 28; stroke-dashoffset: 28; transform: translateY(-1px); } to { opacity: 1; stroke-dasharray: 28; stroke-dashoffset: 0; transform: none; } }
+@keyframes origin01-calendar-dates { from { opacity: 0; } to { opacity: 1; } }
+@keyframes origin01-calendar-mark { from { opacity: 0; transform: scale(.55); transform-origin: 13px 16px; } to { opacity: 1; transform: none; } }
+@keyframes origin01-clock-face { from { opacity: .3; stroke-dasharray: 54; stroke-dashoffset: 54; } to { opacity: 1; stroke-dasharray: 54; stroke-dashoffset: 0; } }
+@keyframes origin01-clock-hands { from { opacity: .35; transform: rotate(-34deg); } to { opacity: 1; transform: none; } }
+@keyframes origin01-pin-settle { from { opacity: .3; transform: translateY(-3px); } 70% { transform: translateY(.6px); } to { opacity: 1; transform: none; } }
+@keyframes origin01-pin-ring { from { opacity: 0; transform: scaleX(.35); transform-origin: 12px 20.25px; } 70% { opacity: .55; } to { opacity: .3; transform: none; } }
+@keyframes origin01-hanger-hook { from { opacity: 0; stroke-dasharray: 18; stroke-dashoffset: 18; } to { opacity: 1; stroke-dasharray: 18; stroke-dashoffset: 0; } }
+@keyframes origin01-hanger-body { from { opacity: .2; stroke-dasharray: 44; stroke-dashoffset: 44; transform: translateY(-1px); } 85% { transform: translateY(.4px); } to { opacity: 1; stroke-dasharray: 44; stroke-dashoffset: 0; transform: none; } }
+@keyframes origin01-hanger-detail { from { opacity: 0; transform: scaleX(.45); transform-origin: center; } to { opacity: 1; transform: none; } }
+@keyframes origin01-gift-box { from { opacity: .2; transform: scaleY(.88); transform-origin: bottom; } to { opacity: 1; transform: none; } }
+@keyframes origin01-gift-lid { from { opacity: .25; transform: translateY(-2px); } 75% { transform: translateY(.35px); } to { opacity: 1; transform: none; } }
+@keyframes origin01-gift-bow { from { opacity: 0; stroke-dasharray: 34; stroke-dashoffset: 34; } to { opacity: 1; stroke-dasharray: 34; stroke-dashoffset: 0; } }
+@keyframes origin01-message-bubble { from { opacity: .2; stroke-dasharray: 58; stroke-dashoffset: 58; } to { opacity: 1; stroke-dasharray: 58; stroke-dashoffset: 0; } }
+@keyframes origin01-message-line { from { opacity: 0; stroke-dasharray: 18; stroke-dashoffset: 18; } to { opacity: 1; stroke-dasharray: 18; stroke-dashoffset: 0; } }
+@keyframes origin01-message-response { from { opacity: 0; transform: scale(.45); transform-origin: 16.8px 15.7px; } to { opacity: 1; transform: none; } }
+@keyframes origin01-copy-check { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+@keyframes origin01-music-breath { 0%, 100% { opacity: .28; transform: scale(.92); } 50% { opacity: .58; transform: scale(1); } }
+@keyframes origin01-loading-dot { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 
 @media (max-width: 359px) {
   .origin01-envelope-stage .origin01-entry-topline {

@@ -15,7 +15,7 @@ type CountdownValue = {
 
 type EntryPhase = 'prelude' | 'envelope' | 'opening' | 'invitation'
 type InvitationAudience = 'protagonist' | 'guest'
-type IconName = 'calendar' | 'calendarPlus' | 'check' | 'clock' | 'copy' | 'gift' | 'hanger' | 'message' | 'pause' | 'pin' | 'play' | 'route' | 'share'
+type IconName = 'calendar' | 'calendarPlus' | 'check' | 'clock' | 'copy' | 'error' | 'gift' | 'hanger' | 'message' | 'pause' | 'pin' | 'play' | 'route' | 'share'
 
 const calendarDate = (isoDate: string) => new Date(isoDate).toISOString().replace(/[-:]/g, '').replace('.000', '')
 
@@ -83,8 +83,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'calendar' || name === 'calendarPlus') {
     return (
       <svg {...commonProps}>
-        <path className="origin01-icon__base" d="M6.75 3.75v3m10.5-3v3M4.5 9h15M5.75 5.25h12.5A1.75 1.75 0 0 1 20 7v11.25A1.75 1.75 0 0 1 18.25 20H5.75A1.75 1.75 0 0 1 4 18.25V7a1.75 1.75 0 0 1 1.75-1.75Z" />
-        {name === 'calendarPlus' ? <path className="origin01-icon__detail" d="M12 12v5m-2.5-2.5h5" /> : <path className="origin01-icon__detail" d="M8 12.25h2m2 0h2m2 0h.01M8 16h2m2 0h2" />}
+        <rect className="origin01-icon__calendar-frame" x="4" y="5.25" width="16" height="14.75" rx="1.75" />
+        <path className="origin01-icon__calendar-binding" d="M6.75 3.75v3m10.5-3v3M4.5 9h15" />
+        {name === 'calendarPlus' ? <path className="origin01-icon__calendar-mark origin01-icon__action-detail" d="M12 12v5m-2.5-2.5h5" /> : <><path className="origin01-icon__calendar-dates" d="M8 12.25h2m2 0h2m2 0h.01M8 16h2m2 0h2" /><circle className="origin01-icon__calendar-mark" cx="13" cy="16" r="1.45" /></>}
       </svg>
     )
   }
@@ -92,18 +93,18 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'clock') {
     return (
       <svg {...commonProps}>
-        <circle cx="12" cy="12" r="8.25" />
-        <path d="M12 7.75V12l3 1.75" />
+        <circle className="origin01-icon__clock-face" cx="12" cy="12" r="8.25" />
+        <path className="origin01-icon__clock-hands" d="M12 7.75V12l3 1.75" />
       </svg>
     )
   }
 
-  if (name === 'copy' || name === 'check') {
+  if (name === 'copy' || name === 'check' || name === 'error') {
     return (
       <svg {...commonProps}>
         {name === 'copy' ? (
           <><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></>
-        ) : <path d="m5 12.5 4.25 4.25L19 7" />}
+        ) : name === 'check' ? <path d="m5 12.5 4.25 4.25L19 7" /> : <><circle cx="12" cy="12" r="8" /><path d="m9.5 9.5 5 5m0-5-5 5" /></>}
       </svg>
     )
   }
@@ -119,8 +120,10 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'gift') {
     return (
       <svg {...commonProps}>
-        <path className="origin01-icon__base" d="M4 10.25h16v9H4zM3.25 6.75h17.5v3.5H3.25zM12 6.75V19.25" />
-        <path className="origin01-icon__detail" d="M12 6.75H8.6a2.1 2.1 0 1 1 0-4.2c2.3 0 3.4 4.2 3.4 4.2Zm0 0h3.4a2.1 2.1 0 1 0 0-4.2c-2.3 0-3.4 4.2-3.4 4.2Z" />
+        <path className="origin01-icon__gift-box" d="M4.5 10h15v10h-15Z" />
+        <path className="origin01-icon__gift-lid" d="M3.5 7h17v3h-17" />
+        <path className="origin01-icon__gift-ribbon" d="M12 7v13" />
+        <path className="origin01-icon__gift-bow" d="M12 7H8.75a2.15 2.15 0 1 1 .05-4.3C10.85 2.7 12 7 12 7Zm0 0h3.25a2.15 2.15 0 1 0-.05-4.3C13.15 2.7 12 7 12 7Z" />
       </svg>
     )
   }
@@ -128,7 +131,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'hanger') {
     return (
       <svg {...commonProps}>
-        <path d="M9.8 6.2a2.2 2.2 0 1 1 3.62 1.68c-.86.73-1.42 1.16-1.42 2.12M12 10l8.1 6.15a1.05 1.05 0 0 1-.64 1.85H4.54a1.05 1.05 0 0 1-.64-1.85L12 10Z" />
+        <path className="origin01-icon__hanger-hook" d="M9.8 6.2a2.2 2.2 0 1 1 3.62 1.68C12.56 8.61 12 9.04 12 10" />
+        <path className="origin01-icon__hanger-body" d="m12 10 8.1 6.15a1.05 1.05 0 0 1-.64 1.85H4.54a1.05 1.05 0 0 1-.64-1.85L12 10Z" />
+        <path className="origin01-icon__hanger-detail" d="M8 15.6h8" />
       </svg>
     )
   }
@@ -136,8 +141,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'message') {
     return (
       <svg {...commonProps}>
-        <path d="M20 11.5a7.5 7.5 0 0 1-11.3 6.47L4 19.25l1.3-4.38A7.5 7.5 0 1 1 20 11.5Z" />
-        <path className="origin01-icon__detail" d="m9.1 11.7 1.8 1.8 4-4" />
+        <path className="origin01-icon__message-bubble" d="M20 11.5a7.5 7.5 0 0 1-11.3 6.47L4 19.25l1.3-4.38A7.5 7.5 0 1 1 20 11.5Z" />
+        <path className="origin01-icon__message-line" d="M8.6 10h6.8M8.6 13h4.8" />
+        <circle className="origin01-icon__message-response" cx="16.8" cy="15.7" r="1.35" />
       </svg>
     )
   }
@@ -145,8 +151,9 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'pin') {
     return (
       <svg {...commonProps}>
-        <path d="M19 10c0 5.25-7 10-7 10s-7-4.75-7-10a7 7 0 1 1 14 0Z" />
-        <circle cx="12" cy="10" r="2.25" />
+        <ellipse className="origin01-icon__pin-ring" cx="12" cy="20.25" rx="3.5" ry="1.15" />
+        <path className="origin01-icon__pin-body" d="M19 10c0 5.25-7 10-7 10s-7-4.75-7-10a7 7 0 1 1 14 0Z" />
+        <circle className="origin01-icon__pin-center" cx="12" cy="10" r="2.25" />
       </svg>
     )
   }
@@ -256,11 +263,13 @@ export function Origin01Invitation({
   const [phase, setPhase] = useState<EntryPhase>(audience === 'guest' ? 'envelope' : 'prelude')
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMusicLoading, setIsMusicLoading] = useState(false)
+  const [isMusicFailed, setIsMusicFailed] = useState(false)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [shareStatus, setShareStatus] = useState('')
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const envelopeRef = useRef<HTMLButtonElement | null>(null)
   const experienceRef = useRef<HTMLDivElement | null>(null)
+  const copyResetRef = useRef<number | null>(null)
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
@@ -283,6 +292,10 @@ export function Origin01Invitation({
 
     return () => window.clearTimeout(timeoutId)
   }, [phase])
+
+  useEffect(() => () => {
+    if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
+  }, [])
 
   useLayoutEffect(() => {
     if (!invitationIsVisible || !experienceRef.current) return
@@ -341,13 +354,29 @@ export function Origin01Invitation({
   }, [invitationIsVisible])
 
   const playMusic = () => {
-    if (!audioRef.current) return
+    const audio = audioRef.current
+    if (!audio) return
+
+    if (!audio.paused && !audio.ended) {
+      setIsPlaying(true)
+      setIsMusicLoading(false)
+      setIsMusicFailed(false)
+      return
+    }
 
     setIsMusicLoading(true)
-    void audioRef.current.play().catch(() => {
-      setIsPlaying(false)
-      setIsMusicLoading(false)
-    })
+    setIsMusicFailed(false)
+    void audio.play().then(
+      () => {
+        setIsPlaying(true)
+        setIsMusicLoading(false)
+      },
+      () => {
+        setIsPlaying(false)
+        setIsMusicLoading(false)
+        setIsMusicFailed(true)
+      },
+    )
   }
 
   const revealEnvelope = () => {
@@ -404,13 +433,15 @@ export function Origin01Invitation({
 
   const copyGiftAccount = async () => {
     if (!invitation.gift) return
+    if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
     try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable')
       await navigator.clipboard.writeText(invitation.gift.accountValue)
       setCopyStatus('copied')
-      window.setTimeout(() => setCopyStatus('idle'), 2_400)
     } catch {
       setCopyStatus('error')
     }
+    copyResetRef.current = window.setTimeout(() => setCopyStatus('idle'), 2_400)
   }
 
   return (
@@ -421,22 +452,22 @@ export function Origin01Invitation({
           src={musicSrc}
           loop
           preload="auto"
-          onPlay={() => setIsPlaying(true)}
+          onPlay={() => setIsMusicFailed(false)}
           onPause={() => { setIsPlaying(false); setIsMusicLoading(false) }}
-          onPlaying={() => setIsMusicLoading(false)}
+          onPlaying={() => { setIsPlaying(true); setIsMusicLoading(false); setIsMusicFailed(false) }}
           onWaiting={() => setIsMusicLoading(true)}
           onCanPlay={() => setIsMusicLoading(false)}
-          onEnded={() => setIsPlaying(false)}
-          onError={() => { setIsPlaying(false); setIsMusicLoading(false) }}
+          onEnded={() => { setIsPlaying(false); setIsMusicLoading(false) }}
+          onError={() => { setIsPlaying(false); setIsMusicLoading(false); setIsMusicFailed(true) }}
         />
       ) : null}
 
       {hasMusic && phase !== 'prelude' ? (
         <button
           type="button"
-          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
+          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''} ${isMusicLoading ? 'origin01-music--loading' : ''} ${isMusicFailed ? 'origin01-music--failed' : ''}`}
           onClick={toggleMusic}
-          aria-label={isMusicLoading ? 'Cargando música' : isPlaying ? 'Pausar música' : 'Reproducir música'}
+          aria-label={isMusicLoading ? 'Cargando música' : isMusicFailed ? 'Reintentar música' : isPlaying ? 'Pausar música' : 'Reproducir música'}
           aria-pressed={isPlaying}
           aria-busy={isMusicLoading}
         >
@@ -559,7 +590,7 @@ export function Origin01Invitation({
                 <div>
                   <p>Fecha</p>
                   <strong>{invitation.event.dateLabel}</strong>
-                  <span className="origin01-info__meta"><OriginIcon name="clock" /> {invitation.event.timeLabel} hs</span>
+                  <span className="origin01-info__meta"><span className="origin01-clock-mark" data-icon-motion="clock"><OriginIcon name="clock" /></span> {invitation.event.timeLabel} hs</span>
                 </div>
               </article>
               <article className="origin01-info__row">
@@ -630,9 +661,13 @@ export function Origin01Invitation({
                   <div className="origin01-gift__account">
                     <span>{invitation.gift.accountLabel}</span>
                     <strong>{invitation.gift.accountValue}</strong>
-                    <button type="button" className={`origin01-copy ${copyStatus === 'copied' ? 'origin01-copy--success' : ''}`} onClick={copyGiftAccount} aria-label="Copiar alias">
-                      <OriginIcon name={copyStatus === 'copied' ? 'check' : 'copy'} />
-                      <span>{copyStatus === 'copied' ? 'Copiado' : 'Copiar'}</span>
+                    <button type="button" className={`origin01-copy origin01-copy--${copyStatus}`} onClick={copyGiftAccount} aria-label="Copiar alias">
+                      <span className="origin01-copy__icons" aria-hidden="true">
+                        <OriginIcon name="copy" />
+                        <OriginIcon name="check" />
+                        <OriginIcon name="error" />
+                      </span>
+                      <span className="origin01-copy__label">{copyStatus === 'copied' ? 'Copiado' : copyStatus === 'error' ? 'No se pudo copiar' : 'Copiar alias'}</span>
                     </button>
                     <span className="origin01-sr-only" aria-live="polite">{copyStatus === 'copied' ? 'Alias copiado' : copyStatus === 'error' ? 'No se pudo copiar el alias' : ''}</span>
                   </div>
