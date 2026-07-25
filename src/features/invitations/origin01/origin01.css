@@ -1,26 +1,47 @@
 .origin01 {
-  --origin-ink: #181314;
-  --origin-charcoal: #1d171c;
-  --origin-plum: #67354f;
-  --origin-plum-deep: #321a29;
-  --origin-wine: #4a2038;
-  --origin-rose: #b97f92;
-  --origin-blush: #e4cbd1;
-  --origin-mist: #eee5e6;
-  --origin-cream: #f3efea;
-  --origin-old-rose: #d7b7bb;
-  --origin-rose-haze: #eadbdd;
-  --origin-paper: #faf7f2;
-  --origin-surface: #f8f4ef;
-  --origin-gold: #c9a86f;
-  --origin-muted: #726367;
-  --origin-hairline: rgba(49, 31, 42, .09);
-  --origin-script: "Snell Roundhand", "Segoe Script", "Apple Chancery", "URW Chancery L", cursive;
+  /* Origin 01 — stable, invitation-scoped art-direction palette */
+  --origin-wine-deep: #3b1d2d;
+  --origin-wine-soft: #5b3045;
+  --origin-old-rose: #d8b8bc;
+  --origin-ivory: #f5efe7;
+  --origin-photo-surface: #eee1d8;
+  --origin-text-primary: #321d29;
+  --origin-text-muted: #75636a;
+  --origin-text-light: #f7ede5;
+  --origin-border: #d8c7c2;
+  --origin-divider: #c9acae;
+  --origin-accent: #c49b62;
+  --origin-focus: #e7bd7f;
+  --origin-display: Didot, "Bodoni 72", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --origin-accent-font: "Snell Roundhand", "Segoe Script", "Apple Chancery", "URW Chancery L", cursive;
+  --origin-reading: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --origin-radius-control: 1rem;
+  --origin-radius-surface: 1.5rem;
+  --origin-radius-feature: 2rem;
+  --origin-shadow-soft: 0 14px 36px rgba(59, 29, 45, .09);
+
+  /* Compatibility aliases for the existing isolated theme. */
+  --origin-ink: var(--origin-text-primary);
+  --origin-charcoal: #21171c;
+  --origin-plum: var(--origin-wine-soft);
+  --origin-plum-deep: var(--origin-wine-deep);
+  --origin-wine: var(--origin-wine-soft);
+  --origin-rose: #b77f8e;
+  --origin-blush: var(--origin-old-rose);
+  --origin-mist: var(--origin-photo-surface);
+  --origin-cream: var(--origin-ivory);
+  --origin-rose-haze: #ead8d8;
+  --origin-paper: var(--origin-text-light);
+  --origin-surface: var(--origin-photo-surface);
+  --origin-gold: var(--origin-accent);
+  --origin-muted: var(--origin-text-muted);
+  --origin-hairline: var(--origin-border);
+  --origin-script: var(--origin-accent-font);
   min-height: 100dvh;
   overflow-x: clip;
   color: var(--origin-ink);
   background: var(--origin-ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--origin-reading);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -32,7 +53,7 @@
 }
 
 .origin01 :focus-visible {
-  outline: 3px solid #edca96;
+  outline: 3px solid var(--origin-focus);
   outline-offset: 5px;
 }
 
@@ -43,7 +64,7 @@
 .origin01 h2,
 .origin01-hero__phrase,
 .origin01-envelope__monogram {
-  font-family: Didot, "Bodoni 72", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  font-family: var(--origin-display);
   font-weight: 400;
 }
 
@@ -163,7 +184,7 @@
 
 .origin01-prelude h1 {
   margin: 0;
-  color: #f5ebe4;
+  color: var(--origin-text-light);
   font-size: clamp(4rem, 18vw, 7rem);
   font-style: italic;
   letter-spacing: -.045em;
@@ -183,8 +204,8 @@
 
 .origin01-prelude__reveal {
   margin: 2rem 0 0;
-  color: #ebcfc9;
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  color: var(--origin-old-rose);
+  font-family: var(--origin-display);
   font-size: clamp(1.6rem, 6.5vw, 2.35rem);
   font-style: italic;
   animation: origin01-soft-reveal 1s 2.15s both;
@@ -320,8 +341,8 @@
 .origin01-envelope-stage h1 {
   max-width: 17ch;
   margin: 0 auto 2.75rem;
-  color: #f5ebe4;
-  font-family: Didot, "Bodoni 72", "Iowan Old Style", Georgia, "Times New Roman", serif;
+  color: var(--origin-text-light);
+  font-family: var(--origin-display);
   font-weight: 400;
   font-size: clamp(2.2rem, 9.5vw, 4rem);
   letter-spacing: -.05em;
@@ -360,7 +381,7 @@
   width: 100%;
   display: block;
   aspect-ratio: 1.42 / 1;
-  filter: drop-shadow(0 26px 38px rgba(0, 0, 0, .34));
+  filter: drop-shadow(0 26px 38px rgba(33, 23, 28, .34));
   transform-style: preserve-3d;
   transition: transform .35s cubic-bezier(.22, 1, .36, 1);
 }
@@ -372,7 +393,7 @@
   border-radius: 1rem;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, .22), transparent 36%),
-    #d9b9b2;
+    var(--origin-old-rose);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .42);
 }
 
@@ -453,7 +474,7 @@
   overflow: hidden;
   border: 1px solid rgba(82, 48, 54, .12);
   border-radius: 1rem;
-  background: #d9b9b2;
+  background: var(--origin-old-rose);
 }
 
 .origin01-envelope__front::before {
@@ -461,7 +482,7 @@
   inset: 0;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, .18), transparent 42%),
-    #dfc1ba;
+    var(--origin-old-rose);
   clip-path: polygon(0 18%, 50% 60%, 100% 18%, 100% 100%, 0 100%);
   content: "";
 }
@@ -486,7 +507,7 @@
   border-radius: .95rem .95rem 0 0;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, .2), transparent 45%),
-    #e7ccc5;
+    var(--origin-photo-surface);
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   backface-visibility: hidden;
   transform-origin: top center;
@@ -505,12 +526,12 @@
   justify-content: center;
   border: 1px solid rgba(255, 235, 201, .36);
   border-radius: 50%;
-  color: #f2d6a6;
+  color: var(--origin-accent);
   background:
     radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .2), transparent 24%),
     #87505a;
   box-shadow: 0 6px 13px rgba(74, 39, 46, .27), inset 0 0 0 4px rgba(96, 48, 59, .2);
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  font-family: var(--origin-display);
   font-size: 1.35rem;
   font-style: italic;
   transform: translate(-50%, -50%);
@@ -696,7 +717,7 @@
   width: .36rem;
   height: .36rem;
   border-radius: 50%;
-  background: #d7b27c;
+  background: var(--origin-accent);
   box-shadow: 0 0 0 3px rgba(215, 178, 124, .14);
 }
 
@@ -832,7 +853,7 @@
 .origin01-hero h1 {
   max-width: 8ch;
   margin: 0;
-  color: #efd2cf;
+  color: var(--origin-old-rose);
   font-size: clamp(5.6rem, 24vw, 12rem);
   font-style: italic;
   letter-spacing: -.055em;
@@ -938,8 +959,8 @@
 
 .origin01-countdown strong {
   display: block;
-  color: #f3d5c5;
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  color: var(--origin-text-light);
+  font-family: var(--origin-display);
   font-size: clamp(1.85rem, 8.5vw, 4.5rem);
   font-weight: 400;
   letter-spacing: -.04em;
@@ -1001,7 +1022,7 @@
 .origin01-message__quote {
   margin-bottom: -1.5rem;
   color: var(--origin-blush);
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  font-family: var(--origin-display);
   font-size: 7.5rem;
   line-height: 1;
 }
@@ -1085,7 +1106,7 @@
 .origin01-info__row strong {
   max-width: 19ch;
   display: block;
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  font-family: var(--origin-display);
   font-size: clamp(1.75rem, 7.3vw, 3.2rem);
   font-weight: 400;
   letter-spacing: -.04em;
@@ -1225,7 +1246,7 @@
 
 .origin01-dress h2 {
   margin: 0;
-  color: #efd2cf;
+  color: var(--origin-old-rose);
   font-size: clamp(4rem, 17vw, 8rem);
   font-style: italic;
   letter-spacing: -.07em;
@@ -1247,7 +1268,7 @@
   padding-top: 1.25rem;
   border-top: 1px solid rgba(208, 170, 114, .32);
   color: var(--origin-gold);
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  font-family: var(--origin-display);
   font-size: 1.2rem;
   font-style: italic;
   line-height: 1.5;
@@ -1295,14 +1316,14 @@
   gap: .8rem;
   margin: .8rem .25rem 0;
   color: var(--origin-plum);
-  font-family: Didot, "Bodoni 72", Georgia, serif;
+  font-family: var(--origin-display);
   font-size: 1.15rem;
   font-style: italic;
 }
 
 .origin01-gallery figcaption span {
   color: var(--origin-muted);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--origin-reading);
   font-size: .56rem;
   font-style: normal;
   font-weight: 750;
@@ -1426,7 +1447,7 @@
 }
 
 .origin01-rsvp h2 {
-  color: #f3d9d2;
+  color: var(--origin-text-light);
 }
 
 .origin01-rsvp > p:not(.origin01-kicker):not(.origin01-rsvp__note) {
@@ -1493,7 +1514,7 @@
 .origin01-closing__name {
   display: block;
   margin-top: 2.1rem;
-  color: #edc8c4;
+  color: var(--origin-old-rose);
   font-size: clamp(3rem, 14vw, 6rem);
   font-style: italic;
   letter-spacing: -.045em;
@@ -1795,7 +1816,7 @@
   .origin01-experience {
     width: min(100%, 90rem);
     margin: 0 auto;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 0 120px rgba(0, 0, 0, .35);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .04), 0 0 120px rgba(33, 23, 28, .35);
   }
 
   .origin01-hero__image {
@@ -1823,4 +1844,112 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* Sprint 3 — shared editorial hierarchy and surface discipline */
+.origin01 h2,
+.origin01-hero__phrase,
+.origin01-envelope__monogram,
+.origin01-prelude h1,
+.origin01-hero h1,
+.origin01-envelope__name,
+.origin01-closing__name {
+  font-family: var(--origin-display);
+  font-weight: 400;
+}
+
+.origin01-message__signature {
+  font-family: var(--origin-accent-font);
+  font-weight: 400;
+}
+
+.origin01-kicker,
+.origin01-info__row p,
+.origin01-button,
+.origin01-demo-label,
+.origin01-hero__date {
+  font-family: var(--origin-reading);
+  font-weight: 700;
+}
+
+.origin01-experience::before {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.3'/%3E%3C/svg%3E");
+  content: "";
+  opacity: .018;
+  pointer-events: none;
+}
+
+.origin01-info__surface,
+.origin01-gift__card {
+  border-color: var(--origin-border);
+  border-radius: var(--origin-radius-surface);
+  background: var(--origin-ivory);
+  box-shadow: var(--origin-shadow-soft);
+}
+
+.origin01-icon-wrap,
+.origin01-gift__account,
+.origin01-button {
+  border-radius: var(--origin-radius-control);
+}
+
+.origin01-icon-wrap {
+  border-color: var(--origin-border);
+  color: var(--origin-wine-soft);
+  background: var(--origin-photo-surface);
+  box-shadow: none;
+}
+
+.origin01-button {
+  border-color: var(--origin-divider);
+  color: var(--origin-text-primary);
+  background: var(--origin-ivory);
+  box-shadow: none;
+}
+
+.origin01-button:hover {
+  background: var(--origin-photo-surface);
+}
+
+.origin01-button--dark {
+  border-color: var(--origin-wine-deep);
+  color: var(--origin-text-light);
+  background: var(--origin-wine-deep);
+  box-shadow: 0 7px 18px rgba(59, 29, 45, .12);
+}
+
+.origin01-gallery__image {
+  border-radius: var(--origin-radius-feature);
+  box-shadow: var(--origin-shadow-soft);
+}
+
+.origin01-gift__account {
+  border-color: var(--origin-border);
+  background: var(--origin-photo-surface);
+}
+
+.origin01-rsvp {
+  border-radius: var(--origin-radius-feature);
+  background: linear-gradient(145deg, var(--origin-wine-soft), var(--origin-wine-deep));
+  box-shadow: var(--origin-shadow-soft);
+}
+
+.origin01-closing__share {
+  border-color: rgba(247, 237, 229, .2);
+  border-radius: var(--origin-radius-surface);
+  background: rgba(59, 29, 45, .64);
+  box-shadow: none;
+}
+
+.origin01-icon {
+  stroke-width: 1.65;
+}
+
+.origin01-feature-icon .origin01-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  stroke-width: 1.5;
 }
