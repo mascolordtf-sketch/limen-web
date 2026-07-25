@@ -11,7 +11,7 @@
   --origin-paper: #faf7f2;
   --origin-surface: #f8f4ef;
   --origin-gold: #c9a86f;
-  --origin-muted: #74666a;
+  --origin-muted: #726367;
   --origin-hairline: rgba(49, 31, 42, .09);
   --origin-script: "Snell Roundhand", "Segoe Script", "Apple Chancery", "URW Chancery L", cursive;
   min-height: 100dvh;
@@ -66,12 +66,20 @@
 
 .origin01-kicker {
   margin: 0 0 .9rem;
-  color: var(--origin-rose);
+  color: var(--origin-plum);
   font-size: .69rem;
   font-weight: 750;
   letter-spacing: .21em;
   line-height: 1.45;
   text-transform: uppercase;
+}
+
+.origin01-hero .origin01-kicker,
+.origin01-countdown-panel__surface .origin01-kicker,
+.origin01-dress .origin01-kicker,
+.origin01-rsvp .origin01-kicker,
+.origin01-closing .origin01-kicker {
+  color: var(--origin-blush);
 }
 
 .origin01-entry-topline {
@@ -88,7 +96,8 @@
 }
 
 .origin01-envelope-stage .origin01-entry-topline {
-  padding-right: 3.85rem;
+  margin-top: 4rem;
+  gap: .75rem;
 }
 
 /* Private prologue */
@@ -1416,7 +1425,7 @@
   max-width: 27rem;
   margin-top: 1.25rem;
   margin-bottom: 0;
-  color: rgba(255, 250, 245, .45);
+  color: var(--origin-paper);
   font-size: .67rem;
   line-height: 1.55;
 }
@@ -1466,8 +1475,8 @@
   color: #edc8c4;
   font-size: clamp(3rem, 14vw, 6rem);
   font-style: italic;
-  letter-spacing: -.07em;
-  line-height: .8;
+  letter-spacing: -.045em;
+  line-height: .95;
 }
 
 .origin01-closing__share {
@@ -1611,6 +1620,14 @@
 
   to {
     transform: scaleY(1.05);
+  }
+}
+
+@media (max-width: 359px) {
+  .origin01-envelope-stage .origin01-entry-topline {
+    font-size: .56rem;
+    letter-spacing: .15em;
+    white-space: nowrap;
   }
 }
 
