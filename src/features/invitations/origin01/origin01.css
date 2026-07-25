@@ -1973,11 +1973,28 @@
     animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+    transition-delay: 0s !important;
   }
 
   .origin01-motion-ready [data-motion] {
-    opacity: 1;
-    transform: none;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .origin01 [data-icon-motion] .origin01-icon,
+  .origin01 [data-icon-motion] .origin01-icon * {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .origin01-music--playing::after,
+  .origin01-music--loading::before {
+    animation: none !important;
   }
 }
 
