@@ -321,7 +321,7 @@ export function Origin01Invitation({
   const playMusic = () => {
     if (!audioRef.current) return
 
-    void audioRef.current.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false))
+    void audioRef.current.play().catch(() => setIsPlaying(false))
   }
 
   const revealEnvelope = () => {
@@ -347,7 +347,6 @@ export function Origin01Invitation({
     }
 
     audio.pause()
-    setIsPlaying(false)
   }
 
   const shareInvitation = async () => {
@@ -379,7 +378,32 @@ export function Origin01Invitation({
 
   return (
     <main className={`origin01 origin01--${phase}`}>
-      {hasMusic && musicSrc ? <audio ref={audioRef} src={musicSrc} loop preload="auto" /> : null}
+      {hasMusic && musicSrc ? (
+        <audio
+          ref={audioRef}
+          src={musicSrc}
+          loop
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
+      ) : null}
+
+      {hasMusic && phase !== 'prelude' ? (
+        <button
+          type="button"
+          className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
+          onClick={toggleMusic}
+          aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
+          aria-pressed={isPlaying}
+        >
+          <span className="origin01-music__bars" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+        </button>
+      ) : null}
 
       {phase === 'prelude' ? (
         <section className="origin01-prelude" aria-labelledby="origin01-prelude-title">
@@ -449,22 +473,6 @@ export function Origin01Invitation({
             <span aria-hidden="true" />
             Demo LIMEN
           </p>
-
-          {hasMusic ? (
-            <button
-              type="button"
-              className={`origin01-music ${isPlaying ? 'origin01-music--playing' : ''}`}
-              onClick={toggleMusic}
-              aria-label={isPlaying ? 'Pausar música' : 'Reproducir música'}
-              aria-pressed={isPlaying}
-            >
-              <span className="origin01-music__bars" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-            </button>
-          ) : null}
 
           <section className="origin01-hero" aria-labelledby="origin01-hero-title">
             <InvitationImageAsset image={coverImage} className="origin01-hero__image" eager />
