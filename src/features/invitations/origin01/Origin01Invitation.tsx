@@ -532,7 +532,7 @@ export function Origin01Invitation({
             </div>
             <div className="origin01-actions">
               <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">
-                <OriginIcon name="route" />
+                <OriginIcon name="pin" />
                 Ver ubicación
               </a>
               <a className="origin01-button" href={calendarUrl} target="_blank" rel="noreferrer">
@@ -616,14 +616,16 @@ export function Origin01Invitation({
               <p className="origin01-kicker">El comienzo</p>
               <h2 id="origin01-closing-title">{invitation.closing}</h2>
               <span className="origin01-closing__name">{invitation.event.name}</span>
-              <div className="origin01-closing__share">
-                <p>Ahora podés compartir este momento con quienes querés cerca.</p>
-                <button type="button" className="origin01-button origin01-button--glass" onClick={shareInvitation}>
-                  <OriginIcon name="share" />
-                  Compartir invitación
-                </button>
-                <p className="origin01-closing__share-status" aria-live="polite">{shareStatus}</p>
-              </div>
+              {audience === 'protagonist' ? (
+                <div className="origin01-closing__share">
+                  <p>Ahora podés compartir este momento con quienes querés cerca.</p>
+                  <button type="button" className="origin01-button origin01-button--glass" onClick={shareInvitation}>
+                    <OriginIcon name="share" />
+                    Compartir invitación
+                  </button>
+                  <p className="origin01-closing__share-status" aria-live="polite">{shareStatus}</p>
+                </div>
+              ) : null}
               <p className="origin01-closing__brand">Origin 01 · LIMEN</p>
             </div>
           </section>

@@ -8,6 +8,8 @@
   --origin-blush: #e4cbd1;
   --origin-mist: #eee5e6;
   --origin-cream: #f3efea;
+  --origin-old-rose: #d7b7bb;
+  --origin-rose-haze: #eadbdd;
   --origin-paper: #faf7f2;
   --origin-surface: #f8f4ef;
   --origin-gold: #c9a86f;
@@ -643,7 +645,13 @@
 
 .origin01-section {
   width: 100%;
-  padding: 5.5rem 1rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+.origin01-experience {
+  position: relative;
+  background: var(--origin-old-rose);
 }
 
 .origin01-section-heading {
@@ -693,7 +701,7 @@
 }
 
 .origin01-demo-label--fixed {
-  position: fixed;
+  position: absolute;
   top: max(.72rem, env(safe-area-inset-top));
   left: .72rem;
   z-index: 30;
@@ -766,7 +774,9 @@
 
 .origin01-hero {
   position: relative;
+  min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   overflow: hidden;
   align-items: flex-end;
@@ -860,6 +870,8 @@
 /* Countdown surface */
 
 .origin01-countdown-panel {
+  padding-top: 2.25rem;
+  padding-bottom: 0;
   color: var(--origin-paper);
   background: var(--origin-cream);
 }
@@ -953,20 +965,21 @@
 /* Letter */
 
 .origin01-message {
+  padding-top: 0;
+  padding-bottom: 0;
   background:
     radial-gradient(circle at 100% 0, rgba(185, 127, 146, .1), transparent 24rem),
-    var(--origin-paper);
+    var(--origin-cream);
 }
 
 .origin01-message__card {
   position: relative;
   width: min(100%, 60rem);
-  min-height: 38rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   margin: 0 auto;
-  padding: 4.4rem .35rem;
+  padding: 4.4rem .35rem 2rem;
 }
 
 .origin01-message__card::before {
@@ -1011,7 +1024,9 @@
 /* Event details */
 
 .origin01-info {
-  background: var(--origin-cream);
+  padding-top: 2.75rem;
+  padding-bottom: 2.5rem;
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 1.75rem, var(--origin-old-rose) 2.75rem);
 }
 
 .origin01-info > * {
@@ -1136,10 +1151,10 @@
 }
 
 .origin01-button--dark {
-  border-color: var(--origin-ink);
-  color: var(--origin-paper);
-  background: var(--origin-ink);
-  box-shadow: 0 10px 25px rgba(24, 19, 20, .13);
+  border-color: var(--origin-plum-deep);
+  color: var(--origin-cream);
+  background: var(--origin-plum-deep);
+  box-shadow: 0 8px 20px rgba(50, 26, 41, .11);
 }
 
 .origin01-button--dark:hover {
@@ -1188,7 +1203,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4.8rem 1.25rem 5.3rem;
+  padding: 4.8rem 1.25rem 2rem;
 }
 
 .origin01-feature-icon {
@@ -1241,7 +1256,9 @@
 /* Gallery */
 
 .origin01-gallery {
-  background: var(--origin-mist);
+  padding-top: 3rem;
+  padding-bottom: 0;
+  background: var(--origin-cream);
 }
 
 .origin01-gallery > * {
@@ -1295,7 +1312,9 @@
 /* Gift */
 
 .origin01-gift {
-  background: var(--origin-cream);
+  padding-top: 3.25rem;
+  padding-bottom: 2rem;
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2rem, var(--origin-old-rose) 3rem);
 }
 
 .origin01-gift__card {
@@ -1310,7 +1329,7 @@
 }
 
 .origin01-gift__media {
-  min-height: 31rem;
+  height: clamp(15rem, 67vw, 20rem);
 }
 
 .origin01-gift__image {
@@ -1324,7 +1343,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 4rem 1.25rem;
+  padding: 3.25rem 1.25rem;
 }
 
 .origin01-feature-icon--light {
@@ -1381,8 +1400,10 @@
   position: relative;
   width: calc(100% - 2rem);
   overflow: hidden;
-  margin: 1rem;
+  margin: 0 1rem 1.75rem;
   border-radius: 2.2rem;
+  padding-top: 4.25rem;
+  padding-bottom: 4.25rem;
   text-align: center;
   color: var(--origin-paper);
   background:
@@ -1631,6 +1652,23 @@
   }
 }
 
+@media (max-width: 399px) {
+  .origin01-demo-label--fixed {
+    top: max(.55rem, env(safe-area-inset-top));
+    left: .55rem;
+    padding: .44rem .55rem;
+    font-size: .5rem;
+    letter-spacing: .1em;
+  }
+
+  .origin01-music {
+    top: max(.55rem, env(safe-area-inset-top));
+    right: .55rem;
+    width: 2.9rem;
+    height: 2.9rem;
+  }
+}
+
 @media (min-width: 700px) {
   .origin01-prelude,
   .origin01-envelope-stage {
@@ -1639,7 +1677,36 @@
   }
 
   .origin01-section {
-    padding: 7.5rem 3rem;
+    padding-right: 3rem;
+    padding-left: 3rem;
+  }
+
+  .origin01-countdown-panel {
+    padding-top: 4rem;
+    padding-bottom: 0;
+  }
+
+  .origin01-message {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .origin01-info {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2.5rem, var(--origin-old-rose) 4rem);
+  }
+
+  .origin01-gallery {
+    padding-top: 4rem;
+    padding-bottom: 0;
+    background: var(--origin-cream);
+  }
+
+  .origin01-gift {
+    padding-top: 4rem;
+    padding-bottom: 3rem;
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2.5rem, var(--origin-old-rose) 4rem);
   }
 
   .origin01-hero__content,
@@ -1680,7 +1747,7 @@
   }
 
   .origin01-dress__content {
-    padding: 6rem 3rem;
+    padding: 6rem 3rem 3rem;
   }
 
   .origin01-gallery__grid {
@@ -1707,6 +1774,7 @@
   }
 
   .origin01-gift__media {
+    height: auto;
     min-height: 48rem;
   }
 
@@ -1717,7 +1785,9 @@
   .origin01-rsvp {
     width: calc(100% - 4rem);
     max-width: 78rem;
-    margin: 2rem auto;
+    margin: 0 auto 2rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
   }
 }
 
