@@ -697,6 +697,12 @@
   --origin-icon-entrance-duration: 900ms;
 }
 
+.origin01-motion-ready [data-icon-motion="constellation"] {
+  --origin-icon-displacement: 16px;
+  --origin-icon-initial-scale: .88;
+  --origin-icon-entrance-duration: 1000ms;
+}
+
 .origin01-motion-ready [data-motion]:where(.origin01-motion-visible) {
   opacity: 1;
   transform: none;
@@ -1291,7 +1297,7 @@
   align-items: center;
   justify-content: center;
   align-self: center;
-  margin-bottom: 1.8rem;
+  margin-bottom: 2.8rem;
   border: 0;
   border-radius: 0;
   color: var(--origin-blush);
@@ -1299,9 +1305,9 @@
 }
 
 .origin01-feature-icon .origin01-icon {
-  width: 3.75rem;
-  height: 3.75rem;
-  stroke-width: 1.4;
+  width: 6rem;
+  height: 6rem;
+  stroke-width: 1.05;
 }
 
 .origin01-dress h2 {
@@ -1431,7 +1437,7 @@
   color: var(--origin-plum);
 }
 
-.origin01-feature-icon--light .origin01-icon { width: 3.6rem; height: 3.6rem; }
+.origin01-feature-icon--light .origin01-icon { width: 5.75rem; height: 5.75rem; }
 
 .origin01-gift__content > p:not(.origin01-kicker) {
   max-width: 31rem;
@@ -1563,11 +1569,11 @@
 .origin01-feature-icon--rsvp {
   width: auto;
   height: auto;
-  margin-bottom: 1.7rem;
+  margin-bottom: 2.8rem;
   color: var(--origin-blush);
 }
 
-.origin01-feature-icon--rsvp .origin01-icon { width: 3.5rem; height: 3.5rem; }
+.origin01-feature-icon--rsvp .origin01-icon { width: 6rem; height: 6rem; }
 
 .origin01-rsvp h2 {
   color: var(--origin-text-light);
@@ -2098,6 +2104,18 @@
 
 /* === Trivia: El universo de Valentina === */
 
+/* — Trivia constellation icon — */
+
+.origin01-trivia__icon-wrap {
+  margin-bottom: 2.5rem;
+  color: var(--origin-accent);
+}
+
+.origin01-trivia__icon {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
 /* — Section wrapper — */
 
 .origin01-trivia {
@@ -2266,6 +2284,16 @@
   text-wrap: balance;
   color: var(--origin-text-primary);
   outline: none;
+  animation: origin01-trivia-question-enter .35s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1)) both;
+}
+
+@keyframes origin01-trivia-question-enter {
+  from { opacity: 0; transform: translate3d(0, 6px, 0); }
+  to { opacity: 1; transform: none; }
+}
+
+.origin01-trivia__options {
+  animation: origin01-trivia-question-enter .35s .08s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1)) both;
 }
 
 /* — Options — */
@@ -2376,20 +2404,15 @@
   opacity: .45;
 }
 
-/* — Feedback — */
+/* — Feedback area (always present, min-height reserves space) — */
 
 .origin01-trivia__feedback {
-  margin-top: 1.75rem;
+  min-height: 4rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
-  animation: origin01-trivia-feedback-in .4s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1)) both;
-}
-
-@keyframes origin01-trivia-feedback-in {
-  from { opacity: 0; transform: translate3d(0, 10px, 0); }
-  to { opacity: 1; transform: none; }
+  justify-content: center;
 }
 
 .origin01-trivia__feedback-text {
@@ -2399,6 +2422,12 @@
   font-weight: 600;
   line-height: 1.6;
   text-align: center;
+  animation: origin01-trivia-feedback-in .4s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1)) both;
+}
+
+@keyframes origin01-trivia-feedback-in {
+  from { opacity: 0; transform: translate3d(0, 8px, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 .origin01-trivia__feedback-text--correct {
@@ -2414,8 +2443,36 @@
   color: var(--origin-wine-soft);
 }
 
+/* — Action area (always present, stable layout) — */
+
+.origin01-trivia__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
 .origin01-trivia__next {
   width: min(100%, 20rem);
+  transition: opacity .3s ease, transform .3s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1));
+}
+
+.origin01-trivia__next:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+.origin01-trivia__action-hint {
+  margin: .85rem 0 0;
+  color: var(--origin-text-muted);
+  font-size: .8rem;
+  font-weight: 600;
+  text-align: center;
+  transition: opacity .3s ease;
+}
+
+.origin01-trivia__action-hint--hidden {
+  opacity: 0;
 }
 
 /* — Result scene — */
@@ -2578,12 +2635,19 @@
 /* — Reduced motion — */
 
 @media (prefers-reduced-motion: reduce) {
-  .origin01-trivia__feedback,
+  .origin01-trivia__feedback-text,
+  .origin01-trivia__question,
+  .origin01-trivia__options,
   .origin01-trivia__result-score,
   .origin01-trivia__result-tier,
   .origin01-trivia__result-message,
   .origin01-trivia__reveal {
     animation: none !important;
+  }
+
+  .origin01-trivia__next,
+  .origin01-trivia__action-hint {
+    transition: none !important;
   }
 
   .origin01-trivia__light {

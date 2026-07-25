@@ -10,6 +10,33 @@ type RevealImage = {
   alt: string
 }
 
+function ConstellationIcon() {
+  return (
+    <svg
+      className="origin01-icon origin01-trivia__icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.05}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path
+        className="origin01-icon__constellation-lines"
+        d="M6 5.5L12 11.5M17.5 6.5L12 11.5M12 11.5L5.5 17M12 11.5L17 17.5"
+        strokeWidth={0.65}
+        opacity={0.45}
+      />
+      <circle cx="6" cy="5.5" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="17.5" cy="6.5" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="11.5" r="2.1" fill="currentColor" stroke="none" />
+      <circle cx="5.5" cy="17" r="1.35" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="17.5" r="1.35" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
   const [phase, setPhase] = useState<Phase>('intro')
   const [currentQ, setCurrentQ] = useState(0)
@@ -99,15 +126,33 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
   if (phase === 'intro') {
     return (
       <div className="origin01-trivia__intro">
-        <p className="origin01-kicker origin01-trivia__eyebrow">{config.introEyebrow}</p>
+        <span
+          className="origin01-feature-icon origin01-trivia__icon-wrap"
+          data-icon-motion="constellation"
+        >
+          <ConstellationIcon />
+        </span>
+        <p className="origin01-kicker origin01-trivia__eyebrow">
+          {config.introEyebrow}
+        </p>
         <h2 className="origin01-trivia__title">{config.title}</h2>
         <p className="origin01-trivia__desc">{config.description}</p>
-        <div className="origin01-trivia__lights origin01-trivia__lights--intro" aria-hidden="true">
+        <div
+          className="origin01-trivia__lights origin01-trivia__lights--intro"
+          aria-hidden="true"
+        >
           {lights.map((_, i) => (
-            <span key={i} className="origin01-trivia__light origin01-trivia__light--unlit" />
+            <span
+              key={i}
+              className="origin01-trivia__light origin01-trivia__light--unlit"
+            />
           ))}
         </div>
-        <button type="button" className="origin01-button origin01-button--dark origin01-trivia__start" onClick={startTrivia}>
+        <button
+          type="button"
+          className="origin01-button origin01-button--dark origin01-trivia__start"
+          onClick={startTrivia}
+        >
           {config.primaryAction}
         </button>
         <p className="origin01-trivia__meta">{config.meta}</p>
@@ -132,7 +177,11 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           <span className="origin01-trivia__progress-label">
             Pregunta {currentQ + 1} de {totalQuestions}
           </span>
-          <div className="origin01-trivia__lights" role="img" aria-label={`${lights.filter((l) => l === 'lit').length} de ${scoredQuestions} respuestas correctas`}>
+          <div
+            className="origin01-trivia__lights"
+            role="img"
+            aria-label={`${lights.filter((l) => l === 'lit').length} de ${scoredQuestions} respuestas correctas`}
+          >
             {lights.map((state, i) => (
               <span
                 key={i}
@@ -143,6 +192,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
         </div>
 
         <h3
+          key={currentQ}
           ref={questionRef}
           className="origin01-trivia__question"
           tabIndex={-1}
@@ -150,7 +200,12 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           {question.prompt}
         </h3>
 
-        <div className="origin01-trivia__options" role="group" aria-label={question.prompt}>
+        <div
+          key={`opts-${currentQ}`}
+          className="origin01-trivia__options"
+          role="group"
+          aria-label={question.prompt}
+        >
           {question.options.map((option, i) => {
             const isSelected = selectedId === option.id
             const isAnswerCorrect = option.id === question.correctOptionId
@@ -179,14 +234,17 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
                 <span className="origin01-trivia__option-letter">
                   {String.fromCharCode(65 + i)}
                 </span>
-                <span className="origin01-trivia__option-text">{option.label}</span>
+                <span className="origin01-trivia__option-text">
+                  {option.label}
+                </span>
               </button>
             )
           })}
         </div>
 
-        {isAnswered ? (
-          <div className="origin01-trivia__feedback" aria-live="polite">
+        {/* Feedback area — always rendered, min-height reserves space */}
+        <div className="origin01-trivia__feedback" aria-live="polite">
+          {isAnswered ? (
             <p
               className={`origin01-trivia__feedback-text${
                 question.isPrediction
@@ -198,15 +256,27 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
             >
               {feedback}
             </p>
-            <button
-              type="button"
-              className="origin01-button origin01-button--dark origin01-trivia__next"
-              onClick={handleNext}
-            >
-              {isLastQuestion ? config.resultLabel : config.nextLabel}
-            </button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
+
+        {/* Action area — always rendered, stable layout */}
+        <div className="origin01-trivia__action">
+          <button
+            type="button"
+            className="origin01-button origin01-button--dark origin01-trivia__next"
+            onClick={handleNext}
+            disabled={!isAnswered}
+          >
+            {isLastQuestion ? config.resultLabel : config.nextLabel}
+          </button>
+          <p
+            className={`origin01-trivia__action-hint${
+              isAnswered ? ' origin01-trivia__action-hint--hidden' : ''
+            }`}
+          >
+            Elegí una respuesta
+          </p>
+        </div>
       </div>
     )
   }
@@ -224,7 +294,9 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
         <span className="origin01-trivia__result-divider">/</span>
         <span className="origin01-trivia__result-total">{scoredQuestions}</span>
       </div>
-      <h3 className="origin01-trivia__result-tier" aria-live="polite">{tier.title}</h3>
+      <h3 className="origin01-trivia__result-tier" aria-live="polite">
+        {tier.title}
+      </h3>
       <p className="origin01-trivia__result-message">{tier.message}</p>
 
       <div className="origin01-trivia__reveal">
@@ -245,13 +317,23 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
               loading="lazy"
             />
           ) : (
-            <div className="origin01-trivia__reveal-placeholder" role="img" aria-label={revealImage.alt} />
+            <div
+              className="origin01-trivia__reveal-placeholder"
+              role="img"
+              aria-label={revealImage.alt}
+            />
           )}
         </div>
         <h3 className="origin01-trivia__reveal-title">{config.revealTitle}</h3>
         <p className="origin01-trivia__reveal-body">{config.revealMessage}</p>
-        <span className="origin01-trivia__reveal-signature">{config.revealSignature}</span>
-        <button type="button" className="origin01-button origin01-trivia__replay" onClick={handleReplay}>
+        <span className="origin01-trivia__reveal-signature">
+          {config.revealSignature}
+        </span>
+        <button
+          type="button"
+          className="origin01-button origin01-trivia__replay"
+          onClick={handleReplay}
+        >
           {config.replayLabel}
         </button>
       </div>
