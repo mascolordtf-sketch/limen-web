@@ -101,7 +101,7 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'gift') {
     return (
       <svg {...commonProps}>
-        <path d="M4 10.25h16v9H4zM3.25 6.75h17.5v3.5H3.25zM12 6.75V19.25M12 6.75H8.6a2.1 2.1 0 1 1 0-4.2c2.3 0 3.4 4.2 3.4 4.2Zm0 0h3.4a2.1 2.1 0 1 0 0-4.2c-2.3 0-3.4 4.2-3.4 4.2Z" />
+        <path d="M4 10.5h16v8.75H4zM3.25 7h17.5v3.25H3.25zM12 7v12.25M11 7c-.8-2.4-1.8-4.2-3.5-4.2a2.1 2.1 0 0 0 0 4.2c1.7 0 2.7-1.8 3.5-4.2Zm2 0c.8-2.4 1.8-4.2 3.5-4.2a2.1 2.1 0 0 1 0 4.2c-1.7 0-2.7-1.8-3.5-4.2Z" />
       </svg>
     )
   }
@@ -109,7 +109,7 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'hanger') {
     return (
       <svg {...commonProps}>
-        <path d="M9.8 6.2a2.2 2.2 0 1 1 3.62 1.68c-.86.73-1.42 1.16-1.42 2.12M12 10l8.1 6.15a1.05 1.05 0 0 1-.64 1.85H4.54a1.05 1.05 0 0 1-.64-1.85L12 10Z" />
+        <path d="M12 4.5a2 2 0 0 0-1.2 3.6c.7.52 1.2.9 1.2 1.65M12 9.75 20.5 16a1 1 0 0 1-.6 1.8H4.1A1 1 0 0 1 3.5 16L12 9.75Z" />
       </svg>
     )
   }
@@ -117,7 +117,7 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'message') {
     return (
       <svg {...commonProps}>
-        <path d="M20 11.5a7.5 7.5 0 0 1-11.3 6.47L4 19.25l1.3-4.38A7.5 7.5 0 1 1 20 11.5Z" />
+        <path d="M19.5 11.5a7 7 0 0 1-10.6 6.05L4 19l1.25-4.2A7 7 0 1 1 19.5 11.5Z" />
         <path d="m9.1 11.7 1.8 1.8 4-4" />
       </svg>
     )
@@ -153,7 +153,7 @@ function OriginIcon({ name }: { name: IconName }) {
   if (name === 'sparkle') {
     return (
       <svg {...commonProps}>
-        <path d="M12 3.5l1.8 5.2L19 10.5l-5.2 1.8L12 17.5l-1.8-5.2L5 10.5l5.2-1.8L12 3.5Z" />
+        <path d="M12 3.5l1.8 5.2L19 10.5l-5.2 1.8L12 17.5l-1.8-5.2L5 10.5l5.2-1.8L12 3.5Z" /><path d="M18.5 14.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6Z" />
       </svg>
     )
   }
@@ -411,7 +411,11 @@ export function Origin01Invitation({
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
       { selector: '.origin01-trivia > .origin01-section-heading', motion: 'up', level: 'content' },
       { selector: '.origin01-trivia__surface', motion: 'up', level: 'content', delay: 'follow' },
+      { selector: '.origin01-dress .origin01-feature-icon', motion: 'icon', level: 'content' },
+      { selector: '.origin01-gift .origin01-feature-icon', motion: 'icon', level: 'content', delay: 'follow' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
+      { selector: '.origin01-rsvp > .origin01-feature-icon', motion: 'icon', level: 'content' },
+      { selector: '.origin01-trivia .origin01-feature-icon', motion: 'icon', level: 'content', delay: 'follow' },
       { selector: '.origin01-gift__content', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-rsvp', motion: 'up', level: 'content' },
       { selector: '.origin01-rsvp > .origin01-button', motion: 'scale', level: 'action', delay: 'action' },
