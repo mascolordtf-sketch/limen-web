@@ -532,7 +532,7 @@ export function Origin01Invitation({
             </div>
             <div className="origin01-actions">
               <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">
-                <OriginIcon name="route" />
+                <OriginIcon name="pin" />
                 Ver ubicación
               </a>
               <a className="origin01-button" href={calendarUrl} target="_blank" rel="noreferrer">

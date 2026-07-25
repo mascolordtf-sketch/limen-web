@@ -9,6 +9,7 @@
   --origin-mist: #eee5e6;
   --origin-cream: #f3efea;
   --origin-old-rose: #d7b7bb;
+  --origin-rose-haze: #eadbdd;
   --origin-paper: #faf7f2;
   --origin-surface: #f8f4ef;
   --origin-gold: #c9a86f;
@@ -1025,7 +1026,7 @@
 .origin01-info {
   padding-top: 2.75rem;
   padding-bottom: 2.5rem;
-  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 2.75rem);
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 1.75rem, var(--origin-old-rose) 2.75rem);
 }
 
 .origin01-info > * {
@@ -1150,10 +1151,10 @@
 }
 
 .origin01-button--dark {
-  border-color: var(--origin-ink);
-  color: var(--origin-paper);
-  background: var(--origin-ink);
-  box-shadow: 0 10px 25px rgba(24, 19, 20, .13);
+  border-color: var(--origin-plum-deep);
+  color: var(--origin-cream);
+  background: var(--origin-plum-deep);
+  box-shadow: 0 8px 20px rgba(50, 26, 41, .11);
 }
 
 .origin01-button--dark:hover {
@@ -1257,7 +1258,7 @@
 .origin01-gallery {
   padding-top: 3rem;
   padding-bottom: 0;
-  background: linear-gradient(to bottom, var(--origin-plum-deep), var(--origin-cream) 3rem);
+  background: var(--origin-cream);
 }
 
 .origin01-gallery > * {
@@ -1313,7 +1314,7 @@
 .origin01-gift {
   padding-top: 3.25rem;
   padding-bottom: 2rem;
-  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 3rem);
+  background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2rem, var(--origin-old-rose) 3rem);
 }
 
 .origin01-gift__card {
@@ -1399,7 +1400,7 @@
   position: relative;
   width: calc(100% - 2rem);
   overflow: hidden;
-  margin: 0 1rem;
+  margin: 0 1rem 1.75rem;
   border-radius: 2.2rem;
   padding-top: 4.25rem;
   padding-bottom: 4.25rem;
@@ -1693,19 +1694,19 @@
   .origin01-info {
     padding-top: 4rem;
     padding-bottom: 4rem;
-    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 4rem);
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2.5rem, var(--origin-old-rose) 4rem);
   }
 
   .origin01-gallery {
     padding-top: 4rem;
     padding-bottom: 0;
-    background: linear-gradient(to bottom, var(--origin-plum-deep), var(--origin-cream) 4rem);
+    background: var(--origin-cream);
   }
 
   .origin01-gift {
     padding-top: 4rem;
     padding-bottom: 3rem;
-    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-old-rose) 4rem);
+    background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2.5rem, var(--origin-old-rose) 4rem);
   }
 
   .origin01-hero__content,
@@ -1784,7 +1785,7 @@
   .origin01-rsvp {
     width: calc(100% - 4rem);
     max-width: 78rem;
-    margin: 0 auto;
+    margin: 0 auto 2rem;
     padding-top: 6rem;
     padding-bottom: 6rem;
   }
