@@ -2458,7 +2458,7 @@
 }
 
 .origin01-trivia__next:disabled {
-  opacity: .35;
+  opacity: .55;
   cursor: default;
 }
 
