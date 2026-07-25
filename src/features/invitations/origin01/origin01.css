@@ -580,6 +580,14 @@
   --origin-motion-duration-protagonist: 1.04s;
   --origin-motion-duration-content: .78s;
   --origin-motion-duration-action: .5s;
+  --origin-icon-entrance-duration: 620ms;
+  --origin-icon-gesture-duration: 480ms;
+  --origin-icon-stagger: 140ms;
+  --origin-icon-ease: cubic-bezier(.22, 1, .36, 1);
+  --origin-icon-initial-opacity: .18;
+  --origin-icon-initial-scale: .96;
+  --origin-icon-displacement: 6px;
+  --origin-icon-response-duration: 180ms;
   width: 100%;
   overflow: clip;
   color: var(--origin-ink);
@@ -657,6 +665,13 @@
 
 .origin01-motion-ready [data-motion="depth"] {
   transform: scale(.965);
+}
+
+.origin01-motion-ready [data-motion="icon"] {
+  opacity: var(--origin-icon-initial-opacity);
+  transform: translate3d(0, var(--origin-icon-displacement), 0) scale(var(--origin-icon-initial-scale));
+  transition-duration: var(--origin-icon-entrance-duration);
+  transition-timing-function: var(--origin-icon-ease);
 }
 
 .origin01-motion-ready [data-motion]:where(.origin01-motion-visible) {
@@ -758,39 +773,24 @@
   transform: scale(.96);
 }
 
-.origin01-music__bars {
-  height: 1.15rem;
-  display: flex;
-  align-items: center;
-  gap: 3px;
+.origin01-music__symbol {
+  display: grid;
+  place-items: center;
+  transition: opacity var(--origin-icon-response-duration) ease, transform var(--origin-icon-response-duration) var(--origin-icon-ease);
 }
 
-.origin01-music__bars i {
-  width: 2px;
-  height: 38%;
-  display: block;
-  border-radius: 2px;
-  background: currentColor;
+.origin01-music__symbol .origin01-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke-width: 1.8;
 }
 
-.origin01-music__bars i:nth-child(2) {
-  height: 88%;
-}
-
-.origin01-music__bars i:nth-child(3) {
-  height: 58%;
-}
-
-.origin01-music--playing .origin01-music__bars i {
-  animation: origin01-music-bars .75s ease-in-out infinite alternate;
-}
-
-.origin01-music--playing .origin01-music__bars i:nth-child(2) {
-  animation-delay: -.28s;
-}
-
-.origin01-music--playing .origin01-music__bars i:nth-child(3) {
-  animation-delay: -.5s;
+.origin01-music--playing::after {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(245, 239, 231, .25);
+  border-radius: inherit;
+  content: "";
 }
 
 .origin01-hero {
@@ -1171,6 +1171,11 @@
   transform: scale(.985);
 }
 
+.origin01-button:active .origin01-icon--pin,
+.origin01-button:active .origin01-icon--share {
+  transform: translate3d(1px, -1px, 0);
+}
+
 .origin01-button--dark {
   border-color: var(--origin-plum-deep);
   color: var(--origin-cream);
@@ -1404,6 +1409,45 @@
   color: var(--origin-plum);
   font-size: .93rem;
   letter-spacing: .035em;
+}
+
+.origin01-copy {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  margin-top: .9rem;
+  border: 1px solid var(--origin-divider);
+  border-radius: .85rem;
+  padding: .6rem .8rem;
+  color: var(--origin-plum);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  transition: color var(--origin-icon-response-duration) ease, background var(--origin-icon-response-duration) ease, transform var(--origin-icon-response-duration) ease;
+}
+
+.origin01-copy > span {
+  color: inherit;
+  font-size: .61rem;
+}
+
+.origin01-copy .origin01-icon { width: 1rem; height: 1rem; }
+.origin01-copy:active { transform: scale(.98); }
+.origin01-copy--success { color: var(--origin-cream); background: var(--origin-plum); }
+.origin01-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+/* One-time, meaning-led gestures begin only after the shared viewport entrance. */
+[data-icon-motion].origin01-motion-visible .origin01-icon__detail {
+  animation: origin01-icon-detail var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
+}
+
+[data-icon-motion="pin"].origin01-motion-visible .origin01-icon {
+  animation: origin01-icon-pin var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
+}
+
+[data-icon-motion="hanger"].origin01-motion-visible .origin01-icon {
+  animation: origin01-icon-dress var(--origin-icon-gesture-duration) var(--origin-icon-ease) var(--origin-icon-stagger) both;
 }
 
 .origin01-gift small {
@@ -1655,15 +1699,9 @@
   }
 }
 
-@keyframes origin01-music-bars {
-  from {
-    transform: scaleY(.45);
-  }
-
-  to {
-    transform: scaleY(1.05);
-  }
-}
+@keyframes origin01-icon-detail { from { opacity: 0; stroke-dasharray: 28; stroke-dashoffset: 28; } to { opacity: 1; stroke-dasharray: 28; stroke-dashoffset: 0; } }
+@keyframes origin01-icon-pin { 0% { transform: translateY(-3px); } 65% { transform: translateY(1px); } 100% { transform: none; } }
+@keyframes origin01-icon-dress { 0% { opacity: .35; clip-path: inset(0 0 100%); } 100% { opacity: 1; clip-path: inset(0); } }
 
 @media (max-width: 359px) {
   .origin01-envelope-stage .origin01-entry-topline {
