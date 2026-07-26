@@ -2099,7 +2099,7 @@
 /* Origin 01 trivia — a quiet game scene, kept in natural document flow. */
 .origin01-trivia {
   position: relative;
-  overflow: hidden;
+  overflow: clip;
   padding-block: clamp(4.5rem, 15vw, 7rem);
   background: color-mix(in srgb, var(--origin-ivory) 91%, var(--origin-old-rose));
 }
@@ -2178,8 +2178,17 @@
 .origin01-trivia__feedback--incorrect { border-color: var(--origin-rose); }
 .origin01-trivia__next { width: 100%; }
 
-.origin01-trivia__result { text-align: center; animation: origin01-trivia-fade .3s ease-out; }
-.origin01-trivia__confetti { position: absolute; inset: -4rem -1rem auto; width: calc(100% + 2rem); height: 22rem; overflow: hidden; pointer-events: none; }
+.origin01-trivia__result { isolation: isolate; text-align: center; animation: origin01-trivia-fade .3s ease-out; }
+.origin01-trivia__result > :not(.origin01-trivia__confetti) { position: relative; z-index: 1; }
+.origin01-trivia__confetti {
+  position: absolute;
+  inset: -4.5rem -20% -4rem;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+}
 .origin01-trivia__score { position: relative; display: flex; align-items: baseline; justify-content: center; gap: .45rem; margin: 0; color: var(--origin-text-muted); }
 .origin01-trivia__score strong { color: var(--origin-wine-deep); font-family: var(--origin-display); font-size: clamp(4.5rem, 22vw, 7rem); font-weight: 400; line-height: 1; }
 .origin01-trivia__score span { font-size: .84rem; }
