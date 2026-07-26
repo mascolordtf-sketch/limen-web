@@ -2407,7 +2407,7 @@
 /* — Feedback area (always present, min-height reserves space) — */
 
 .origin01-trivia__feedback {
-  min-height: 4rem;
+  min-height: 5.5rem;
   margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -2450,6 +2450,7 @@
   flex-direction: column;
   align-items: center;
   margin-top: 1.5rem;
+  opacity: 1;
 }
 
 .origin01-trivia__next {
@@ -2476,6 +2477,7 @@
 
 .origin01-trivia__action-hint--hidden {
   opacity: 0;
+  visibility: hidden;
 }
 
 /* — Result scene — */

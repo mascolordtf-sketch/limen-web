@@ -273,6 +273,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
             className={`origin01-trivia__action-hint${
               isAnswered ? ' origin01-trivia__action-hint--hidden' : ''
             }`}
+            aria-hidden={isAnswered}
           >
             Elegí una respuesta
           </p>
