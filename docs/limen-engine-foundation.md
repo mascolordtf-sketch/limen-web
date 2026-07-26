@@ -29,4 +29,12 @@ Los contratos de invitación son datos serializables: usan fechas ISO como texto
 
 La Fase 1A no extrae el contenido actual, no crea datos de demo nuevos, no conecta configuraciones con React y no altera el renderizado público.
 
-La **Fase 1B** extraerá el contenido de Origin 01 hacia una invitación tipada y adaptará sus datos sin activar renderizado condicional. La **Fase 1C** conectará módulos validados con las escenas visibles, preservando el orden y la dirección de arte de la plantilla.
+La **Fase 1B** extrae el contenido de Origin 01 hacia una invitación tipada y adapta sus datos sin activar renderizado condicional. La **Fase 1C** conectará módulos validados con las escenas visibles, preservando el orden y la dirección de arte de la plantilla.
+
+## Fase 1B — datos concretos de Origin 01
+
+La invitación publicada `LMN-015-001` vive en `origin01/origin01DemoData.ts` y satisface el contrato `Origin01InvitationData`, una especialización de `LimenInvitation<Origin01Content>`. El objeto reúne metadatos del evento, identidades, referencias de medios, configuración de todos los módulos admitidos y el contenido serializable de cada escena. Una aserción de inicialización valida la plantilla, la variante, los módulos obligatorios, los duplicados y la presencia mínima de contenido y medios.
+
+`DemoPage` mantiene un registro local explícito por código y entrega el objeto completo a `Origin01Invitation`; la audiencia continúa derivándose de la URL como estado de ejecución. El renderer conserva su jerarquía de escenas y resuelve las referencias de medios sin crear un contenedor visual nuevo. `Origin01Trivia` recibe su configuración tipada mediante una prop y ya no importa contenido personalizado global.
+
+El contrato histórico de `types.ts` se conserva temporalmente para no ampliar esta fase a una limpieza general, pero ya no es la fuente de la demo Origin 01. La Fase 1C sigue siendo responsable de conectar la configuración validada de módulos con renderizado condicional; en esta fase la configuración no activa, oculta ni reordena escenas.

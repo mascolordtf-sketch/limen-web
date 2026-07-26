@@ -3,11 +3,11 @@ import { useState } from 'react'
 import confettiAnimation from '../../../assets/lottie/origin01-trivia-confetti.json'
 import questionAnimation from '../../../assets/lottie/origin01-trivia-question.json'
 import { Origin01Lottie } from './Origin01Lottie'
-import { origin01Trivia as config } from './origin01TriviaData'
+import type { Origin01TriviaContent } from './origin01ContentTypes'
 
 type Phase = 'intro' | 'playing' | 'result'
 
-export function Origin01Trivia() {
+export function Origin01Trivia({ config }: { config: Origin01TriviaContent }) {
   const [phase, setPhase] = useState<Phase>('intro')
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
@@ -45,10 +45,10 @@ export function Origin01Trivia() {
   if (phase === 'intro') return (
     <div className="origin01-trivia__intro">
       <Origin01Lottie animationData={questionAnimation} className="origin01-trivia__question-lottie" playWhenVisible />
-      <p className="origin01-kicker origin01-trivia__eyebrow">Entre nosotros…</p>
-      <h2 className="origin01-trivia__title">¿Cuánto conocés de verdad a Valentina?</h2>
-      <p className="origin01-trivia__description">Cinco preguntas. Menos de un minuto.</p>
-      <button type="button" className="origin01-button origin01-button--dark origin01-trivia__primary" onClick={() => setPhase('playing')}>Aceptar el desafío</button>
+      <p className="origin01-kicker origin01-trivia__eyebrow">{config.introEyebrow}</p>
+      <h2 className="origin01-trivia__title">{config.title}</h2>
+      <p className="origin01-trivia__description">{config.description}</p>
+      <button type="button" className="origin01-button origin01-button--dark origin01-trivia__primary" onClick={() => setPhase('playing')}>{config.primaryActionLabel}</button>
     </div>
   )
 
@@ -58,7 +58,7 @@ export function Origin01Trivia() {
     return (
       <div className="origin01-trivia__playing">
         <div className="origin01-trivia__progress">
-          <p>Pregunta {currentQuestionIndex + 1} de {config.questions.length}</p>
+          <p>{config.questionMetaLabel} {currentQuestionIndex + 1} de {config.questions.length}</p>
           <div className="origin01-trivia__progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={config.questions.length} aria-valuenow={completedCount} aria-label="Progreso de la trivia">
             <span style={{ width: `${(completedCount / config.questions.length) * 100}%` }} />
           </div>
@@ -78,7 +78,7 @@ export function Origin01Trivia() {
         {selectedOptionId !== null ? (
           <div className="origin01-trivia__answered">
             <p className={`origin01-trivia__feedback origin01-trivia__feedback--${question.isPrediction ? 'prediction' : isCorrect ? 'correct' : 'incorrect'}`} aria-live="polite">{feedback}</p>
-            <button type="button" className="origin01-button origin01-button--dark origin01-trivia__next" onClick={next}>{isLastQuestion ? 'Ver resultado' : 'Siguiente'}</button>
+            <button type="button" className="origin01-button origin01-button--dark origin01-trivia__next" onClick={next}>{isLastQuestion ? config.resultLabel : config.nextLabel}</button>
           </div>
         ) : null}
       </div>
@@ -89,15 +89,15 @@ export function Origin01Trivia() {
   return (
     <div className="origin01-trivia__result">
       <Origin01Lottie animationData={confettiAnimation} className="origin01-trivia__confetti" playKey={playthrough} hideForReducedMotion />
-      <p className="origin01-trivia__score"><strong>{correctCount}</strong><span>/ 4 respuestas</span></p>
+      <p className="origin01-trivia__score"><strong>{correctCount}</strong><span>{config.scoreTotalLabel}</span></p>
       <h3 className="origin01-trivia__tier" aria-live="polite">{tier.title}</h3>
       <p className="origin01-trivia__result-message">{tier.message}</p>
       <div className="origin01-trivia__closing">
-        <h3>Gracias por jugar</h3>
-        <p>Ahora que ya sabés un poco más de mí, espero que estés ahí para compartir una de las noches más importantes de mi vida.</p>
-        <span>Valentina</span>
+        <h3>{config.revealTitle}</h3>
+        <p>{config.revealMessage}</p>
+        <span>{config.revealSignature}</span>
       </div>
-      <button type="button" className="origin01-button origin01-trivia__replay" onClick={replay}>Volver a jugar</button>
+      <button type="button" className="origin01-button origin01-trivia__replay" onClick={replay}>{config.replayLabel}</button>
     </div>
   )
 }

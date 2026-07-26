@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
-import type { InvitationData, InvitationImage } from '../types'
+import type { InvitationAudience, InvitationMediaReference } from '../engine/invitationTypes'
 import { Origin01Trivia } from './Origin01Trivia'
+import type { Origin01InvitationData } from './origin01ContentTypes'
 import './origin01.css'
-
-const defaultMusicSrc = '/audio/origin-01-demo.mp3'
 
 type CountdownValue = {
   days: number
@@ -15,7 +14,6 @@ type CountdownValue = {
 }
 
 type EntryPhase = 'prelude' | 'envelope' | 'opening' | 'invitation'
-type InvitationAudience = 'protagonist' | 'guest'
 type IconName = 'calendar' | 'calendarPlus' | 'check' | 'clock' | 'copy' | 'error' | 'gift' | 'hanger' | 'message' | 'pause' | 'pin' | 'play' | 'route' | 'share'
 
 const calendarDate = (isoDate: string) => new Date(isoDate).toISOString().replace(/[-:]/g, '').replace('.000', '')
@@ -36,32 +34,32 @@ const getCountdown = (targetTime: number, currentTime = Date.now()): CountdownVa
   }
 }
 
-function buildMapsUrl(invitation: InvitationData) {
+function buildMapsUrl(invitation: Origin01InvitationData) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${invitation.event.venue}, ${invitation.event.address}`,
   )}`
 }
 
-function buildCalendarUrl(invitation: InvitationData) {
+function buildCalendarUrl(invitation: Origin01InvitationData) {
   const start = calendarDate(invitation.event.startsAt)
   const end = calendarDate(invitation.event.endsAt)
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: `${invitation.event.celebration} de ${invitation.event.name}`,
+    text: invitation.content.closing.shareTitle,
     dates: `${start}/${end}`,
-    details: `${invitation.mainPhrase}\n\n${invitation.demoLabel}`,
+    details: invitation.content.eventDetails.calendarDescription,
     location: `${invitation.event.venue}, ${invitation.event.address}`,
   })
 
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
-function buildWhatsAppUrl(invitation: InvitationData) {
-  const recipient = invitation.rsvp.recipientPhone ?? ''
-  return `https://wa.me/${recipient}?text=${encodeURIComponent(invitation.rsvp.message)}`
+function buildWhatsAppUrl(invitation: Origin01InvitationData) {
+  const recipient = invitation.content.rsvp.recipientPhone ?? ''
+  return `https://wa.me/${recipient}?text=${encodeURIComponent(invitation.content.rsvp.message)}`
 }
 
-function buildEnvelopeDate(invitation: InvitationData) {
+function buildEnvelopeDate(invitation: Origin01InvitationData) {
   const dateParts = new Intl.DateTimeFormat('es-AR', {
     day: '2-digit',
     month: '2-digit',
@@ -180,7 +178,7 @@ function OriginIcon({ name }: { name: IconName }) {
   return null
 }
 
-function Countdown({ startsAt }: { startsAt: string }) {
+function Countdown({ startsAt, completedMessage }: { startsAt: string; completedMessage: string }) {
   const targetTime = useMemo(() => new Date(startsAt).getTime(), [startsAt])
   const getSnapshot = useCallback(() => Math.min(Math.floor(Date.now() / 1_000) * 1_000, targetTime), [targetTime])
   const subscribe = useCallback(
@@ -205,7 +203,7 @@ function Countdown({ startsAt }: { startsAt: string }) {
   const countdown = useMemo(() => getCountdown(targetTime, currentTime), [currentTime, targetTime])
 
   if (countdown.completed) {
-    return <p className="origin01-countdown-complete">Este momento ya empezó. Gracias por haber sido parte.</p>
+    return <p className="origin01-countdown-complete">{completedMessage}</p>
   }
 
   const items = [
@@ -233,7 +231,7 @@ function InvitationImageAsset({
   eager = false,
   decorative = false,
 }: {
-  image?: InvitationImage
+  image?: InvitationMediaReference
   className: string
   eager?: boolean
   decorative?: boolean
@@ -258,7 +256,7 @@ export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
 }: {
-  invitation: InvitationData
+  invitation: Origin01InvitationData
   audience?: InvitationAudience
 }) {
   const [phase, setPhase] = useState<EntryPhase>(audience === 'guest' ? 'envelope' : 'prelude')
@@ -275,10 +273,11 @@ export function Origin01Invitation({
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
   const envelopeDate = buildEnvelopeDate(invitation)
-  const musicSrc = invitation.music ? invitation.music.src ?? defaultMusicSrc : undefined
+  const mediaById = new Map(invitation.media.map((media) => [media.id, media]))
+  const musicSrc = mediaById.get(invitation.content.music.mediaId)?.src
   const hasMusic = Boolean(musicSrc)
-  const coverImage = invitation.gallery[0]
-  const closingImage = invitation.gallery[2] ?? coverImage
+  const coverImage = mediaById.get(invitation.content.hero.imageMediaId)
+  const closingImage = mediaById.get(invitation.content.closing.imageMediaId) ?? coverImage
   const invitationIsVisible = phase === 'invitation'
 
   useEffect(() => {
@@ -411,8 +410,8 @@ export function Origin01Invitation({
     const guestUrl = new URL(window.location.href)
     guestUrl.searchParams.set('vista', 'invitado')
     const shareData = {
-      title: `${invitation.event.celebration} de ${invitation.event.name}`,
-      text: `${invitation.mainPhrase} Te invito a compartir este momento conmigo.`,
+      title: invitation.content.closing.shareTitle,
+      text: invitation.content.closing.shareText,
       url: guestUrl.toString(),
     }
 
@@ -435,11 +434,10 @@ export function Origin01Invitation({
   }
 
   const copyGiftAccount = async () => {
-    if (!invitation.gift) return
     if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
     try {
       if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable')
-      await navigator.clipboard.writeText(invitation.gift.accountValue)
+      await navigator.clipboard.writeText(invitation.content.gifts.accountValue)
       setCopyStatus('copied')
     } catch {
       setCopyStatus('error')
@@ -488,17 +486,17 @@ export function Origin01Invitation({
             <span>Origin 01</span>
           </div>
           <div className="origin01-prelude__content">
-            <p className="origin01-prelude__eyebrow">Un mensaje solo para vos</p>
-            <h1 id="origin01-prelude-title">{invitation.welcome.title}</h1>
-            <p className="origin01-prelude__body">{invitation.welcome.body}</p>
-            <p className="origin01-prelude__reveal">Este es tu LIMEN.</p>
-            <p className="origin01-prelude__question">¿Estás lista para cruzarlo?</p>
+            <p className="origin01-prelude__eyebrow">{invitation.content.prelude.eyebrow}</p>
+            <h1 id="origin01-prelude-title">{invitation.content.prelude.title}</h1>
+            <p className="origin01-prelude__body">{invitation.content.prelude.body}</p>
+            <p className="origin01-prelude__reveal">{invitation.content.prelude.reveal}</p>
+            <p className="origin01-prelude__question">{invitation.content.prelude.question}</p>
             <button type="button" onClick={revealEnvelope} className="origin01-primary-action">
-              <span>Estoy lista</span>
+              <span>{invitation.content.prelude.actionLabel}</span>
               <span className="origin01-primary-action__arrow" aria-hidden="true">→</span>
             </button>
           </div>
-          <p className="origin01-prelude__sound">La música comienza al continuar</p>
+          <p className="origin01-prelude__sound">{invitation.content.prelude.soundHint}</p>
         </section>
       ) : null}
 
@@ -512,8 +510,8 @@ export function Origin01Invitation({
             <span>Origin 01 · El primer instante</span>
           </div>
           <div className="origin01-envelope-stage__content">
-            <p className="origin01-envelope-stage__eyebrow">Una invitación para vos</p>
-            <h1 id="origin01-envelope-title">{invitation.thresholdPhrase}</h1>
+            <p className="origin01-envelope-stage__eyebrow">{invitation.content.envelope.eyebrow}</p>
+            <h1 id="origin01-envelope-title">{invitation.content.envelope.heading}</h1>
             <button
               ref={envelopeRef}
               type="button"
@@ -525,7 +523,7 @@ export function Origin01Invitation({
               <span className="origin01-envelope" aria-hidden="true">
                 <span className="origin01-envelope__back" />
                 <span className="origin01-envelope__letter">
-                  <span className="origin01-envelope__monogram">V</span>
+                  <span className="origin01-envelope__monogram">{invitation.content.envelope.monogram}</span>
                   <span className="origin01-envelope__name">{invitation.event.name}</span>
                   <span className="origin01-envelope__date">{envelopeDate}</span>
                 </span>
@@ -536,7 +534,7 @@ export function Origin01Invitation({
             </button>
             <p className="origin01-envelope-stage__instruction">
               <span aria-hidden="true">✦</span>
-              Tocá el sello para abrir
+              {invitation.content.envelope.instruction}
             </p>
           </div>
         </section>
@@ -557,49 +555,49 @@ export function Origin01Invitation({
               <span>El primer instante</span>
             </div>
             <div className="origin01-hero__content">
-              <p className="origin01-kicker">{invitation.event.celebration}</p>
+              <p className="origin01-kicker">{invitation.content.hero.celebrationLabel}</p>
               <h1 id="origin01-hero-title">{invitation.event.name}</h1>
-              <p className="origin01-hero__date">{invitation.event.dateLabel}</p>
-              <p className="origin01-hero__phrase">{invitation.mainPhrase}</p>
+              <p className="origin01-hero__date">{invitation.content.hero.dateLabel}</p>
+              <p className="origin01-hero__phrase">{invitation.content.hero.phrase}</p>
             </div>
-            <span className="origin01-hero__scroll" aria-hidden="true">Deslizá para descubrir ↓</span>
+            <span className="origin01-hero__scroll" aria-hidden="true">{invitation.content.hero.scrollHint}</span>
           </section>
 
           <section className="origin01-section origin01-countdown-panel" aria-labelledby="origin01-countdown-title">
             <div className="origin01-countdown-panel__surface">
-              <p className="origin01-kicker">El tiempo se acerca</p>
-              <h2 id="origin01-countdown-title">Falta menos para una noche inolvidable.</h2>
-              <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} />
+              <p className="origin01-kicker">{invitation.content.countdown.eyebrow}</p>
+              <h2 id="origin01-countdown-title">{invitation.content.countdown.heading}</h2>
+              <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} completedMessage={invitation.content.countdown.completedMessage} />
             </div>
           </section>
 
           <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
             <div className="origin01-message__card">
-              <p className="origin01-kicker">Una invitación</p>
+              <p className="origin01-kicker">{invitation.content.story.eyebrow}</p>
               <span className="origin01-message__quote" aria-hidden="true">“</span>
-              <h2 id="origin01-message-title">{invitation.personalMessage}</h2>
-              <span className="origin01-message__signature">{invitation.event.name}</span>
+              <h2 id="origin01-message-title">{invitation.content.story.message}</h2>
+              <span className="origin01-message__signature">{invitation.content.story.signature}</span>
             </div>
           </section>
 
           <section className="origin01-section origin01-info" aria-labelledby="origin01-info-title">
             <div className="origin01-section-heading">
-              <p className="origin01-kicker">Cuándo y dónde</p>
-              <h2 id="origin01-info-title">Guardá este momento.</h2>
+              <p className="origin01-kicker">{invitation.content.eventDetails.eyebrow}</p>
+              <h2 id="origin01-info-title">{invitation.content.eventDetails.heading}</h2>
             </div>
             <div className="origin01-info__surface">
               <article className="origin01-info__row">
                 <span className="origin01-icon-wrap" data-icon-motion="calendar"><OriginIcon name="calendar" /></span>
                 <div>
                   <p>Fecha</p>
-                  <strong>{invitation.event.dateLabel}</strong>
-                  <span className="origin01-info__meta"><span className="origin01-clock-mark" data-icon-motion="clock"><OriginIcon name="clock" /></span> {invitation.event.timeLabel} hs</span>
+                  <strong>{invitation.content.eventDetails.dateLabel}</strong>
+                  <span className="origin01-info__meta"><span className="origin01-clock-mark" data-icon-motion="clock"><OriginIcon name="clock" /></span> {invitation.content.eventDetails.timeLabel} hs</span>
                 </div>
               </article>
               <article className="origin01-info__row">
                 <span className="origin01-icon-wrap" data-icon-motion="pin"><OriginIcon name="pin" /></span>
                 <div>
-                  <p>Lugar</p>
+                  <p>{invitation.content.eventDetails.venueLabel}</p>
                   <strong>{invitation.event.venue}</strong>
                   <span>{invitation.event.address}</span>
                 </div>
@@ -608,67 +606,69 @@ export function Origin01Invitation({
             <div className="origin01-actions">
               <a className="origin01-button origin01-button--dark" href={mapsUrl} target="_blank" rel="noreferrer">
                 <OriginIcon name="pin" />
-                Ver ubicación
+                {invitation.content.eventDetails.mapActionLabel}
               </a>
               <a className="origin01-button" href={calendarUrl} target="_blank" rel="noreferrer">
                 <OriginIcon name="calendarPlus" />
-                Agendar fecha
+                {invitation.content.eventDetails.calendarActionLabel}
               </a>
             </div>
           </section>
 
           <section className="origin01-dress" aria-labelledby="origin01-dress-title">
             <div className="origin01-dress__media">
-              <InvitationImageAsset image={invitation.gallery[1]} className="origin01-dress__image" />
+              <InvitationImageAsset image={mediaById.get(invitation.content.dressCode.imageMediaId)} className="origin01-dress__image" />
             </div>
             <div className="origin01-dress__content">
               <span className="origin01-feature-icon" data-icon-motion="hanger"><OriginIcon name="hanger" /></span>
-              <p className="origin01-kicker">Dress code</p>
-              <h2 id="origin01-dress-title">{invitation.event.dressCode}</h2>
-              <p>Una noche especial merece que vengas como más te gusta: con presencia, alegría y ganas de celebrar.</p>
-              <span className="origin01-dress__note">La elegancia también es sentirse uno mismo.</span>
+              <p className="origin01-kicker">{invitation.content.dressCode.eyebrow}</p>
+              <h2 id="origin01-dress-title">{invitation.content.dressCode.title}</h2>
+              <p>{invitation.content.dressCode.description}</p>
+              <span className="origin01-dress__note">{invitation.content.dressCode.note}</span>
             </div>
           </section>
 
           <section className="origin01-section origin01-gallery" aria-labelledby="origin01-gallery-title">
             <div className="origin01-section-heading">
-              <p className="origin01-kicker">Antes del comienzo</p>
-              <h2 id="origin01-gallery-title">Instantes que ya son parte de la historia.</h2>
+              <p className="origin01-kicker">{invitation.content.gallery.eyebrow}</p>
+              <h2 id="origin01-gallery-title">{invitation.content.gallery.heading}</h2>
             </div>
             <div className="origin01-gallery__grid">
-              {invitation.gallery.map((image, index) => (
-                <figure className={`origin01-gallery__item origin01-gallery__item--${index + 1}`} key={`${image.alt}-${index}`}>
-                  <InvitationImageAsset image={image} className="origin01-gallery__image" />
-                  {image.title ? (
+              {invitation.content.gallery.images.map((image, index) => {
+                const media = mediaById.get(image.mediaId)
+                return (
+                <figure className={`origin01-gallery__item origin01-gallery__item--${index + 1}`} key={`${image.mediaId}-${index}`}>
+                  <InvitationImageAsset image={media} className="origin01-gallery__image" />
+                  {image.caption ? (
                     <figcaption>
                       <span>0{index + 1}</span>
-                      {image.title}
+                      {image.caption}
                     </figcaption>
                   ) : null}
                 </figure>
-              ))}
+                )
+              })}
             </div>
           </section>
 
           <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
-            <h2 id="origin01-trivia-title" className="origin01-sr-only">Trivia sobre Valentina</h2>
-            <Origin01Trivia />
+            <h2 id="origin01-trivia-title" className="origin01-sr-only">{invitation.content.trivia.accessibleTitle}</h2>
+            <Origin01Trivia config={invitation.content.trivia} />
           </section>
 
-          {invitation.gift ? (
-            <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">
+          <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">
               <div className="origin01-gift__card">
                 <div className="origin01-gift__media">
-                  <InvitationImageAsset image={invitation.gift.image} className="origin01-gift__image" />
+                  <InvitationImageAsset image={mediaById.get(invitation.content.gifts.imageMediaId)} className="origin01-gift__image" />
                 </div>
                 <div className="origin01-gift__content">
                   <span className="origin01-feature-icon origin01-feature-icon--light" data-icon-motion="gift"><OriginIcon name="gift" /></span>
-                  <p className="origin01-kicker">Un detalle</p>
-                  <h2 id="origin01-gift-title">{invitation.gift.title}</h2>
-                  <p>{invitation.gift.description}</p>
+                  <p className="origin01-kicker">{invitation.content.gifts.eyebrow}</p>
+                  <h2 id="origin01-gift-title">{invitation.content.gifts.title}</h2>
+                  <p>{invitation.content.gifts.description}</p>
                   <div className="origin01-gift__account">
-                    <span>{invitation.gift.accountLabel}</span>
-                    <strong>{invitation.gift.accountValue}</strong>
+                    <span>{invitation.content.gifts.accountLabel}</span>
+                    <strong>{invitation.content.gifts.accountValue}</strong>
                     <button type="button" className={`origin01-copy origin01-copy--${copyStatus}`} onClick={copyGiftAccount} aria-label="Copiar alias">
                       <span className="origin01-copy__icons" aria-hidden="true">
                         <OriginIcon name="copy" />
@@ -679,38 +679,37 @@ export function Origin01Invitation({
                     </button>
                     <span className="origin01-sr-only" aria-live="polite">{copyStatus === 'copied' ? 'Alias copiado' : copyStatus === 'error' ? 'No se pudo copiar el alias' : ''}</span>
                   </div>
-                  <small>{invitation.gift.demoNote}</small>
+                  <small>{invitation.content.gifts.demoNote}</small>
                 </div>
               </div>
-            </section>
-          ) : null}
+          </section>
 
           <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
             <div className="origin01-rsvp__sparkles" aria-hidden="true" />
             <span className="origin01-feature-icon origin01-feature-icon--rsvp" data-icon-motion="message"><OriginIcon name="message" /></span>
-            <p className="origin01-kicker">Nos encantaría que estés</p>
-            <h2 id="origin01-rsvp-title">¿Compartimos esta noche?</h2>
-            <p>Confirmá tu asistencia para que podamos esperarte.</p>
+            <p className="origin01-kicker">{invitation.content.rsvp.eyebrow}</p>
+            <h2 id="origin01-rsvp-title">{invitation.content.rsvp.title}</h2>
+            <p>{invitation.content.rsvp.description}</p>
             <a className="origin01-button origin01-button--light" href={whatsappUrl} target="_blank" rel="noreferrer">
               <OriginIcon name="message" />
-              Confirmar por WhatsApp
+              {invitation.content.rsvp.actionLabel}
             </a>
-            {invitation.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.rsvp.demoNote}</p> : null}
+            {invitation.content.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.content.rsvp.demoNote}</p> : null}
           </section>
 
           <section className="origin01-closing" aria-labelledby="origin01-closing-title">
             <InvitationImageAsset image={closingImage} className="origin01-closing__image" decorative />
             <div className="origin01-closing__veil" aria-hidden="true" />
             <div className="origin01-closing__content">
-              <p className="origin01-kicker">El comienzo</p>
-              <h2 id="origin01-closing-title">{invitation.closing}</h2>
-              <span className="origin01-closing__name">{invitation.event.name}</span>
+              <p className="origin01-kicker">{invitation.content.closing.eyebrow}</p>
+              <h2 id="origin01-closing-title">{invitation.content.closing.title}</h2>
+              <span className="origin01-closing__name">{invitation.content.closing.signature}</span>
               {audience === 'protagonist' ? (
                 <div className="origin01-closing__share">
-                  <p>Ahora podés compartir este momento con quienes querés cerca.</p>
+                  <p>{invitation.content.closing.sharePrompt}</p>
                   <button type="button" className="origin01-button origin01-button--glass" onClick={shareInvitation}>
                     <OriginIcon name="share" />
-                    Compartir invitación
+                    {invitation.content.closing.shareActionLabel}
                   </button>
                   <p className="origin01-closing__share-status" aria-live="polite">{shareStatus}</p>
                 </div>
