@@ -45,4 +45,4 @@ Las escenas opcionales de Origin 01 ahora obedecen `invitation.modules`, mientra
 
 ## Fase 1C.2 — verificación con configuración reducida
 
-Una configuración reducida de Origin 01 se deriva de la demo canónica sin duplicar su fixture de contenido. Solo cambian las banderas de módulos opcionales y la invitación resultante conserva la validación existente para una verificación interna controlada. No se introduce una ruta pública ni una interfaz de Studio; los controles visibles continúan diferidos.
+El helper inmutable `updateInvitationModuleConfiguration` permite derivar configuraciones reducidas a partir de una invitación canónica sin duplicar su fixture ni alterar el orden de sus módulos. Esta fase no incorpora un fixture reducido permanente, una ruta pública ni una interfaz de Studio. La verificación ejecutable del renderizado reducido queda diferida hasta que exista tooling de pruebas compatible o hasta la fase de vista previa de Studio; los controles visibles continúan diferidos.
