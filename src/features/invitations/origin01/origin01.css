@@ -2292,13 +2292,12 @@
   to { opacity: 1; transform: none; }
 }
 
-.origin01-trivia__options {
-  animation: origin01-trivia-question-enter .35s .08s var(--origin-motion-ease-spatial, cubic-bezier(.22, 1, .36, 1)) both;
-}
-
 /* — Options — */
 
 .origin01-trivia__options {
+  /* Keep this flow container out of a transient compositing layer. In iOS
+     webviews its former delayed transform animation could stop painting the
+     following action when the animation layer was torn down. */
   display: flex;
   flex-direction: column;
   gap: .55rem;
@@ -2642,7 +2641,6 @@
 @media (prefers-reduced-motion: reduce) {
   .origin01-trivia__feedback-text,
   .origin01-trivia__question,
-  .origin01-trivia__options,
   .origin01-trivia__result-score,
   .origin01-trivia__result-tier,
   .origin01-trivia__result-message,

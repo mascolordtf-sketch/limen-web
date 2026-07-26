@@ -50,10 +50,6 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
 
   const questionRef = useRef<HTMLHeadingElement>(null)
   const resultRef = useRef<HTMLDivElement>(null)
-  // Keyboard and assistive-technology activations report a zero-detail click.
-  // Avoid focusing headings after touch clicks because some iOS webviews scroll
-  // focused elements even when preventScroll is requested.
-  const shouldMoveFocusRef = useRef(false)
 
   const question = config.questions[currentQ]
   const totalQuestions = config.questions.length
@@ -69,8 +65,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
 
   // — Handlers —
 
-  const startTrivia = (shouldMoveFocus: boolean) => {
-    shouldMoveFocusRef.current = shouldMoveFocus
+  const startTrivia = () => {
     setPhase('playing')
   }
 
@@ -95,8 +90,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
     })
   }
 
-  const handleNext = (shouldMoveFocus: boolean) => {
-    shouldMoveFocusRef.current = shouldMoveFocus
+  const handleNext = () => {
     if (isLastQuestion) {
       setPhase('result')
       return
@@ -116,21 +110,13 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
   // — Focus management —
 
   useEffect(() => {
-    if (
-      phase === 'playing' &&
-      shouldMoveFocusRef.current &&
-      questionRef.current
-    ) {
+    if (phase === 'playing' && questionRef.current) {
       questionRef.current.focus({ preventScroll: true })
     }
   }, [phase, currentQ])
 
   useEffect(() => {
-    if (
-      phase === 'result' &&
-      shouldMoveFocusRef.current &&
-      resultRef.current
-    ) {
+    if (phase === 'result' && resultRef.current) {
       resultRef.current.focus({ preventScroll: true })
     }
   }, [phase])
@@ -165,7 +151,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
         <button
           type="button"
           className="origin01-button origin01-button--dark origin01-trivia__start"
-          onClick={(event) => startTrivia(event.detail === 0)}
+          onClick={startTrivia}
         >
           {config.primaryAction}
         </button>
@@ -278,7 +264,7 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           <button
             type="button"
             className="origin01-button origin01-button--dark origin01-trivia__next"
-            onClick={(event) => handleNext(event.detail === 0)}
+            onClick={handleNext}
             disabled={!isAnswered}
           >
             {isLastQuestion ? config.resultLabel : config.nextLabel}
