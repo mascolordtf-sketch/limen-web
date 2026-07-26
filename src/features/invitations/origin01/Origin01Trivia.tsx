@@ -15,6 +15,7 @@ export function Origin01Trivia() {
   const [playthrough, setPlaythrough] = useState(0)
   const question = config.questions[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === config.questions.length - 1
+  const completedCount = answers.filter((answer) => answer !== null).length
   const correctCount = config.questions.reduce((score, item, index) =>
     item.isPrediction ? score : score + Number(answers[index] === item.correctOptionId), 0)
 
@@ -34,7 +35,7 @@ export function Origin01Trivia() {
   }
 
   const replay = () => {
-    setPhase('intro')
+    setPhase('playing')
     setCurrentQuestionIndex(0)
     setSelectedOptionId(null)
     setAnswers(Array(config.questions.length).fill(null))
@@ -43,7 +44,7 @@ export function Origin01Trivia() {
 
   if (phase === 'intro') return (
     <div className="origin01-trivia__intro">
-      <Origin01Lottie animationData={questionAnimation} className="origin01-trivia__question-lottie" playKey={playthrough} />
+      <Origin01Lottie animationData={questionAnimation} className="origin01-trivia__question-lottie" playWhenVisible />
       <p className="origin01-kicker origin01-trivia__eyebrow">Entre nosotros…</p>
       <h2 className="origin01-trivia__title">¿Cuánto conocés de verdad a Valentina?</h2>
       <p className="origin01-trivia__description">Cinco preguntas. Menos de un minuto.</p>
@@ -58,8 +59,8 @@ export function Origin01Trivia() {
       <div className="origin01-trivia__playing">
         <div className="origin01-trivia__progress">
           <p>Pregunta {currentQuestionIndex + 1} de {config.questions.length}</p>
-          <div className="origin01-trivia__progress-track" role="progressbar" aria-valuemin={1} aria-valuemax={config.questions.length} aria-valuenow={currentQuestionIndex + 1} aria-label="Progreso de la trivia">
-            <span style={{ width: `${((currentQuestionIndex + 1) / config.questions.length) * 100}%` }} />
+          <div className="origin01-trivia__progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={config.questions.length} aria-valuenow={completedCount} aria-label="Progreso de la trivia">
+            <span style={{ width: `${(completedCount / config.questions.length) * 100}%` }} />
           </div>
         </div>
         <h3 key={question.id} className="origin01-trivia__question">{question.prompt}</h3>

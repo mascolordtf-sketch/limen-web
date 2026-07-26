@@ -6,6 +6,7 @@ type Origin01LottieProps = {
   className: string
   playKey?: number
   hideForReducedMotion?: boolean
+  playWhenVisible?: boolean
 }
 
 const useReducedMotion = () => {
@@ -29,15 +30,17 @@ export function Origin01Lottie({
   className,
   playKey = 0,
   hideForReducedMotion = false,
+  playWhenVisible = false,
 }: Origin01LottieProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
 
   useEffect(() => {
-    if (!containerRef.current || (reducedMotion && hideForReducedMotion)) return
+    const container = containerRef.current
+    if (!container || (reducedMotion && hideForReducedMotion)) return
 
     const animation = lottie.loadAnimation({
-      container: containerRef.current,
+      container,
       renderer: 'svg',
       loop: false,
       autoplay: false,
@@ -49,12 +52,27 @@ export function Origin01Lottie({
 
     if (reducedMotion) {
       animation.goToAndStop(Math.max(animation.totalFrames - 1, 0), true)
-    } else {
-      animation.play()
+      return () => animation.destroy()
     }
 
-    return () => animation.destroy()
-  }, [animationData, hideForReducedMotion, playKey, reducedMotion])
+    if (!playWhenVisible || !('IntersectionObserver' in window)) {
+      animation.play()
+      return () => animation.destroy()
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      animation.play()
+      observer.disconnect()
+    }, { threshold: .4 })
+
+    observer.observe(container)
+
+    return () => {
+      observer.disconnect()
+      animation.destroy()
+    }
+  }, [animationData, hideForReducedMotion, playKey, playWhenVisible, reducedMotion])
 
   if (reducedMotion && hideForReducedMotion) return null
 
