@@ -1,6 +1,12 @@
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { updateInvitationModuleConfiguration } from '../invitations/engine/moduleConfiguration'
+import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
+import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
+import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import { origin01DemoData } from '../invitations/origin01/origin01DemoData'
+import { StudioModuleList } from './StudioModuleList'
 import './studio.css'
 
 const lifecycleLabels = {
@@ -15,6 +21,31 @@ const lifecycleLabels = {
 
 export function StudioInvitationPage() {
   const invitation = origin01DemoData
+  const template = findInvitationTemplate(invitation.templateId)
+  const [modules, setModules] = useState<readonly InvitationModuleConfig[]>(
+    () => invitation.modules.map((module) => ({ ...module })),
+  )
+  const validation = useMemo(
+    () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
+    [invitation, modules],
+  )
+  const resetDisabled = modules.length === invitation.modules.length
+    && modules.every((module, index) => {
+      const originalModule = invitation.modules[index]
+      return module.moduleId === originalModule.moduleId && module.enabled === originalModule.enabled
+    })
+
+  const handleModuleChange = (moduleId: InvitationModuleId, enabled: boolean) => {
+    if (!template || template.requiredModules.includes(moduleId)) return
+
+    setModules((currentModules) => (
+      updateInvitationModuleConfiguration(currentModules, { [moduleId]: enabled })
+    ))
+  }
+
+  const handleReset = () => {
+    setModules(invitation.modules.map((module) => ({ ...module })))
+  }
   const eventDate = new Intl.DateTimeFormat('es-AR', {
     dateStyle: 'long',
     timeStyle: 'short',
@@ -51,18 +82,30 @@ export function StudioInvitationPage() {
         <section className="limen-studio__notice" aria-labelledby="studio-notice-title">
           <h2 id="studio-notice-title">Estado del prototipo</h2>
           <p><strong>Prototipo interno sin autenticación. No contiene persistencia.</strong></p>
-          <p>Los cambios futuros de este espacio serán temporales hasta conectar el backend.</p>
-          <p>Esta fase todavía no incluye controles editables.</p>
+          <p>Los cambios de configuración de este espacio son temporales y se restablecen al recargar.</p>
         </section>
 
         <div className="limen-studio__panel-grid">
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
-            <h2 id="studio-scenes-title">Configuración de escenas</h2>
-            <p>Los controles para activar y desactivar escenas se incorporarán en la próxima fase.</p>
+            {template ? (
+              <StudioModuleList
+                template={template}
+                modules={modules}
+                validation={validation}
+                onModuleChange={handleModuleChange}
+                onReset={handleReset}
+                resetDisabled={resetDisabled}
+              />
+            ) : (
+              <>
+                <h2 id="studio-scenes-title">Configuración de escenas</h2>
+                <p>No pudimos cargar la plantilla de esta invitación. Revisá su configuración.</p>
+              </>
+            )}
           </section>
           <section className="limen-studio__panel" aria-labelledby="studio-preview-title">
             <h2 id="studio-preview-title">Vista previa</h2>
-            <p>La vista previa real de la invitación se conectará en una fase posterior.</p>
+            <p>La vista previa real se conectará en la próxima fase usando esta configuración local.</p>
           </section>
         </div>
       </div>

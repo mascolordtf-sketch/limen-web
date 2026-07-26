@@ -145,6 +145,174 @@
   padding-bottom: 2rem;
 }
 
+.limen-studio__panel-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.limen-studio__panel-heading p {
+  margin-bottom: 0;
+}
+
+.limen-studio__reset {
+  min-height: 2.75rem;
+  border: 1px solid #bdbbb5;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  background: #fafaf8;
+  color: #343330;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.limen-studio__reset:disabled {
+  color: #85837d;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.limen-studio__reset:not(:disabled):hover {
+  background: #f0efeb;
+}
+
+.limen-studio__reset:focus-visible,
+.limen-studio__switch input:focus-visible + .limen-studio__switch-track {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
+.limen-studio__scene-list {
+  display: grid;
+  gap: 0;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border-top: 1px solid #deddd8;
+  list-style: none;
+}
+
+.limen-studio__scene {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1rem 0;
+  border-bottom: 1px solid #deddd8;
+}
+
+.limen-studio__scene-details {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.limen-studio__scene-label {
+  font-weight: 700;
+}
+
+.limen-studio__scene-id {
+  color: #74726d;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.limen-studio__required-state {
+  display: grid;
+  gap: 0.2rem;
+  color: #55544f;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.limen-studio__required-state strong {
+  color: #343330;
+  font-size: 0.875rem;
+}
+
+.limen-studio__switch {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.limen-studio__switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.limen-studio__state-label {
+  min-width: 4.5rem;
+  color: #55544f;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.limen-studio__switch-track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 3.25rem;
+  height: 1.9rem;
+  border: 1px solid #aaa8a1;
+  border-radius: 1rem;
+  background: #d6d4ce;
+  transition: background 150ms ease;
+}
+
+.limen-studio__switch-track::after {
+  position: absolute;
+  top: 0.18rem;
+  left: 0.2rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(32 32 30 / 20%);
+  content: '';
+  transition: transform 150ms ease;
+}
+
+.limen-studio__switch input:checked + .limen-studio__switch-track {
+  border-color: #4e6758;
+  background: #4e6758;
+}
+
+.limen-studio__switch input:checked + .limen-studio__switch-track::after {
+  transform: translateX(1.38rem);
+}
+
+.limen-studio__validation {
+  margin-top: 1.25rem;
+  border-left: 3px solid #55705f;
+  padding: 0.75rem 0 0.75rem 1rem;
+}
+
+.limen-studio__validation--invalid {
+  border-left-color: #8b4b43;
+}
+
+.limen-studio__validation p {
+  margin-bottom: 0;
+  color: #343330;
+}
+
+.limen-studio__validation-messages {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+  color: #55544f;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
 .limen-studio__unavailable {
   max-width: 42rem;
 }
@@ -195,6 +363,22 @@
   }
 
   .limen-studio__panel-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
+  }
+
+  .limen-studio__panel-heading,
+  .limen-studio__scene {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .limen-studio__scene-details {
+    padding-right: 1rem;
+  }
+
+  .limen-studio__required-state {
+    max-width: 15rem;
+    text-align: right;
   }
 }

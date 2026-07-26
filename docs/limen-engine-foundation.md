@@ -50,3 +50,7 @@ El helper inmutable `updateInvitationModuleConfiguration` permite derivar config
 ## Fase 1C.3 — estructura básica de Studio
 
 Studio dispone de rutas internas independientes del layout público. La invitación local conocida se resuelve directamente desde `origin01DemoData` y la página muestra únicamente sus metadatos junto con espacios reservados para la configuración de escenas y la vista previa. Todavía no existen controles ni una vista previa real, y tampoco hay autenticación o persistencia. Studio no está enlazado desde la interfaz pública; los controles permanecen diferidos hasta la Fase 1C.4.
+
+## Fase 1C.4 — configuración local de escenas en Studio
+
+Studio ahora lista las escenas y sus etiquetas desde los metadatos de la plantilla, respetando su orden canónico. Las escenas obligatorias permanecen bloqueadas y las opcionales ofrecen controles nativos accesibles; cada cambio actualiza inmutablemente la configuración completa de módulos y valida una invitación derivada localmente. Restablecer recupera los módulos canónicos de la demo sin alterar el fixture. Los cambios son temporales, la vista previa real queda diferida hasta la Fase 1C.5 y todavía no existen autenticación ni persistencia.
