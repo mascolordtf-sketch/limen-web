@@ -651,6 +651,7 @@ export function Origin01Invitation({
           </section>
 
           <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
+            <h2 id="origin01-trivia-title" className="origin01-sr-only">Trivia sobre Valentina</h2>
             <Origin01Trivia />
           </section>
 

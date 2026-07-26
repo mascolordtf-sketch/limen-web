@@ -43,9 +43,9 @@ export function Origin01Trivia() {
 
   if (phase === 'intro') return (
     <div className="origin01-trivia__intro">
-      <Origin01Lottie animationData={questionAnimation} kind="question" className="origin01-trivia__question-lottie" playKey={playthrough} />
+      <Origin01Lottie animationData={questionAnimation} className="origin01-trivia__question-lottie" playKey={playthrough} />
       <p className="origin01-kicker origin01-trivia__eyebrow">Entre nosotros…</p>
-      <h2 id="origin01-trivia-title" className="origin01-trivia__title">¿Cuánto conocés de verdad a Valentina?</h2>
+      <h2 className="origin01-trivia__title">¿Cuánto conocés de verdad a Valentina?</h2>
       <p className="origin01-trivia__description">Cinco preguntas. Menos de un minuto.</p>
       <button type="button" className="origin01-button origin01-button--dark origin01-trivia__primary" onClick={() => setPhase('playing')}>Aceptar el desafío</button>
     </div>
@@ -87,7 +87,7 @@ export function Origin01Trivia() {
   const tier = config.resultTiers.find((item) => correctCount >= item.minScore) ?? config.resultTiers.at(-1)!
   return (
     <div className="origin01-trivia__result">
-      <Origin01Lottie animationData={confettiAnimation} kind="confetti" className="origin01-trivia__confetti" playKey={playthrough} />
+      <Origin01Lottie animationData={confettiAnimation} className="origin01-trivia__confetti" playKey={playthrough} hideForReducedMotion />
       <p className="origin01-trivia__score"><strong>{correctCount}</strong><span>/ 4 respuestas</span></p>
       <h3 className="origin01-trivia__tier" aria-live="polite">{tier.title}</h3>
       <p className="origin01-trivia__result-message">{tier.message}</p>
