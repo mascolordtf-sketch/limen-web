@@ -46,3 +46,7 @@ Las escenas opcionales de Origin 01 ahora obedecen `invitation.modules`, mientra
 ## Fase 1C.2 — verificación con configuración reducida
 
 El helper inmutable `updateInvitationModuleConfiguration` permite derivar configuraciones reducidas a partir de una invitación canónica sin duplicar su fixture ni alterar el orden de sus módulos. Esta fase no incorpora un fixture reducido permanente, una ruta pública ni una interfaz de Studio. La verificación ejecutable del renderizado reducido queda diferida hasta que exista tooling de pruebas compatible o hasta la fase de vista previa de Studio; los controles visibles continúan diferidos.
+
+## Fase 1C.3 — estructura básica de Studio
+
+Studio dispone de rutas internas independientes del layout público. La invitación local conocida se resuelve directamente desde `origin01DemoData` y la página muestra únicamente sus metadatos junto con espacios reservados para la configuración de escenas y la vista previa. Todavía no existen controles ni una vista previa real, y tampoco hay autenticación o persistencia. Studio no está enlazado desde la interfaz pública; los controles permanecen diferidos hasta la Fase 1C.4.

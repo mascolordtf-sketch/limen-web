@@ -1,0 +1,200 @@
+.limen-studio {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: #f1f1ef;
+  color: #20201e;
+  padding: 1.25rem;
+}
+
+.limen-studio__workspace {
+  width: 100%;
+  max-width: 70rem;
+  margin: 0 auto;
+}
+
+.limen-studio__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 0.75rem 0 2rem;
+}
+
+.limen-studio h1,
+.limen-studio h2,
+.limen-studio p,
+.limen-studio dl {
+  margin-top: 0;
+}
+
+.limen-studio h1 {
+  max-width: 42rem;
+  margin-bottom: 0;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+}
+
+.limen-studio h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.limen-studio__eyebrow {
+  margin-bottom: 0.6rem;
+  color: #62615d;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.limen-studio__back-link,
+.limen-studio__primary-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.limen-studio__back-link {
+  border: 1px solid #cfcec9;
+  padding: 0.65rem 1rem;
+  color: #343330;
+  background: #fafaf8;
+}
+
+.limen-studio__summary,
+.limen-studio__panel,
+.limen-studio__notice {
+  border: 1px solid #d9d8d3;
+  border-radius: 1.25rem;
+  background: #fafaf8;
+  padding: 1.25rem;
+}
+
+.limen-studio__summary-heading h2 {
+  font-size: 1.6rem;
+  letter-spacing: -0.025em;
+}
+
+.limen-studio__technical {
+  color: #696864;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.limen-studio__metadata {
+  display: grid;
+  gap: 0;
+  margin-bottom: 0;
+}
+
+.limen-studio__metadata div {
+  min-width: 0;
+  border-top: 1px solid #e2e1dc;
+  padding: 0.9rem 0;
+}
+
+.limen-studio__metadata dt {
+  margin-bottom: 0.25rem;
+  color: #696864;
+  font-size: 0.8rem;
+}
+
+.limen-studio__metadata dd {
+  margin: 0;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.limen-studio__metadata dd span {
+  margin-left: 0.35rem;
+  color: #777671;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.limen-studio__notice {
+  margin-top: 1rem;
+  border-color: #c7c2b2;
+  background: #f5f1e7;
+}
+
+.limen-studio__notice p,
+.limen-studio__panel p {
+  max-width: 46rem;
+  margin-bottom: 0.5rem;
+  color: #55544f;
+  line-height: 1.65;
+}
+
+.limen-studio__notice p:last-child,
+.limen-studio__panel p:last-child {
+  margin-bottom: 0;
+}
+
+.limen-studio__panel-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.limen-studio__unavailable {
+  max-width: 42rem;
+}
+
+.limen-studio__primary-link {
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  background: #262522;
+  color: #fff;
+}
+
+.limen-studio a:hover {
+  filter: brightness(0.94);
+}
+
+.limen-studio a:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
+@media (min-width: 48rem) {
+  .limen-studio {
+    padding: 2rem;
+  }
+
+  .limen-studio__header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 2rem 0 3rem;
+  }
+
+  .limen-studio__summary {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 3rem;
+    padding: 2rem;
+  }
+
+  .limen-studio__metadata {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+
+  .limen-studio__notice,
+  .limen-studio__panel {
+    padding: 1.75rem;
+  }
+
+  .limen-studio__panel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
