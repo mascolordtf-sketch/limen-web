@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { InvitationData, InvitationImage } from '../types'
+import { Origin01Trivia } from './Origin01Trivia'
 import './origin01.css'
 
 const defaultMusicSrc = '/audio/origin-01-demo.mp3'
@@ -647,6 +648,11 @@ export function Origin01Invitation({
                 </figure>
               ))}
             </div>
+          </section>
+
+          <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
+            <h2 id="origin01-trivia-title" className="origin01-sr-only">Trivia sobre Valentina</h2>
+            <Origin01Trivia />
           </section>
 
           {invitation.gift ? (
