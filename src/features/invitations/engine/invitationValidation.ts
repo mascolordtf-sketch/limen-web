@@ -10,6 +10,10 @@ export type InvitationValidationErrorCode =
   | 'required_module_missing'
   | 'required_module_disabled'
   | 'invalid_theme_variant'
+  | 'duplicate_supported_module'
+  | 'duplicate_required_module'
+  | 'duplicate_optional_module'
+  | 'duplicate_supported_theme_variant'
   | 'duplicate_canonical_module'
   | 'module_classification_overlap'
   | 'supported_module_unclassified'
@@ -25,6 +29,7 @@ export type InvitationValidationError = {
   readonly message: string
   readonly templateId?: string
   readonly moduleId?: string
+  readonly themeId?: string
   readonly fieldPath?: string
 }
 
@@ -51,6 +56,22 @@ export function validateTemplateDefinition(template: InvitationTemplateDefinitio
   const required = new Set<InvitationModuleId>(template.requiredModules)
   const optional = new Set<InvitationModuleId>(template.optionalModules)
   const metadataIds = template.modules.map(({ moduleId }) => moduleId)
+
+  for (const moduleId of duplicates(template.supportedModules)) {
+    errors.push({ code: 'duplicate_supported_module', message: `Template "${template.id}" repeats supported module "${moduleId}". Remove the duplicate entry.`, templateId: template.id, moduleId, fieldPath: 'supportedModules' })
+  }
+
+  for (const moduleId of duplicates(template.requiredModules)) {
+    errors.push({ code: 'duplicate_required_module', message: `Template "${template.id}" repeats required module "${moduleId}". Remove the duplicate entry.`, templateId: template.id, moduleId, fieldPath: 'requiredModules' })
+  }
+
+  for (const moduleId of duplicates(template.optionalModules)) {
+    errors.push({ code: 'duplicate_optional_module', message: `Template "${template.id}" repeats optional module "${moduleId}". Remove the duplicate entry.`, templateId: template.id, moduleId, fieldPath: 'optionalModules' })
+  }
+
+  for (const themeId of duplicates(template.supportedThemeVariants)) {
+    errors.push({ code: 'duplicate_supported_theme_variant', message: `Template "${template.id}" repeats supported theme variant "${themeId}". Remove the duplicate entry.`, templateId: template.id, themeId, fieldPath: 'supportedThemeVariants' })
+  }
 
   for (const moduleId of duplicates(template.canonicalOrder)) {
     errors.push({ code: 'duplicate_canonical_module', message: `Template "${template.id}" repeats module "${moduleId}" in canonical order.`, templateId: template.id, moduleId, fieldPath: 'canonicalOrder' })

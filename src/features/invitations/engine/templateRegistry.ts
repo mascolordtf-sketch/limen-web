@@ -8,8 +8,12 @@ const templateRegistry = {
 
 Object.values(templateRegistry).forEach(assertValidTemplateDefinition)
 
+function isRegisteredTemplateId(templateId: string): templateId is keyof typeof templateRegistry {
+  return Object.prototype.hasOwnProperty.call(templateRegistry, templateId)
+}
+
 export function findInvitationTemplate(templateId: string): InvitationTemplateDefinition | undefined {
-  return templateId === 'origin01' ? templateRegistry.origin01 : undefined
+  return isRegisteredTemplateId(templateId) ? templateRegistry[templateId] : undefined
 }
 
 export function getInvitationTemplate(templateId: InvitationTemplateId): InvitationTemplateDefinition {
