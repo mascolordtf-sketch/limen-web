@@ -2227,7 +2227,7 @@
   margin: 0 auto;
   border: 1px solid var(--origin-border);
   border-radius: var(--origin-radius-feature);
-  padding: 2.25rem 1.25rem;
+  padding: 1.5rem 1.25rem;
   background: var(--origin-ivory);
   box-shadow: var(--origin-shadow-soft);
 }
@@ -2237,7 +2237,7 @@
   flex-direction: column;
   align-items: center;
   gap: .85rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.35rem;
 }
 
 .origin01-trivia__progress-label {
@@ -2275,7 +2275,7 @@
 /* — Question — */
 
 .origin01-trivia__question {
-  margin: 0 0 2rem;
+  margin: 0 0 1.4rem;
   font-family: var(--origin-display);
   font-size: clamp(1.7rem, 6.5vw, 2.4rem);
   font-weight: 400;
@@ -2301,14 +2301,14 @@
 .origin01-trivia__options {
   display: flex;
   flex-direction: column;
-  gap: .7rem;
+  gap: .55rem;
 }
 
 .origin01-trivia__option {
   display: flex;
   align-items: center;
   gap: .85rem;
-  min-height: 3.5rem;
+  min-height: 3.25rem;
   border: 1px solid var(--origin-border);
   border-radius: var(--origin-radius-control);
   padding: .8rem 1.1rem;
@@ -2404,11 +2404,11 @@
   opacity: .45;
 }
 
-/* — Feedback area (always present, min-height reserves space) — */
+/* — Feedback area (always present, compact space for wrapped mobile copy) — */
 
 .origin01-trivia__feedback {
-  min-height: 5.5rem;
-  margin-top: 1.5rem;
+  min-height: 4.5rem;
+  margin-top: .875rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2449,7 +2449,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 1.5rem;
+  margin-top: .875rem;
   opacity: 1;
 }
 

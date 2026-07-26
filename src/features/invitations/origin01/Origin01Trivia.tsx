@@ -242,12 +242,8 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           })}
         </div>
 
-        {/* Feedback area — always rendered and tall enough for wrapped mobile copy */}
-        <div
-          className="origin01-trivia__feedback"
-          aria-live="polite"
-          style={{ minHeight: '7.25rem' }}
-        >
+        {/* Feedback area — always rendered so the action remains stable */}
+        <div className="origin01-trivia__feedback" aria-live="polite">
           {isAnswered ? (
             <p
               className={`origin01-trivia__feedback-text${
@@ -263,11 +259,8 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           ) : null}
         </div>
 
-        {/* Action area — always rendered and keeps a stable footprint */}
-        <div
-          className="origin01-trivia__action"
-          style={{ minHeight: '5.25rem' }}
-        >
+        {/* Action area — the button and hint keep their natural footprint */}
+        <div className="origin01-trivia__action">
           <button
             type="button"
             className="origin01-button origin01-button--dark origin01-trivia__next"
