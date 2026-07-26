@@ -42,3 +42,7 @@ El contrato histórico de `types.ts` se conserva temporalmente para no ampliar e
 ## Fase 1C.1 — configuración de escenas opcionales
 
 Las escenas opcionales de Origin 01 ahora obedecen `invitation.modules`, mientras que la validación sigue protegiendo las escenas obligatorias. El orden canónico permanece escrito explícitamente en el renderer de la plantilla y el helper puro de ejecución vive en `engine/moduleRuntime.ts`. Studio y los controles visibles continúan diferidos.
+
+## Fase 1C.2 — verificación con configuración reducida
+
+Una configuración reducida de Origin 01 se deriva de la demo canónica sin duplicar su fixture de contenido. Solo cambian las banderas de módulos opcionales y la invitación resultante conserva la validación existente para una verificación interna controlada. No se introduce una ruta pública ni una interfaz de Studio; los controles visibles continúan diferidos.
