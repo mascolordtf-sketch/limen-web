@@ -59,7 +59,7 @@ export function StudioInvitationPage() {
   }).format(new Date(invitation.event.startsAt))
 
   return (
-    <main className="limen-studio">
+    <div className="limen-studio">
       <div className="limen-studio__workspace">
         <header className="limen-studio__header">
           <div>
@@ -113,6 +113,6 @@ export function StudioInvitationPage() {
 
         <StudioPreview invitation={validation.valid ? previewInvitation : null} />
       </div>
-    </main>
+    </div>
   )
 }
