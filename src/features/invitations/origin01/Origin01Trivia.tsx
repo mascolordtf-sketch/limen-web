@@ -1,0 +1,102 @@
+import { useState } from 'react'
+
+import confettiAnimation from '../../../assets/lottie/origin01-trivia-confetti.json'
+import questionAnimation from '../../../assets/lottie/origin01-trivia-question.json'
+import { Origin01Lottie } from './Origin01Lottie'
+import { origin01Trivia as config } from './origin01TriviaData'
+
+type Phase = 'intro' | 'playing' | 'result'
+
+export function Origin01Trivia() {
+  const [phase, setPhase] = useState<Phase>('intro')
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
+  const [answers, setAnswers] = useState<(string | null)[]>(() => Array(config.questions.length).fill(null))
+  const [playthrough, setPlaythrough] = useState(0)
+  const question = config.questions[currentQuestionIndex]
+  const isLastQuestion = currentQuestionIndex === config.questions.length - 1
+  const correctCount = config.questions.reduce((score, item, index) =>
+    item.isPrediction ? score : score + Number(answers[index] === item.correctOptionId), 0)
+
+  const selectOption = (optionId: string) => {
+    if (selectedOptionId !== null) return
+    setSelectedOptionId(optionId)
+    setAnswers((previous) => previous.map((answer, index) => index === currentQuestionIndex ? optionId : answer))
+  }
+
+  const next = () => {
+    if (isLastQuestion) {
+      setPhase('result')
+      return
+    }
+    setCurrentQuestionIndex((index) => index + 1)
+    setSelectedOptionId(null)
+  }
+
+  const replay = () => {
+    setPhase('intro')
+    setCurrentQuestionIndex(0)
+    setSelectedOptionId(null)
+    setAnswers(Array(config.questions.length).fill(null))
+    setPlaythrough((value) => value + 1)
+  }
+
+  if (phase === 'intro') return (
+    <div className="origin01-trivia__intro">
+      <Origin01Lottie animationData={questionAnimation} kind="question" className="origin01-trivia__question-lottie" playKey={playthrough} />
+      <p className="origin01-kicker origin01-trivia__eyebrow">Entre nosotros…</p>
+      <h2 id="origin01-trivia-title" className="origin01-trivia__title">¿Cuánto conocés de verdad a Valentina?</h2>
+      <p className="origin01-trivia__description">Cinco preguntas. Menos de un minuto.</p>
+      <button type="button" className="origin01-button origin01-button--dark origin01-trivia__primary" onClick={() => setPhase('playing')}>Aceptar el desafío</button>
+    </div>
+  )
+
+  if (phase === 'playing') {
+    const isCorrect = !question.isPrediction && selectedOptionId === question.correctOptionId
+    const feedback = question.isPrediction || isCorrect ? question.correctFeedback : question.incorrectFeedback
+    return (
+      <div className="origin01-trivia__playing">
+        <div className="origin01-trivia__progress">
+          <p>Pregunta {currentQuestionIndex + 1} de {config.questions.length}</p>
+          <div className="origin01-trivia__progress-track" role="progressbar" aria-valuemin={1} aria-valuemax={config.questions.length} aria-valuenow={currentQuestionIndex + 1} aria-label="Progreso de la trivia">
+            <span style={{ width: `${((currentQuestionIndex + 1) / config.questions.length) * 100}%` }} />
+          </div>
+        </div>
+        <h3 key={question.id} className="origin01-trivia__question">{question.prompt}</h3>
+        <div className="origin01-trivia__options" role="group" aria-label={`Respuestas para: ${question.prompt}`}>
+          {question.options.map((option, index) => {
+            const selected = selectedOptionId === option.id
+            const answered = selectedOptionId !== null
+            const correct = !question.isPrediction && option.id === question.correctOptionId
+            const state = !answered ? '' : question.isPrediction ? (selected ? 'selected' : 'quiet') : correct ? 'correct' : selected ? 'incorrect' : 'quiet'
+            return <button key={option.id} type="button" className={`origin01-trivia__option ${state ? `origin01-trivia__option--${state}` : ''}`} onClick={() => selectOption(option.id)} disabled={answered} aria-pressed={selected}>
+              <span aria-hidden="true">{String.fromCharCode(65 + index)}</span><strong>{option.label}</strong>
+            </button>
+          })}
+        </div>
+        {selectedOptionId !== null ? (
+          <div className="origin01-trivia__answered">
+            <p className={`origin01-trivia__feedback origin01-trivia__feedback--${question.isPrediction ? 'prediction' : isCorrect ? 'correct' : 'incorrect'}`} aria-live="polite">{feedback}</p>
+            <button type="button" className="origin01-button origin01-button--dark origin01-trivia__next" onClick={next}>{isLastQuestion ? 'Ver resultado' : 'Siguiente'}</button>
+          </div>
+        ) : null}
+      </div>
+    )
+  }
+
+  const tier = config.resultTiers.find((item) => correctCount >= item.minScore) ?? config.resultTiers.at(-1)!
+  return (
+    <div className="origin01-trivia__result">
+      <Origin01Lottie animationData={confettiAnimation} kind="confetti" className="origin01-trivia__confetti" playKey={playthrough} />
+      <p className="origin01-trivia__score"><strong>{correctCount}</strong><span>/ 4 respuestas</span></p>
+      <h3 className="origin01-trivia__tier" aria-live="polite">{tier.title}</h3>
+      <p className="origin01-trivia__result-message">{tier.message}</p>
+      <div className="origin01-trivia__closing">
+        <h3>Gracias por jugar</h3>
+        <p>Ahora que ya sabés un poco más de mí, espero que estés ahí para compartir una de las noches más importantes de mi vida.</p>
+        <span>Valentina</span>
+      </div>
+      <button type="button" className="origin01-button origin01-trivia__replay" onClick={replay}>Volver a jugar</button>
+    </div>
+  )
+}
