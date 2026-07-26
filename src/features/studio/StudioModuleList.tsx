@@ -47,11 +47,13 @@ export function StudioModuleList({
           const isRequired = requiredModules.has(moduleId)
           const isEnabled = isRequired || configuration?.enabled === true
           const controlId = `studio-module-${moduleId}`
+          const labelId = `studio-module-${moduleId}-label`
+          const stateId = `studio-module-${moduleId}-state`
 
           return (
             <li className="limen-studio__scene" key={moduleId}>
               <div className="limen-studio__scene-details">
-                <span className="limen-studio__scene-label">{definition?.internalLabel ?? moduleId}</span>
+                <span id={labelId} className="limen-studio__scene-label">{definition?.internalLabel ?? moduleId}</span>
                 <span className="limen-studio__scene-id">{moduleId}</span>
               </div>
 
@@ -62,11 +64,12 @@ export function StudioModuleList({
                 </div>
               ) : (
                 <label className="limen-studio__switch" htmlFor={controlId}>
-                  <span className="limen-studio__state-label">{isEnabled ? 'Activa' : 'Inactiva'}</span>
+                  <span id={stateId} className="limen-studio__state-label">{isEnabled ? 'Activa' : 'Inactiva'}</span>
                   <input
                     id={controlId}
                     type="checkbox"
                     checked={isEnabled}
+                    aria-labelledby={`${labelId} ${stateId}`}
                     onChange={(event) => onModuleChange(moduleId, event.currentTarget.checked)}
                   />
                   <span className="limen-studio__switch-track" aria-hidden="true" />
