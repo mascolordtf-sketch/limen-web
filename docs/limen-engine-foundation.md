@@ -42,3 +42,7 @@ El contrato histórico de `types.ts` se conserva temporalmente para no ampliar e
 ## Fase 1C.1 — configuración de escenas opcionales
 
 Las escenas opcionales de Origin 01 ahora obedecen `invitation.modules`, mientras que la validación sigue protegiendo las escenas obligatorias. El orden canónico permanece escrito explícitamente en el renderer de la plantilla y el helper puro de ejecución vive en `engine/moduleRuntime.ts`. Studio y los controles visibles continúan diferidos.
+
+## Fase 1C.2 — verificación con configuración reducida
+
+El helper inmutable `updateInvitationModuleConfiguration` permite derivar configuraciones reducidas a partir de una invitación canónica sin duplicar su fixture ni alterar el orden de sus módulos. Esta fase no incorpora un fixture reducido permanente, una ruta pública ni una interfaz de Studio. La verificación ejecutable del renderizado reducido queda diferida hasta que exista tooling de pruebas compatible o hasta la fase de vista previa de Studio; los controles visibles continúan diferidos.
