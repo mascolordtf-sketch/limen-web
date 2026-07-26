@@ -111,13 +111,13 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
 
   useEffect(() => {
     if (phase === 'playing' && questionRef.current) {
-      questionRef.current.focus()
+      questionRef.current.focus({ preventScroll: true })
     }
   }, [phase, currentQ])
 
   useEffect(() => {
     if (phase === 'result' && resultRef.current) {
-      resultRef.current.focus()
+      resultRef.current.focus({ preventScroll: true })
     }
   }, [phase])
 
@@ -242,8 +242,12 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           })}
         </div>
 
-        {/* Feedback area — always rendered, min-height reserves space */}
-        <div className="origin01-trivia__feedback" aria-live="polite">
+        {/* Feedback area — always rendered and tall enough for wrapped mobile copy */}
+        <div
+          className="origin01-trivia__feedback"
+          aria-live="polite"
+          style={{ minHeight: '7.25rem' }}
+        >
           {isAnswered ? (
             <p
               className={`origin01-trivia__feedback-text${
@@ -259,8 +263,11 @@ export function Origin01Trivia({ revealImage }: { revealImage: RevealImage }) {
           ) : null}
         </div>
 
-        {/* Action area — always rendered, stable layout */}
-        <div className="origin01-trivia__action">
+        {/* Action area — always rendered and keeps a stable footprint */}
+        <div
+          className="origin01-trivia__action"
+          style={{ minHeight: '5.25rem' }}
+        >
           <button
             type="button"
             className="origin01-button origin01-button--dark origin01-trivia__next"
