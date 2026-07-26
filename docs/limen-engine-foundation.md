@@ -54,3 +54,7 @@ Studio dispone de rutas internas independientes del layout público. La invitaci
 ## Fase 1C.4 — configuración local de escenas en Studio
 
 Studio ahora lista las escenas y sus etiquetas desde los metadatos de la plantilla, respetando su orden canónico. Las escenas obligatorias permanecen bloqueadas y las opcionales ofrecen controles nativos accesibles; cada cambio actualiza inmutablemente la configuración completa de módulos y valida una invitación derivada localmente. Restablecer recupera los módulos canónicos de la demo sin alterar el fixture. Los cambios son temporales, la vista previa real queda diferida hasta la Fase 1C.5 y todavía no existen autenticación ni persistencia.
+
+## Fase 1C.5A — vista previa real en Studio
+
+Studio deriva la invitación de vista previa a partir de `origin01DemoData` y la configuración local de módulos, por lo que solo reemplaza los módulos y conserva intactos los demás datos canónicos. Las configuraciones válidas se entregan al renderer real `Origin01Invitation`, que permanece ajeno a Studio; una configuración inválida no se renderiza. Los cambios siguen siendo temporales y la audiencia permanece fija en protagonista durante esta fase. Los controles de audiencia quedan diferidos hasta la Fase 1C.5B y todavía no existen autenticación ni persistencia.

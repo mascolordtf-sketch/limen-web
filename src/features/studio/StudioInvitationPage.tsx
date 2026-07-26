@@ -5,8 +5,10 @@ import { updateInvitationModuleConfiguration } from '../invitations/engine/modul
 import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
+import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { origin01DemoData } from '../invitations/origin01/origin01DemoData'
 import { StudioModuleList } from './StudioModuleList'
+import { StudioPreview } from './StudioPreview'
 import './studio.css'
 
 const lifecycleLabels = {
@@ -28,6 +30,10 @@ export function StudioInvitationPage() {
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
+  )
+  const previewInvitation = useMemo<Origin01InvitationData>(
+    () => ({ ...origin01DemoData, modules }),
+    [modules],
   )
   const resetDisabled = modules.length === invitation.modules.length
     && modules.every((module, index) => {
@@ -103,11 +109,9 @@ export function StudioInvitationPage() {
               </>
             )}
           </section>
-          <section className="limen-studio__panel" aria-labelledby="studio-preview-title">
-            <h2 id="studio-preview-title">Vista previa</h2>
-            <p>La vista previa real se conectará en la próxima fase usando esta configuración local.</p>
-          </section>
         </div>
+
+        <StudioPreview invitation={validation.valid ? previewInvitation : null} />
       </div>
     </main>
   )
