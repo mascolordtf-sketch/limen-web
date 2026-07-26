@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { InvitationAudience, InvitationMediaReference } from '../engine/invitationTypes'
+import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
 import { Origin01Trivia } from './Origin01Trivia'
 import type { Origin01InvitationData } from './origin01ContentTypes'
 import './origin01.css'
@@ -265,6 +266,10 @@ export function Origin01Invitation({
   const [isMusicFailed, setIsMusicFailed] = useState(false)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const [shareStatus, setShareStatus] = useState('')
+  const enabledModules = useMemo(
+    () => getEnabledInvitationModuleIds(invitation.modules),
+    [invitation.modules],
+  )
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const envelopeRef = useRef<HTMLButtonElement | null>(null)
   const experienceRef = useRef<HTMLDivElement | null>(null)
@@ -563,6 +568,7 @@ export function Origin01Invitation({
             <span className="origin01-hero__scroll" aria-hidden="true">{invitation.content.hero.scrollHint}</span>
           </section>
 
+          {enabledModules.has('countdown') ? (
           <section className="origin01-section origin01-countdown-panel" aria-labelledby="origin01-countdown-title">
             <div className="origin01-countdown-panel__surface">
               <p className="origin01-kicker">{invitation.content.countdown.eyebrow}</p>
@@ -570,7 +576,9 @@ export function Origin01Invitation({
               <Countdown key={invitation.event.startsAt} startsAt={invitation.event.startsAt} completedMessage={invitation.content.countdown.completedMessage} />
             </div>
           </section>
+          ) : null}
 
+          {enabledModules.has('story') ? (
           <section className="origin01-section origin01-message" aria-labelledby="origin01-message-title">
             <div className="origin01-message__card">
               <p className="origin01-kicker">{invitation.content.story.eyebrow}</p>
@@ -579,6 +587,7 @@ export function Origin01Invitation({
               <span className="origin01-message__signature">{invitation.content.story.signature}</span>
             </div>
           </section>
+          ) : null}
 
           <section className="origin01-section origin01-info" aria-labelledby="origin01-info-title">
             <div className="origin01-section-heading">
@@ -615,6 +624,7 @@ export function Origin01Invitation({
             </div>
           </section>
 
+          {enabledModules.has('dressCode') ? (
           <section className="origin01-dress" aria-labelledby="origin01-dress-title">
             <div className="origin01-dress__media">
               <InvitationImageAsset image={mediaById.get(invitation.content.dressCode.imageMediaId)} className="origin01-dress__image" />
@@ -627,7 +637,9 @@ export function Origin01Invitation({
               <span className="origin01-dress__note">{invitation.content.dressCode.note}</span>
             </div>
           </section>
+          ) : null}
 
+          {enabledModules.has('gallery') ? (
           <section className="origin01-section origin01-gallery" aria-labelledby="origin01-gallery-title">
             <div className="origin01-section-heading">
               <p className="origin01-kicker">{invitation.content.gallery.eyebrow}</p>
@@ -650,12 +662,16 @@ export function Origin01Invitation({
               })}
             </div>
           </section>
+          ) : null}
 
+          {enabledModules.has('trivia') ? (
           <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
             <h2 id="origin01-trivia-title" className="origin01-sr-only">{invitation.content.trivia.accessibleTitle}</h2>
             <Origin01Trivia config={invitation.content.trivia} />
           </section>
+          ) : null}
 
+          {enabledModules.has('gifts') ? (
           <section className="origin01-section origin01-gift" aria-labelledby="origin01-gift-title">
               <div className="origin01-gift__card">
                 <div className="origin01-gift__media">
@@ -683,7 +699,9 @@ export function Origin01Invitation({
                 </div>
               </div>
           </section>
+          ) : null}
 
+          {enabledModules.has('rsvp') ? (
           <section className="origin01-section origin01-rsvp" aria-labelledby="origin01-rsvp-title">
             <div className="origin01-rsvp__sparkles" aria-hidden="true" />
             <span className="origin01-feature-icon origin01-feature-icon--rsvp" data-icon-motion="message"><OriginIcon name="message" /></span>
@@ -696,6 +714,7 @@ export function Origin01Invitation({
             </a>
             {invitation.content.rsvp.demoNote ? <p className="origin01-rsvp__note">{invitation.content.rsvp.demoNote}</p> : null}
           </section>
+          ) : null}
 
           <section className="origin01-closing" aria-labelledby="origin01-closing-title">
             <InvitationImageAsset image={closingImage} className="origin01-closing__image" decorative />
