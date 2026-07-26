@@ -38,3 +38,7 @@ La invitación publicada `LMN-015-001` vive en `origin01/origin01DemoData.ts` y 
 `DemoPage` mantiene un registro local explícito por código y entrega el objeto completo a `Origin01Invitation`; la audiencia continúa derivándose de la URL como estado de ejecución. El renderer conserva su jerarquía de escenas y resuelve las referencias de medios sin crear un contenedor visual nuevo. `Origin01Trivia` recibe su configuración tipada mediante una prop y ya no importa contenido personalizado global.
 
 El contrato histórico de `types.ts` se conserva temporalmente para no ampliar esta fase a una limpieza general, pero ya no es la fuente de la demo Origin 01. La Fase 1C sigue siendo responsable de conectar la configuración validada de módulos con renderizado condicional; en esta fase la configuración no activa, oculta ni reordena escenas.
+
+## Fase 1C.1 — configuración de escenas opcionales
+
+Las escenas opcionales de Origin 01 ahora obedecen `invitation.modules`, mientras que la validación sigue protegiendo las escenas obligatorias. El orden canónico permanece escrito explícitamente en el renderer de la plantilla y el helper puro de ejecución vive en `engine/moduleRuntime.ts`. Studio y los controles visibles continúan diferidos.
