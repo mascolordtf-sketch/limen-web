@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 
 import type { InvitationData, InvitationImage } from '../types'
-import { Origin01Trivia } from './Origin01Trivia'
 import './origin01.css'
 
 const defaultMusicSrc = '/audio/origin-01-demo.mp3'
@@ -316,10 +315,6 @@ export function Origin01Invitation({
       { selector: '.origin01-gallery__item--1', motion: 'depth', level: 'protagonist', delay: 'follow' },
       { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
-      { selector: '.origin01-trivia__eyebrow, .origin01-trivia__title', motion: 'up', level: 'content' },
-      { selector: '.origin01-trivia__desc, .origin01-trivia__meta', motion: 'fade', level: 'content', delay: 'follow' },
-      { selector: '.origin01-trivia__lights--intro', motion: 'scale', level: 'content', delay: 'supporting' },
-      { selector: '.origin01-trivia__start', motion: 'scale', level: 'action', delay: 'action' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-gift__content > .origin01-kicker, .origin01-gift__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
       { selector: '.origin01-gift__content > p:not(.origin01-kicker), .origin01-gift__account, .origin01-gift__content > small', motion: 'fade', level: 'content', delay: 'supporting' },
@@ -652,11 +647,6 @@ export function Origin01Invitation({
                 </figure>
               ))}
             </div>
-          </section>
-
-          <section className="origin01-section origin01-trivia" aria-labelledby="origin01-trivia-title">
-            <h2 id="origin01-trivia-title" className="origin01-sr-only">El universo de Valentina</h2>
-            <Origin01Trivia revealImage={{ src: closingImage?.src, alt: closingImage?.alt ?? 'Valentina' }} />
           </section>
 
           {invitation.gift ? (
