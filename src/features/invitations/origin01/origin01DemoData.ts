@@ -42,7 +42,6 @@ export const origin01DemoData = {
     { id: 'music', kind: 'audio', src: '/audio/origin-01-demo.mp3', title: 'Música de fondo' },
   ],
   content: {
-    demoLabel: 'Demostración LIMEN',
     prelude: {
       eyebrow: 'Un mensaje solo para vos', title: 'Hola, Valentina.',
       body: 'Durante mucho tiempo imaginaste este momento. Hoy empieza a hacerse real.',
@@ -54,7 +53,7 @@ export const origin01DemoData = {
       monogram: 'V', instruction: 'Tocá el sello para abrir',
     },
     hero: {
-      celebrationLabel: 'Mis 15', dateLabel: '20 de marzo de 2027',
+      dateLabel: '20 de marzo de 2027',
       phrase: 'Antes era un sueño. Ahora empieza.', scrollHint: 'Deslizá para descubrir ↓', imageMediaId: 'hero',
     },
     countdown: { eyebrow: 'El tiempo se acerca', heading: 'Falta menos para una noche inolvidable.', completedMessage: 'Este momento ya empezó. Gracias por haber sido parte.' },
@@ -116,7 +115,7 @@ export const origin01DemoData = {
       sharePrompt: 'Ahora podés compartir este momento con quienes querés cerca.', shareActionLabel: 'Compartir invitación',
       shareTitle: 'Mis 15 de Valentina', shareText: 'Antes era un sueño. Ahora empieza. Te invito a compartir este momento conmigo.',
     },
-    music: { mediaId: 'music', label: 'Música de fondo' },
+    music: { mediaId: 'music' },
   },
   createdAt: '2026-07-26T14:40:54.000Z',
   updatedAt: '2026-07-26T14:40:54.000Z',
@@ -141,9 +140,19 @@ function assertOrigin01DemoData(invitation: Origin01InvitationData): void {
       throw new Error(`Invitation ${invitation.code}, scene/module "${scene}": missing field.`)
     }
   }
-  for (const mediaId of [invitation.content.hero.imageMediaId, invitation.content.dressCode.imageMediaId, invitation.content.gifts.imageMediaId, invitation.content.closing.imageMediaId, invitation.content.music.mediaId, ...invitation.content.gallery.images.map(({ mediaId }) => mediaId)]) {
-    if (!invitation.media.some(({ id }) => id === mediaId)) throw new Error(`Invitation ${invitation.code}, scene/module "media": missing field "${mediaId}".`)
+  const assertMediaKind = (field: string, mediaId: string, expectedKind: 'image' | 'audio') => {
+    const media = invitation.media.find(({ id }) => id === mediaId)
+    if (media?.kind !== expectedKind) {
+      throw new Error(`Invitation ${invitation.code}, scene/content field "${field}": media "${mediaId}" expected kind "${expectedKind}", actual kind "${media?.kind ?? 'missing-media'}".`)
+    }
   }
+
+  assertMediaKind('hero.imageMediaId', invitation.content.hero.imageMediaId, 'image')
+  assertMediaKind('dressCode.imageMediaId', invitation.content.dressCode.imageMediaId, 'image')
+  assertMediaKind('gifts.imageMediaId', invitation.content.gifts.imageMediaId, 'image')
+  assertMediaKind('closing.imageMediaId', invitation.content.closing.imageMediaId, 'image')
+  invitation.content.gallery.images.forEach(({ mediaId }, index) => assertMediaKind(`gallery.images.${index}.mediaId`, mediaId, 'image'))
+  assertMediaKind('music.mediaId', invitation.content.music.mediaId, 'audio')
 }
 
 assertOrigin01DemoData(origin01DemoData)

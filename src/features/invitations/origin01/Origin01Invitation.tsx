@@ -555,7 +555,7 @@ export function Origin01Invitation({
               <span>El primer instante</span>
             </div>
             <div className="origin01-hero__content">
-              <p className="origin01-kicker">{invitation.content.hero.celebrationLabel}</p>
+              <p className="origin01-kicker">{invitation.event.celebrationLabel}</p>
               <h1 id="origin01-hero-title">{invitation.event.name}</h1>
               <p className="origin01-hero__date">{invitation.content.hero.dateLabel}</p>
               <p className="origin01-hero__phrase">{invitation.content.hero.phrase}</p>

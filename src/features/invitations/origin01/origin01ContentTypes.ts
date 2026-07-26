@@ -56,7 +56,6 @@ export type Origin01Content = LimenInvitationContent & {
     readonly instruction: string
   }
   readonly hero: {
-    readonly celebrationLabel: string
     readonly dateLabel: string
     readonly phrase: string
     readonly scrollHint: string
@@ -111,8 +110,7 @@ export type Origin01Content = LimenInvitationContent & {
     readonly shareTitle: string
     readonly shareText: string
   }
-  readonly music: { readonly mediaId: string; readonly label: string }
-  readonly demoLabel: string
+  readonly music: { readonly mediaId: string }
 }
 
 export type Origin01InvitationData = LimenInvitation<Origin01Content> & {
