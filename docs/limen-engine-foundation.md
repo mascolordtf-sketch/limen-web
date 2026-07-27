@@ -81,4 +81,8 @@ Studio presenta el inicio y la finalización como una única configuración de h
 
 ## Fase 2A.3A — edición temporal del nombre del lugar
 
-Studio permite editar temporalmente el nombre canónico del lugar, y la vista previa real de Origin 01 consume el `event.venue` derivado mientras conserva sin cambios la dirección canónica. Ningún fixture se muta y no existen persistencia ni autenticación; la edición de la dirección y las capacidades avanzadas de mapas permanecen diferidas.
+Studio permite editar temporalmente el nombre canónico del lugar, y la vista previa real de Origin 01 consume el `event.venue` derivado. Ningún fixture se muta y no existen persistencia ni autenticación.
+
+## Fase 2A.3B — edición temporal de la ubicación del evento
+
+Studio presenta el lugar y la dirección como una única configuración temporal, con ambos campos editables y restablecibles de forma independiente. Origin 01 consume el `event.venue` y el `event.address` derivados, incluida la acción de mapa existente, sin mutar ningún fixture. No existen persistencia ni autenticación; las coordenadas, la geocodificación y la edición avanzada de mapas permanecen diferidas.
