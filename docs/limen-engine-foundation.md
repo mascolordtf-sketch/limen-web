@@ -98,3 +98,7 @@ Studio reúne en un único editor de confirmación la edición temporal del tít
 ## Fase 2A.6 — edición temporal de Regalos
 
 Studio reúne en un único editor de Regalos la edición temporal del contenido existente y del dato canónico copiable. La vista previa real de Origin 01 consume los valores derivados y la acción existente continúa controlando la copia; ocultar y volver a activar el módulo conserva las ediciones temporales. Ningún fixture se muta y no existen persistencia ni autenticación; el procesamiento de pagos, los registros de regalos y las integraciones financieras permanecen diferidos.
+
+## Fase 2A.7 — edición temporal de Historia
+
+Studio permite editar temporalmente el contenido narrativo no identitario existente de Historia, preservando su estructura canónica, mientras la firma sigue derivándose de la identidad temporal de la protagonista. La vista previa real de Origin 01 consume los valores derivados; ocultar y volver a activar el módulo conserva las ediciones, y el contenido más extenso crece naturalmente. Ningún fixture se muta y no existen persistencia ni autenticación; los medios, los cambios en la estructura de párrafos y la edición de texto enriquecido permanecen diferidos.

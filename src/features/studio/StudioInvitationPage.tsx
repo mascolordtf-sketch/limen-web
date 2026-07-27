@@ -17,6 +17,7 @@ import { StudioPreview } from './StudioPreview'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
+import { StudioStoryEditor } from './StudioStoryEditor'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
 import './studio.css'
 
@@ -91,6 +92,10 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [giftsNote, setGiftsNote] = useState<string>(() => canonicalGiftsNote)
   const canonicalGiftsAccount = invitation.content.gifts.accountValue
   const [giftsAccount, setGiftsAccount] = useState<string>(() => canonicalGiftsAccount)
+  const canonicalStoryEyebrow = invitation.content.story.eyebrow
+  const [storyEyebrow, setStoryEyebrow] = useState<string>(() => canonicalStoryEyebrow)
+  const canonicalStoryMessage = invitation.content.story.message
+  const [storyMessage, setStoryMessage] = useState<string>(() => canonicalStoryMessage)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -163,6 +168,12 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const giftsAccountError = giftsAccount.trim().length === 0
     ? 'Ingresá el dato para regalar.'
     : null
+  const storyEyebrowError = storyEyebrow.trim().length === 0
+    ? 'Ingresá el texto introductorio.'
+    : null
+  const storyMessageError = storyMessage.trim().length === 0
+    ? 'Ingresá el texto de la historia.'
+    : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -201,6 +212,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         },
         story: {
           ...invitation.content.story,
+          eyebrow: storyEyebrow,
+          message: storyMessage,
           signature: protagonistName,
         },
         trivia: {
@@ -240,7 +253,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     }),
     [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, invitation, modules,
-      protagonistName, shareMode, temporaryDateLabel,
+      protagonistName, shareMode, storyEyebrow, storyMessage, temporaryDateLabel,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -340,6 +353,18 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onModeChange={handleShareModeChange}
             onCustomMessageChange={setCustomShareMessage}
             onReset={handleShareReset}
+          />
+          <StudioStoryEditor
+            eyebrowValue={storyEyebrow}
+            canonicalEyebrowValue={canonicalStoryEyebrow}
+            eyebrowError={storyEyebrowError}
+            messageValue={storyMessage}
+            canonicalMessageValue={canonicalStoryMessage}
+            messageError={storyMessageError}
+            onEyebrowChange={setStoryEyebrow}
+            onEyebrowReset={() => setStoryEyebrow(canonicalStoryEyebrow)}
+            onMessageChange={setStoryMessage}
+            onMessageReset={() => setStoryMessage(canonicalStoryMessage)}
           />
           <StudioEventScheduleEditor
             startValue={eventStart}
@@ -453,6 +478,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !rsvpTitleError && !rsvpDescriptionError && !rsvpActionLabelError
             && !rsvpRecipientPhoneError
             && !giftsTitleError && !giftsDescriptionError && !giftsNoteError && !giftsAccountError
+            && !storyEyebrowError && !storyMessageError
             ? previewInvitation
             : null}
           audience={audience}
