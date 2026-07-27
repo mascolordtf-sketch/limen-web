@@ -69,4 +69,4 @@ Studio resuelve invitaciones mediante un único registro local tipado. La ruta g
 
 ## Fase 2A.1 — edición temporal del nombre de la protagonista
 
-Studio permite editar temporalmente el nombre visible de la identidad canónica de la protagonista y deriva la invitación de vista previa sin mutar el fixture registrado. `event.name` se sincroniza temporalmente como proyección de compatibilidad porque el renderer actual de Origin 01 todavía lo consume; las cadenas editoriales personalizadas duplicadas permanecen fuera de esta fase. No existen persistencia ni autenticación.
+Studio permite editar temporalmente la identidad canónica de la protagonista y proyecta ese nombre en los campos de identidad directos de Origin 01 sin mutar el fixture registrado. `event.name` permanece sincronizado como compatibilidad con el renderer actual; los textos narrativos y operativos arbitrarios no se reemplazan globalmente y quedan diferidos para edición explícita por sección o variables. No existen persistencia ni autenticación.

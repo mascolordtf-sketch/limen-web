@@ -59,6 +59,28 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         ...invitation.event,
         name: protagonistName,
       },
+      content: {
+        ...invitation.content,
+        prelude: {
+          ...invitation.content.prelude,
+          title: `Hola, ${protagonistName}.`,
+        },
+        story: {
+          ...invitation.content.story,
+          signature: protagonistName,
+        },
+        trivia: {
+          ...invitation.content.trivia,
+          protagonistName,
+          accessibleTitle: `Trivia sobre ${protagonistName}`,
+          title: `¿Cuánto conocés de verdad a ${protagonistName}?`,
+          revealSignature: protagonistName,
+        },
+        closing: {
+          ...invitation.content.closing,
+          signature: protagonistName,
+        },
+      },
     }),
     [invitation, modules, protagonistName],
   )
