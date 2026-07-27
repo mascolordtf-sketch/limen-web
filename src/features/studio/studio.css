@@ -79,6 +79,7 @@
 .limen-studio__panel,
 .limen-studio__content-editor,
 .limen-studio__event-schedule-editor,
+.limen-studio__venue-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -665,6 +666,7 @@
   .limen-studio__panel,
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
+  .limen-studio__venue-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -719,6 +721,7 @@
   .limen-studio__panel,
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
+  .limen-studio__venue-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }

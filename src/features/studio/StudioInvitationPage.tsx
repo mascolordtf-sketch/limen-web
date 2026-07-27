@@ -13,6 +13,7 @@ import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
+import { StudioVenueEditor } from './StudioVenueEditor'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
 import './studio.css'
 
@@ -57,6 +58,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     [invitation.event.endsAt, invitation.event.timeZone],
   )
   const [eventEnd, setEventEnd] = useState<string>(() => canonicalEventEnd)
+  const canonicalVenue = invitation.event.venue
+  const [venue, setVenue] = useState<string>(() => canonicalVenue)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -89,6 +92,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const protagonistNameError = protagonistName.trim().length === 0
     ? 'Ingresá el nombre de la protagonista.'
     : null
+  const venueError = venue.trim().length === 0
+    ? 'Ingresá el nombre del lugar.'
+    : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -107,6 +113,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         name: protagonistName,
         startsAt: temporaryStartsAt ?? invitation.event.startsAt,
         endsAt: temporaryEndsAt ?? invitation.event.endsAt,
+        venue,
       },
       content: {
         ...invitation.content,
@@ -143,7 +150,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       },
     }),
     [customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode,
-      temporaryDateLabel, temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel],
+      temporaryDateLabel, temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel, venue],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
@@ -255,6 +262,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onEndChange={setEventEnd}
             onEndReset={() => setEventEnd(canonicalEventEnd)}
           />
+          <StudioVenueEditor
+            value={venue}
+            canonicalValue={canonicalVenue}
+            error={venueError}
+            onChange={setVenue}
+            onReset={() => setVenue(canonicalVenue)}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -276,7 +290,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
 
         <StudioPreview
           invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
-            && !shareMessageError && !eventStartError && !eventEndError
+            && !shareMessageError && !eventStartError && !eventEndError && !venueError
             ? previewInvitation
             : null}
           audience={audience}
