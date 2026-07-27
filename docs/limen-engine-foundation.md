@@ -102,3 +102,7 @@ Studio reúne en un único editor de Regalos la edición temporal del contenido 
 ## Fase 2A.7 — edición temporal de Historia
 
 Studio permite editar temporalmente el contenido narrativo no identitario existente de Historia, preservando su estructura canónica, mientras la firma sigue derivándose de la identidad temporal de la protagonista. La vista previa real de Origin 01 consume los valores derivados; ocultar y volver a activar el módulo conserva las ediciones, y el contenido más extenso crece naturalmente. Ningún fixture se muta y no existen persistencia ni autenticación; los medios, los cambios en la estructura de párrafos y la edición de texto enriquecido permanecen diferidos.
+
+## Fase 2A.8 — edición temporal de la apertura
+
+Studio reúne en un único editor de apertura la edición temporal de los textos no derivados existentes de Preludio y Portada. El saludo y los campos identitarios siguen proyectándose desde la identidad temporal de la protagonista, mientras la fecha de Portada se deriva del inicio temporal del evento. La vista previa real de Origin 01 consume el contenido derivado y los textos extensos crecen naturalmente, sin alterar los medios canónicos ni el carácter obligatorio de ambas escenas. Ningún fixture se muta y no existen persistencia ni autenticación; los medios, el movimiento y la personalización visual permanecen diferidos.

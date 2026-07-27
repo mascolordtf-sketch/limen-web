@@ -13,6 +13,7 @@ import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
+import { StudioOpeningEditor } from './StudioOpeningEditor'
 import { StudioPreview } from './StudioPreview'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
@@ -96,6 +97,24 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [storyEyebrow, setStoryEyebrow] = useState<string>(() => canonicalStoryEyebrow)
   const canonicalStoryMessage = invitation.content.story.message
   const [storyMessage, setStoryMessage] = useState<string>(() => canonicalStoryMessage)
+  const canonicalPreludeEyebrow = invitation.content.prelude.eyebrow
+  const [preludeEyebrow, setPreludeEyebrow] = useState<string>(() => canonicalPreludeEyebrow)
+  const canonicalPreludeBody = invitation.content.prelude.body
+  const [preludeBody, setPreludeBody] = useState<string>(() => canonicalPreludeBody)
+  const canonicalPreludeReveal = invitation.content.prelude.reveal
+  const [preludeReveal, setPreludeReveal] = useState<string>(() => canonicalPreludeReveal)
+  const canonicalPreludeQuestion = invitation.content.prelude.question
+  const [preludeQuestion, setPreludeQuestion] = useState<string>(() => canonicalPreludeQuestion)
+  const canonicalPreludeActionLabel = invitation.content.prelude.actionLabel
+  const [preludeActionLabel, setPreludeActionLabel] = useState<string>(
+    () => canonicalPreludeActionLabel,
+  )
+  const canonicalPreludeSoundHint = invitation.content.prelude.soundHint
+  const [preludeSoundHint, setPreludeSoundHint] = useState<string>(() => canonicalPreludeSoundHint)
+  const canonicalHeroPhrase = invitation.content.hero.phrase
+  const [heroPhrase, setHeroPhrase] = useState<string>(() => canonicalHeroPhrase)
+  const canonicalHeroScrollHint = invitation.content.hero.scrollHint
+  const [heroScrollHint, setHeroScrollHint] = useState<string>(() => canonicalHeroScrollHint)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -174,6 +193,22 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const storyMessageError = storyMessage.trim().length === 0
     ? 'Ingresá el texto de la historia.'
     : null
+  const preludeEyebrowError = preludeEyebrow.trim().length === 0
+    ? 'Ingresá el texto introductorio del preludio.' : null
+  const preludeBodyError = preludeBody.trim().length === 0
+    ? 'Ingresá el mensaje de apertura.' : null
+  const preludeRevealError = preludeReveal.trim().length === 0
+    ? 'Ingresá el texto de revelación.' : null
+  const preludeQuestionError = preludeQuestion.trim().length === 0
+    ? 'Ingresá la pregunta de entrada.' : null
+  const preludeActionLabelError = preludeActionLabel.trim().length === 0
+    ? 'Ingresá el texto de la acción.' : null
+  const preludeSoundHintError = preludeSoundHint.trim().length === 0
+    ? 'Ingresá la indicación de sonido.' : null
+  const heroPhraseError = heroPhrase.trim().length === 0
+    ? 'Ingresá el título principal.' : null
+  const heroScrollHintError = heroScrollHint.trim().length === 0
+    ? 'Ingresá el texto de desplazamiento.' : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -199,11 +234,19 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         ...invitation.content,
         prelude: {
           ...invitation.content.prelude,
+          eyebrow: preludeEyebrow,
           title: `Hola, ${protagonistName}.`,
+          body: preludeBody,
+          reveal: preludeReveal,
+          question: preludeQuestion,
+          actionLabel: preludeActionLabel,
+          soundHint: preludeSoundHint,
         },
         hero: {
           ...invitation.content.hero,
           dateLabel: temporaryDateLabel,
+          phrase: heroPhrase,
+          scrollHint: heroScrollHint,
         },
         eventDetails: {
           ...invitation.content.eventDetails,
@@ -252,8 +295,10 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       },
     }),
     [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
-      dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, invitation, modules,
-      protagonistName, shareMode, storyEyebrow, storyMessage, temporaryDateLabel,
+      dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
+      heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
+      preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
+      storyMessage, temporaryDateLabel,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -365,6 +410,33 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onEyebrowReset={() => setStoryEyebrow(canonicalStoryEyebrow)}
             onMessageChange={setStoryMessage}
             onMessageReset={() => setStoryMessage(canonicalStoryMessage)}
+          />
+          <StudioOpeningEditor
+            preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
+              error: preludeEyebrowError, onChange: setPreludeEyebrow,
+              onReset: () => setPreludeEyebrow(canonicalPreludeEyebrow) }}
+            preludeBody={{ value: preludeBody, canonicalValue: canonicalPreludeBody,
+              error: preludeBodyError, onChange: setPreludeBody,
+              onReset: () => setPreludeBody(canonicalPreludeBody) }}
+            preludeReveal={{ value: preludeReveal, canonicalValue: canonicalPreludeReveal,
+              error: preludeRevealError, onChange: setPreludeReveal,
+              onReset: () => setPreludeReveal(canonicalPreludeReveal) }}
+            preludeQuestion={{ value: preludeQuestion, canonicalValue: canonicalPreludeQuestion,
+              error: preludeQuestionError, onChange: setPreludeQuestion,
+              onReset: () => setPreludeQuestion(canonicalPreludeQuestion) }}
+            preludeActionLabel={{ value: preludeActionLabel,
+              canonicalValue: canonicalPreludeActionLabel, error: preludeActionLabelError,
+              onChange: setPreludeActionLabel,
+              onReset: () => setPreludeActionLabel(canonicalPreludeActionLabel) }}
+            preludeSoundHint={{ value: preludeSoundHint, canonicalValue: canonicalPreludeSoundHint,
+              error: preludeSoundHintError, onChange: setPreludeSoundHint,
+              onReset: () => setPreludeSoundHint(canonicalPreludeSoundHint) }}
+            heroPhrase={{ value: heroPhrase, canonicalValue: canonicalHeroPhrase,
+              error: heroPhraseError, onChange: setHeroPhrase,
+              onReset: () => setHeroPhrase(canonicalHeroPhrase) }}
+            heroScrollHint={{ value: heroScrollHint, canonicalValue: canonicalHeroScrollHint,
+              error: heroScrollHintError, onChange: setHeroScrollHint,
+              onReset: () => setHeroScrollHint(canonicalHeroScrollHint) }}
           />
           <StudioEventScheduleEditor
             startValue={eventStart}
@@ -479,6 +551,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !rsvpRecipientPhoneError
             && !giftsTitleError && !giftsDescriptionError && !giftsNoteError && !giftsAccountError
             && !storyEyebrowError && !storyMessageError
+            && !preludeEyebrowError && !preludeBodyError && !preludeRevealError
+            && !preludeQuestionError && !preludeActionLabelError && !preludeSoundHintError
+            && !heroPhraseError && !heroScrollHintError
             ? previewInvitation
             : null}
           audience={audience}
