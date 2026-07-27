@@ -11,6 +11,7 @@ import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
 import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
+import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
@@ -82,6 +83,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [rsvpRecipientPhone, setRsvpRecipientPhone] = useState<string>(
     () => canonicalRsvpRecipientPhone,
   )
+  const canonicalGiftsTitle = invitation.content.gifts.title
+  const [giftsTitle, setGiftsTitle] = useState<string>(() => canonicalGiftsTitle)
+  const canonicalGiftsDescription = invitation.content.gifts.description
+  const [giftsDescription, setGiftsDescription] = useState<string>(() => canonicalGiftsDescription)
+  const canonicalGiftsNote = invitation.content.gifts.demoNote
+  const [giftsNote, setGiftsNote] = useState<string>(() => canonicalGiftsNote)
+  const canonicalGiftsAccount = invitation.content.gifts.accountValue
+  const [giftsAccount, setGiftsAccount] = useState<string>(() => canonicalGiftsAccount)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -143,6 +152,16 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const rsvpRecipientPhoneError = !/^\+?[\d ()-]+$/.test(trimmedRsvpRecipientPhone)
     || rsvpRecipientDigits.length < 7 || rsvpRecipientDigits.length > 15
     ? 'Ingresá un número de WhatsApp válido.'
+    : null
+  const giftsTitleError = giftsTitle.trim().length === 0
+    ? 'Ingresá un título para la sección de regalos.'
+    : null
+  const giftsDescriptionError = giftsDescription.trim().length === 0
+    ? 'Ingresá una descripción para la sección de regalos.'
+    : null
+  const giftsNoteError = giftsNote.trim().length === 0 ? 'Ingresá una nota destacada.' : null
+  const giftsAccountError = giftsAccount.trim().length === 0
+    ? 'Ingresá el dato para regalar.'
     : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
@@ -210,10 +229,18 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           actionLabel: rsvpActionLabel,
           recipientPhone: rsvpRecipientDigits,
         },
+        gifts: {
+          ...invitation.content.gifts,
+          title: giftsTitle,
+          description: giftsDescription,
+          demoNote: giftsNote,
+          accountValue: giftsAccount,
+        },
       },
     }),
     [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
-      dressCodeTitle, invitation, modules, protagonistName, shareMode, temporaryDateLabel,
+      dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, invitation, modules,
+      protagonistName, shareMode, temporaryDateLabel,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -356,6 +383,28 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onNoteChange={setDressCodeNote}
             onNoteReset={() => setDressCodeNote(canonicalDressCodeNote)}
           />
+          <StudioGiftsEditor
+            titleValue={giftsTitle}
+            canonicalTitleValue={canonicalGiftsTitle}
+            titleError={giftsTitleError}
+            descriptionValue={giftsDescription}
+            canonicalDescriptionValue={canonicalGiftsDescription}
+            descriptionError={giftsDescriptionError}
+            noteValue={giftsNote}
+            canonicalNoteValue={canonicalGiftsNote}
+            noteError={giftsNoteError}
+            accountValue={giftsAccount}
+            canonicalAccountValue={canonicalGiftsAccount}
+            accountError={giftsAccountError}
+            onTitleChange={setGiftsTitle}
+            onTitleReset={() => setGiftsTitle(canonicalGiftsTitle)}
+            onDescriptionChange={setGiftsDescription}
+            onDescriptionReset={() => setGiftsDescription(canonicalGiftsDescription)}
+            onNoteChange={setGiftsNote}
+            onNoteReset={() => setGiftsNote(canonicalGiftsNote)}
+            onAccountChange={setGiftsAccount}
+            onAccountReset={() => setGiftsAccount(canonicalGiftsAccount)}
+          />
           <StudioRsvpEditor
             titleValue={rsvpTitle}
             canonicalTitleValue={canonicalRsvpTitle}
@@ -403,6 +452,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !dressCodeTitleError && !dressCodeDescriptionError && !dressCodeNoteError
             && !rsvpTitleError && !rsvpDescriptionError && !rsvpActionLabelError
             && !rsvpRecipientPhoneError
+            && !giftsTitleError && !giftsDescriptionError && !giftsNoteError && !giftsAccountError
             ? previewInvitation
             : null}
           audience={audience}
