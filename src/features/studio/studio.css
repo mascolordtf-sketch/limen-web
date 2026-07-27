@@ -162,6 +162,58 @@
   line-height: 1.65;
 }
 
+.limen-studio__audience {
+  min-width: 0;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.limen-studio__audience-legend {
+  margin-bottom: 0.65rem;
+  color: #343330;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.limen-studio__audience-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.limen-studio__audience-option {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid #cfcec9;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: #fafaf8;
+  color: #55544f;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.limen-studio__audience-option:has(input:checked) {
+  border-color: #4e6758;
+  background: #eef1ed;
+  color: #20201e;
+}
+
+.limen-studio__audience-option input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: #4e6758;
+}
+
+.limen-studio__audience-option:has(input:focus-visible) {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
 .limen-studio__preview-shell {
   width: 100%;
   min-width: 0;
