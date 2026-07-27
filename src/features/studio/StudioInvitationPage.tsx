@@ -7,7 +7,6 @@ import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
-import { origin01DemoData } from '../invitations/origin01/origin01DemoData'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import './studio.css'
@@ -22,8 +21,11 @@ const lifecycleLabels = {
   archived: 'Archivada',
 } as const
 
-export function StudioInvitationPage() {
-  const invitation = origin01DemoData
+type StudioInvitationPageProps = {
+  invitation: Origin01InvitationData
+}
+
+export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) {
   const template = findInvitationTemplate(invitation.templateId)
   const [modules, setModules] = useState<readonly InvitationModuleConfig[]>(
     () => invitation.modules.map((module) => ({ ...module })),
@@ -34,8 +36,8 @@ export function StudioInvitationPage() {
     [invitation, modules],
   )
   const previewInvitation = useMemo<Origin01InvitationData>(
-    () => ({ ...origin01DemoData, modules }),
-    [modules],
+    () => ({ ...invitation, modules }),
+    [invitation, modules],
   )
   const resetDisabled = modules.length === invitation.modules.length
     && modules.every((module, index) => {

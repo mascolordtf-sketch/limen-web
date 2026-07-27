@@ -62,3 +62,7 @@ Studio deriva la invitación de vista previa a partir de `origin01DemoData` y la
 ## Fase 1C.6A — limpieza responsive y accesible de Studio
 
 Studio recibió ajustes de presentación responsive y accesibilidad sin incorporar funcionalidad nueva. La configuración de módulos y la audiencia continúan siendo temporales; la autenticación y la persistencia permanecen diferidas.
+
+## Fase 1C.6B — resolución local de invitaciones en Studio
+
+Studio resuelve invitaciones mediante un único registro local tipado. La ruta genérica por código atiende tanto invitaciones conocidas como desconocidas, y la redirección predeterminada deriva de la invitación canónica registrada sin duplicar sus datos. El registro contiene únicamente Origin 01; la persistencia, la autenticación y el renderizado de múltiples plantillas permanecen diferidos.

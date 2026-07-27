@@ -1,10 +1,12 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import './studio.css'
 
-export function StudioUnavailablePage() {
-  const { code } = useParams()
+type StudioUnavailablePageProps = {
+  code?: string
+}
 
+export function StudioUnavailablePage({ code }: StudioUnavailablePageProps) {
   return (
     <main className="limen-studio">
       <div className="limen-studio__workspace">

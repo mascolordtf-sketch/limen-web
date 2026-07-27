@@ -7,16 +7,18 @@ import { DemoPage } from '../pages/DemoPage'
 import { DesignDetailPage } from '../pages/DesignDetailPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage } from '../pages/NotFoundPage'
-import { StudioInvitationPage } from '../features/studio/StudioInvitationPage'
-import { StudioUnavailablePage } from '../features/studio/StudioUnavailablePage'
+import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
+import { defaultStudioInvitationCode } from '../features/studio/studioInvitationRegistry'
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="demo/:code" element={<DemoPage />} />
-      <Route path="studio" element={<Navigate to="/studio/invitaciones/LMN-015-001" replace />} />
-      <Route path="studio/invitaciones/LMN-015-001" element={<StudioInvitationPage />} />
-      <Route path="studio/invitaciones/:code" element={<StudioUnavailablePage />} />
+      <Route
+        path="studio"
+        element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
+      />
+      <Route path="studio/invitaciones/:code" element={<StudioInvitationRoute />} />
 
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
