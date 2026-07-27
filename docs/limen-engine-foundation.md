@@ -58,3 +58,7 @@ Studio ahora lista las escenas y sus etiquetas desde los metadatos de la plantil
 ## Fase 1C.5A — vista previa real en Studio
 
 Studio deriva la invitación de vista previa a partir de `origin01DemoData` y la configuración local de módulos, por lo que solo reemplaza los módulos y conserva intactos los demás datos canónicos. Las configuraciones válidas se entregan al renderer real `Origin01Invitation`, que permanece ajeno a Studio; una configuración inválida no se renderiza. Los cambios siguen siendo temporales y la audiencia permanece fija en protagonista durante esta fase. Los controles de audiencia quedan diferidos hasta la Fase 1C.5B y todavía no existen autenticación ni persistencia.
+
+## Fase 1C.6A — limpieza responsive y accesible de Studio
+
+Studio recibió ajustes de presentación responsive y accesibilidad sin incorporar funcionalidad nueva. La configuración de módulos y la audiencia continúan siendo temporales; la autenticación y la persistencia permanecen diferidas.
