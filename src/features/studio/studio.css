@@ -78,7 +78,7 @@
 .limen-studio__summary,
 .limen-studio__panel,
 .limen-studio__content-editor,
-.limen-studio__event-date-editor,
+.limen-studio__event-schedule-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -186,6 +186,27 @@
 
 .limen-studio__content-editor {
   min-width: 0;
+}
+
+.limen-studio__schedule-intro {
+  margin-bottom: 0;
+  color: #696864;
+  line-height: 1.6;
+}
+
+.limen-studio__schedule-field-group {
+  margin-top: 1.25rem;
+}
+
+.limen-studio__schedule-field-group--end {
+  border-top: 1px solid #dfded9;
+  padding-top: 1.25rem;
+}
+
+.limen-studio__schedule-field-group h3 {
+  margin-bottom: 0.75rem;
+  color: #343330;
+  font-size: 1rem;
 }
 
 .limen-studio__field-group {
@@ -643,6 +664,7 @@
   .limen-studio__summary,
   .limen-studio__panel,
   .limen-studio__content-editor,
+  .limen-studio__event-schedule-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -696,6 +718,7 @@
   .limen-studio__notice,
   .limen-studio__panel,
   .limen-studio__content-editor,
+  .limen-studio__event-schedule-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }
