@@ -1348,6 +1348,11 @@
   margin-left: auto;
 }
 
+.origin01-gallery .origin01-section-heading {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 .origin01-gallery__grid {
   display: grid;
   gap: 1.5rem;
@@ -1379,9 +1384,12 @@
   font-family: var(--origin-display);
   font-size: 1.15rem;
   font-style: italic;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .origin01-gallery figcaption span {
+  flex: 0 0 auto;
   color: var(--origin-muted);
   font-family: var(--origin-reading);
   font-size: .56rem;

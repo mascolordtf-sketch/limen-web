@@ -88,6 +88,7 @@
 .limen-studio__closing-editor,
 .limen-studio__trivia-editor,
 .limen-studio__event-information-editor,
+.limen-studio__gallery-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -114,6 +115,18 @@
 .limen-studio__event-information-textarea[aria-invalid='true'] { border-color: #8b4b43; }
 .limen-studio__event-information-textarea:focus-visible {
   outline: 3px solid #315f81; outline-offset: 2px;
+}
+
+.limen-studio__gallery-editor { min-width: 0; }
+.limen-studio__gallery-intro { margin: 0.5rem 0 0; color: #55544f; line-height: 1.55; }
+.limen-studio__gallery-groups { display: grid; gap: 1.75rem; margin-top: 1.5rem; }
+.limen-studio__gallery-group { min-width: 0; }
+.limen-studio__gallery-group + .limen-studio__gallery-group {
+  border-top: 1px solid #d9d8d3; padding-top: 1.75rem;
+}
+.limen-studio__gallery-group h3 { margin: 0 0 1rem; font-size: 1.05rem; }
+.limen-studio__gallery-group .limen-studio__field-group + .limen-studio__field-group {
+  margin-top: 1.25rem;
 }
 
 .limen-studio__trivia-editor { min-width: 0; }
@@ -1020,6 +1033,7 @@
   .limen-studio__closing-editor,
   .limen-studio__trivia-editor,
   .limen-studio__event-information-editor,
+  .limen-studio__gallery-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -1082,6 +1096,7 @@
   .limen-studio__closing-editor,
   .limen-studio__trivia-editor,
   .limen-studio__event-information-editor,
+  .limen-studio__gallery-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }

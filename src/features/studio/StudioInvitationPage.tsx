@@ -14,6 +14,7 @@ import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventInformationEditor } from './StudioEventInformationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioGiftsEditor } from './StudioGiftsEditor'
+import { StudioGalleryEditor } from './StudioGalleryEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioOpeningEditor } from './StudioOpeningEditor'
 import { StudioPreview } from './StudioPreview'
@@ -151,6 +152,15 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     calendarActionLabel: canonicalEventDetails.calendarActionLabel,
     calendarDescription: canonicalEventDetails.calendarDescription,
   }))
+  const canonicalGallery = invitation.content.gallery
+  const [galleryCopy, setGalleryCopy] = useState(() => ({
+    eyebrow: canonicalGallery.eyebrow,
+    heading: canonicalGallery.heading,
+  }))
+  const canonicalGalleryCaptions = canonicalGallery.images.map(({ caption }) => caption ?? '')
+  const [galleryCaptions, setGalleryCaptions] = useState<readonly string[]>(
+    () => [...canonicalGalleryCaptions],
+  )
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -271,6 +281,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   }
   const eventInformationValid = [...Object.values(countdownErrors), ...Object.values(eventDetailsErrors)]
     .every((error) => error === null)
+  const galleryErrors = {
+    eyebrow: requiredEditorialError(galleryCopy.eyebrow),
+    heading: requiredEditorialError(galleryCopy.heading),
+  }
+  const galleryValid = Object.values(galleryErrors).every((error) => error === null)
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -316,6 +331,15 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           ...eventDetailsCopy,
           dateLabel: temporaryDateLabel,
           timeLabel: temporaryTimeLabel,
+        },
+        gallery: {
+          ...invitation.content.gallery,
+          eyebrow: galleryCopy.eyebrow,
+          heading: galleryCopy.heading,
+          images: invitation.content.gallery.images.map((image, index) => ({
+            ...image,
+            caption: galleryCaptions[index].trim().length > 0 ? galleryCaptions[index] : undefined,
+          })),
         },
         story: {
           ...invitation.content.story,
@@ -367,7 +391,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
       heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
       preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
-      storyMessage, temporaryDateLabel, trivia, countdownCopy, eventDetailsCopy,
+      storyMessage, temporaryDateLabel, trivia, countdownCopy, eventDetailsCopy, galleryCopy,
+      galleryCaptions,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -522,6 +547,25 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               canonicalValue: canonicalClosingShareActionLabel,
               error: closingShareActionLabelError, onChange: setClosingShareActionLabel,
               onReset: () => setClosingShareActionLabel(canonicalClosingShareActionLabel) }}
+          />
+          <StudioGalleryEditor
+            eyebrow={{ value: galleryCopy.eyebrow, error: galleryErrors.eyebrow,
+              onChange: (eyebrow) => setGalleryCopy((current) => ({ ...current, eyebrow })) }}
+            heading={{ value: galleryCopy.heading, error: galleryErrors.heading,
+              onChange: (heading) => setGalleryCopy((current) => ({ ...current, heading })) }}
+            captions={galleryCaptions}
+            copyResetDisabled={galleryCopy.eyebrow === canonicalGallery.eyebrow
+              && galleryCopy.heading === canonicalGallery.heading}
+            captionsResetDisabled={galleryCaptions.every(
+              (caption, index) => caption === canonicalGalleryCaptions[index],
+            )}
+            onCaptionChange={(index, caption) => setGalleryCaptions((current) => (
+              current.map((value, currentIndex) => currentIndex === index ? caption : value)
+            ))}
+            onCopyReset={() => setGalleryCopy({
+              eyebrow: canonicalGallery.eyebrow, heading: canonicalGallery.heading,
+            })}
+            onCaptionsReset={() => setGalleryCaptions([...canonicalGalleryCaptions])}
           />
           <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
           <StudioEventInformationEditor
@@ -686,7 +730,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !heroPhraseError && !heroScrollHintError
             && !closingEyebrowError && !closingTitleError && !closingSharePromptError
             && !closingShareActionLabelError
-            && triviaValid && eventInformationValid
+            && triviaValid && eventInformationValid && galleryValid
             ? previewInvitation
             : null}
           audience={audience}
