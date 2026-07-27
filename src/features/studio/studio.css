@@ -86,12 +86,52 @@
 .limen-studio__story-editor,
 .limen-studio__opening-editor,
 .limen-studio__closing-editor,
+.limen-studio__trivia-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__trivia-editor { min-width: 0; }
+.limen-studio__trivia-intro { margin-bottom: 0; color: #55544f; line-height: 1.55; }
+.limen-studio__trivia-groups { display: grid; gap: 1.75rem; margin-top: 1.5rem; }
+.limen-studio__trivia-group + .limen-studio__trivia-group {
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.75rem;
+}
+.limen-studio__trivia-group h3 { margin: 0 0 1rem; font-size: 1.05rem; }
+.limen-studio__trivia-field + .limen-studio__trivia-field { margin-top: 1.25rem; }
+.limen-studio__trivia-question,
+.limen-studio__trivia-result { min-width: 0; border-top: 1px solid #dfded9; padding: 1.4rem 0; }
+.limen-studio__trivia-question:first-of-type,
+.limen-studio__trivia-result:first-of-type { border-top: 0; padding-top: 0; }
+.limen-studio__trivia-question h4,
+.limen-studio__trivia-result h4 { margin: 0 0 1rem; color: #343330; font-size: 0.95rem; }
+.limen-studio__trivia-question > .limen-studio__field-group + .limen-studio__field-group,
+.limen-studio__trivia-result > .limen-studio__field-group + .limen-studio__field-group { margin-top: 1rem; }
+.limen-studio__trivia-options { display: grid; gap: 1rem; margin-top: 1rem; }
+.limen-studio__trivia-textarea {
+  width: 100%; min-width: 0; min-height: 6rem; resize: vertical;
+  border: 1px solid #aaa8a1; border-radius: 0.75rem; padding: 0.75rem;
+  background: #fff; color: #20201e; font: inherit; line-height: 1.5;
+}
+.limen-studio__trivia-textarea[aria-invalid='true'] { border-color: #8b4b43; }
+.limen-studio__trivia-textarea:focus-visible { outline: 3px solid #315f81; outline-offset: 2px; }
+.limen-studio__trivia-correct { display: grid; gap: 0.65rem; margin: 1.25rem 0; border: 0; padding: 0; }
+.limen-studio__trivia-correct legend { margin-bottom: 0.25rem; font-weight: 700; }
+.limen-studio__trivia-correct label {
+  display: flex; min-height: 2.75rem; align-items: center; gap: 0.65rem;
+  max-width: 30rem; border: 1px solid #cfcec9; border-radius: 0.75rem; padding: 0.65rem 0.8rem;
+}
+.limen-studio__trivia-correct input { width: 1.15rem; height: 1.15rem; margin: 0; accent-color: #4e6758; }
+.limen-studio__trivia-correct label:has(input:focus-visible) { outline: 3px solid #315f81; outline-offset: 2px; }
+.limen-studio__trivia-correct span { min-width: 0; overflow-wrap: anywhere; }
+.limen-studio__trivia-note {
+  max-width: 30rem; margin: 1.25rem 0; border-left: 3px solid #c7c2b2;
+  padding: 0.75rem 1rem; background: #f5f1e7; color: #55544f; line-height: 1.55;
 }
 
 .limen-studio__closing-intro {
@@ -957,6 +997,7 @@
   .limen-studio__story-editor,
   .limen-studio__opening-editor,
   .limen-studio__closing-editor,
+  .limen-studio__trivia-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -1016,6 +1057,8 @@
   .limen-studio__gifts-editor,
   .limen-studio__story-editor,
   .limen-studio__opening-editor,
+  .limen-studio__closing-editor,
+  .limen-studio__trivia-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }
