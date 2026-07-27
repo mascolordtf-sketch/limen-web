@@ -86,3 +86,7 @@ Studio permite editar temporalmente el nombre canónico del lugar, y la vista pr
 ## Fase 2A.3B — edición temporal de la ubicación del evento
 
 Studio presenta el lugar y la dirección como una única configuración temporal, con ambos campos editables y restablecibles de forma independiente. Origin 01 consume el `event.venue` y el `event.address` derivados, incluida la acción de mapa existente, sin mutar ningún fixture. No existen persistencia ni autenticación; las coordenadas, la geocodificación y la edición avanzada de mapas permanecen diferidas.
+
+## Fase 2A.4 — edición temporal del Dress Code
+
+Studio permite editar temporalmente el título, la descripción y la nota existentes del Dress Code dentro de un único editor coherente de la escena. La vista previa real de Origin 01 consume ese contenido derivado, y el módulo puede ocultarse y volver a activarse sin perder las ediciones temporales. Ningún fixture se muta y no existen persistencia ni autenticación; la imagen del Dress Code y la personalización visual permanecen diferidas.
