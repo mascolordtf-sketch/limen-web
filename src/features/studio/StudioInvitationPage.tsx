@@ -13,6 +13,7 @@ import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
+import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
@@ -71,6 +72,16 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   )
   const canonicalDressCodeNote = invitation.content.dressCode.note
   const [dressCodeNote, setDressCodeNote] = useState<string>(() => canonicalDressCodeNote)
+  const canonicalRsvpTitle = invitation.content.rsvp.title
+  const [rsvpTitle, setRsvpTitle] = useState<string>(() => canonicalRsvpTitle)
+  const canonicalRsvpDescription = invitation.content.rsvp.description
+  const [rsvpDescription, setRsvpDescription] = useState<string>(() => canonicalRsvpDescription)
+  const canonicalRsvpActionLabel = invitation.content.rsvp.actionLabel
+  const [rsvpActionLabel, setRsvpActionLabel] = useState<string>(() => canonicalRsvpActionLabel)
+  const canonicalRsvpRecipientPhone = invitation.content.rsvp.recipientPhone ?? ''
+  const [rsvpRecipientPhone, setRsvpRecipientPhone] = useState<string>(
+    () => canonicalRsvpRecipientPhone,
+  )
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -117,6 +128,21 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     : null
   const dressCodeNoteError = dressCodeNote.trim().length === 0
     ? 'Ingresá una nota destacada.'
+    : null
+  const rsvpTitleError = rsvpTitle.trim().length === 0
+    ? 'Ingresá un título para la confirmación.'
+    : null
+  const rsvpDescriptionError = rsvpDescription.trim().length === 0
+    ? 'Ingresá una descripción para la confirmación.'
+    : null
+  const rsvpActionLabelError = rsvpActionLabel.trim().length === 0
+    ? 'Ingresá el texto del botón.'
+    : null
+  const trimmedRsvpRecipientPhone = rsvpRecipientPhone.trim()
+  const rsvpRecipientDigits = trimmedRsvpRecipientPhone.replace(/\D/g, '')
+  const rsvpRecipientPhoneError = !/^\+?[\d ()-]+$/.test(trimmedRsvpRecipientPhone)
+    || rsvpRecipientDigits.length < 7 || rsvpRecipientDigits.length > 15
+    ? 'Ingresá un número de WhatsApp válido.'
     : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
@@ -177,11 +203,19 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           description: dressCodeDescription,
           note: dressCodeNote,
         },
+        rsvp: {
+          ...invitation.content.rsvp,
+          title: rsvpTitle,
+          description: rsvpDescription,
+          actionLabel: rsvpActionLabel,
+          recipientPhone: rsvpRecipientDigits,
+        },
       },
     }),
     [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
       dressCodeTitle, invitation, modules, protagonistName, shareMode, temporaryDateLabel,
-      temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel, venue],
+      rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
+      temporaryStartsAt, temporaryTimeLabel, venue],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
@@ -322,6 +356,28 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onNoteChange={setDressCodeNote}
             onNoteReset={() => setDressCodeNote(canonicalDressCodeNote)}
           />
+          <StudioRsvpEditor
+            titleValue={rsvpTitle}
+            canonicalTitleValue={canonicalRsvpTitle}
+            titleError={rsvpTitleError}
+            descriptionValue={rsvpDescription}
+            canonicalDescriptionValue={canonicalRsvpDescription}
+            descriptionError={rsvpDescriptionError}
+            actionLabelValue={rsvpActionLabel}
+            canonicalActionLabelValue={canonicalRsvpActionLabel}
+            actionLabelError={rsvpActionLabelError}
+            recipientPhoneValue={rsvpRecipientPhone}
+            canonicalRecipientPhoneValue={canonicalRsvpRecipientPhone}
+            recipientPhoneError={rsvpRecipientPhoneError}
+            onTitleChange={setRsvpTitle}
+            onTitleReset={() => setRsvpTitle(canonicalRsvpTitle)}
+            onDescriptionChange={setRsvpDescription}
+            onDescriptionReset={() => setRsvpDescription(canonicalRsvpDescription)}
+            onActionLabelChange={setRsvpActionLabel}
+            onActionLabelReset={() => setRsvpActionLabel(canonicalRsvpActionLabel)}
+            onRecipientPhoneChange={setRsvpRecipientPhone}
+            onRecipientPhoneReset={() => setRsvpRecipientPhone(canonicalRsvpRecipientPhone)}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -345,6 +401,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
             && !shareMessageError && !eventStartError && !eventEndError && !venueError && !addressError
             && !dressCodeTitleError && !dressCodeDescriptionError && !dressCodeNoteError
+            && !rsvpTitleError && !rsvpDescriptionError && !rsvpActionLabelError
+            && !rsvpRecipientPhoneError
             ? previewInvitation
             : null}
           audience={audience}
