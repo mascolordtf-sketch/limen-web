@@ -433,8 +433,9 @@ export function Origin01Invitation({
     }
 
     try {
-      await navigator.clipboard.writeText(shareData.url)
-      setShareStatus('Enlace para invitados copiado')
+      const clipboardText = `${shareData.text}\n\n${shareData.url}`
+      await navigator.clipboard.writeText(clipboardText)
+      setShareStatus('Mensaje y enlace copiados')
     } catch {
       setShareStatus('Abrí el menú del navegador para compartir')
     }
