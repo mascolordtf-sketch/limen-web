@@ -6,7 +6,7 @@ import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
-import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01InvitationData, Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
 import { StudioClosingEditor } from './StudioClosingEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
@@ -20,6 +20,8 @@ import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
 import { StudioStoryEditor } from './StudioStoryEditor'
+import { StudioTriviaEditor } from './StudioTriviaEditor'
+import { isTriviaContentValid } from './studioTriviaValidation'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
 import './studio.css'
 
@@ -128,6 +130,15 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [closingShareActionLabel, setClosingShareActionLabel] = useState<string>(
     () => canonicalClosingShareActionLabel,
   )
+  const canonicalTrivia = invitation.content.trivia
+  const [trivia, setTrivia] = useState<Origin01TriviaContent>(() => ({
+    ...canonicalTrivia,
+    questions: canonicalTrivia.questions.map((question) => ({
+      ...question,
+      options: question.options.map((option) => ({ ...option })),
+    })),
+    resultTiers: canonicalTrivia.resultTiers.map((tier) => ({ ...tier })),
+  }))
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -230,6 +241,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     ? 'Ingresá la invitación a compartir.' : null
   const closingShareActionLabelError = closingShareActionLabel.trim().length === 0
     ? 'Ingresá el texto de la acción para compartir.' : null
+  const triviaValid = isTriviaContentValid(trivia)
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -281,7 +293,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           signature: protagonistName,
         },
         trivia: {
-          ...invitation.content.trivia,
+          ...trivia,
           protagonistName,
           accessibleTitle: `Trivia sobre ${protagonistName}`,
           title: `¿Cuánto conocés de verdad a ${protagonistName}?`,
@@ -324,7 +336,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
       heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
       preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
-      storyMessage, temporaryDateLabel,
+      storyMessage, temporaryDateLabel, trivia,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -480,6 +492,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               error: closingShareActionLabelError, onChange: setClosingShareActionLabel,
               onReset: () => setClosingShareActionLabel(canonicalClosingShareActionLabel) }}
           />
+          <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
           <StudioEventScheduleEditor
             startValue={eventStart}
             canonicalStartValue={canonicalEventStart}
@@ -598,6 +611,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !heroPhraseError && !heroScrollHintError
             && !closingEyebrowError && !closingTitleError && !closingSharePromptError
             && !closingShareActionLabelError
+            && triviaValid
             ? previewInvitation
             : null}
           audience={audience}
