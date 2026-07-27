@@ -80,6 +80,7 @@
 .limen-studio__content-editor,
 .limen-studio__event-schedule-editor,
 .limen-studio__event-location-editor,
+.limen-studio__dress-code-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -109,6 +110,50 @@
   margin: 0 0 0.75rem;
   color: #343330;
   font-size: 1rem;
+}
+
+.limen-studio__dress-code-intro {
+  margin-bottom: 0;
+  color: #55544f;
+  line-height: 1.55;
+}
+
+.limen-studio__dress-code-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.limen-studio__dress-code-field-group + .limen-studio__dress-code-field-group {
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.25rem;
+}
+
+.limen-studio__dress-code-textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid #aaa8a1;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  color: #20201e;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.limen-studio__dress-code-textarea--note {
+  min-height: 5.5rem;
+}
+
+.limen-studio__dress-code-textarea[aria-invalid='true'] {
+  border-color: #8b4b43;
+}
+
+.limen-studio__dress-code-textarea:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
 }
 
 .limen-studio__share-editor {
@@ -690,6 +735,7 @@
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
   .limen-studio__event-location-editor,
+  .limen-studio__dress-code-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -745,6 +791,7 @@
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
   .limen-studio__event-location-editor,
+  .limen-studio__dress-code-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }

@@ -8,6 +8,7 @@ import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioContentEditor } from './StudioContentEditor'
+import { StudioDressCodeEditor } from './StudioDressCodeEditor'
 import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioModuleList } from './StudioModuleList'
@@ -62,6 +63,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [venue, setVenue] = useState<string>(() => canonicalVenue)
   const canonicalAddress = invitation.event.address
   const [address, setAddress] = useState<string>(() => canonicalAddress)
+  const canonicalDressCodeTitle = invitation.content.dressCode.title
+  const [dressCodeTitle, setDressCodeTitle] = useState<string>(() => canonicalDressCodeTitle)
+  const canonicalDressCodeDescription = invitation.content.dressCode.description
+  const [dressCodeDescription, setDressCodeDescription] = useState<string>(
+    () => canonicalDressCodeDescription,
+  )
+  const canonicalDressCodeNote = invitation.content.dressCode.note
+  const [dressCodeNote, setDressCodeNote] = useState<string>(() => canonicalDressCodeNote)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -99,6 +108,15 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     : null
   const addressError = address.trim().length === 0
     ? 'Ingresá la dirección del evento.'
+    : null
+  const dressCodeTitleError = dressCodeTitle.trim().length === 0
+    ? 'Ingresá el tipo de vestimenta.'
+    : null
+  const dressCodeDescriptionError = dressCodeDescription.trim().length === 0
+    ? 'Ingresá una descripción del Dress Code.'
+    : null
+  const dressCodeNoteError = dressCodeNote.trim().length === 0
+    ? 'Ingresá una nota destacada.'
     : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
@@ -153,10 +171,17 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           shareTitle: `Mis 15 de ${protagonistName}`,
           shareText: shareMode === 'default' ? defaultShareMessage : customShareMessage,
         },
+        dressCode: {
+          ...invitation.content.dressCode,
+          title: dressCodeTitle,
+          description: dressCodeDescription,
+          note: dressCodeNote,
+        },
       },
     }),
-    [address, customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode,
-      temporaryDateLabel, temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel, venue],
+    [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
+      dressCodeTitle, invitation, modules, protagonistName, shareMode, temporaryDateLabel,
+      temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel, venue],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
@@ -280,6 +305,23 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onAddressChange={setAddress}
             onAddressReset={() => setAddress(canonicalAddress)}
           />
+          <StudioDressCodeEditor
+            titleValue={dressCodeTitle}
+            canonicalTitleValue={canonicalDressCodeTitle}
+            titleError={dressCodeTitleError}
+            descriptionValue={dressCodeDescription}
+            canonicalDescriptionValue={canonicalDressCodeDescription}
+            descriptionError={dressCodeDescriptionError}
+            noteValue={dressCodeNote}
+            canonicalNoteValue={canonicalDressCodeNote}
+            noteError={dressCodeNoteError}
+            onTitleChange={setDressCodeTitle}
+            onTitleReset={() => setDressCodeTitle(canonicalDressCodeTitle)}
+            onDescriptionChange={setDressCodeDescription}
+            onDescriptionReset={() => setDressCodeDescription(canonicalDressCodeDescription)}
+            onNoteChange={setDressCodeNote}
+            onNoteReset={() => setDressCodeNote(canonicalDressCodeNote)}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -302,6 +344,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         <StudioPreview
           invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
             && !shareMessageError && !eventStartError && !eventEndError && !venueError && !addressError
+            && !dressCodeTitleError && !dressCodeDescriptionError && !dressCodeNoteError
             ? previewInvitation
             : null}
           audience={audience}
