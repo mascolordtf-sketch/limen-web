@@ -78,11 +78,109 @@
 .limen-studio__summary,
 .limen-studio__panel,
 .limen-studio__content-editor,
+.limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__share-editor {
+  min-width: 0;
+}
+
+.limen-studio__share-options {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.limen-studio__share-options legend {
+  margin-bottom: 0.65rem;
+  color: #343330;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.limen-studio__share-radio-group {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 30rem;
+}
+
+.limen-studio__share-radio-group label {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid #cfcec9;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  cursor: pointer;
+}
+
+.limen-studio__share-radio-group label:has(input:checked) {
+  border-color: #4e6758;
+  background: #eef1ed;
+}
+
+.limen-studio__share-radio-group input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: #4e6758;
+}
+
+.limen-studio__share-radio-group label:has(input:focus-visible) {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
+.limen-studio__message-preview {
+  max-width: 30rem;
+  margin: 1rem 0 0;
+  border-left: 3px solid #c7c2b2;
+  padding: 0.75rem 1rem;
+  background: #f5f1e7;
+  color: #343330;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.limen-studio__share-textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 8rem;
+  resize: vertical;
+  border: 1px solid #aaa8a1;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  color: #20201e;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.limen-studio__share-textarea[aria-invalid='true'] {
+  border-color: #8b4b43;
+}
+
+.limen-studio__share-textarea:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__share-link-help {
+  max-width: 30rem;
+  margin: 0.75rem 0 0;
+  color: #696864;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.limen-studio__share-editor > .limen-studio__field-group {
+  margin-top: 1rem;
 }
 
 .limen-studio__content-editor {
@@ -515,6 +613,7 @@
   .limen-studio__summary,
   .limen-studio__panel,
   .limen-studio__content-editor,
+  .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
     padding: 1rem;
@@ -566,7 +665,8 @@
 
   .limen-studio__notice,
   .limen-studio__panel,
-  .limen-studio__content-editor {
+  .limen-studio__content-editor,
+  .limen-studio__share-editor {
     padding: 1.75rem;
   }
 

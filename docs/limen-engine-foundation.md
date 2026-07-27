@@ -69,4 +69,4 @@ Studio resuelve invitaciones mediante un único registro local tipado. La ruta g
 
 ## Fase 2A.1 — edición temporal del nombre de la protagonista
 
-Studio permite editar temporalmente la identidad canónica de la protagonista y proyecta ese nombre en los campos de identidad directos de Origin 01 sin mutar el fixture registrado. `event.name` permanece sincronizado como compatibilidad con el renderer actual; los textos narrativos y operativos arbitrarios no se reemplazan globalmente y quedan diferidos para edición explícita por sección o variables. No existen persistencia ni autenticación.
+Studio proyecta temporalmente la identidad canónica de la protagonista en los campos directos de Origin 01 y permite elegir entre un mensaje sugerido por LIMEN, que incluye su nombre, o uno personalizado; el título compartido también refleja la protagonista y la vista previa siempre comparte la ruta pública `/demo/:code`. `event.name` permanece sincronizado por compatibilidad, ningún fixture se muta y los textos narrativos arbitrarios siguen diferidos para edición explícita por sección o variables. No existen persistencia ni autenticación.

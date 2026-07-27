@@ -10,6 +10,8 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
+import { StudioShareEditor } from './StudioShareEditor'
+import type { StudioShareMode } from './StudioShareEditor'
 import './studio.css'
 
 const lifecycleLabels = {
@@ -39,6 +41,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [protagonistName, setProtagonistName] = useState<string>(
     () => canonicalProtagonistIdentity?.displayName ?? '',
   )
+  const initialShareMessage = `${canonicalProtagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
+  const [shareMode, setShareMode] = useState<StudioShareMode>('default')
+  const [customShareMessage, setCustomShareMessage] = useState<string>(() => initialShareMessage)
+  const [customShareMessageInitialized, setCustomShareMessageInitialized] = useState(false)
+  const defaultShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
+  const shareMessageError = shareMode === 'custom' && customShareMessage.trim().length === 0
+    ? 'Ingresá un mensaje para compartir.'
+    : null
   const protagonistNameError = protagonistName.trim().length === 0
     ? 'Ingresá el nombre de la protagonista.'
     : null
@@ -79,11 +89,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         closing: {
           ...invitation.content.closing,
           signature: protagonistName,
+          shareTitle: `Mis 15 de ${protagonistName}`,
+          shareText: shareMode === 'default' ? defaultShareMessage : customShareMessage,
         },
       },
     }),
-    [invitation, modules, protagonistName],
+    [customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode],
   )
+  const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
     && modules.every((module, index) => {
       const originalModule = invitation.modules[index]
@@ -100,6 +113,19 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
 
   const handleReset = () => {
     setModules(invitation.modules.map((module) => ({ ...module })))
+  }
+  const handleShareModeChange = (mode: StudioShareMode) => {
+    if (mode === 'custom' && !customShareMessageInitialized) {
+      setCustomShareMessage(defaultShareMessage)
+      setCustomShareMessageInitialized(true)
+    }
+    setShareMode(mode)
+  }
+
+  const handleShareReset = () => {
+    setShareMode('default')
+    setCustomShareMessage(defaultShareMessage)
+    setCustomShareMessageInitialized(true)
   }
   const eventDate = new Intl.DateTimeFormat('es-AR', {
     dateStyle: 'long',
@@ -157,6 +183,16 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               </p>
             </section>
           )}
+          <StudioShareEditor
+            mode={shareMode}
+            defaultMessage={defaultShareMessage}
+            customMessage={customShareMessage}
+            error={shareMessageError}
+            resetDisabled={shareMode === 'default' && customShareMessage === defaultShareMessage}
+            onModeChange={handleShareModeChange}
+            onCustomMessageChange={setCustomShareMessage}
+            onReset={handleShareReset}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -177,10 +213,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </div>
 
         <StudioPreview
-          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
+          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError && !shareMessageError
             ? previewInvitation
             : null}
           audience={audience}
+          publicInvitationUrl={publicInvitationUrl}
           onAudienceChange={setAudience}
         />
       </div>
