@@ -94,3 +94,7 @@ Studio permite editar temporalmente el título, la descripción y la nota existe
 ## Fase 2A.5 — edición temporal de la confirmación
 
 Studio reúne en un único editor de confirmación la edición temporal del título, la descripción, el texto de la acción y el destino canónico de RSVP. La vista previa real de Origin 01 consume los valores derivados y el constructor de la acción existente continúa controlando el destino; ocultar y volver a activar el módulo conserva las ediciones temporales. Ningún fixture se muta y no existen persistencia ni autenticación; las respuestas RSVP y la gestión de invitados permanecen diferidas.
+
+## Fase 2A.6 — edición temporal de Regalos
+
+Studio reúne en un único editor de Regalos la edición temporal del contenido existente y del dato canónico copiable. La vista previa real de Origin 01 consume los valores derivados y la acción existente continúa controlando la copia; ocultar y volver a activar el módulo conserva las ediciones temporales. Ningún fixture se muta y no existen persistencia ni autenticación; el procesamiento de pagos, los registros de regalos y las integraciones financieras permanecen diferidos.

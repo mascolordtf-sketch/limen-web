@@ -82,6 +82,7 @@
 .limen-studio__event-location-editor,
 .limen-studio__dress-code-editor,
 .limen-studio__rsvp-editor,
+.limen-studio__gifts-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -173,6 +174,46 @@
   border-top: 1px solid #d9d8d3;
   padding-top: 1.25rem;
 }
+
+.limen-studio__gifts-intro {
+  margin-bottom: 0;
+  color: #55544f;
+  line-height: 1.55;
+}
+
+.limen-studio__gifts-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.limen-studio__gifts-field-group + .limen-studio__gifts-field-group {
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.25rem;
+}
+
+.limen-studio__gifts-textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid #aaa8a1;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  color: #20201e;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.limen-studio__gifts-textarea--note { min-height: 5.5rem; }
+.limen-studio__gifts-textarea[aria-invalid='true'] { border-color: #8b4b43; }
+.limen-studio__gifts-textarea:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__gifts-destination { overflow-wrap: anywhere; }
 
 .limen-studio__rsvp-textarea {
   width: 100%;
@@ -782,6 +823,7 @@
   .limen-studio__event-location-editor,
   .limen-studio__dress-code-editor,
   .limen-studio__rsvp-editor,
+  .limen-studio__gifts-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -838,6 +880,7 @@
   .limen-studio__event-schedule-editor,
   .limen-studio__event-location-editor,
   .limen-studio__dress-code-editor,
+  .limen-studio__gifts-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }
