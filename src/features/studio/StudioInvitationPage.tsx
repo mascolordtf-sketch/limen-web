@@ -7,6 +7,7 @@ import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { StudioClosingEditor } from './StudioClosingEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
 import { StudioEventLocationEditor } from './StudioEventLocationEditor'
@@ -115,6 +116,18 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [heroPhrase, setHeroPhrase] = useState<string>(() => canonicalHeroPhrase)
   const canonicalHeroScrollHint = invitation.content.hero.scrollHint
   const [heroScrollHint, setHeroScrollHint] = useState<string>(() => canonicalHeroScrollHint)
+  const canonicalClosingEyebrow = invitation.content.closing.eyebrow
+  const [closingEyebrow, setClosingEyebrow] = useState<string>(() => canonicalClosingEyebrow)
+  const canonicalClosingTitle = invitation.content.closing.title
+  const [closingTitle, setClosingTitle] = useState<string>(() => canonicalClosingTitle)
+  const canonicalClosingSharePrompt = invitation.content.closing.sharePrompt
+  const [closingSharePrompt, setClosingSharePrompt] = useState<string>(
+    () => canonicalClosingSharePrompt,
+  )
+  const canonicalClosingShareActionLabel = invitation.content.closing.shareActionLabel
+  const [closingShareActionLabel, setClosingShareActionLabel] = useState<string>(
+    () => canonicalClosingShareActionLabel,
+  )
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -209,6 +222,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     ? 'Ingresá el título principal.' : null
   const heroScrollHintError = heroScrollHint.trim().length === 0
     ? 'Ingresá el texto de desplazamiento.' : null
+  const closingEyebrowError = closingEyebrow.trim().length === 0
+    ? 'Ingresá el texto introductorio del cierre.' : null
+  const closingTitleError = closingTitle.trim().length === 0
+    ? 'Ingresá un título para el cierre.' : null
+  const closingSharePromptError = closingSharePrompt.trim().length === 0
+    ? 'Ingresá la invitación a compartir.' : null
+  const closingShareActionLabelError = closingShareActionLabel.trim().length === 0
+    ? 'Ingresá el texto de la acción para compartir.' : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -268,6 +289,10 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         },
         closing: {
           ...invitation.content.closing,
+          eyebrow: closingEyebrow,
+          title: closingTitle,
+          sharePrompt: closingSharePrompt,
+          shareActionLabel: closingShareActionLabel,
           signature: protagonistName,
           shareTitle: `Mis 15 de ${protagonistName}`,
           shareText: shareMode === 'default' ? defaultShareMessage : customShareMessage,
@@ -294,7 +319,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         },
       },
     }),
-    [address, customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
+    [address, closingEyebrow, closingShareActionLabel, closingSharePrompt, closingTitle,
+      customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
       heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
       preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
@@ -438,6 +464,22 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               error: heroScrollHintError, onChange: setHeroScrollHint,
               onReset: () => setHeroScrollHint(canonicalHeroScrollHint) }}
           />
+          <StudioClosingEditor
+            eyebrow={{ value: closingEyebrow, canonicalValue: canonicalClosingEyebrow,
+              error: closingEyebrowError, onChange: setClosingEyebrow,
+              onReset: () => setClosingEyebrow(canonicalClosingEyebrow) }}
+            title={{ value: closingTitle, canonicalValue: canonicalClosingTitle,
+              error: closingTitleError, onChange: setClosingTitle,
+              onReset: () => setClosingTitle(canonicalClosingTitle) }}
+            sharePrompt={{ value: closingSharePrompt,
+              canonicalValue: canonicalClosingSharePrompt, error: closingSharePromptError,
+              onChange: setClosingSharePrompt,
+              onReset: () => setClosingSharePrompt(canonicalClosingSharePrompt) }}
+            shareActionLabel={{ value: closingShareActionLabel,
+              canonicalValue: canonicalClosingShareActionLabel,
+              error: closingShareActionLabelError, onChange: setClosingShareActionLabel,
+              onReset: () => setClosingShareActionLabel(canonicalClosingShareActionLabel) }}
+          />
           <StudioEventScheduleEditor
             startValue={eventStart}
             canonicalStartValue={canonicalEventStart}
@@ -554,6 +596,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !preludeEyebrowError && !preludeBodyError && !preludeRevealError
             && !preludeQuestionError && !preludeActionLabelError && !preludeSoundHintError
             && !heroPhraseError && !heroScrollHintError
+            && !closingEyebrowError && !closingTitleError && !closingSharePromptError
+            && !closingShareActionLabelError
             ? previewInvitation
             : null}
           audience={audience}

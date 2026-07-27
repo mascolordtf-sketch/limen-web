@@ -106,3 +106,7 @@ Studio permite editar temporalmente el contenido narrativo no identitario existe
 ## Fase 2A.8 — edición temporal de la apertura
 
 Studio reúne en un único editor de apertura la edición temporal de los textos no derivados existentes de Preludio y Portada. El saludo y los campos identitarios siguen proyectándose desde la identidad temporal de la protagonista, mientras la fecha de Portada se deriva del inicio temporal del evento. La vista previa real de Origin 01 consume el contenido derivado y los textos extensos crecen naturalmente, sin alterar los medios canónicos ni el carácter obligatorio de ambas escenas. Ningún fixture se muta y no existen persistencia ni autenticación; los medios, el movimiento y la personalización visual permanecen diferidos.
+
+## Fase 2A.9 — edición temporal del cierre
+
+Studio permite editar temporalmente el contenido editorial no derivado existente de Cierre, y la vista previa real de Origin 01 consume ese contenido derivado y crece naturalmente con textos más largos. La firma continúa proyectándose desde la identidad temporal de la protagonista, mientras que el título y el texto compartidos permanecen bajo las proyecciones existentes de identidad y configuración de compartir. Cierre sigue siendo una escena obligatoria, ningún fixture se muta y no existen persistencia ni autenticación; los medios, la personalización visual y la configuración avanzada de compartir permanecen diferidos.

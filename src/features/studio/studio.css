@@ -85,12 +85,52 @@
 .limen-studio__gifts-editor,
 .limen-studio__story-editor,
 .limen-studio__opening-editor,
+.limen-studio__closing-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__closing-intro {
+  margin-bottom: 0;
+  color: #55544f;
+  line-height: 1.55;
+}
+
+.limen-studio__closing-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.limen-studio__closing-field-group + .limen-studio__closing-field-group {
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.25rem;
+}
+
+.limen-studio__closing-textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  border: 1px solid #bdbbb5;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  color: #262522;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.limen-studio__closing-textarea[aria-invalid='true'] {
+  border-color: #8b4b43;
+}
+
+.limen-studio__closing-textarea:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
 }
 
 .limen-studio__event-location-editor > p {
@@ -916,6 +956,7 @@
   .limen-studio__gifts-editor,
   .limen-studio__story-editor,
   .limen-studio__opening-editor,
+  .limen-studio__closing-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
