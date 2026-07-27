@@ -41,7 +41,7 @@ export function StudioPreview({ invitation, audience, onAudienceChange }: Studio
 
       {invitation ? (
         <div className="limen-studio__preview-shell">
-          <Origin01Invitation invitation={invitation} audience={audience} />
+          <Origin01Invitation key={audience} invitation={invitation} audience={audience} />
         </div>
       ) : (
         <p className="limen-studio__preview-unavailable" role="status">
