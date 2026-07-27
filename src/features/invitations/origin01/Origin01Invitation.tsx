@@ -256,9 +256,11 @@ function InvitationImageAsset({
 export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
+  publicInvitationUrl,
 }: {
   invitation: Origin01InvitationData
   audience?: InvitationAudience
+  publicInvitationUrl?: string
 }) {
   const [phase, setPhase] = useState<EntryPhase>(audience === 'guest' ? 'envelope' : 'prelude')
   const [isPlaying, setIsPlaying] = useState(false)
@@ -412,7 +414,7 @@ export function Origin01Invitation({
   }
 
   const shareInvitation = async () => {
-    const guestUrl = new URL(window.location.href)
+    const guestUrl = new URL(publicInvitationUrl ?? window.location.href)
     guestUrl.searchParams.set('vista', 'invitado')
     const shareData = {
       title: invitation.content.closing.shareTitle,
@@ -431,8 +433,9 @@ export function Origin01Invitation({
     }
 
     try {
-      await navigator.clipboard.writeText(shareData.url)
-      setShareStatus('Enlace para invitados copiado')
+      const clipboardText = `${shareData.text}\n\n${shareData.url}`
+      await navigator.clipboard.writeText(clipboardText)
+      setShareStatus('Mensaje y enlace copiados')
     } catch {
       setShareStatus('Abrí el menú del navegador para compartir')
     }

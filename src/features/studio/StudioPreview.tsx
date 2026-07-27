@@ -5,6 +5,7 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 type StudioPreviewProps = {
   invitation: Origin01InvitationData | null
   audience: InvitationAudience
+  publicInvitationUrl: string
   onAudienceChange: (audience: InvitationAudience) => void
 }
 
@@ -13,7 +14,7 @@ const audienceOptions: ReadonlyArray<{ value: InvitationAudience, label: string 
   { value: 'guest', label: 'Invitado' },
 ]
 
-export function StudioPreview({ invitation, audience, onAudienceChange }: StudioPreviewProps) {
+export function StudioPreview({ invitation, audience, publicInvitationUrl, onAudienceChange }: StudioPreviewProps) {
   return (
     <section className="limen-studio__preview-section" aria-labelledby="studio-preview-title">
       <div className="limen-studio__preview-heading">
@@ -41,7 +42,12 @@ export function StudioPreview({ invitation, audience, onAudienceChange }: Studio
 
       {invitation ? (
         <div className="limen-studio__preview-shell">
-          <Origin01Invitation key={audience} invitation={invitation} audience={audience} />
+          <Origin01Invitation
+            key={audience}
+            invitation={invitation}
+            audience={audience}
+            publicInvitationUrl={publicInvitationUrl}
+          />
         </div>
       ) : (
         <p className="limen-studio__preview-unavailable" role="status">
