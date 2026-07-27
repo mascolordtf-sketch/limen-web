@@ -118,3 +118,7 @@ Studio permite editar temporalmente la presentación existente de Trivia, su con
 ## Fase 2A.11 — edición editorial de la información del evento
 
 Studio reúne en un único panel la edición temporal de los textos editoriales existentes de Cuenta regresiva y Datos del evento, con validación y restablecimientos independientes. La fecha, la hora, la ubicación, el objetivo de la cuenta regresiva y los destinos de calendario y mapa continúan derivados de los datos canónicos temporales. No existen persistencia, autenticación, geocodificación, edición de medios ni mutación de la invitación pública.
+
+## Fase 2A.12 — edición editorial de Galería
+
+Studio permite editar temporalmente el texto introductorio, el título y los epígrafes opcionales de las imágenes existentes de Galería, con restablecimientos independientes para el contenido general y los epígrafes. Las referencias de medios, la cantidad y el orden canónicos permanecen protegidos. No existen persistencia, autenticación, carga o reemplazo de medios ni creación, eliminación o reordenamiento de elementos.
