@@ -8,12 +8,12 @@ import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioContentEditor } from './StudioContentEditor'
+import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
-import { StudioVenueEditor } from './StudioVenueEditor'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
 import './studio.css'
 
@@ -60,6 +60,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [eventEnd, setEventEnd] = useState<string>(() => canonicalEventEnd)
   const canonicalVenue = invitation.event.venue
   const [venue, setVenue] = useState<string>(() => canonicalVenue)
+  const canonicalAddress = invitation.event.address
+  const [address, setAddress] = useState<string>(() => canonicalAddress)
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -95,6 +97,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const venueError = venue.trim().length === 0
     ? 'Ingresá el nombre del lugar.'
     : null
+  const addressError = address.trim().length === 0
+    ? 'Ingresá la dirección del evento.'
+    : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -114,6 +119,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         startsAt: temporaryStartsAt ?? invitation.event.startsAt,
         endsAt: temporaryEndsAt ?? invitation.event.endsAt,
         venue,
+        address,
       },
       content: {
         ...invitation.content,
@@ -149,7 +155,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         },
       },
     }),
-    [customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode,
+    [address, customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode,
       temporaryDateLabel, temporaryEndsAt, temporaryStartsAt, temporaryTimeLabel, venue],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
@@ -262,12 +268,17 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onEndChange={setEventEnd}
             onEndReset={() => setEventEnd(canonicalEventEnd)}
           />
-          <StudioVenueEditor
-            value={venue}
-            canonicalValue={canonicalVenue}
-            error={venueError}
-            onChange={setVenue}
-            onReset={() => setVenue(canonicalVenue)}
+          <StudioEventLocationEditor
+            venueValue={venue}
+            canonicalVenueValue={canonicalVenue}
+            venueError={venueError}
+            addressValue={address}
+            canonicalAddressValue={canonicalAddress}
+            addressError={addressError}
+            onVenueChange={setVenue}
+            onVenueReset={() => setVenue(canonicalVenue)}
+            onAddressChange={setAddress}
+            onAddressReset={() => setAddress(canonicalAddress)}
           />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
@@ -290,7 +301,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
 
         <StudioPreview
           invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
-            && !shareMessageError && !eventStartError && !eventEndError && !venueError
+            && !shareMessageError && !eventStartError && !eventEndError && !venueError && !addressError
             ? previewInvitation
             : null}
           audience={audience}

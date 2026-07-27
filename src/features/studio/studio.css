@@ -79,13 +79,36 @@
 .limen-studio__panel,
 .limen-studio__content-editor,
 .limen-studio__event-schedule-editor,
-.limen-studio__venue-editor,
+.limen-studio__event-location-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__event-location-editor > p {
+  margin: 0.5rem 0 0;
+  color: #55544f;
+  line-height: 1.55;
+}
+
+.limen-studio__location-fields {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.limen-studio__location-field-group + .limen-studio__location-field-group {
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.25rem;
+}
+
+.limen-studio__location-field-group h3 {
+  margin: 0 0 0.75rem;
+  color: #343330;
+  font-size: 1rem;
 }
 
 .limen-studio__share-editor {
@@ -666,7 +689,7 @@
   .limen-studio__panel,
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
-  .limen-studio__venue-editor,
+  .limen-studio__event-location-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -721,7 +744,7 @@
   .limen-studio__panel,
   .limen-studio__content-editor,
   .limen-studio__event-schedule-editor,
-  .limen-studio__venue-editor,
+  .limen-studio__event-location-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }
