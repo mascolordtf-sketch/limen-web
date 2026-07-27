@@ -32,8 +32,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     () => invitation.modules.map((module) => ({ ...module })),
   )
   const [audience, setAudience] = useState<InvitationAudience>('protagonist')
-  const canonicalProtagonistName = invitation.event.name
-  const [protagonistName, setProtagonistName] = useState<string>(() => canonicalProtagonistName)
+  const canonicalProtagonistIdentity = invitation.identities.find(
+    ({ role }) => role === 'protagonist',
+  )
+  const canonicalProtagonistName = canonicalProtagonistIdentity?.displayName ?? ''
+  const [protagonistName, setProtagonistName] = useState<string>(
+    () => canonicalProtagonistIdentity?.displayName ?? '',
+  )
   const protagonistNameError = protagonistName.trim().length === 0
     ? 'Ingresá el nombre de la protagonista.'
     : null
@@ -45,6 +50,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     () => ({
       ...invitation,
       modules,
+      identities: invitation.identities.map((identity) => (
+        identity.role === 'protagonist'
+          ? { ...identity, displayName: protagonistName }
+          : identity
+      )),
       event: {
         ...invitation.event,
         name: protagonistName,
@@ -109,13 +119,22 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </section>
 
         <div className="limen-studio__panel-grid">
-          <StudioContentEditor
-            value={protagonistName}
-            canonicalValue={canonicalProtagonistName}
-            error={protagonistNameError}
-            onChange={setProtagonistName}
-            onReset={() => setProtagonistName(canonicalProtagonistName)}
-          />
+          {canonicalProtagonistIdentity ? (
+            <StudioContentEditor
+              value={protagonistName}
+              canonicalValue={canonicalProtagonistName}
+              error={protagonistNameError}
+              onChange={setProtagonistName}
+              onReset={() => setProtagonistName(canonicalProtagonistName)}
+            />
+          ) : (
+            <section className="limen-studio__content-editor" aria-labelledby="studio-content-title">
+              <h2 id="studio-content-title">Contenido principal</h2>
+              <p className="limen-studio__field-error" role="alert">
+                No encontramos la identidad de la protagonista en esta invitación.
+              </p>
+            </section>
+          )}
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -136,7 +155,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </div>
 
         <StudioPreview
-          invitation={validation.valid && !protagonistNameError ? previewInvitation : null}
+          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
+            ? previewInvitation
+            : null}
           audience={audience}
           onAudienceChange={setAudience}
         />
