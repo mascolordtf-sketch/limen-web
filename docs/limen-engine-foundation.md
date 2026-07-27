@@ -78,3 +78,7 @@ Studio permite editar temporalmente la fecha y hora de inicio canónica del even
 ## Fase 2A.2B — edición temporal de la finalización del evento
 
 Studio presenta el inicio y la finalización como una única configuración de horario, manteniendo ambos valores temporalmente editables de forma independiente y admitiendo eventos que cruzan la medianoche. Origin 01 muestra el rango horario derivado, y el calendario consume el inicio y la finalización derivados. Ningún fixture se muta y no existen persistencia ni autenticación.
+
+## Fase 2A.3A — edición temporal del nombre del lugar
+
+Studio permite editar temporalmente el nombre canónico del lugar, y la vista previa real de Origin 01 consume el `event.venue` derivado mientras conserva sin cambios la dirección canónica. Ningún fixture se muta y no existen persistencia ni autenticación; la edición de la dirección y las capacidades avanzadas de mapas permanecen diferidas.
