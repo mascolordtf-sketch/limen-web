@@ -7,9 +7,9 @@
 }
 
 .limen-studio,
-.limen-studio *,
-.limen-studio *::before,
-.limen-studio *::after {
+.limen-studio [class^='limen-studio__'],
+.limen-studio [class^='limen-studio__']::before,
+.limen-studio [class^='limen-studio__']::after {
   box-sizing: border-box;
 }
 
