@@ -78,6 +78,7 @@
 .limen-studio__summary,
 .limen-studio__panel,
 .limen-studio__content-editor,
+.limen-studio__event-date-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -225,6 +226,35 @@
 .limen-studio__text-input:focus-visible {
   outline: 3px solid #315f81;
   outline-offset: 2px;
+}
+
+.limen-studio__datetime-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  border: 1px solid #aaa8a1;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: #fff;
+  color: #20201e;
+  font: inherit;
+}
+
+.limen-studio__datetime-input[aria-invalid='true'] {
+  border-color: #8b4b43;
+}
+
+.limen-studio__datetime-input:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__field-time-zone {
+  margin-bottom: 0;
+  color: #777671;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .limen-studio__field-error {

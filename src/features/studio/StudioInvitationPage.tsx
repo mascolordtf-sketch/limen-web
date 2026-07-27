@@ -8,10 +8,12 @@ import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioContentEditor } from './StudioContentEditor'
+import { StudioEventDateEditor } from './StudioEventDateEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import { StudioShareEditor } from './StudioShareEditor'
 import type { StudioShareMode } from './StudioShareEditor'
+import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
 import './studio.css'
 
 const lifecycleLabels = {
@@ -45,6 +47,30 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const [shareMode, setShareMode] = useState<StudioShareMode>('default')
   const [customShareMessage, setCustomShareMessage] = useState<string>(() => initialShareMessage)
   const [customShareMessageInitialized, setCustomShareMessageInitialized] = useState(false)
+  const canonicalEventStart = useMemo(
+    () => toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone),
+    [invitation.event.startsAt, invitation.event.timeZone],
+  )
+  const [eventStart, setEventStart] = useState<string>(() => canonicalEventStart)
+  const temporaryStartsAt = useMemo(
+    () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
+    [eventStart, invitation.event.timeZone],
+  )
+  const canonicalDuration = useMemo(
+    () => new Date(invitation.event.endsAt).getTime() - new Date(invitation.event.startsAt).getTime(),
+    [invitation.event.endsAt, invitation.event.startsAt],
+  )
+  const eventStartError = temporaryStartsAt ? null : 'Ingresá una fecha y hora válidas.'
+  const temporaryDateLabel = temporaryStartsAt
+    ? new Intl.DateTimeFormat('es-AR', {
+      day: 'numeric', month: 'long', year: 'numeric', timeZone: invitation.event.timeZone,
+    }).format(new Date(temporaryStartsAt))
+    : ''
+  const temporaryTimeLabel = temporaryStartsAt
+    ? new Intl.DateTimeFormat('es-AR', {
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: invitation.event.timeZone,
+    }).format(new Date(temporaryStartsAt))
+    : ''
   const defaultShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
   const shareMessageError = shareMode === 'custom' && customShareMessage.trim().length === 0
     ? 'Ingresá un mensaje para compartir.'
@@ -68,12 +94,25 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       event: {
         ...invitation.event,
         name: protagonistName,
+        startsAt: temporaryStartsAt ?? invitation.event.startsAt,
+        endsAt: temporaryStartsAt
+          ? new Date(new Date(temporaryStartsAt).getTime() + canonicalDuration).toISOString()
+          : invitation.event.endsAt,
       },
       content: {
         ...invitation.content,
         prelude: {
           ...invitation.content.prelude,
           title: `Hola, ${protagonistName}.`,
+        },
+        hero: {
+          ...invitation.content.hero,
+          dateLabel: temporaryDateLabel,
+        },
+        eventDetails: {
+          ...invitation.content.eventDetails,
+          dateLabel: temporaryDateLabel,
+          timeLabel: temporaryTimeLabel,
         },
         story: {
           ...invitation.content.story,
@@ -94,7 +133,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         },
       },
     }),
-    [customShareMessage, defaultShareMessage, invitation, modules, protagonistName, shareMode],
+    [canonicalDuration, customShareMessage, defaultShareMessage, invitation, modules, protagonistName,
+      shareMode, temporaryDateLabel, temporaryStartsAt, temporaryTimeLabel],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
@@ -193,6 +233,14 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onCustomMessageChange={setCustomShareMessage}
             onReset={handleShareReset}
           />
+          <StudioEventDateEditor
+            value={eventStart}
+            canonicalValue={canonicalEventStart}
+            timeZone={invitation.event.timeZone}
+            error={eventStartError}
+            onChange={setEventStart}
+            onReset={() => setEventStart(canonicalEventStart)}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -213,7 +261,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </div>
 
         <StudioPreview
-          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError && !shareMessageError
+          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
+            && !shareMessageError && !eventStartError
             ? previewInvitation
             : null}
           audience={audience}
