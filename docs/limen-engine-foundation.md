@@ -77,4 +77,4 @@ Studio permite editar temporalmente la fecha y hora de inicio canónica del even
 
 ## Fase 2A.2B — edición temporal de la finalización del evento
 
-Studio permite editar temporalmente el inicio y la finalización del evento de forma independiente; ambos valores `datetime-local` respetan la zona horaria de la invitación, admiten eventos que cruzan la medianoche y exigen que la finalización sea estrictamente posterior al inicio. El calendario consume el inicio y la finalización derivados, reemplazando la preservación automática de la duración canónica de la Fase 2A.2A por una finalización explícita. Ningún fixture se muta y no existen persistencia ni autenticación; la edición de la duración y de la zona horaria permanece diferida.
+Studio presenta el inicio y la finalización como una única configuración de horario, manteniendo ambos valores temporalmente editables de forma independiente y admitiendo eventos que cruzan la medianoche. Origin 01 muestra el rango horario derivado, y el calendario consume el inicio y la finalización derivados. Ningún fixture se muta y no existen persistencia ni autenticación.

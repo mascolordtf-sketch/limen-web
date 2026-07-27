@@ -8,8 +8,7 @@ import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioContentEditor } from './StudioContentEditor'
-import { StudioEventDateEditor } from './StudioEventDateEditor'
-import { StudioEventEndEditor } from './StudioEventEndEditor'
+import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import { StudioShareEditor } from './StudioShareEditor'
@@ -77,10 +76,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       day: 'numeric', month: 'long', year: 'numeric', timeZone: invitation.event.timeZone,
     }).format(new Date(temporaryStartsAt))
     : ''
-  const temporaryTimeLabel = temporaryStartsAt
-    ? new Intl.DateTimeFormat('es-AR', {
+  const timeFormatter = new Intl.DateTimeFormat('es-AR', {
       hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: invitation.event.timeZone,
-    }).format(new Date(temporaryStartsAt))
+    })
+  const temporaryTimeLabel = temporaryStartsAt && temporaryEndsAt
+    ? `${timeFormatter.format(new Date(temporaryStartsAt))} a ${timeFormatter.format(new Date(temporaryEndsAt))}`
     : ''
   const defaultShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
   const shareMessageError = shareMode === 'custom' && customShareMessage.trim().length === 0
@@ -242,21 +242,18 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onCustomMessageChange={setCustomShareMessage}
             onReset={handleShareReset}
           />
-          <StudioEventDateEditor
-            value={eventStart}
-            canonicalValue={canonicalEventStart}
+          <StudioEventScheduleEditor
+            startValue={eventStart}
+            canonicalStartValue={canonicalEventStart}
+            startError={eventStartError}
+            endValue={eventEnd}
+            canonicalEndValue={canonicalEventEnd}
+            endError={eventEndError}
             timeZone={invitation.event.timeZone}
-            error={eventStartError}
-            onChange={setEventStart}
-            onReset={() => setEventStart(canonicalEventStart)}
-          />
-          <StudioEventEndEditor
-            value={eventEnd}
-            canonicalValue={canonicalEventEnd}
-            timeZone={invitation.event.timeZone}
-            error={eventEndError}
-            onChange={setEventEnd}
-            onReset={() => setEventEnd(canonicalEventEnd)}
+            onStartChange={setEventStart}
+            onStartReset={() => setEventStart(canonicalEventStart)}
+            onEndChange={setEventEnd}
+            onEndReset={() => setEventEnd(canonicalEventEnd)}
           />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
