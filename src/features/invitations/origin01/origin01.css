@@ -1631,7 +1631,9 @@
   font-size: clamp(3.1rem, 12.5vw, 6.7rem);
   letter-spacing: -.055em;
   line-height: .93;
+  overflow-wrap: anywhere;
   text-wrap: balance;
+  white-space: pre-line;
 }
 
 .origin01-closing__name {
@@ -1661,6 +1663,8 @@
   color: rgba(255, 250, 245, .68);
   font-size: .86rem;
   line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
 
 .origin01-button--glass {
