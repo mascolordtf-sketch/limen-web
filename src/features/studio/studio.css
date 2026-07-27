@@ -142,7 +142,37 @@
   display: grid;
   gap: 1rem;
   margin-top: 1rem;
-  padding-bottom: 2rem;
+}
+
+.limen-studio__preview-section {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 1.5rem 0 2rem;
+  border-top: 1px solid #d9d8d3;
+}
+
+.limen-studio__preview-heading {
+  margin-bottom: 1.25rem;
+}
+
+.limen-studio__preview-heading p {
+  max-width: 46rem;
+  margin-bottom: 0;
+  color: #55544f;
+  line-height: 1.65;
+}
+
+.limen-studio__preview-shell {
+  width: 100%;
+  min-width: 0;
+}
+
+.limen-studio__preview-unavailable {
+  border: 1px solid #d9d8d3;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #fafaf8;
+  color: #55544f;
 }
 
 .limen-studio__panel-heading {
@@ -362,10 +392,6 @@
     padding: 1.75rem;
   }
 
-  .limen-studio__panel-grid {
-    grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
-  }
-
   .limen-studio__panel-heading,
   .limen-studio__scene {
     flex-direction: row;
@@ -380,5 +406,10 @@
   .limen-studio__required-state {
     max-width: 15rem;
     text-align: right;
+  }
+
+  .limen-studio__preview-section {
+    margin-top: 3rem;
+    padding-top: 2.5rem;
   }
 }
