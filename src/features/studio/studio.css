@@ -87,12 +87,33 @@
 .limen-studio__opening-editor,
 .limen-studio__closing-editor,
 .limen-studio__trivia-editor,
+.limen-studio__event-information-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__event-information-intro { margin: 0.5rem 0 0; color: #55544f; line-height: 1.55; }
+.limen-studio__event-information-groups { display: grid; gap: 1.75rem; margin-top: 1.5rem; }
+.limen-studio__event-information-group { min-width: 0; }
+.limen-studio__event-information-group + .limen-studio__event-information-group {
+  border-top: 1px solid #d9d8d3; padding-top: 1.75rem;
+}
+.limen-studio__event-information-group h3 { margin: 0 0 1rem; font-size: 1.05rem; }
+.limen-studio__event-information-group .limen-studio__field-group + .limen-studio__field-group {
+  margin-top: 1.25rem;
+}
+.limen-studio__event-information-textarea {
+  width: 100%; min-width: 0; min-height: 6rem; resize: vertical;
+  border: 1px solid #aaa8a1; border-radius: 0.75rem; padding: 0.75rem;
+  background: #fff; color: #20201e; font: inherit; line-height: 1.5;
+}
+.limen-studio__event-information-textarea[aria-invalid='true'] { border-color: #8b4b43; }
+.limen-studio__event-information-textarea:focus-visible {
+  outline: 3px solid #315f81; outline-offset: 2px;
 }
 
 .limen-studio__trivia-editor { min-width: 0; }
@@ -998,6 +1019,7 @@
   .limen-studio__opening-editor,
   .limen-studio__closing-editor,
   .limen-studio__trivia-editor,
+  .limen-studio__event-information-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -1059,6 +1081,7 @@
   .limen-studio__opening-editor,
   .limen-studio__closing-editor,
   .limen-studio__trivia-editor,
+  .limen-studio__event-information-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }

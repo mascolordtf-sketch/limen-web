@@ -11,6 +11,7 @@ import { StudioClosingEditor } from './StudioClosingEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
 import { StudioEventLocationEditor } from './StudioEventLocationEditor'
+import { StudioEventInformationEditor } from './StudioEventInformationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
 import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
@@ -139,6 +140,17 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     })),
     resultTiers: canonicalTrivia.resultTiers.map((tier) => ({ ...tier })),
   }))
+  const canonicalCountdown = invitation.content.countdown
+  const [countdownCopy, setCountdownCopy] = useState(() => ({ ...canonicalCountdown }))
+  const canonicalEventDetails = invitation.content.eventDetails
+  const [eventDetailsCopy, setEventDetailsCopy] = useState(() => ({
+    eyebrow: canonicalEventDetails.eyebrow,
+    heading: canonicalEventDetails.heading,
+    venueLabel: canonicalEventDetails.venueLabel,
+    mapActionLabel: canonicalEventDetails.mapActionLabel,
+    calendarActionLabel: canonicalEventDetails.calendarActionLabel,
+    calendarDescription: canonicalEventDetails.calendarDescription,
+  }))
   const temporaryStartsAt = useMemo(
     () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
     [eventStart, invitation.event.timeZone],
@@ -242,6 +254,23 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const closingShareActionLabelError = closingShareActionLabel.trim().length === 0
     ? 'Ingresá el texto de la acción para compartir.' : null
   const triviaValid = isTriviaContentValid(trivia)
+  const requiredEditorialError = (value: string) => value.trim().length === 0
+    ? 'Este texto es obligatorio.' : null
+  const countdownErrors = {
+    eyebrow: requiredEditorialError(countdownCopy.eyebrow),
+    heading: requiredEditorialError(countdownCopy.heading),
+    completedMessage: requiredEditorialError(countdownCopy.completedMessage),
+  }
+  const eventDetailsErrors = {
+    eyebrow: requiredEditorialError(eventDetailsCopy.eyebrow),
+    heading: requiredEditorialError(eventDetailsCopy.heading),
+    venueLabel: requiredEditorialError(eventDetailsCopy.venueLabel),
+    mapActionLabel: requiredEditorialError(eventDetailsCopy.mapActionLabel),
+    calendarActionLabel: requiredEditorialError(eventDetailsCopy.calendarActionLabel),
+    calendarDescription: requiredEditorialError(eventDetailsCopy.calendarDescription),
+  }
+  const eventInformationValid = [...Object.values(countdownErrors), ...Object.values(eventDetailsErrors)]
+    .every((error) => error === null)
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -281,8 +310,10 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           phrase: heroPhrase,
           scrollHint: heroScrollHint,
         },
+        countdown: { ...countdownCopy },
         eventDetails: {
           ...invitation.content.eventDetails,
+          ...eventDetailsCopy,
           dateLabel: temporaryDateLabel,
           timeLabel: temporaryTimeLabel,
         },
@@ -336,7 +367,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
       heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
       preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
-      storyMessage, temporaryDateLabel, trivia,
+      storyMessage, temporaryDateLabel, trivia, countdownCopy, eventDetailsCopy,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
       temporaryStartsAt, temporaryTimeLabel, venue],
   )
@@ -493,6 +524,50 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               onReset: () => setClosingShareActionLabel(canonicalClosingShareActionLabel) }}
           />
           <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
+          <StudioEventInformationEditor
+            countdown={{
+              eyebrow: { value: countdownCopy.eyebrow, error: countdownErrors.eyebrow,
+                onChange: (eyebrow) => setCountdownCopy((current) => ({ ...current, eyebrow })) },
+              heading: { value: countdownCopy.heading, error: countdownErrors.heading,
+                onChange: (heading) => setCountdownCopy((current) => ({ ...current, heading })) },
+              completedMessage: { value: countdownCopy.completedMessage,
+                error: countdownErrors.completedMessage,
+                onChange: (completedMessage) => setCountdownCopy((current) => ({ ...current, completedMessage })) },
+              resetDisabled: Object.keys(canonicalCountdown).every((key) =>
+                countdownCopy[key as keyof typeof countdownCopy] === canonicalCountdown[key as keyof typeof canonicalCountdown]),
+              onReset: () => setCountdownCopy({ ...canonicalCountdown }),
+            }}
+            eventDetails={{
+              eyebrow: { value: eventDetailsCopy.eyebrow, error: eventDetailsErrors.eyebrow,
+                onChange: (eyebrow) => setEventDetailsCopy((current) => ({ ...current, eyebrow })) },
+              heading: { value: eventDetailsCopy.heading, error: eventDetailsErrors.heading,
+                onChange: (heading) => setEventDetailsCopy((current) => ({ ...current, heading })) },
+              venueLabel: { value: eventDetailsCopy.venueLabel, error: eventDetailsErrors.venueLabel,
+                onChange: (venueLabel) => setEventDetailsCopy((current) => ({ ...current, venueLabel })) },
+              mapActionLabel: { value: eventDetailsCopy.mapActionLabel,
+                error: eventDetailsErrors.mapActionLabel,
+                onChange: (mapActionLabel) => setEventDetailsCopy((current) => ({ ...current, mapActionLabel })) },
+              calendarActionLabel: { value: eventDetailsCopy.calendarActionLabel,
+                error: eventDetailsErrors.calendarActionLabel,
+                onChange: (calendarActionLabel) => setEventDetailsCopy((current) => ({ ...current, calendarActionLabel })) },
+              calendarDescription: { value: eventDetailsCopy.calendarDescription,
+                error: eventDetailsErrors.calendarDescription,
+                onChange: (calendarDescription) => setEventDetailsCopy((current) => ({ ...current, calendarDescription })) },
+              resetDisabled: eventDetailsCopy.eyebrow === canonicalEventDetails.eyebrow
+                && eventDetailsCopy.heading === canonicalEventDetails.heading
+                && eventDetailsCopy.venueLabel === canonicalEventDetails.venueLabel
+                && eventDetailsCopy.mapActionLabel === canonicalEventDetails.mapActionLabel
+                && eventDetailsCopy.calendarActionLabel === canonicalEventDetails.calendarActionLabel
+                && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
+              onReset: () => setEventDetailsCopy({
+                eyebrow: canonicalEventDetails.eyebrow, heading: canonicalEventDetails.heading,
+                venueLabel: canonicalEventDetails.venueLabel,
+                mapActionLabel: canonicalEventDetails.mapActionLabel,
+                calendarActionLabel: canonicalEventDetails.calendarActionLabel,
+                calendarDescription: canonicalEventDetails.calendarDescription,
+              }),
+            }}
+          />
           <StudioEventScheduleEditor
             startValue={eventStart}
             canonicalStartValue={canonicalEventStart}
@@ -611,7 +686,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             && !heroPhraseError && !heroScrollHintError
             && !closingEyebrowError && !closingTitleError && !closingSharePromptError
             && !closingShareActionLabelError
-            && triviaValid
+            && triviaValid && eventInformationValid
             ? previewInvitation
             : null}
           audience={audience}
