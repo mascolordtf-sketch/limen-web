@@ -66,3 +66,7 @@ Studio recibió ajustes de presentación responsive y accesibilidad sin incorpor
 ## Fase 1C.6B — resolución local de invitaciones en Studio
 
 Studio resuelve invitaciones mediante un único registro local tipado. La ruta genérica por código atiende tanto invitaciones conocidas como desconocidas, y la redirección predeterminada deriva de la invitación canónica registrada sin duplicar sus datos. El registro contiene únicamente Origin 01; la persistencia, la autenticación y el renderizado de múltiples plantillas permanecen diferidos.
+
+## Fase 2A.1 — edición temporal del nombre de la protagonista
+
+Studio permite editar temporalmente el campo canónico que muestra el nombre de la protagonista y deriva la invitación de vista previa sin mutar el fixture registrado. Los estados de módulos, audiencia y nombre permanecen independientes; un nombre vacío bloquea localmente la vista previa y una recarga restaura el dato canónico. No existen persistencia ni autenticación, y los campos adicionales continúan diferidos.

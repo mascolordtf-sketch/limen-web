@@ -77,11 +77,93 @@
 
 .limen-studio__summary,
 .limen-studio__panel,
+.limen-studio__content-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
   border-radius: 1.25rem;
   background: #fafaf8;
   padding: 1.25rem;
+}
+
+.limen-studio__content-editor {
+  min-width: 0;
+}
+
+.limen-studio__field-group {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 30rem;
+}
+
+.limen-studio__field-label {
+  color: #343330;
+  font-weight: 700;
+}
+
+.limen-studio__field-help {
+  margin-bottom: 0;
+  color: #696864;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.limen-studio__text-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  border: 1px solid #aaa8a1;
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  background: #fff;
+  color: #20201e;
+  font: inherit;
+}
+
+.limen-studio__text-input[aria-invalid='true'] {
+  border-color: #8b4b43;
+}
+
+.limen-studio__text-input:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__field-error {
+  margin-bottom: 0;
+  color: #753e37;
+  font-size: 0.875rem;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.limen-studio__field-reset {
+  justify-self: start;
+  min-height: 2.75rem;
+  border: 0;
+  padding: 0.5rem 0;
+  background: transparent;
+  color: #343330;
+  font: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.limen-studio__field-reset:disabled {
+  color: #85837d;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.limen-studio__field-reset:not(:disabled):hover {
+  color: #11110f;
+}
+
+.limen-studio__field-reset:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
 }
 
 .limen-studio__summary-heading h2 {
@@ -432,6 +514,7 @@
 
   .limen-studio__summary,
   .limen-studio__panel,
+  .limen-studio__content-editor,
   .limen-studio__notice {
     border-radius: 1rem;
     padding: 1rem;
@@ -482,7 +565,8 @@
   }
 
   .limen-studio__notice,
-  .limen-studio__panel {
+  .limen-studio__panel,
+  .limen-studio__content-editor {
     padding: 1.75rem;
   }
 

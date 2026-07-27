@@ -7,6 +7,7 @@ import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { StudioContentEditor } from './StudioContentEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioPreview } from './StudioPreview'
 import './studio.css'
@@ -31,13 +32,25 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
     () => invitation.modules.map((module) => ({ ...module })),
   )
   const [audience, setAudience] = useState<InvitationAudience>('protagonist')
+  const canonicalProtagonistName = invitation.event.name
+  const [protagonistName, setProtagonistName] = useState<string>(() => canonicalProtagonistName)
+  const protagonistNameError = protagonistName.trim().length === 0
+    ? 'Ingresá el nombre de la protagonista.'
+    : null
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
   )
   const previewInvitation = useMemo<Origin01InvitationData>(
-    () => ({ ...invitation, modules }),
-    [invitation, modules],
+    () => ({
+      ...invitation,
+      modules,
+      event: {
+        ...invitation.event,
+        name: protagonistName,
+      },
+    }),
+    [invitation, modules, protagonistName],
   )
   const resetDisabled = modules.length === invitation.modules.length
     && modules.every((module, index) => {
@@ -96,6 +109,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </section>
 
         <div className="limen-studio__panel-grid">
+          <StudioContentEditor
+            value={protagonistName}
+            canonicalValue={canonicalProtagonistName}
+            error={protagonistNameError}
+            onChange={setProtagonistName}
+            onReset={() => setProtagonistName(canonicalProtagonistName)}
+          />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
@@ -116,7 +136,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </div>
 
         <StudioPreview
-          invitation={validation.valid ? previewInvitation : null}
+          invitation={validation.valid && !protagonistNameError ? previewInvitation : null}
           audience={audience}
           onAudienceChange={setAudience}
         />
