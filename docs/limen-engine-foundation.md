@@ -114,3 +114,7 @@ Studio permite editar temporalmente el contenido editorial no derivado existente
 ## Fase 2A.10 — edición temporal de Trivia
 
 Studio permite editar temporalmente la presentación existente de Trivia, su conjunto fijo de preguntas, las etiquetas de opciones, la configuración de respuestas correctas y los mensajes de devolución y resultados. La cantidad, el orden y los tipos de preguntas permanecen canónicos; los campos identitarios siguen derivados de la identidad temporal de la protagonista, los umbrales y la dinámica de puntaje no cambian, y la pregunta de predicción continúa sin respuesta incorrecta. Ocultar y volver a activar el módulo conserva las ediciones temporales, que consume la vista previa real de Origin 01 sin mutar el fixture. No existen persistencia ni autenticación; la creación y el reordenamiento de preguntas, las analíticas y los puntajes almacenados de invitados permanecen diferidos.
+
+## Fase 2A.11 — edición editorial de la información del evento
+
+Studio reúne en un único panel la edición temporal de los textos editoriales existentes de Cuenta regresiva y Datos del evento, con validación y restablecimientos independientes. La fecha, la hora, la ubicación, el objetivo de la cuenta regresiva y los destinos de calendario y mapa continúan derivados de los datos canónicos temporales. No existen persistencia, autenticación, geocodificación, edición de medios ni mutación de la invitación pública.
