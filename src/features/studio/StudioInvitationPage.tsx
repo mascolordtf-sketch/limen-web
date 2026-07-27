@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { updateInvitationModuleConfiguration } from '../invitations/engine/moduleConfiguration'
+import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
@@ -27,6 +28,7 @@ export function StudioInvitationPage() {
   const [modules, setModules] = useState<readonly InvitationModuleConfig[]>(
     () => invitation.modules.map((module) => ({ ...module })),
   )
+  const [audience, setAudience] = useState<InvitationAudience>('protagonist')
   const validation = useMemo(
     () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
     [invitation, modules],
@@ -111,7 +113,11 @@ export function StudioInvitationPage() {
           </section>
         </div>
 
-        <StudioPreview invitation={validation.valid ? previewInvitation : null} />
+        <StudioPreview
+          invitation={validation.valid ? previewInvitation : null}
+          audience={audience}
+          onAudienceChange={setAudience}
+        />
       </div>
     </div>
   )
