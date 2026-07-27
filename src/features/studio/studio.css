@@ -6,6 +6,13 @@
   padding: 1.25rem;
 }
 
+.limen-studio,
+.limen-studio [class^='limen-studio__'],
+.limen-studio [class^='limen-studio__']::before,
+.limen-studio [class^='limen-studio__']::after {
+  box-sizing: border-box;
+}
+
 .limen-studio__workspace {
   width: 100%;
   max-width: 70rem;
@@ -113,7 +120,8 @@
 }
 
 .limen-studio__metadata dd span {
-  margin-left: 0.35rem;
+  display: block;
+  margin-top: 0.2rem;
   color: #777671;
   font-size: 0.75rem;
   font-weight: 500;
@@ -293,6 +301,7 @@
 
 .limen-studio__scene-label {
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .limen-studio__scene-id {
@@ -328,6 +337,7 @@
   position: absolute;
   width: 1px;
   height: 1px;
+  margin: 0;
   opacity: 0;
 }
 
@@ -415,6 +425,32 @@
   outline-offset: 3px;
 }
 
+@media (max-width: 24rem) {
+  .limen-studio {
+    padding: 1rem;
+  }
+
+  .limen-studio__summary,
+  .limen-studio__panel,
+  .limen-studio__notice {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  .limen-studio__audience-options {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .limen-studio__audience-option {
+    width: 100%;
+  }
+
+  .limen-studio__reset {
+    width: 100%;
+  }
+}
+
 @media (min-width: 48rem) {
   .limen-studio {
     padding: 2rem;
@@ -437,6 +473,12 @@
   .limen-studio__metadata {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 2rem;
+  }
+
+  .limen-studio__metadata dd span {
+    display: inline;
+    margin-top: 0;
+    margin-left: 0.35rem;
   }
 
   .limen-studio__notice,
