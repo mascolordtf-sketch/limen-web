@@ -4,6 +4,7 @@ import { origin01DemoData } from '../src/features/invitations/origin01/origin01D
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
+import { getStudioEditorResolution, isStudioEditorId, studioEditorSurfaceFields } from '../src/features/studio/StudioActiveEditor'
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
@@ -18,6 +19,7 @@ import {
 } from '../src/features/studio/origin01StudioDraft'
 import { createOrigin01StudioDomains, origin01TriviaFlow } from '../src/features/studio/origin01StudioConfiguration'
 import { selectValidStudioPreview, validateOrigin01StudioDraft } from '../src/features/studio/origin01StudioValidation'
+import { selectStudioIssueSummary, selectStudioItemStatus } from '../src/features/studio/studioItemStatus'
 import {
   createStudioPreviewAudienceState,
   getStudioPreviewKey,
@@ -182,6 +184,11 @@ const experienceScenes = domains.find(({ id }) => id === 'experiences')?.items.m
 const expectedExperiences = origin01Template.canonicalOrder.filter((sceneId) =>
   ['countdown', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
 assert(experienceScenes?.join() === expectedExperiences.join(), 'deriva el orden de experiencias desde la plantilla canónica')
+const narrativeScenes = domains.find(({ id }) => id === 'narrative')?.items.flatMap(({ id, sceneId }) =>
+  id === 'opening' ? ['prelude', 'hero'] : sceneId ? [sceneId] : [])
+const expectedNarrative = origin01Template.canonicalOrder.filter((sceneId) =>
+  ['prelude', 'hero', 'story', 'closing'].includes(sceneId))
+assert(narrativeScenes?.join() === expectedNarrative.join(), 'Narrativa mantiene el orden canónico de la plantilla')
 const storyNavigation = domains.flatMap(({ items }) => items).find(({ sceneId }) => sceneId === 'story')
 assert(storyNavigation?.required === origin01Template.requiredModules.includes('story')
   && storyNavigation.canToggle === origin01Template.optionalModules.includes('story'), 'deriva obligatoriedad y activación desde la plantilla')
@@ -194,20 +201,43 @@ const triviaNavigation = transitionStudioNavigation(navigation, { type: 'open-it
 const returnedNavigation = transitionStudioNavigation(triviaNavigation, { type: 'show-domain-index' })
 assert(triviaNavigation.mobileLevel === 'editor' && triviaNavigation.returnLevel === 'domain-index'
   && returnedNavigation.mobileLevel === 'domain-index', 'el modelo móvil representa editor y retorno contextual')
-assert(initial.protagonistName === 'Valentina' && initial.modules === initial.modules,
-  'la navegación pura no modifica borrador, audiencia ni módulos')
+const draftBeforeNavigation = JSON.stringify(initial)
+transitionStudioNavigation(triviaNavigation, { type: 'show-general-index' })
+assert(JSON.stringify(initial) === draftBeforeNavigation, 'navegar no modifica borrador, módulos ni Trivia')
 assert(domains.every((domain) => domain.items.length > 0), 'la navegación secundaria proviene de los metadatos de cada dominio')
-const explicitEditors = new Set(['identity', 'identity-projections', 'event-canonical', 'event-operations', 'event-copy',
-  'opening', 'story', 'closing', 'countdown', 'dress-code', 'gallery', 'trivia', 'gifts', 'rsvp',
-  'review-status', 'review-errors', 'review-scenes', 'review-checklist', 'review-audiences', 'share'])
-assert(domains.flatMap(({ items }) => items).every(({ editorId }) => explicitEditors.has(editorId)),
-  'todos los editorId configurados poseen un destino explícito')
-assert(triviaNavigation.editorId === 'trivia' && initial.trivia === initial.trivia
+assert(domains.flatMap(({ items }) => items).every(({ editorId }) => isStudioEditorId(editorId)),
+  'todos los editorId configurados se resuelven con el contrato productivo')
+assert(getStudioEditorResolution(undefined) === 'unselected'
+  && getStudioEditorResolution('editor-inexistente') === 'unresolved',
+  'distingue una selección ausente de un editor no resoluble')
+const openedEvent = transitionStudioNavigation(navigation, { type: 'open-domain', domainId: 'event' })
+assert(openedEvent.domainId === 'event' && openedEvent.itemId === undefined && openedEvent.editorId === undefined,
+  'open-domain representa un dominio sin item activo')
+assert(triviaNavigation.editorId === 'trivia'
+  && initial.trivia.questions.map(({ id }) => id).join() === validBase.trivia.questions.map(({ id }) => id).join()
   && initial.modules.find(({ moduleId }) => moduleId === 'trivia')?.enabled,
   'entrar y salir de Trivia conserva contenido, activación y orden')
+assert(studioEditorSurfaceFields['event-operations'].join() === 'giftsAccount,rsvpRecipientPhone'
+  && !studioEditorSurfaceFields.gifts.includes('giftsAccount' as never)
+  && !studioEditorSurfaceFields.rsvp.includes('rsvpRecipientPhone' as never),
+  'los datos operativos poseen una única superficie propietaria')
+assert(!studioEditorSurfaceFields.countdown.some((field) => field.startsWith('eventDetails')),
+  'Cuenta regresiva no expone Datos del evento')
+const eventOperations = domains.find(({ id }) => id === 'event')!.items.find(({ editorId }) => editorId === 'event-operations')!
+assert(selectStudioItemStatus(invalidGiftResult, eventOperations, 'event').relevantErrorCount === 1
+  && selectStudioItemStatus(invalidRsvpResult, eventOperations, 'event').relevantErrorCount === 1,
+  'event-operations refleja los errores relevantes de sus campos propietarios')
+assert(storyStatus?.active === false && invalidStory.story.message === inactiveInvalidStory.story.message,
+  'una experiencia opcional inactiva conserva contenido y comunica estado inactivo')
+assert(selectStudioIssueSummary(activeStoryResult).errorCount >= 1
+  && activeStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')?.severity === 'active-error',
+  'review-errors cuenta errores editoriales relevantes además de bloqueos estructurales')
 
 const initialAudience = createStudioPreviewAudienceState()
 assert(initialAudience.audience === 'protagonist' && initialAudience.run === 0, 'inicializa la audiencia productiva')
+transitionStudioNavigation(navigation, { type: 'open-domain', domainId: 'review' })
+assert(initialAudience.audience === 'protagonist' && getStudioPreviewKey(initialAudience) === 'protagonist-0',
+  'navegar no modifica audiencia ni previewKey')
 const guestAudience = transitionStudioPreviewAudience(initialAudience, { type: 'change-audience', audience: 'guest' })
 assert(guestAudience.audience === 'guest' && guestAudience.run === 1, 'la transición productiva cambia audiencia y reinicia')
 const restartedAudience = transitionStudioPreviewAudience(guestAudience, { type: 'restart' })

@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 
-import type { Origin01StudioValidation, StudioDomainStatus, StudioSceneStatus } from './origin01StudioValidation'
+import type { Origin01StudioValidation } from './origin01StudioValidation'
+import { selectStudioItemStatus } from './studioItemStatus'
+import type { StudioVisibleItemStatus } from './studioItemStatus'
 import type { StudioDomainDefinition, StudioNavigationItem, StudioNavigationState } from './studioNavigation'
 import type { StudioNavigationAction } from './studioNavigation'
 
@@ -14,7 +16,7 @@ type Props = {
   onNavigate: (action: StudioNavigationAction) => void
 }
 
-function statusText(status?: StudioDomainStatus | StudioSceneStatus) {
+function statusText(status?: StudioVisibleItemStatus) {
   if (!status) return 'Estado no disponible'
   const parts = [status.complete ? 'Completo' : 'Incompleto']
   if ('active' in status && !status.active) parts.splice(0, 1, 'Contenido inactivo')
@@ -37,9 +39,7 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
     explicitNavigation.current = false
   }, [navigation.domainId, navigation.itemId, navigation.mobileLevel])
 
-  const itemStatus = (item: StudioNavigationItem) => item.sceneId
-    ? validation.sceneStatuses.find(({ sceneId }) => sceneId === item.sceneId)
-    : undefined
+  const itemStatus = (item: StudioNavigationItem) => selectStudioItemStatus(validation, item, activeDomain.id)
   return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel}`}>
     <nav className="limen-studio__primary-nav" aria-label="Dominios de la invitación">
       <h2>Índice general</h2>
@@ -77,7 +77,9 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
       <h2 className="limen-studio__editor-title" ref={editorTitle} tabIndex={-1}>{activeItem?.label ?? 'Elegí una sección'}</h2>
       {activeItem && <p>{activeItem.description}</p>}
       {activeItem && <p className="limen-studio__section-status" role="status">{statusText(itemStatus(activeItem))}</p>}
-      {editorResolvable ? editor : <section className="limen-studio__panel" role="alert">
+      {!activeItem ? <section className="limen-studio__panel">
+        <h3>Elegí una sección</h3><p>Seleccioná una unidad de {activeDomain?.label} para comenzar.</p>
+      </section> : editorResolvable ? editor : <section className="limen-studio__panel" role="alert">
         <h3>Editor no disponible</h3><p>Esta sección tiene un destino explícito, pero todavía no posee un editor compatible.</p>
       </section>}
     </main>
