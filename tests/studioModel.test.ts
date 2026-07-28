@@ -23,6 +23,7 @@ import {
   getStudioPreviewKey,
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
+import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -185,6 +186,25 @@ const storyNavigation = domains.flatMap(({ items }) => items).find(({ sceneId })
 assert(storyNavigation?.required === origin01Template.requiredModules.includes('story')
   && storyNavigation.canToggle === origin01Template.optionalModules.includes('story'), 'deriva obligatoriedad y activación desde la plantilla')
 assert(origin01TriviaFlow[1].id === 'questions' && origin01TriviaFlow[1].preservesCanonicalOrder, 'prepara el flujo canónico de Trivia')
+const navigation = createInitialStudioNavigation(domains)
+assert(navigation.domainId === 'identity' && navigation.editorId === 'identity', 'la selección inicial es determinista y resoluble')
+const experiencesDomain = domains.find(({ id }) => id === 'experiences')!
+const triviaItem = experiencesDomain.items.find(({ editorId }) => editorId === 'trivia')!
+const triviaNavigation = transitionStudioNavigation(navigation, { type: 'open-item', domainId: 'experiences', item: triviaItem })
+const returnedNavigation = transitionStudioNavigation(triviaNavigation, { type: 'show-domain-index' })
+assert(triviaNavigation.mobileLevel === 'editor' && triviaNavigation.returnLevel === 'domain-index'
+  && returnedNavigation.mobileLevel === 'domain-index', 'el modelo móvil representa editor y retorno contextual')
+assert(initial.protagonistName === 'Valentina' && initial.modules === initial.modules,
+  'la navegación pura no modifica borrador, audiencia ni módulos')
+assert(domains.every((domain) => domain.items.length > 0), 'la navegación secundaria proviene de los metadatos de cada dominio')
+const explicitEditors = new Set(['identity', 'identity-projections', 'event-canonical', 'event-operations', 'event-copy',
+  'opening', 'story', 'closing', 'countdown', 'dress-code', 'gallery', 'trivia', 'gifts', 'rsvp',
+  'review-status', 'review-errors', 'review-scenes', 'review-checklist', 'review-audiences', 'share'])
+assert(domains.flatMap(({ items }) => items).every(({ editorId }) => explicitEditors.has(editorId)),
+  'todos los editorId configurados poseen un destino explícito')
+assert(triviaNavigation.editorId === 'trivia' && initial.trivia === initial.trivia
+  && initial.modules.find(({ moduleId }) => moduleId === 'trivia')?.enabled,
+  'entrar y salir de Trivia conserva contenido, activación y orden')
 
 const initialAudience = createStudioPreviewAudienceState()
 assert(initialAudience.audience === 'protagonist' && initialAudience.run === 0, 'inicializa la audiencia productiva')

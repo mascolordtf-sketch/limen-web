@@ -2,6 +2,9 @@ import { Link } from 'react-router-dom'
 
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { StudioNavigationShell } from './StudioNavigationShell'
+import { createOrigin01StudioDomains } from './origin01StudioConfiguration'
+import { useStudioNavigation } from './useStudioNavigation'
 import { StudioClosingEditor } from './StudioClosingEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
@@ -182,41 +185,12 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const handleReset = resetConfiguration
   const eventDate = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeStyle: 'short',
     timeZone: invitation.event.timeZone }).format(new Date(invitation.event.startsAt))
-  return (
-    <div className="limen-studio">
-      <div className="limen-studio__workspace">
-        <header className="limen-studio__header">
-          <div>
-            <p className="limen-studio__eyebrow">LIMEN Studio</p>
-            <h1>Espacio interno de composición</h1>
-          </div>
-          <Link className="limen-studio__back-link" to="/">Volver al sitio</Link>
-        </header>
 
-        <section className="limen-studio__summary" aria-labelledby="studio-invitation-title">
-          <div className="limen-studio__summary-heading">
-            <p className="limen-studio__eyebrow">Invitación</p>
-            <h2 id="studio-invitation-title">{invitation.internalName}</h2>
-            <p className="limen-studio__technical">Código {invitation.code}</p>
-          </div>
-          <dl className="limen-studio__metadata">
-            <div><dt>Evento</dt><dd>{invitation.event.name}</dd></div>
-            <div><dt>Celebración</dt><dd>{invitation.event.celebrationLabel}</dd></div>
-            <div><dt>Fecha</dt><dd>{eventDate}</dd></div>
-            <div><dt>Plantilla</dt><dd>Origin 01 <span>{invitation.templateId}</span></dd></div>
-            <div><dt>Estado</dt><dd>{lifecycleLabels[invitation.lifecycleStatus]}</dd></div>
-            <div><dt>Módulos configurados</dt><dd>{invitation.modules.length}</dd></div>
-          </dl>
-        </section>
-
-        <section className="limen-studio__notice" aria-labelledby="studio-notice-title">
-          <h2 id="studio-notice-title">Estado del prototipo</h2>
-          <p><strong>Prototipo interno sin autenticación. No contiene persistencia.</strong></p>
-          <p>Los cambios de configuración de este espacio son temporales y se restablecen al recargar.</p>
-        </section>
-
-        <div className="limen-studio__panel-grid">
-          {canonicalProtagonistIdentity ? (
+  const domains = createOrigin01StudioDomains(template)
+  const [navigation, navigate] = useStudioNavigation(domains)
+  const activeEditor = (() => {
+    switch (navigation.editorId) {
+      case 'identity': return <div className="limen-studio__panel-grid">          {canonicalProtagonistIdentity ? (
             <StudioContentEditor
               value={protagonistName}
               canonicalValue={canonicalProtagonistName}
@@ -231,91 +205,76 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 No encontramos la identidad de la protagonista en esta invitación.
               </p>
             </section>
-          )}
-          <StudioShareEditor
-            mode={shareMode}
-            defaultMessage={defaultShareMessage}
-            customMessage={customShareMessage}
-            error={shareMessageError}
-            resetDisabled={shareMode === 'default' && customShareMessage === defaultShareMessage}
-            onModeChange={handleShareModeChange}
-            onCustomMessageChange={setCustomShareMessage}
-            onReset={handleShareReset}
-          />
-          <StudioStoryEditor
-            eyebrowValue={storyEyebrow}
-            canonicalEyebrowValue={canonicalStoryEyebrow}
-            eyebrowError={storyEyebrowError}
-            messageValue={storyMessage}
-            canonicalMessageValue={canonicalStoryMessage}
-            messageError={storyMessageError}
-            onEyebrowChange={setStoryEyebrow}
-            onEyebrowReset={() => resetField('story', 'eyebrow')}
-            onMessageChange={setStoryMessage}
-            onMessageReset={() => resetField('story', 'message')}
-          />
-          <StudioOpeningEditor
-            preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
-              error: preludeEyebrowError, onChange: (value) => setOpening('preludeEyebrow', value),
-              onReset: () => resetField('opening', 'preludeEyebrow') }}
-            preludeBody={{ value: preludeBody, canonicalValue: canonicalPreludeBody,
-              error: preludeBodyError, onChange: (value) => setOpening('preludeBody', value),
-              onReset: () => resetField('opening', 'preludeBody') }}
-            preludeReveal={{ value: preludeReveal, canonicalValue: canonicalPreludeReveal,
-              error: preludeRevealError, onChange: (value) => setOpening('preludeReveal', value),
-              onReset: () => resetField('opening', 'preludeReveal') }}
-            preludeQuestion={{ value: preludeQuestion, canonicalValue: canonicalPreludeQuestion,
-              error: preludeQuestionError, onChange: (value) => setOpening('preludeQuestion', value),
-              onReset: () => resetField('opening', 'preludeQuestion') }}
-            preludeActionLabel={{ value: preludeActionLabel,
-              canonicalValue: canonicalPreludeActionLabel, error: preludeActionLabelError,
-              onChange: (value) => setOpening('preludeActionLabel', value),
-              onReset: () => resetField('opening', 'preludeActionLabel') }}
-            preludeSoundHint={{ value: preludeSoundHint, canonicalValue: canonicalPreludeSoundHint,
-              error: preludeSoundHintError, onChange: (value) => setOpening('preludeSoundHint', value),
-              onReset: () => resetField('opening', 'preludeSoundHint') }}
-            heroPhrase={{ value: heroPhrase, canonicalValue: canonicalHeroPhrase,
-              error: heroPhraseError, onChange: (value) => setOpening('heroPhrase', value),
-              onReset: () => resetField('opening', 'heroPhrase') }}
-            heroScrollHint={{ value: heroScrollHint, canonicalValue: canonicalHeroScrollHint,
-              error: heroScrollHintError, onChange: (value) => setOpening('heroScrollHint', value),
-              onReset: () => resetField('opening', 'heroScrollHint') }}
-          />
-          <StudioClosingEditor
-            eyebrow={{ value: closingEyebrow, canonicalValue: canonicalClosingEyebrow,
-              error: closingEyebrowError, onChange: (value) => setClosing('eyebrow', value),
-              onReset: () => resetField('closing', 'eyebrow') }}
-            title={{ value: closingTitle, canonicalValue: canonicalClosingTitle,
-              error: closingTitleError, onChange: (value) => setClosing('title', value),
-              onReset: () => resetField('closing', 'title') }}
-            sharePrompt={{ value: closingSharePrompt,
-              canonicalValue: canonicalClosingSharePrompt, error: closingSharePromptError,
-              onChange: (value) => setClosing('sharePrompt', value),
-              onReset: () => resetField('closing', 'sharePrompt') }}
-            shareActionLabel={{ value: closingShareActionLabel,
-              canonicalValue: canonicalClosingShareActionLabel,
-              error: closingShareActionLabelError, onChange: (value) => setClosing('shareActionLabel', value),
-              onReset: () => resetField('closing', 'shareActionLabel') }}
-          />
-          <StudioGalleryEditor
-            eyebrow={{ value: galleryCopy.eyebrow, error: galleryErrors.eyebrow,
-              onChange: (eyebrow) => setGalleryCopy((current) => ({ ...current, eyebrow })) }}
-            heading={{ value: galleryCopy.heading, error: galleryErrors.heading,
-              onChange: (heading) => setGalleryCopy((current) => ({ ...current, heading })) }}
-            captions={galleryCaptions}
-            copyResetDisabled={galleryCopy.eyebrow === canonicalGallery.eyebrow
-              && galleryCopy.heading === canonicalGallery.heading}
-            captionsResetDisabled={galleryCaptions.every(
-              (caption, index) => caption === canonicalGalleryCaptions[index],
-            )}
-            onCaptionChange={(index, caption) => setGalleryCaptions((current) => (
-              current.map((value, currentIndex) => currentIndex === index ? caption : value)
-            ))}
-            onCopyReset={() => resetField('gallery', 'copy')}
-            onCaptionsReset={() => resetField('gallery', 'captions')}
-          />
-          <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
-          <StudioEventInformationEditor
+          )}</div>
+      case 'identity-projections': return <section className="limen-studio__panel"><h2>Proyecciones de identidad</h2><p>Los textos públicos usan automáticamente el nombre canónico actual. No existe una copia editable adicional.</p></section>
+      case 'event-canonical': return <div className="limen-studio__panel-grid">          <StudioEventScheduleEditor
+            startValue={eventStart}
+            canonicalStartValue={canonicalEventStart}
+            startError={eventStartError}
+            endValue={eventEnd}
+            canonicalEndValue={canonicalEventEnd}
+            endError={eventEndError}
+            timeZone={invitation.event.timeZone}
+            onStartChange={setEventStart}
+            onStartReset={() => resetField('event', 'start')}
+            onEndChange={setEventEnd}
+            onEndReset={() => resetField('event', 'end')}
+          />          <StudioEventLocationEditor
+            venueValue={venue}
+            canonicalVenueValue={canonicalVenue}
+            venueError={venueError}
+            addressValue={address}
+            canonicalAddressValue={canonicalAddress}
+            addressError={addressError}
+            onVenueChange={setVenue}
+            onVenueReset={() => resetField('event', 'venue')}
+            onAddressChange={setAddress}
+            onAddressReset={() => resetField('event', 'address')}
+          /></div>
+      case 'event-operations': return <div className="limen-studio__panel-grid">          <StudioGiftsEditor
+            titleValue={giftsTitle}
+            canonicalTitleValue={canonicalGiftsTitle}
+            titleError={giftsTitleError}
+            descriptionValue={giftsDescription}
+            canonicalDescriptionValue={canonicalGiftsDescription}
+            descriptionError={giftsDescriptionError}
+            noteValue={giftsNote}
+            canonicalNoteValue={canonicalGiftsNote}
+            noteError={giftsNoteError}
+            accountValue={giftsAccount}
+            canonicalAccountValue={canonicalGiftsAccount}
+            accountError={giftsAccountError}
+            onTitleChange={setGiftsTitle}
+            onTitleReset={() => resetField('gifts', 'title')}
+            onDescriptionChange={setGiftsDescription}
+            onDescriptionReset={() => resetField('gifts', 'description')}
+            onNoteChange={setGiftsNote}
+            onNoteReset={() => resetField('gifts', 'demoNote')}
+            onAccountChange={setGiftsAccount}
+            onAccountReset={() => resetField('gifts', 'accountValue')}
+          />          <StudioRsvpEditor
+            titleValue={rsvpTitle}
+            canonicalTitleValue={canonicalRsvpTitle}
+            titleError={rsvpTitleError}
+            descriptionValue={rsvpDescription}
+            canonicalDescriptionValue={canonicalRsvpDescription}
+            descriptionError={rsvpDescriptionError}
+            actionLabelValue={rsvpActionLabel}
+            canonicalActionLabelValue={canonicalRsvpActionLabel}
+            actionLabelError={rsvpActionLabelError}
+            recipientPhoneValue={rsvpRecipientPhone}
+            canonicalRecipientPhoneValue={canonicalRsvpRecipientPhone}
+            recipientPhoneError={rsvpRecipientPhoneError}
+            onTitleChange={setRsvpTitle}
+            onTitleReset={() => resetField('rsvp', 'title')}
+            onDescriptionChange={setRsvpDescription}
+            onDescriptionReset={() => resetField('rsvp', 'description')}
+            onActionLabelChange={setRsvpActionLabel}
+            onActionLabelReset={() => resetField('rsvp', 'actionLabel')}
+            onRecipientPhoneChange={setRsvpRecipientPhone}
+            onRecipientPhoneReset={() => resetField('rsvp', 'recipientPhone')}
+          /></div>
+      case 'event-copy': return <div className="limen-studio__panel-grid">          <StudioEventInformationEditor
             countdown={{
               eyebrow: { value: countdownCopy.eyebrow, error: countdownErrors.eyebrow,
                 onChange: (eyebrow) => setCountdownCopy((current) => ({ ...current, eyebrow })) },
@@ -352,33 +311,101 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
               onReset: () => resetScene('eventDetails'),
             }}
-          />
-          <StudioEventScheduleEditor
-            startValue={eventStart}
-            canonicalStartValue={canonicalEventStart}
-            startError={eventStartError}
-            endValue={eventEnd}
-            canonicalEndValue={canonicalEventEnd}
-            endError={eventEndError}
-            timeZone={invitation.event.timeZone}
-            onStartChange={setEventStart}
-            onStartReset={() => resetField('event', 'start')}
-            onEndChange={setEventEnd}
-            onEndReset={() => resetField('event', 'end')}
-          />
-          <StudioEventLocationEditor
-            venueValue={venue}
-            canonicalVenueValue={canonicalVenue}
-            venueError={venueError}
-            addressValue={address}
-            canonicalAddressValue={canonicalAddress}
-            addressError={addressError}
-            onVenueChange={setVenue}
-            onVenueReset={() => resetField('event', 'venue')}
-            onAddressChange={setAddress}
-            onAddressReset={() => resetField('event', 'address')}
-          />
-          <StudioDressCodeEditor
+          /></div>
+      case 'opening': return <div className="limen-studio__panel-grid">          <StudioOpeningEditor
+            preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
+              error: preludeEyebrowError, onChange: (value) => setOpening('preludeEyebrow', value),
+              onReset: () => resetField('opening', 'preludeEyebrow') }}
+            preludeBody={{ value: preludeBody, canonicalValue: canonicalPreludeBody,
+              error: preludeBodyError, onChange: (value) => setOpening('preludeBody', value),
+              onReset: () => resetField('opening', 'preludeBody') }}
+            preludeReveal={{ value: preludeReveal, canonicalValue: canonicalPreludeReveal,
+              error: preludeRevealError, onChange: (value) => setOpening('preludeReveal', value),
+              onReset: () => resetField('opening', 'preludeReveal') }}
+            preludeQuestion={{ value: preludeQuestion, canonicalValue: canonicalPreludeQuestion,
+              error: preludeQuestionError, onChange: (value) => setOpening('preludeQuestion', value),
+              onReset: () => resetField('opening', 'preludeQuestion') }}
+            preludeActionLabel={{ value: preludeActionLabel,
+              canonicalValue: canonicalPreludeActionLabel, error: preludeActionLabelError,
+              onChange: (value) => setOpening('preludeActionLabel', value),
+              onReset: () => resetField('opening', 'preludeActionLabel') }}
+            preludeSoundHint={{ value: preludeSoundHint, canonicalValue: canonicalPreludeSoundHint,
+              error: preludeSoundHintError, onChange: (value) => setOpening('preludeSoundHint', value),
+              onReset: () => resetField('opening', 'preludeSoundHint') }}
+            heroPhrase={{ value: heroPhrase, canonicalValue: canonicalHeroPhrase,
+              error: heroPhraseError, onChange: (value) => setOpening('heroPhrase', value),
+              onReset: () => resetField('opening', 'heroPhrase') }}
+            heroScrollHint={{ value: heroScrollHint, canonicalValue: canonicalHeroScrollHint,
+              error: heroScrollHintError, onChange: (value) => setOpening('heroScrollHint', value),
+              onReset: () => resetField('opening', 'heroScrollHint') }}
+          /></div>
+      case 'story': return <div className="limen-studio__panel-grid">          <StudioStoryEditor
+            eyebrowValue={storyEyebrow}
+            canonicalEyebrowValue={canonicalStoryEyebrow}
+            eyebrowError={storyEyebrowError}
+            messageValue={storyMessage}
+            canonicalMessageValue={canonicalStoryMessage}
+            messageError={storyMessageError}
+            onEyebrowChange={setStoryEyebrow}
+            onEyebrowReset={() => resetField('story', 'eyebrow')}
+            onMessageChange={setStoryMessage}
+            onMessageReset={() => resetField('story', 'message')}
+          /></div>
+      case 'closing': return <div className="limen-studio__panel-grid">          <StudioClosingEditor
+            eyebrow={{ value: closingEyebrow, canonicalValue: canonicalClosingEyebrow,
+              error: closingEyebrowError, onChange: (value) => setClosing('eyebrow', value),
+              onReset: () => resetField('closing', 'eyebrow') }}
+            title={{ value: closingTitle, canonicalValue: canonicalClosingTitle,
+              error: closingTitleError, onChange: (value) => setClosing('title', value),
+              onReset: () => resetField('closing', 'title') }}
+            sharePrompt={{ value: closingSharePrompt,
+              canonicalValue: canonicalClosingSharePrompt, error: closingSharePromptError,
+              onChange: (value) => setClosing('sharePrompt', value),
+              onReset: () => resetField('closing', 'sharePrompt') }}
+            shareActionLabel={{ value: closingShareActionLabel,
+              canonicalValue: canonicalClosingShareActionLabel,
+              error: closingShareActionLabelError, onChange: (value) => setClosing('shareActionLabel', value),
+              onReset: () => resetField('closing', 'shareActionLabel') }}
+          /></div>
+      case 'countdown': return <div className="limen-studio__panel-grid">          <StudioEventInformationEditor
+            countdown={{
+              eyebrow: { value: countdownCopy.eyebrow, error: countdownErrors.eyebrow,
+                onChange: (eyebrow) => setCountdownCopy((current) => ({ ...current, eyebrow })) },
+              heading: { value: countdownCopy.heading, error: countdownErrors.heading,
+                onChange: (heading) => setCountdownCopy((current) => ({ ...current, heading })) },
+              completedMessage: { value: countdownCopy.completedMessage,
+                error: countdownErrors.completedMessage,
+                onChange: (completedMessage) => setCountdownCopy((current) => ({ ...current, completedMessage })) },
+              resetDisabled: Object.keys(canonicalCountdown).every((key) =>
+                countdownCopy[key as keyof typeof countdownCopy] === canonicalCountdown[key as keyof typeof canonicalCountdown]),
+              onReset: () => resetScene('countdown'),
+            }}
+            eventDetails={{
+              eyebrow: { value: eventDetailsCopy.eyebrow, error: eventDetailsErrors.eyebrow,
+                onChange: (eyebrow) => setEventDetailsCopy((current) => ({ ...current, eyebrow })) },
+              heading: { value: eventDetailsCopy.heading, error: eventDetailsErrors.heading,
+                onChange: (heading) => setEventDetailsCopy((current) => ({ ...current, heading })) },
+              venueLabel: { value: eventDetailsCopy.venueLabel, error: eventDetailsErrors.venueLabel,
+                onChange: (venueLabel) => setEventDetailsCopy((current) => ({ ...current, venueLabel })) },
+              mapActionLabel: { value: eventDetailsCopy.mapActionLabel,
+                error: eventDetailsErrors.mapActionLabel,
+                onChange: (mapActionLabel) => setEventDetailsCopy((current) => ({ ...current, mapActionLabel })) },
+              calendarActionLabel: { value: eventDetailsCopy.calendarActionLabel,
+                error: eventDetailsErrors.calendarActionLabel,
+                onChange: (calendarActionLabel) => setEventDetailsCopy((current) => ({ ...current, calendarActionLabel })) },
+              calendarDescription: { value: eventDetailsCopy.calendarDescription,
+                error: eventDetailsErrors.calendarDescription,
+                onChange: (calendarDescription) => setEventDetailsCopy((current) => ({ ...current, calendarDescription })) },
+              resetDisabled: eventDetailsCopy.eyebrow === canonicalEventDetails.eyebrow
+                && eventDetailsCopy.heading === canonicalEventDetails.heading
+                && eventDetailsCopy.venueLabel === canonicalEventDetails.venueLabel
+                && eventDetailsCopy.mapActionLabel === canonicalEventDetails.mapActionLabel
+                && eventDetailsCopy.calendarActionLabel === canonicalEventDetails.calendarActionLabel
+                && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
+              onReset: () => resetScene('eventDetails'),
+            }}
+          /></div>
+      case 'dress-code': return <div className="limen-studio__panel-grid">          <StudioDressCodeEditor
             titleValue={dressCodeTitle}
             canonicalTitleValue={canonicalDressCodeTitle}
             titleError={dressCodeTitleError}
@@ -394,8 +421,26 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onDescriptionReset={() => resetField('dressCode', 'description')}
             onNoteChange={setDressCodeNote}
             onNoteReset={() => resetField('dressCode', 'note')}
-          />
-          <StudioGiftsEditor
+          /></div>
+      case 'gallery': return <div className="limen-studio__panel-grid">          <StudioGalleryEditor
+            eyebrow={{ value: galleryCopy.eyebrow, error: galleryErrors.eyebrow,
+              onChange: (eyebrow) => setGalleryCopy((current) => ({ ...current, eyebrow })) }}
+            heading={{ value: galleryCopy.heading, error: galleryErrors.heading,
+              onChange: (heading) => setGalleryCopy((current) => ({ ...current, heading })) }}
+            captions={galleryCaptions}
+            copyResetDisabled={galleryCopy.eyebrow === canonicalGallery.eyebrow
+              && galleryCopy.heading === canonicalGallery.heading}
+            captionsResetDisabled={galleryCaptions.every(
+              (caption, index) => caption === canonicalGalleryCaptions[index],
+            )}
+            onCaptionChange={(index, caption) => setGalleryCaptions((current) => (
+              current.map((value, currentIndex) => currentIndex === index ? caption : value)
+            ))}
+            onCopyReset={() => resetField('gallery', 'copy')}
+            onCaptionsReset={() => resetField('gallery', 'captions')}
+          /></div>
+      case 'trivia': return <div className="limen-studio__panel-grid">          <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} /></div>
+      case 'gifts': return <div className="limen-studio__panel-grid">          <StudioGiftsEditor
             titleValue={giftsTitle}
             canonicalTitleValue={canonicalGiftsTitle}
             titleError={giftsTitleError}
@@ -416,8 +461,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onNoteReset={() => resetField('gifts', 'demoNote')}
             onAccountChange={setGiftsAccount}
             onAccountReset={() => resetField('gifts', 'accountValue')}
-          />
-          <StudioRsvpEditor
+          /></div>
+      case 'rsvp': return <div className="limen-studio__panel-grid">          <StudioRsvpEditor
             titleValue={rsvpTitle}
             canonicalTitleValue={canonicalRsvpTitle}
             titleError={rsvpTitleError}
@@ -438,8 +483,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onActionLabelReset={() => resetField('rsvp', 'actionLabel')}
             onRecipientPhoneChange={setRsvpRecipientPhone}
             onRecipientPhoneReset={() => resetField('rsvp', 'recipientPhone')}
-          />
-          <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
+          /></div>
+      case 'review-scenes': return <div className="limen-studio__panel-grid">          <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
               <StudioModuleList
                 template={template}
@@ -455,9 +500,62 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 <p>No pudimos cargar la plantilla de esta invitación. Revisá su configuración.</p>
               </>
             )}
-          </section>
-        </div>
+          </section></div>
+      case 'share': return <div className="limen-studio__panel-grid">          <StudioShareEditor
+            mode={shareMode}
+            defaultMessage={defaultShareMessage}
+            customMessage={customShareMessage}
+            error={shareMessageError}
+            resetDisabled={shareMode === 'default' && customShareMessage === defaultShareMessage}
+            onModeChange={handleShareModeChange}
+            onCustomMessageChange={setCustomShareMessage}
+            onReset={handleShareReset}
+          /></div>
+      case 'review-status': return <section className="limen-studio__panel"><h2>Estado general</h2><p>{studioValidation.invitationValid ? 'Invitación válida' : 'Invitación con errores'}. La revisión editorial sigue pendiente y todavía no está lista para publicar.</p></section>
+      case 'review-errors': return <section className="limen-studio__panel"><h2>Errores del borrador</h2><p>{studioValidation.issues.filter((issue) => issue.relevant && issue.blocksPreview).length} problemas relevantes.</p></section>
+      case 'review-checklist': return <section className="limen-studio__panel"><h2>Revisión editorial</h2><p>La revisión editorial está pendiente. La checklist funcional se incorporará en una fase posterior.</p></section>
+      case 'review-audiences': return <section className="limen-studio__panel"><h2>Audiencias</h2><p>Usá el selector de audiencia de la preview actual para revisar la invitación.</p></section>
+      default: return null
+    }
+  })()
+  const editorResolvable = activeEditor !== null
 
+  return (
+    <div className="limen-studio">
+      <div className="limen-studio__workspace">
+        <header className="limen-studio__header">
+          <div>
+            <p className="limen-studio__eyebrow">LIMEN Studio</p>
+            <h1>Espacio interno de composición</h1>
+          </div>
+          <Link className="limen-studio__back-link" to="/">Volver al sitio</Link>
+        </header>
+
+        <section className="limen-studio__summary" aria-labelledby="studio-invitation-title">
+          <div className="limen-studio__summary-heading">
+            <p className="limen-studio__eyebrow">Invitación</p>
+            <h2 id="studio-invitation-title">{draft.protagonistName}</h2>
+            <p className="limen-studio__technical">Borrador temporal · Código estable {invitation.code}</p>
+          </div>
+          <dl className="limen-studio__metadata">
+            <div><dt>Evento</dt><dd>{invitation.event.name}</dd></div>
+            <div><dt>Celebración</dt><dd>{invitation.event.celebrationLabel}</dd></div>
+            <div><dt>Fecha</dt><dd>{eventDate}</dd></div>
+            <div><dt>Plantilla</dt><dd>Origin 01 <span>{invitation.templateId}</span></dd></div>
+            <div><dt>Estado</dt><dd>{lifecycleLabels[invitation.lifecycleStatus]}</dd></div>
+            <div><dt>Módulos configurados</dt><dd>{invitation.modules.length}</dd></div>
+          </dl>
+        </section>
+
+        <section className="limen-studio__notice" aria-labelledby="studio-notice-title">
+          <h2 id="studio-notice-title">Estado del prototipo</h2>
+          <p><strong>Prototipo interno sin autenticación. No contiene persistencia.</strong></p>
+          <p>Los cambios de configuración de este espacio son temporales y se restablecen al recargar.</p>
+        </section>
+
+        <StudioNavigationShell domains={domains} navigation={navigation}
+          validation={studioValidation} editor={activeEditor} editorResolvable={editorResolvable}
+          onNavigate={navigate} />
         <StudioPreview
           key={previewAudience.previewKey}
           invitation={canonicalProtagonistIdentity

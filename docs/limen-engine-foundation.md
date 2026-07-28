@@ -144,3 +144,11 @@ La navegación visual responsive queda reservada para 2B.4. La presentación def
 Cada issue pertenece a un único dominio, incluso cuando también informa el estado global de una escena. Los datos operativos de RSVP y Regalos pertenecen a Evento y navegan a `event-operations`; su incidencia puede volver incompleta la escena relacionada sin trasladar silenciosamente su conteo a Experiencias. Los dominios agregan exclusivamente sus propias incidencias, mientras las escenas agregan todos sus campos asociados.
 
 La sesión temporal se identifica mediante el `id` estable de la invitación. La ruta usa esa identidad como `key` de la composición de Studio, de modo que abrir otra invitación crea un hook y un borrador nuevos antes de calcular resets, validación o preview; no se intenta conservar ni persistir cambios entre invitaciones.
+# Fase 2B.4 — shell de navegación de Studio
+
+Studio dispone de un shell jerárquico responsive derivado de los metadatos de Origin 01: el dominio es
+la navegación primaria y cada grupo, escena o tarea constituye el segundo nivel. Solo se monta el editor
+enfocado. En móvil, el recorrido separa índice general, índice del dominio y editor con retorno contextual;
+en escritorio mantiene ambos índices visibles junto al editor. La selección es temporal, independiente del
+borrador y no se persiste ni altera la preview pública. La preview avanzada y las capacidades de revisión
+operativa quedan reservadas para 2B.5, que no fue iniciada.

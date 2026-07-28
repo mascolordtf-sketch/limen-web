@@ -36,6 +36,41 @@ export type StudioNavigationSelection = {
   readonly editorId?: string
 }
 
+export type StudioMobileLevel = 'general-index' | 'domain-index' | 'editor'
+
+export type StudioNavigationState = StudioNavigationSelection & {
+  readonly mobileLevel: StudioMobileLevel
+  readonly returnLevel?: Exclude<StudioMobileLevel, 'editor'>
+}
+
+export type StudioNavigationAction =
+  | { readonly type: 'open-domain'; readonly domainId: StudioDomainId }
+  | { readonly type: 'open-item'; readonly domainId: StudioDomainId; readonly item: StudioNavigationItem }
+  | { readonly type: 'show-general-index' }
+  | { readonly type: 'show-domain-index' }
+
+export function createInitialStudioNavigation(
+  domains: readonly StudioDomainDefinition[],
+): StudioNavigationState {
+  const domain = domains[0]
+  const firstItem = domain?.items[0]
+  if (!domain || !firstItem) throw new Error('Studio requiere al menos un editor navegable.')
+  return { domainId: domain.id, itemId: firstItem.id, editorId: firstItem.editorId,
+    mobileLevel: 'general-index' }
+}
+
+export function transitionStudioNavigation(
+  state: StudioNavigationState,
+  action: StudioNavigationAction,
+): StudioNavigationState {
+  if (action.type === 'show-general-index') return { ...state, mobileLevel: 'general-index' }
+  if (action.type === 'show-domain-index') return { ...state, mobileLevel: 'domain-index' }
+  if (action.type === 'open-domain') return { domainId: action.domainId, mobileLevel: 'domain-index',
+    returnLevel: 'general-index' }
+  return { domainId: action.domainId, itemId: action.item.id, editorId: action.item.editorId,
+    mobileLevel: 'editor', returnLevel: 'domain-index' }
+}
+
 export type StudioPreviewIntent = {
   readonly domainId: StudioDomainId
   readonly sceneId?: InvitationModuleId
