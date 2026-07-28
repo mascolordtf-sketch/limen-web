@@ -35,6 +35,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const model = useOrigin01StudioModel(invitation)
   const audience = useStudioPreviewAudience('protagonist')
   const domains = createOrigin01StudioDomains(template)
+  const contentDomains = domains.filter(({ id }) => id !== 'review')
   const [navigation, navigate] = useStudioNavigation(domains)
   const [surface, surfaceDispatch] = useReducer(transitionStudioPreviewSurface, undefined, createStudioPreviewSurfaceState)
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
@@ -118,7 +119,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     <div className="limen-studio__stage-content">
       {activeStage === 'design' && <StudioDesignStage template={template} onPreview={openPreview} />}
       {activeStage === 'sections' && <StudioSectionsStage template={template} modules={model.draft.modules} />}
-      <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={domains} navigation={navigation} validation={model.validation} editor={editor}
+      <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={contentDomains} navigation={navigation} validation={model.validation} editor={editor}
       editorResolvable={!navigation.editorId || isStudioEditorId(navigation.editorId)} onNavigate={navigate}
       onOpenPreview={openPreview}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} /></div>

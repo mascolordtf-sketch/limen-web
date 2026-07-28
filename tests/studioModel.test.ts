@@ -439,8 +439,9 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
+const contentDomains = domains.filter(({ id }) => id !== 'review')
 const shellMarkup = renderToStaticMarkup(createElement(StudioNavigationShell, {
-  domains, navigation: triviaNavigation, validation: validResult, editor: createElement('div'),
+  domains: contentDomains, navigation: triviaNavigation, validation: validResult, editor: createElement('div'),
   editorResolvable: true, onNavigate: () => undefined, onOpenPreview: () => undefined,
   correctionReturn: false, onReturnToErrors: () => undefined,
 }))
@@ -456,9 +457,14 @@ assert((frameWithPreviewMarkup.match(/id="studio-preview-renderer-title"/g) ?? [
 assert((shellMarkup.match(/<nav/g) ?? []).length === 1
   && shellMarkup.includes('aria-label="Contenido de la invitación"'),
   'Contenido presenta categorías y secciones como una única navegación editorial')
+assert(!shellMarkup.includes('<strong>Revisión</strong>')
+  && ['Identidad', 'Evento', 'Narrativa', 'Experiencias'].every((label) => shellMarkup.includes(`<strong>${label}</strong>`)),
+  'Contenido muestra las categorías editoriales y excluye la categoría técnica Revisión')
+assert(domains.some(({ id }) => id === 'review') && resolveStudioCorrectionReturn(correctionContext, domains)?.editorId === 'review-errors',
+  'el dominio Revisión permanece disponible para destinos y retornos internos')
 assert((shellMarkup.match(/Ver preview/g) ?? []).length === 3,
   'el mismo control de apertura está disponible en índice general, índice de dominio y editor móvil')
-const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains,
+const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains: contentDomains,
   navigation: triviaNavigation, validation: validResult, editor: createElement('div'), editorResolvable: true,
   onNavigate: () => undefined, onOpenPreview: () => undefined,
   correctionReturn: true, onReturnToErrors: () => undefined }))
