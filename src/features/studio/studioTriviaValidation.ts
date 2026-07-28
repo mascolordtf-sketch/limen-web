@@ -1,6 +1,6 @@
-import type { Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01TriviaEditorialDraft } from './origin01StudioDraft'
 
-export function isTriviaContentValid(trivia: Origin01TriviaContent): boolean {
+export function isTriviaContentValid(trivia: Origin01TriviaEditorialDraft): boolean {
   const presentation = [
     trivia.introEyebrow, trivia.description, trivia.primaryActionLabel,
     trivia.questionMetaLabel, trivia.nextLabel, trivia.resultLabel,

@@ -34,6 +34,9 @@ const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
 
+const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
+assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
+
 const renamed = updateOrigin01StudioDraftField(initial, 'protagonistName', 'Amparo')
 const renamedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, renamed)
 assert(renamedPreview.identities[0]?.displayName === 'Amparo', 'actualiza la fuente canónica de identidad')
@@ -41,6 +44,15 @@ assert(renamedPreview.content.prelude.title === 'Hola, Amparo.', 'deriva el salu
 assert(renamedPreview.content.envelope.monogram === 'A', 'deriva el monograma')
 assert(renamedPreview.content.story.signature === 'Amparo', 'deriva la firma')
 assert(renamedPreview.content.trivia.protagonistName === 'Amparo', 'deriva la identidad de Trivia')
+
+assert(renamed.trivia === initial.trivia, 'cambiar el nombre no muta ni reemplaza el borrador editorial de Trivia')
+assert(renamedPreview.content.trivia.accessibleTitle === 'Trivia sobre Amparo', 'deriva el título accesible de Trivia')
+assert(renamedPreview.content.trivia.title === '¿Cuánto conocés de verdad a Amparo?', 'deriva el título visible de Trivia')
+assert(renamedPreview.content.trivia.revealSignature === 'Amparo', 'deriva la firma final de Trivia')
+assert(renamedPreview.content.trivia.description === initial.trivia.description
+  && renamedPreview.content.trivia.questions === initial.trivia.questions
+  && renamedPreview.content.trivia.resultTiers === initial.trivia.resultTiers,
+  'el contenido editorial de Trivia se conserva durante la derivación')
 
 const editedStory = updateOrigin01StudioDraftGroup(initial, 'story', (story) => ({
   ...story,

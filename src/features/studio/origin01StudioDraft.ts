@@ -5,6 +5,11 @@ import type { Origin01InvitationData, Origin01TriviaContent } from '../invitatio
 import { toDateTimeLocalValue } from './studioDateTime'
 import type { StudioShareMode } from './studioNavigation'
 
+export type Origin01TriviaEditorialDraft = Omit<
+  Origin01TriviaContent,
+  'protagonistName' | 'accessibleTitle' | 'title' | 'revealSignature'
+>
+
 export type Origin01StudioDraft = {
   readonly protagonistName: string
   readonly event: {
@@ -43,7 +48,7 @@ export type Origin01StudioDraft = {
     readonly copy: Pick<Origin01InvitationData['content']['gallery'], 'eyebrow' | 'heading'>
     readonly captions: readonly string[]
   }
-  readonly trivia: Origin01TriviaContent
+  readonly trivia: Origin01TriviaEditorialDraft
   readonly gifts: Pick<Origin01InvitationData['content']['gifts'], 'title' | 'description' | 'demoNote' | 'accountValue'>
   readonly rsvp: {
     readonly title: string
@@ -56,14 +61,22 @@ export type Origin01StudioDraft = {
 
 export const getOrigin01StudioDraftSessionId = (invitation: Origin01InvitationData) => invitation.id
 
-const cloneTrivia = (trivia: Origin01TriviaContent): Origin01TriviaContent => ({
-  ...trivia,
-  questions: trivia.questions.map((question) => ({
-    ...question,
-    options: question.options.map((option) => ({ ...option })),
-  })),
-  resultTiers: trivia.resultTiers.map((tier) => ({ ...tier })),
-})
+const createTriviaEditorialDraft = (trivia: Origin01TriviaContent): Origin01TriviaEditorialDraft => {
+  const { protagonistName, accessibleTitle, title, revealSignature, ...editorial } = trivia
+  void protagonistName
+  void accessibleTitle
+  void title
+  void revealSignature
+
+  return {
+    ...editorial,
+    questions: editorial.questions.map((question) => ({
+      ...question,
+      options: question.options.map((option) => ({ ...option })),
+    })),
+    resultTiers: editorial.resultTiers.map((tier) => ({ ...tier })),
+  }
+}
 
 export function createOrigin01StudioDraft(invitation: Origin01InvitationData): Origin01StudioDraft {
   const protagonistName = invitation.identities.find(({ role }) => role === 'protagonist')?.displayName ?? ''
@@ -112,7 +125,7 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
       copy: { eyebrow: invitation.content.gallery.eyebrow, heading: invitation.content.gallery.heading },
       captions: invitation.content.gallery.images.map(({ caption }) => caption ?? ''),
     },
-    trivia: cloneTrivia(invitation.content.trivia),
+    trivia: createTriviaEditorialDraft(invitation.content.trivia),
     gifts: {
       title: invitation.content.gifts.title,
       description: invitation.content.gifts.description,
