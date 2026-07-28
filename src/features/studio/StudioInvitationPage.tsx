@@ -17,6 +17,7 @@ import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import { StudioStoryEditor } from './StudioStoryEditor'
 import { StudioTriviaEditor } from './StudioTriviaEditor'
+import { selectValidStudioPreview } from './origin01StudioValidation'
 import { useOrigin01StudioModel } from './useOrigin01StudioModel'
 import { useStudioPreviewAudience } from './useStudioPreviewAudience'
 import './studio.css'
@@ -33,7 +34,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const model = useOrigin01StudioModel(invitation)
   const previewAudience = useStudioPreviewAudience('protagonist')
   const { draft, initialDraft, validation: studioValidation, configurationValidation,
-    previewInvitation, update, updateGroup, resetConfiguration, setModuleEnabled } = model
+    previewInvitation, update, updateGroup, resetValue, resetField, resetScene,
+    resetConfiguration, setModuleEnabled } = model
   const errors = studioValidation.fieldErrors
 
   const protagonistName = draft.protagonistName
@@ -220,7 +222,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               canonicalValue={canonicalProtagonistName}
               error={protagonistNameError}
               onChange={setProtagonistName}
-              onReset={() => setProtagonistName(canonicalProtagonistName)}
+              onReset={() => resetValue('protagonistName')}
             />
           ) : (
             <section className="limen-studio__content-editor" aria-labelledby="studio-content-title">
@@ -248,52 +250,52 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalMessageValue={canonicalStoryMessage}
             messageError={storyMessageError}
             onEyebrowChange={setStoryEyebrow}
-            onEyebrowReset={() => setStoryEyebrow(canonicalStoryEyebrow)}
+            onEyebrowReset={() => resetField('story', 'eyebrow')}
             onMessageChange={setStoryMessage}
-            onMessageReset={() => setStoryMessage(canonicalStoryMessage)}
+            onMessageReset={() => resetField('story', 'message')}
           />
           <StudioOpeningEditor
             preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
               error: preludeEyebrowError, onChange: (value) => setOpening('preludeEyebrow', value),
-              onReset: () => setOpening('preludeEyebrow', canonicalPreludeEyebrow) }}
+              onReset: () => resetField('opening', 'preludeEyebrow') }}
             preludeBody={{ value: preludeBody, canonicalValue: canonicalPreludeBody,
               error: preludeBodyError, onChange: (value) => setOpening('preludeBody', value),
-              onReset: () => setOpening('preludeBody', canonicalPreludeBody) }}
+              onReset: () => resetField('opening', 'preludeBody') }}
             preludeReveal={{ value: preludeReveal, canonicalValue: canonicalPreludeReveal,
               error: preludeRevealError, onChange: (value) => setOpening('preludeReveal', value),
-              onReset: () => setOpening('preludeReveal', canonicalPreludeReveal) }}
+              onReset: () => resetField('opening', 'preludeReveal') }}
             preludeQuestion={{ value: preludeQuestion, canonicalValue: canonicalPreludeQuestion,
               error: preludeQuestionError, onChange: (value) => setOpening('preludeQuestion', value),
-              onReset: () => setOpening('preludeQuestion', canonicalPreludeQuestion) }}
+              onReset: () => resetField('opening', 'preludeQuestion') }}
             preludeActionLabel={{ value: preludeActionLabel,
               canonicalValue: canonicalPreludeActionLabel, error: preludeActionLabelError,
               onChange: (value) => setOpening('preludeActionLabel', value),
-              onReset: () => setOpening('preludeActionLabel', canonicalPreludeActionLabel) }}
+              onReset: () => resetField('opening', 'preludeActionLabel') }}
             preludeSoundHint={{ value: preludeSoundHint, canonicalValue: canonicalPreludeSoundHint,
               error: preludeSoundHintError, onChange: (value) => setOpening('preludeSoundHint', value),
-              onReset: () => setOpening('preludeSoundHint', canonicalPreludeSoundHint) }}
+              onReset: () => resetField('opening', 'preludeSoundHint') }}
             heroPhrase={{ value: heroPhrase, canonicalValue: canonicalHeroPhrase,
               error: heroPhraseError, onChange: (value) => setOpening('heroPhrase', value),
-              onReset: () => setOpening('heroPhrase', canonicalHeroPhrase) }}
+              onReset: () => resetField('opening', 'heroPhrase') }}
             heroScrollHint={{ value: heroScrollHint, canonicalValue: canonicalHeroScrollHint,
               error: heroScrollHintError, onChange: (value) => setOpening('heroScrollHint', value),
-              onReset: () => setOpening('heroScrollHint', canonicalHeroScrollHint) }}
+              onReset: () => resetField('opening', 'heroScrollHint') }}
           />
           <StudioClosingEditor
             eyebrow={{ value: closingEyebrow, canonicalValue: canonicalClosingEyebrow,
               error: closingEyebrowError, onChange: (value) => setClosing('eyebrow', value),
-              onReset: () => setClosing('eyebrow', canonicalClosingEyebrow) }}
+              onReset: () => resetField('closing', 'eyebrow') }}
             title={{ value: closingTitle, canonicalValue: canonicalClosingTitle,
               error: closingTitleError, onChange: (value) => setClosing('title', value),
-              onReset: () => setClosing('title', canonicalClosingTitle) }}
+              onReset: () => resetField('closing', 'title') }}
             sharePrompt={{ value: closingSharePrompt,
               canonicalValue: canonicalClosingSharePrompt, error: closingSharePromptError,
               onChange: (value) => setClosing('sharePrompt', value),
-              onReset: () => setClosing('sharePrompt', canonicalClosingSharePrompt) }}
+              onReset: () => resetField('closing', 'sharePrompt') }}
             shareActionLabel={{ value: closingShareActionLabel,
               canonicalValue: canonicalClosingShareActionLabel,
               error: closingShareActionLabelError, onChange: (value) => setClosing('shareActionLabel', value),
-              onReset: () => setClosing('shareActionLabel', canonicalClosingShareActionLabel) }}
+              onReset: () => resetField('closing', 'shareActionLabel') }}
           />
           <StudioGalleryEditor
             eyebrow={{ value: galleryCopy.eyebrow, error: galleryErrors.eyebrow,
@@ -309,8 +311,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onCaptionChange={(index, caption) => setGalleryCaptions((current) => (
               current.map((value, currentIndex) => currentIndex === index ? caption : value)
             ))}
-            onCopyReset={() => setGalleryCopy(() => ({ eyebrow: canonicalGallery.eyebrow, heading: canonicalGallery.heading }))}
-            onCaptionsReset={() => setGalleryCaptions(() => [...canonicalGalleryCaptions])}
+            onCopyReset={() => resetField('gallery', 'copy')}
+            onCaptionsReset={() => resetField('gallery', 'captions')}
           />
           <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
           <StudioEventInformationEditor
@@ -324,7 +326,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 onChange: (completedMessage) => setCountdownCopy((current) => ({ ...current, completedMessage })) },
               resetDisabled: Object.keys(canonicalCountdown).every((key) =>
                 countdownCopy[key as keyof typeof countdownCopy] === canonicalCountdown[key as keyof typeof canonicalCountdown]),
-              onReset: () => setCountdownCopy(() => ({ ...canonicalCountdown })),
+              onReset: () => resetScene('countdown'),
             }}
             eventDetails={{
               eyebrow: { value: eventDetailsCopy.eyebrow, error: eventDetailsErrors.eyebrow,
@@ -348,13 +350,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 && eventDetailsCopy.mapActionLabel === canonicalEventDetails.mapActionLabel
                 && eventDetailsCopy.calendarActionLabel === canonicalEventDetails.calendarActionLabel
                 && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
-              onReset: () => setEventDetailsCopy(() => ({
-                eyebrow: canonicalEventDetails.eyebrow, heading: canonicalEventDetails.heading,
-                venueLabel: canonicalEventDetails.venueLabel,
-                mapActionLabel: canonicalEventDetails.mapActionLabel,
-                calendarActionLabel: canonicalEventDetails.calendarActionLabel,
-                calendarDescription: canonicalEventDetails.calendarDescription,
-              })),
+              onReset: () => resetScene('eventDetails'),
             }}
           />
           <StudioEventScheduleEditor
@@ -366,9 +362,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             endError={eventEndError}
             timeZone={invitation.event.timeZone}
             onStartChange={setEventStart}
-            onStartReset={() => setEventStart(canonicalEventStart)}
+            onStartReset={() => resetField('event', 'start')}
             onEndChange={setEventEnd}
-            onEndReset={() => setEventEnd(canonicalEventEnd)}
+            onEndReset={() => resetField('event', 'end')}
           />
           <StudioEventLocationEditor
             venueValue={venue}
@@ -378,9 +374,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalAddressValue={canonicalAddress}
             addressError={addressError}
             onVenueChange={setVenue}
-            onVenueReset={() => setVenue(canonicalVenue)}
+            onVenueReset={() => resetField('event', 'venue')}
             onAddressChange={setAddress}
-            onAddressReset={() => setAddress(canonicalAddress)}
+            onAddressReset={() => resetField('event', 'address')}
           />
           <StudioDressCodeEditor
             titleValue={dressCodeTitle}
@@ -393,11 +389,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalNoteValue={canonicalDressCodeNote}
             noteError={dressCodeNoteError}
             onTitleChange={setDressCodeTitle}
-            onTitleReset={() => setDressCodeTitle(canonicalDressCodeTitle)}
+            onTitleReset={() => resetField('dressCode', 'title')}
             onDescriptionChange={setDressCodeDescription}
-            onDescriptionReset={() => setDressCodeDescription(canonicalDressCodeDescription)}
+            onDescriptionReset={() => resetField('dressCode', 'description')}
             onNoteChange={setDressCodeNote}
-            onNoteReset={() => setDressCodeNote(canonicalDressCodeNote)}
+            onNoteReset={() => resetField('dressCode', 'note')}
           />
           <StudioGiftsEditor
             titleValue={giftsTitle}
@@ -413,13 +409,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalAccountValue={canonicalGiftsAccount}
             accountError={giftsAccountError}
             onTitleChange={setGiftsTitle}
-            onTitleReset={() => setGiftsTitle(canonicalGiftsTitle)}
+            onTitleReset={() => resetField('gifts', 'title')}
             onDescriptionChange={setGiftsDescription}
-            onDescriptionReset={() => setGiftsDescription(canonicalGiftsDescription)}
+            onDescriptionReset={() => resetField('gifts', 'description')}
             onNoteChange={setGiftsNote}
-            onNoteReset={() => setGiftsNote(canonicalGiftsNote)}
+            onNoteReset={() => resetField('gifts', 'demoNote')}
             onAccountChange={setGiftsAccount}
-            onAccountReset={() => setGiftsAccount(canonicalGiftsAccount)}
+            onAccountReset={() => resetField('gifts', 'accountValue')}
           />
           <StudioRsvpEditor
             titleValue={rsvpTitle}
@@ -435,13 +431,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalRecipientPhoneValue={canonicalRsvpRecipientPhone}
             recipientPhoneError={rsvpRecipientPhoneError}
             onTitleChange={setRsvpTitle}
-            onTitleReset={() => setRsvpTitle(canonicalRsvpTitle)}
+            onTitleReset={() => resetField('rsvp', 'title')}
             onDescriptionChange={setRsvpDescription}
-            onDescriptionReset={() => setRsvpDescription(canonicalRsvpDescription)}
+            onDescriptionReset={() => resetField('rsvp', 'description')}
             onActionLabelChange={setRsvpActionLabel}
-            onActionLabelReset={() => setRsvpActionLabel(canonicalRsvpActionLabel)}
+            onActionLabelReset={() => resetField('rsvp', 'actionLabel')}
             onRecipientPhoneChange={setRsvpRecipientPhone}
-            onRecipientPhoneReset={() => setRsvpRecipientPhone(canonicalRsvpRecipientPhone)}
+            onRecipientPhoneReset={() => resetField('rsvp', 'recipientPhone')}
           />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
@@ -464,8 +460,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
 
         <StudioPreview
           key={previewAudience.previewKey}
-          invitation={!studioValidation.previewBlocked && canonicalProtagonistIdentity
-            ? previewInvitation : null}
+          invitation={canonicalProtagonistIdentity
+            ? selectValidStudioPreview(studioValidation, previewInvitation) : null}
           audience={previewAudience.audience}
           publicInvitationUrl={publicInvitationUrl}
           onAudienceChange={previewAudience.changeAudience}
