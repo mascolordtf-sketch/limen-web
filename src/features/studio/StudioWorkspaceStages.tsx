@@ -32,11 +32,16 @@ export function StudioSectionsStage({ template, modules }: {
   modules: readonly InvitationModuleConfig[]
 }) {
   const configured = new Map(modules.map((module) => [module.moduleId, module.enabled]))
+  const definitions = new Map(template.modules.map((module) => [module.moduleId, module]))
+  const orderedSections = template.canonicalOrder.flatMap((moduleId) => {
+    const definition = definitions.get(moduleId)
+    return definition ? [definition] : []
+  })
   return <section className="limen-studio__stage-panel" aria-labelledby="studio-sections-title">
     <h2 id="studio-sections-title">Secciones</h2>
     <p>Este es el recorrido actual de tu invitación.</p>
     <ol className="limen-studio__section-summary">
-      {template.modules.filter(({ moduleId }) => template.canonicalOrder.includes(moduleId)).map((module) => {
+      {orderedSections.map((module) => {
         const included = template.requiredModules.includes(module.moduleId) || configured.get(module.moduleId) === true
         return <li key={module.moduleId}><span>{module.internalLabel}</span>
           <strong className={included ? 'is-included' : undefined}>{included ? 'Sección incluida' : 'No incluida'}</strong></li>

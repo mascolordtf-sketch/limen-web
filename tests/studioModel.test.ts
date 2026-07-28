@@ -359,6 +359,19 @@ const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
 assert(sectionsMarkup.includes('Sección incluida') && sectionsMarkup.includes('No incluida')
   && !sectionsMarkup.includes('type="checkbox"'),
   'Secciones resume la configuración existente sin ofrecer mutaciones anticipadas')
+const unorderedTemplate = {
+  ...origin01Template,
+  modules: [...origin01Template.modules].reverse().filter(({ moduleId }) => moduleId !== 'countdown'),
+}
+const orderedSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
+  { template: unorderedTemplate, modules: storyDisabled.modules }))
+const orderedSectionLabels = ['Preludio', 'Presentación', 'Historia personal', 'Detalles del evento', 'Código de vestimenta',
+  'Galería', 'Trivia', 'Regalos', 'Confirmación de asistencia', 'Cierre']
+assert(orderedSectionLabels.every((label, index) => orderedSectionsMarkup.indexOf(label)
+  < orderedSectionsMarkup.indexOf(orderedSectionLabels[index + 1] ?? '</ol>'))
+  && !orderedSectionsMarkup.includes('Cuenta regresiva')
+  && orderedSectionsMarkup.includes('Sección incluida') && orderedSectionsMarkup.includes('No incluida'),
+  'Secciones sigue canonicalOrder, omite definiciones inexistentes y conserva su estado humano')
 const dedicatedFrameMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
   previewMode: 'dedicated', background: createElement('button', null, 'Editar contenido'),
   preview: createElement('button', null, 'Volver al editor'),
