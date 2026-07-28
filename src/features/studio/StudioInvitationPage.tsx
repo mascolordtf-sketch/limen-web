@@ -120,10 +120,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       {activeStage === 'sections' && <StudioSectionsStage template={template} modules={model.draft.modules} />}
       <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={domains} navigation={navigation} validation={model.validation} editor={editor}
       editorResolvable={!navigation.editorId || isStudioEditorId(navigation.editorId)} onNavigate={navigate}
-      previewDedicated={layerOpen}
-      previewAudience={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
-      previewStatus={retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}
-      onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
+      onOpenPreview={openPreview}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} /></div>
       {activeStage === 'review' && <section className="limen-studio__stage-panel" aria-labelledby="studio-review-title"><h2 id="studio-review-title">Revisión</h2>{reviewPanel('status')}{reviewPanel('errors')}</section>}
     </div></>
