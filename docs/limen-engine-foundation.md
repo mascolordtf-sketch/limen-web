@@ -122,3 +122,9 @@ Studio reúne en un único panel la edición temporal de los textos editoriales 
 ## Fase 2A.12 — edición editorial de Galería
 
 Studio permite editar temporalmente el texto introductorio, el título y los epígrafes opcionales de las imágenes existentes de Galería, con restablecimientos independientes para el contenido general y los epígrafes. Las referencias de medios, la cantidad y el orden canónicos permanecen protegidos. No existen persistencia, autenticación, carga o reemplazo de medios ni creación, eliminación o reordenamiento de elementos.
+
+## Fase 2A.13 — cierre de proyecciones identitarias y de la Fase 2A
+
+Studio deriva el monograma del sobre, el mensaje prellenado de RSVP y el título utilizado para compartir desde el cierre a partir de la identidad temporal validada de la protagonista. En estas tres proyecciones, `event.celebrationLabel` es la fuente canónica para el tipo o nombre de la celebración. La derivación ocurre en la invitación temporal sin mutar el fixture, sin alterar la invitación pública y sin añadir paneles editoriales.
+
+La Fase 2A queda formalmente cerrada con cobertura editorial temporal suficiente para Origin 01. Los textos menores restantes permanecen canónicos o diferidos deliberadamente. Medios, persistencia, autenticación, publicación y rediseño de Studio siguen fuera de esta etapa. La personalización futura de colores queda diferida al sistema visual del Studio definitivo y deberá resolverse mediante paletas o roles de color coherentes, no mediante cambios aislados de estilos.
