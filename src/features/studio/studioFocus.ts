@@ -9,7 +9,7 @@ export function restoreStudioPreviewOpener(opener: HTMLElement | null) {
 }
 
 export function focusStudioIssueDestination(issue: StudioIssue, root: Pick<Document, 'getElementById' | 'querySelector'> = document) {
-  const destination = issue.fieldId ? root.getElementById(issue.fieldId) : null
+  const destination = issue.fieldTargetId ? root.getElementById(issue.fieldTargetId) : null
   const focusTarget = destination ?? root.querySelector<HTMLElement>('.limen-studio__editor-title')
   focusTarget?.focus()
   return destination ? 'field' : focusTarget ? 'heading' : 'unavailable'

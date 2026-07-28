@@ -18,6 +18,7 @@ export type StudioIssue = {
   readonly id: string
   readonly message: string
   readonly fieldId?: string
+  readonly fieldTargetId?: string
   readonly editorId: string
   readonly domainId: StudioDomainId
   readonly sceneId?: InvitationModuleId
@@ -76,6 +77,23 @@ type IssueSeed = Omit<StudioIssue, 'id' | 'severity' | 'blocksPreview' | 'releva
   readonly error: string | null
   readonly warning?: boolean
   readonly structural?: boolean
+}
+
+const studioFieldTargetIds: Readonly<Record<string, string>> = {
+  protagonistName: 'studio-protagonist-name', shareMessage: 'studio-custom-share-message',
+  eventStart: 'studio-event-start', eventEnd: 'studio-event-end', venue: 'studio-event-venue', address: 'studio-event-address',
+  dressCodeTitle: 'studio-dress-code-title', dressCodeDescription: 'studio-dress-code-description', dressCodeNote: 'studio-dress-code-note',
+  rsvpTitle: 'studio-rsvp-title', rsvpDescription: 'studio-rsvp-description', rsvpActionLabel: 'studio-rsvp-action-label', rsvpRecipientPhone: 'studio-rsvp-recipient-phone',
+  giftsTitle: 'studio-gifts-title', giftsDescription: 'studio-gifts-description', giftsNote: 'studio-gifts-note', giftsAccount: 'studio-gifts-account',
+  storyEyebrow: 'studio-story-eyebrow', storyMessage: 'studio-story-message',
+  preludeEyebrow: 'studio-opening-prelude-eyebrow', preludeBody: 'studio-opening-prelude-body', preludeReveal: 'studio-opening-prelude-reveal',
+  preludeQuestion: 'studio-opening-prelude-question', preludeActionLabel: 'studio-opening-prelude-action', preludeSoundHint: 'studio-opening-prelude-sound',
+  heroPhrase: 'studio-opening-hero-phrase', heroScrollHint: 'studio-opening-hero-scroll',
+  closingEyebrow: 'studio-closing-eyebrow', closingTitle: 'studio-closing-title', closingSharePrompt: 'studio-closing-share-prompt', closingShareActionLabel: 'studio-closing-share-action',
+  countdownEyebrow: 'studio-countdown-eyebrow', countdownHeading: 'studio-countdown-heading', countdownCompletedMessage: 'studio-countdown-completed-message',
+  eventDetailsEyebrow: 'studio-event-details-eyebrow', eventDetailsHeading: 'studio-event-details-heading', eventDetailsVenueLabel: 'studio-event-details-venue-label',
+  eventDetailsMapActionLabel: 'studio-event-details-map-action', eventDetailsCalendarActionLabel: 'studio-event-details-calendar-action',
+  eventDetailsCalendarDescription: 'studio-event-details-calendar-description', galleryEyebrow: 'studio-gallery-eyebrow', galleryHeading: 'studio-gallery-title',
 }
 
 export function validateOrigin01StudioDraft(
@@ -195,6 +213,7 @@ export function validateOrigin01StudioDraft(
       id: `${seed.fieldId ?? seed.editorId}-${index}`,
       message: seed.message,
       fieldId: seed.fieldId,
+      fieldTargetId: seed.fieldId ? studioFieldTargetIds[seed.fieldId] : undefined,
       editorId: seed.editorId,
       domainId: seed.domainId,
       sceneId: seed.sceneId,

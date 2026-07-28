@@ -8,6 +8,7 @@ import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRo
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
+import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
 import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
   showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
@@ -36,7 +37,8 @@ import { focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPrev
 import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel,
   transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
 import { createStudioRenderablePreview, retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
-import { createStudioRenderablePreviewStore } from '../src/features/studio/useStudioRenderablePreview'
+import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
+  selectStudioRenderablePreview } from '../src/features/studio/useStudioRenderablePreview'
 import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
   resolveStudioIssueDestination } from '../src/features/studio/studioReviewIssues'
 
@@ -287,18 +289,35 @@ assert(renderableA.showing === 'current' && staleA.showing === 'last-renderable'
   'un error estructural conserva y declara el último borrador renderizable')
 assert(renderableB.showing === 'current' && renderableB.invitation === renamedPreview, 'un borrador válido nuevo reemplaza el retenido')
 assert(isolated.showing === 'unavailable' && isolated.invitation === null, 'sesiones distintas no comparten preview retenida')
-const committedStore = createStudioRenderablePreviewStore<typeof validPreview>('sync')
-assert(committedStore.getSnapshot().showing === 'unavailable', 'la frontera productiva no retiene durante selección/render')
-committedStore.commit(validPreview)
-assert(committedStore.getSnapshot().invitation === validPreview
-  && createStudioRenderablePreviewStore<typeof validPreview>('new-session').getSnapshot().showing === 'unavailable',
+const committedCell = createStudioCommittedPreviewCell<typeof validPreview>()
+const uncommittedValid = { ...validPreview, code: 'UNCOMMITTED' }
+assert(selectStudioRenderablePreview(committedCell, 'sync', uncommittedValid, true).showing === 'current'
+  && selectStudioRenderablePreview(committedCell, 'sync', renamedPreview, false).showing === 'unavailable',
+  'seleccionar un render válido no confirmado no lo convierte en retenido')
+commitStudioRenderablePreview(committedCell, 'sync', validPreview)
+assert(selectStudioRenderablePreview(committedCell, 'sync', renamedPreview, false).invitation === validPreview
+  && selectStudioRenderablePreview(committedCell, 'new-session', renamedPreview, false).showing === 'unavailable',
   'la frontera productiva conserva solo output confirmado y aísla sesiones')
+for (let index = 0; index < 25; index += 1) {
+  const unstableCurrent = { ...validPreview, code: `UNSTABLE-${index}` }
+  assert(selectStudioRenderablePreview(committedCell, 'sync', unstableCurrent, true).invitation === unstableCurrent,
+    'cada identidad inestable se devuelve inmediatamente sin programar una actualización')
+}
+assert(committedCell.commitCount === 1,
+  'identidades derivadas inestables no causan commits ni bucles durante render')
 
 const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
 assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
   && !inactiveStoryResult.previewBlocked, 'los grupos conservan contenido inactivo sin bloquear preview')
 const storyIssue = inactiveStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')!
 assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
+const storyEditorMarkup = renderToStaticMarkup(createElement(StudioStoryEditor, { eyebrowValue: '', canonicalEyebrowValue: '',
+  eyebrowError: null, messageValue: '', canonicalMessageValue: '', messageError: storyIssue.message,
+  onEyebrowChange: () => undefined, onEyebrowReset: () => undefined,
+  onMessageChange: () => undefined, onMessageReset: () => undefined }))
+assert(storyIssue.fieldTargetId === 'studio-story-message'
+  && storyEditorMarkup.includes(`id="${storyIssue.fieldTargetId}"`),
+  'el target estable de la issue coincide con el id renderizado por su editor productivo')
 assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
 const correctionContext = createStudioIssueCorrectionContext(storyIssue)
 const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!
@@ -369,7 +388,7 @@ assert(isStudioPreviewCloseKey('Escape') && !isStudioPreviewCloseKey('Enter'), '
 const fieldRoot = { getElementById: () => focusable, querySelector: () => null } as unknown as Document
 const headingRoot = { getElementById: () => null, querySelector: () => focusable } as unknown as Document
 assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
-  && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined }, headingRoot) === 'heading',
+  && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
   'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')

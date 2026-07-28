@@ -1,39 +1,40 @@
-import { useLayoutEffect, useMemo, useSyncExternalStore } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import type { StudioRenderablePreview } from './studioRenderablePreview'
-import { createStudioRenderablePreview, retainStudioRenderablePreview } from './studioRenderablePreview'
 
-export type StudioRenderablePreviewStore<T> = {
-  readonly sessionId: string
-  getSnapshot: () => StudioRenderablePreview<T>
-  subscribe: (listener: () => void) => () => void
-  commit: (invitation: T) => void
+export type StudioCommittedPreviewCell<T> = {
+  sessionId?: string
+  invitation: T | null
+  commitCount: number
 }
 
-export function createStudioRenderablePreviewStore<T>(sessionId: string): StudioRenderablePreviewStore<T> {
-  let snapshot = createStudioRenderablePreview<T>()
-  const listeners = new Set<() => void>()
-  return {
-    sessionId,
-    getSnapshot: () => snapshot,
-    subscribe: (listener) => { listeners.add(listener); return () => listeners.delete(listener) },
-    commit: (invitation) => {
-      snapshot = retainStudioRenderablePreview(snapshot, sessionId, invitation, true)
-      listeners.forEach((listener) => listener())
-    },
+export const createStudioCommittedPreviewCell = <T>(): StudioCommittedPreviewCell<T> => ({
+  invitation: null, commitCount: 0,
+})
+
+export function selectStudioRenderablePreview<T>(cell: StudioCommittedPreviewCell<T>, sessionId: string,
+  current: T, structurallyValid: boolean): StudioRenderablePreview<T> {
+  if (structurallyValid) return { sessionId, invitation: current, showing: 'current' }
+  if (cell.sessionId === sessionId && cell.invitation) {
+    return { sessionId, invitation: cell.invitation, showing: 'last-renderable' }
   }
+  return { sessionId, invitation: null, showing: 'unavailable' }
 }
 
-/** Selects current output purely during render and commits retention only after React commits. */
+export function commitStudioRenderablePreview<T>(cell: StudioCommittedPreviewCell<T>, sessionId: string,
+  invitation: T) {
+  cell.sessionId = sessionId
+  cell.invitation = invitation
+  cell.commitCount += 1
+}
+
+/** Render selection is pure; the derived output is retained only after a valid React commit. */
 export function useStudioRenderablePreview<T>(sessionId: string, current: T,
   structurallyValid: boolean): StudioRenderablePreview<T> {
-  const store = useMemo(() => createStudioRenderablePreviewStore<T>(sessionId), [sessionId])
-  const committed = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
+  const [committed] = useState(createStudioCommittedPreviewCell<T>)
+  const selection = selectStudioRenderablePreview(committed, sessionId, current, structurallyValid)
   useLayoutEffect(() => {
-    if (structurallyValid) store.commit(current)
-  }, [current, store, structurallyValid])
-  if (structurallyValid) return { sessionId, invitation: current, showing: 'current' }
-  return committed.invitation
-    ? { ...committed, showing: 'last-renderable' }
-    : { sessionId, invitation: null, showing: 'unavailable' }
+    if (structurallyValid) commitStudioRenderablePreview(committed, sessionId, current)
+  }, [committed, current, sessionId, structurallyValid])
+  return selection
 }
