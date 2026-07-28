@@ -11,13 +11,14 @@ import { useStudioNavigation } from './useStudioNavigation'
 import { StudioPreview } from './StudioPreview'
 import { useOrigin01StudioModel } from './useOrigin01StudioModel'
 import { useStudioPreviewAudience } from './useStudioPreviewAudience'
-import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel, shouldMountStudioPreviewRenderer, transitionStudioPreviewSurface } from './studioPreviewSurface'
-import { createStudioRenderablePreviewBoundary } from './studioRenderablePreview'
+import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel, transitionStudioPreviewSurface } from './studioPreviewSurface'
+import { useStudioRenderablePreview } from './useStudioRenderablePreview'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
 import { StudioReviewPanel } from './StudioReviewPanel'
 import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, resolveStudioIssueDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
+import { focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -30,8 +31,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const domains = createOrigin01StudioDomains(template)
   const [navigation, navigate] = useStudioNavigation(domains)
   const [surface, surfaceDispatch] = useReducer(transitionStudioPreviewSurface, undefined, createStudioPreviewSurfaceState)
-  const [previewBoundary] = useState(() => createStudioRenderablePreviewBoundary<Origin01InvitationData>())
-  const retained = previewBoundary.select(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
+  const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const opener = useRef<HTMLElement | null>(null)
@@ -50,10 +50,10 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       origin: navigation, target: activeItem?.previewTarget })
   }
   const closePreview = () => { surfaceDispatch({ type: 'close' }); requestAnimationFrame(() => {
-    window.scrollTo({ top: scrollPosition.current }); if (opener.current?.isConnected) opener.current.focus()
+    window.scrollTo({ top: scrollPosition.current }); restoreStudioPreviewOpener(opener.current)
   }) }
   useEffect(() => { if (layerOpen) layerTitle.current?.focus() }, [layerOpen])
-  useEffect(() => { if (!layerOpen) return; const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') closePreview() }
+  useEffect(() => { if (!layerOpen) return; const escape = (event: KeyboardEvent) => { if (isStudioPreviewCloseKey(event.key)) closePreview() }
     document.addEventListener('keydown', escape); return () => document.removeEventListener('keydown', escape) })
 
   const openIssue = (issue: StudioIssue) => {
@@ -63,8 +63,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     if (layerOpen) surfaceDispatch({ type: 'close' })
     navigate({ type: 'open-item', domainId: issue.domainId, item: destination })
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      const field = issue.fieldId ? document.getElementById(issue.fieldId) : null
-      ;(field ?? document.querySelector<HTMLElement>('.limen-studio__editor-title'))?.focus()
+      focusStudioIssueDestination(issue)
     }))
   }
   const structuralIssue = () => {
@@ -86,10 +85,10 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const editor = navigation.editorId ? <StudioActiveEditor invitation={invitation} template={template} model={model}
     editorId={navigation.editorId} reviewPanels={{ 'review-status': reviewPanel('status'), 'review-errors': reviewPanel('errors'),
       'review-audiences': reviewPanel('audiences') }} /> : null
-  const preview = shouldMountStudioPreviewRenderer(surface) ? <StudioPreview invitation={retained.invitation} audience={audience.audience}
+  const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
     contextualLabel={contextualLabel} onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
-    onStructuralIssue={structuralIssue} headingRef={layerTitle} /> : null
+    onStructuralIssue={structuralIssue} headingRef={layerTitle} />
   const eventDate = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeStyle: 'short',
     timeZone: invitation.event.timeZone }).format(new Date(invitation.event.startsAt))
 

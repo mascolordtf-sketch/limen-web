@@ -16,8 +16,6 @@ export const createStudioPreviewSurfaceState = (): StudioPreviewSurfaceState => 
   desktop: 'visible', mobile: 'closed',
 })
 
-export const shouldMountStudioPreviewRenderer = (state: StudioPreviewSurfaceState) => Boolean(state)
-
 export function transitionStudioPreviewSurface(state: StudioPreviewSurfaceState, action: StudioPreviewSurfaceAction) {
   if (action.type === 'open') return { ...state, origin: action.origin, returnContext: action.origin,
     target: action.target, [action.viewport]: action.viewport === 'desktop' ? 'expanded' : 'full-screen' } as StudioPreviewSurfaceState

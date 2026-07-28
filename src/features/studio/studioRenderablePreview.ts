@@ -16,12 +16,3 @@ export function retainStudioRenderablePreview<T>(state: StudioRenderablePreview<
 }
 
 /** A preview-lifecycle boundary. It retains only derived renderable output, never editable draft state. */
-export function createStudioRenderablePreviewBoundary<T>() {
-  let snapshot = createStudioRenderablePreview<T>()
-  return {
-    select(sessionId: string, current: T, structurallyValid: boolean) {
-      snapshot = retainStudioRenderablePreview(snapshot, sessionId, current, structurallyValid)
-      return snapshot
-    },
-  }
-}
