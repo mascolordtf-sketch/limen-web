@@ -25,6 +25,8 @@ import { StudioDesignStage, StudioSectionsStage, StudioStageNavigation } from '.
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { StudioWorkspaceFrame } from './StudioWorkspaceFrame'
 import type { StudioPreviewMode } from './StudioWorkspaceFrame'
+import { createInitialStudioNavigation, isStudioNavigationAvailable, resolveStudioNavigationForDomains,
+  transitionStudioNavigation } from './studioNavigation'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -36,7 +38,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const audience = useStudioPreviewAudience('protagonist')
   const domains = createOrigin01StudioDomains(template)
   const contentDomains = domains.filter(({ id }) => id !== 'review')
-  const [navigation, navigate] = useStudioNavigation(domains)
+  const [navigation, dispatchNavigation] = useStudioNavigation(domains)
   const [surface, surfaceDispatch] = useReducer(transitionStudioPreviewSurface, undefined, createStudioPreviewSurfaceState)
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
@@ -45,6 +47,13 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const opener = useRef<HTMLElement | null>(null)
   const scrollPosition = useRef(0)
   const layerTitle = useRef<HTMLHeadingElement>(null)
+  const [lastContentNavigation, setLastContentNavigation] = useState(() => createInitialStudioNavigation(contentDomains))
+  const contentNavigation = resolveStudioNavigationForDomains(navigation, contentDomains, lastContentNavigation)
+  const navigate = (action: Parameters<typeof dispatchNavigation>[0]) => {
+    const nextNavigation = transitionStudioNavigation(navigation, action)
+    if (isStudioNavigationAvailable(nextNavigation, contentDomains)) setLastContentNavigation(nextNavigation)
+    dispatchNavigation(action)
+  }
   const activeDomain = domains.find(({ id }) => id === navigation.domainId)
   const activeItem = activeDomain?.items.find(({ id }) => id === navigation.itemId)
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
@@ -102,8 +111,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const reviewPanel = (kind: 'status' | 'errors' | 'audiences') => <StudioReviewPanel kind={kind}
     validation={model.validation} domains={domains} showing={retained.showing} audience={audience.audience}
     onIssue={openIssue} onAudience={audience.changeAudience} onPreview={openPreview} />
-  const editor = navigation.editorId ? <StudioActiveEditor invitation={invitation} template={template} model={model}
-    editorId={navigation.editorId} reviewPanels={{ 'review-status': reviewPanel('status'), 'review-errors': reviewPanel('errors'),
+  const editor = contentNavigation.editorId ? <StudioActiveEditor invitation={invitation} template={template} model={model}
+    editorId={contentNavigation.editorId} reviewPanels={{ 'review-status': reviewPanel('status'), 'review-errors': reviewPanel('errors'),
       'review-audiences': reviewPanel('audiences') }} /> : null
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
@@ -119,8 +128,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     <div className="limen-studio__stage-content">
       {activeStage === 'design' && <StudioDesignStage template={template} onPreview={openPreview} />}
       {activeStage === 'sections' && <StudioSectionsStage template={template} modules={model.draft.modules} />}
-      <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={contentDomains} navigation={navigation} validation={model.validation} editor={editor}
-      editorResolvable={!navigation.editorId || isStudioEditorId(navigation.editorId)} onNavigate={navigate}
+      <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={contentDomains} navigation={contentNavigation} validation={model.validation} editor={editor}
+      editorResolvable={!contentNavigation.editorId || isStudioEditorId(contentNavigation.editorId)} onNavigate={navigate}
       onOpenPreview={openPreview}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} /></div>
       {activeStage === 'review' && <section className="limen-studio__stage-panel" aria-labelledby="studio-review-title"><h2 id="studio-review-title">Revisión</h2>{reviewPanel('status')}{reviewPanel('errors')}</section>}

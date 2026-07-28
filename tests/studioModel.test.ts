@@ -39,7 +39,8 @@ import {
   getStudioPreviewKey,
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
-import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
+import { createInitialStudioNavigation, isStudioNavigationAvailable, resolveStudioNavigationForDomains,
+  transitionStudioNavigation } from '../src/features/studio/studioNavigation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
   restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
 import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
@@ -440,8 +441,17 @@ const previewElement = createElement(StudioPreview, { invitation: validPreview, 
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
 const contentDomains = domains.filter(({ id }) => id !== 'review')
+const reviewNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: 'review', item: errorReturn })
+const restoredContentNavigation = resolveStudioNavigationForDomains(reviewNavigation, contentDomains, triviaNavigation)
+assert(isStudioNavigationAvailable(restoredContentNavigation, contentDomains)
+  && restoredContentNavigation.domainId === triviaNavigation.domainId
+  && restoredContentNavigation.itemId === triviaNavigation.itemId
+  && restoredContentNavigation.editorId === triviaNavigation.editorId,
+  'Contenido recupera la última selección editorial completa cuando la selección interna apunta a Revisión')
+assert(resolveStudioNavigationForDomains(triviaNavigation, contentDomains, createInitialStudioNavigation(contentDomains)) === triviaNavigation,
+  'una selección editorial válida se conserva al volver a Contenido')
 const shellMarkup = renderToStaticMarkup(createElement(StudioNavigationShell, {
-  domains: contentDomains, navigation: triviaNavigation, validation: validResult, editor: createElement('div'),
+  domains: contentDomains, navigation: restoredContentNavigation, validation: validResult, editor: createElement('div'),
   editorResolvable: true, onNavigate: () => undefined, onOpenPreview: () => undefined,
   correctionReturn: false, onReturnToErrors: () => undefined,
 }))
@@ -460,6 +470,11 @@ assert((shellMarkup.match(/<nav/g) ?? []).length === 1
 assert(!shellMarkup.includes('<strong>Revisión</strong>')
   && ['Identidad', 'Evento', 'Narrativa', 'Experiencias'].every((label) => shellMarkup.includes(`<strong>${label}</strong>`)),
   'Contenido muestra las categorías editoriales y excluye la categoría técnica Revisión')
+assert((shellMarkup.match(/aria-current="page"/g) ?? []).length === 2
+  && shellMarkup.includes('<strong>Experiencias</strong>')
+  && shellMarkup.includes('<strong>Trivia</strong>')
+  && shellMarkup.includes('limen-studio__editor-title" tabindex="-1">Trivia</h2>'),
+  'la categoría, la sección y el título del editor corresponden a la selección editorial recuperada')
 assert(domains.some(({ id }) => id === 'review') && resolveStudioCorrectionReturn(correctionContext, domains)?.editorId === 'review-errors',
   'el dominio Revisión permanece disponible para destinos y retornos internos')
 assert((shellMarkup.match(/Ver preview/g) ?? []).length === 3,
