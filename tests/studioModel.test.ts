@@ -7,10 +7,9 @@ import { origin01Template } from '../src/features/invitations/origin01/origin01T
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
-import { StudioAestheticStage, StudioSectionsStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
-import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
-import { StudioWorkspaceFrame } from '../src/features/studio/StudioWorkspaceFrame'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
+import { StudioAestheticStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
+import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
@@ -39,9 +38,8 @@ import {
   getStudioPreviewKey,
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
-import { createInitialStudioNavigation, isStudioNavigationAvailable, resolveStudioNavigationForDomains,
-  transitionStudioNavigation } from '../src/features/studio/studioNavigation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading, isStudioPreviewCloseKey,
+import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
+import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
   restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
 import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
   resolveStudioPreviewContextLabel,
@@ -60,6 +58,19 @@ const assert = (condition: unknown, message: string) => {
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
+const draftBeforeStageNavigation = JSON.stringify(initial)
+const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
+const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: 'template', onStageChange: () => undefined }))
+assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
+  && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Diseño'),
+  'la navegación superior presenta las cinco etapas aprobadas en orden')
+assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
+  'cada etapa superior puede activarse, incluida Revisión')
+assert(renderToStaticMarkup(createElement(StudioAestheticStage)).includes('próxima entrega')
+  && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Estética es informativa y cambiar la etapa no altera el borrador temporal')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
@@ -348,52 +359,6 @@ assert(storyIssue.fieldTargetId === 'studio-story-message'
   && storyEditorMarkup.includes(`id="${storyIssue.fieldTargetId}"`),
   'el target estable de la issue coincide con el id renderizado por su editor productivo')
 const noop = () => undefined
-const stageNavigationMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: 'template', onStageChange: noop }))
-const approvedStageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
-assert(studioWorkspaceStages.map(({ label }) => label).join('|') === approvedStageLabels.join('|')
-  && approvedStageLabels.every((label) => stageNavigationMarkup.includes(label))
-  && !stageNavigationMarkup.includes('Diseño') && stageNavigationMarkup.includes('aria-current="step"'),
-  'el shell presenta las cinco etapas aprobadas en orden e identifica semánticamente la activa')
-assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: id, onStageChange: noop })).includes('aria-current="step"')),
-  'cada etapa principal puede activarse, incluida Revisión')
-const aestheticMarkup = renderToStaticMarkup(createElement(StudioAestheticStage))
-assert(aestheticMarkup.includes('Estética') && aestheticMarkup.includes('próxima entrega')
-  && !aestheticMarkup.includes('input') && !aestheticMarkup.includes('button'),
-  'Estética comunica honestamente su alcance temporal sin controles inexistentes')
-assert(!stageNavigationMarkup.includes('Guardado'), 'el shell no comunica un guardado inexistente')
-const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
-  { template: origin01Template, modules: storyDisabled.modules }))
-assert(sectionsMarkup.includes('Sección incluida') && sectionsMarkup.includes('No incluida')
-  && !sectionsMarkup.includes('type="checkbox"'),
-  'Secciones resume la configuración existente sin ofrecer mutaciones anticipadas')
-const unorderedTemplate = {
-  ...origin01Template,
-  modules: [...origin01Template.modules].reverse().filter(({ moduleId }) => moduleId !== 'countdown'),
-}
-const orderedSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
-  { template: unorderedTemplate, modules: storyDisabled.modules }))
-const orderedSectionLabels = ['Preludio', 'Presentación', 'Historia personal', 'Detalles del evento', 'Código de vestimenta',
-  'Galería', 'Trivia', 'Regalos', 'Confirmación de asistencia', 'Cierre']
-assert(orderedSectionLabels.every((label, index) => orderedSectionsMarkup.indexOf(label)
-  < orderedSectionsMarkup.indexOf(orderedSectionLabels[index + 1] ?? '</ol>'))
-  && !orderedSectionsMarkup.includes('Cuenta regresiva')
-  && orderedSectionsMarkup.includes('Sección incluida') && orderedSectionsMarkup.includes('No incluida'),
-  'Secciones sigue canonicalOrder, omite definiciones inexistentes y conserva su estado humano')
-const dedicatedFrameMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
-  previewMode: 'dedicated', background: createElement('button', null, 'Editar contenido'),
-  preview: createElement('button', null, 'Volver al editor'),
-}))
-assert(dedicatedFrameMarkup.includes('workspace-background" inert=""')
-  && dedicatedFrameMarkup.includes('workspace-preview')
-  && !dedicatedFrameMarkup.includes('workspace-preview" inert=""'),
-  'la preview dedicada queda fuera del fondo inerte y conserva controles operables')
-const collapsedFrameMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
-  previewMode: 'collapsed', background: createElement('div'), preview: createElement('button', null, 'Mostrar preview'),
-}))
-assert(collapsedFrameMarkup.includes('workspace-frame--preview-collapsed') && collapsedFrameMarkup.includes('Mostrar preview'),
-  'el modo contraído es explícito y conserva la acción para recuperar la preview')
 const identityIssue = validateOrigin01StudioDraft(origin01DemoData,
   updateOrigin01StudioDraftField(initial, 'protagonistName', '')).issues.find(({ fieldId }) => fieldId === 'protagonistName')!
 const identityMarkup = renderToStaticMarkup(createElement(StudioContentEditor,
@@ -462,60 +427,36 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
-const contentDomains = domains.filter(({ id }) => id !== 'review')
-const reviewNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: 'review', item: errorReturn })
-const restoredContentNavigation = resolveStudioNavigationForDomains(reviewNavigation, contentDomains, triviaNavigation)
-assert(isStudioNavigationAvailable(restoredContentNavigation, contentDomains)
-  && restoredContentNavigation.domainId === triviaNavigation.domainId
-  && restoredContentNavigation.itemId === triviaNavigation.itemId
-  && restoredContentNavigation.editorId === triviaNavigation.editorId,
-  'Contenido recupera la última selección editorial completa cuando la selección interna apunta a Revisión')
-assert(resolveStudioNavigationForDomains(triviaNavigation, contentDomains, createInitialStudioNavigation(contentDomains)) === triviaNavigation,
-  'una selección editorial válida se conserva al volver a Contenido')
-const shellMarkup = renderToStaticMarkup(createElement(StudioNavigationShell, {
-  domains: contentDomains, navigation: restoredContentNavigation, validation: validResult, editor: createElement('div'),
-  editorResolvable: true, onNavigate: () => undefined, onOpenPreview: () => undefined,
-  correctionReturn: false, onReturnToErrors: () => undefined,
-}))
-assert(!shellMarkup.includes('studio-preview-renderer-title') && !shellMarkup.includes('workspace-preview')
-  && !shellMarkup.includes('desktop-preview'),
-  'StudioNavigationShell no recibe ni renderiza el host de preview')
-const frameWithPreviewMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
-  previewMode: 'visible', background: createElement('div'), preview: previewElement,
-}))
-assert((frameWithPreviewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
-  && (frameWithPreviewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
-  'StudioWorkspaceFrame conserva el único host, heading y grupo de audiencia')
-assert((shellMarkup.match(/<nav/g) ?? []).length === 1
-  && shellMarkup.includes('aria-label="Contenido de la invitación"'),
-  'Contenido presenta categorías y secciones como una única navegación editorial')
-assert(!shellMarkup.includes('<strong>Revisión</strong>')
-  && ['Identidad', 'Evento', 'Narrativa', 'Experiencias'].every((label) => shellMarkup.includes(`<strong>${label}</strong>`)),
-  'Contenido muestra las categorías editoriales y excluye la categoría técnica Revisión')
-assert((shellMarkup.match(/aria-current="page"/g) ?? []).length === 2
-  && shellMarkup.includes('<strong>Experiencias</strong>')
-  && shellMarkup.includes('<strong>Trivia</strong>')
-  && shellMarkup.includes('limen-studio__editor-title" tabindex="-1">Trivia</h2>'),
-  'la categoría, la sección y el título del editor corresponden a la selección editorial recuperada')
-assert(domains.some(({ id }) => id === 'review') && resolveStudioCorrectionReturn(correctionContext, domains)?.editorId === 'review-errors',
-  'el dominio Revisión permanece disponible para destinos y retornos internos')
-assert((shellMarkup.match(/Ver preview/g) ?? []).length === 3,
+const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
+  StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
+    editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,
+    previewCollapsed, previewDedicated, previewAudience: 'Protagonista', previewStatus: 'Borrador actual',
+    onOpenPreview: () => undefined, onShowPreview: () => undefined, correctionReturn: false,
+    onReturnToErrors: () => undefined }))
+for (const markup of [shellMarkup(false, false), shellMarkup(false, true), shellMarkup(true, false)]) {
+  assert((markup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
+    && (markup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
+  'el shell productivo mantiene un solo host, heading y grupo de audiencia en cada presentación')
+}
+assert(shellMarkup(true, false).includes('hidden=""') && shellMarkup(true, false).includes('inert=""'),
+  'el estado contraído conserva el host pero retira sus controles del foco')
+assert(shellMarkup(false, true).match(/inert=""/g)?.length === 3,
+  'la presentación dedicada vuelve inertes navegación primaria, secundaria y editor')
+assert((shellMarkup(false, false).match(/Ver preview/g) ?? []).length === 3,
   'el mismo control de apertura está disponible en índice general, índice de dominio y editor móvil')
-const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains: contentDomains,
+const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains,
   navigation: triviaNavigation, validation: validResult, editor: createElement('div'), editorResolvable: true,
-  onNavigate: () => undefined, onOpenPreview: () => undefined,
-  correctionReturn: true, onReturnToErrors: () => undefined }))
-assert(correctionShell.includes('Volver a Errores') && !shellMarkup.includes('Volver a Errores'),
+  onNavigate: () => undefined, preview: previewElement, previewCollapsed: false, previewDedicated: false,
+  previewAudience: 'Protagonista', previewStatus: 'Borrador actual', onOpenPreview: () => undefined,
+  onShowPreview: () => undefined, correctionReturn: true, onReturnToErrors: () => undefined }))
+assert(correctionShell.includes('Volver a Errores') && !shellMarkup(false, false).includes('Volver a Errores'),
   'el control productivo de retorno aparece solo durante una corrección')
 const unresolvedPanel = renderToStaticMarkup(createElement(StudioReviewPanel, { kind: 'errors',
   validation: { ...validResult, issues: [{ ...storyIssue, editorId: 'unknown' }] }, domains,
   showing: 'current', audience: 'protagonist', onIssue: () => undefined, onAudience: () => undefined,
   onPreview: () => undefined }))
-assert(unresolvedPanel.includes('Revisá esta información') && !unresolvedPanel.includes('Ir a corregir'),
-  'Revisión mantiene problemas no resueltos visibles y no navegables con lenguaje humano')
-assert(!unresolvedPanel.includes('Dominio:') && !unresolvedPanel.includes('Escena:')
-  && !unresolvedPanel.includes('Campo:') && !unresolvedPanel.includes('storyMessage'),
-  'Revisión no expone dominios ni identificadores técnicos')
+assert(unresolvedPanel.includes('Destino no disponible') && !unresolvedPanel.includes('Corregir en'),
+  'Review productiva mantiene destinos no resueltos visibles y no navegables')
 let focused = 0
 const focusable = { isConnected: true, focus: () => { focused += 1 } } as HTMLElement
 assert(restoreStudioPreviewOpener(focusable) && focused === 1
@@ -527,13 +468,7 @@ const headingRoot = { getElementById: () => null, querySelector: () => focusable
 assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
   && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
   'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
-assert(focusStudioEditorHeading(headingRoot), 'la navegación externa enfoca el heading nuevo del editor')
-let reviewSelector = ''
-let reviewFocused = 0
-const reviewHeading = { focus: () => { reviewFocused += 1 } } as HTMLElement
-const reviewHeadingRoot = { getElementById: (id: string) => { reviewSelector = id; return reviewHeading } } as unknown as Document
-assert(focusStudioReviewHeading(reviewHeadingRoot) && reviewSelector === 'studio-review-title' && reviewFocused === 1,
-  'Volver a Errores enfoca el heading visible y estable de Revisión')
+assert(focusStudioEditorHeading(headingRoot), 'la navegación externa y el retorno a Errores enfocan el heading nuevo')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 

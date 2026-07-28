@@ -59,27 +59,6 @@ export function createInitialStudioNavigation(
     mobileLevel: 'general-index' }
 }
 
-export function isStudioNavigationAvailable(
-  navigation: StudioNavigationState,
-  domains: readonly StudioDomainDefinition[],
-) {
-  const domain = domains.find(({ id }) => id === navigation.domainId)
-  if (!domain) return false
-  if (!navigation.itemId && !navigation.editorId) return true
-  const item = domain.items.find(({ id }) => id === navigation.itemId)
-  return item?.editorId === navigation.editorId
-}
-
-export function resolveStudioNavigationForDomains(
-  navigation: StudioNavigationState,
-  domains: readonly StudioDomainDefinition[],
-  previous?: StudioNavigationState,
-): StudioNavigationState {
-  if (isStudioNavigationAvailable(navigation, domains)) return navigation
-  if (previous && isStudioNavigationAvailable(previous, domains)) return previous
-  return createInitialStudioNavigation(domains)
-}
-
 export function transitionStudioNavigation(
   state: StudioNavigationState,
   action: StudioNavigationAction,
