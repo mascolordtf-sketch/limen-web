@@ -9,6 +9,10 @@ import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
+import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
+import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
+import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
+import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
 import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
   showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
@@ -34,7 +38,8 @@ import {
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
 import { focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
-import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel,
+import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
+  resolveStudioPreviewContextLabel,
   transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
 import { createStudioRenderablePreview, retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
 import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
@@ -280,6 +285,20 @@ const navigationAfterOpening = transitionStudioNavigation(triviaNavigation, { ty
 assert(storedContextLabel === 'Revisando: Trivia' && navigationAfterOpening.editorId === 'dress-code'
   && resolveStudioPreviewContextLabel(openedSurface, domains) === 'Revisando: Trivia',
   'la etiqueta contextual se resuelve desde el origen almacenado y no desde la navegación activa')
+const desktopCollapsed = transitionStudioPreviewSurface(initialSurface, { type: 'collapse' })
+const mobileFromCollapsed = transitionStudioPreviewSurface(desktopCollapsed, { type: 'open', viewport: 'mobile',
+  origin: editorOrigin, target: triviaItem.previewTarget })
+assert(isStudioPreviewEffectivelyCollapsed(desktopCollapsed)
+  && !isStudioPreviewEffectivelyCollapsed(mobileFromCollapsed),
+  'abrir preview móvil anula visualmente el colapso de escritorio sin perder su preferencia')
+assert(selectStudioPreviewContextLabel(openedSurface, domains) === 'Revisando: Trivia'
+  && selectStudioPreviewContextLabel(closedSurface, domains) === undefined,
+  'la etiqueta contextual solo aparece mientras la superficie dedicada está abierta')
+const dressItem = experiencesDomain.items.find(({ editorId }) => editorId === 'dress-code')!
+const reopenedFromDress = transitionStudioPreviewSurface(closedSurface, { type: 'open', viewport: 'desktop',
+  origin: { domainId: 'experiences', itemId: dressItem.id, editorId: dressItem.editorId }, target: dressItem.previewTarget })
+assert(selectStudioPreviewContextLabel(reopenedFromDress, domains) === 'Revisando: Dress Code',
+  'una apertura nueva reemplaza deliberadamente el contexto anterior')
 
 const renderableA = retainStudioRenderablePreview(createStudioRenderablePreview(), 'session-a', validPreview, true)
 const staleA = retainStudioRenderablePreview(renderableA, 'session-a', renamedPreview, false)
@@ -318,6 +337,32 @@ const storyEditorMarkup = renderToStaticMarkup(createElement(StudioStoryEditor, 
 assert(storyIssue.fieldTargetId === 'studio-story-message'
   && storyEditorMarkup.includes(`id="${storyIssue.fieldTargetId}"`),
   'el target estable de la issue coincide con el id renderizado por su editor productivo')
+const noop = () => undefined
+const identityIssue = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftField(initial, 'protagonistName', '')).issues.find(({ fieldId }) => fieldId === 'protagonistName')!
+const identityMarkup = renderToStaticMarkup(createElement(StudioContentEditor,
+  { value: '', canonicalValue: '', error: identityIssue.message, onChange: noop, onReset: noop }))
+const eventIssue = invalidDateResult.issues.find(({ fieldId }) => fieldId === 'eventStart')!
+const eventMarkup = renderToStaticMarkup(createElement(StudioEventScheduleEditor, { startValue: '', canonicalStartValue: '',
+  startError: eventIssue.message, endValue: '', canonicalEndValue: '', endError: null, timeZone: 'UTC',
+  onStartChange: noop, onStartReset: noop, onEndChange: noop, onEndReset: noop }))
+const dressIssue = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftGroup(initial, 'dressCode', (value) => ({ ...value, title: '' })))
+  .issues.find(({ fieldId }) => fieldId === 'dressCodeTitle')!
+const dressMarkup = renderToStaticMarkup(createElement(StudioDressCodeEditor, { titleValue: '', canonicalTitleValue: '',
+  titleError: dressIssue.message, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null,
+  noteValue: '', canonicalNoteValue: '', noteError: null, onTitleChange: noop, onTitleReset: noop,
+  onDescriptionChange: noop, onDescriptionReset: noop, onNoteChange: noop, onNoteReset: noop }))
+const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
+  titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
+  canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
+  onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
+  onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
+for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
+  [dressIssue, dressMarkup], [giftIssue!, giftMarkup]] as const) {
+  assert(Boolean(issue.fieldTargetId) && markup.includes(`id="${issue.fieldTargetId}"`),
+    'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
+}
 assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
 const correctionContext = createStudioIssueCorrectionContext(storyIssue)
 const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!

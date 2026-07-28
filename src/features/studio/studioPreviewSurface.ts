@@ -32,3 +32,14 @@ export function resolveStudioPreviewContextLabel(state: StudioPreviewSurfaceStat
   const item = domains.find(({ id }) => id === state.origin?.domainId)?.items.find(({ id }) => id === state.origin?.itemId)
   return item ? `Revisando: ${item.label}` : undefined
 }
+
+export const isStudioPreviewDedicated = (state: StudioPreviewSurfaceState) =>
+  state.mobile === 'full-screen' || state.desktop === 'expanded'
+
+export const isStudioPreviewEffectivelyCollapsed = (state: StudioPreviewSurfaceState) =>
+  state.desktop === 'collapsed' && !isStudioPreviewDedicated(state)
+
+export function selectStudioPreviewContextLabel(state: StudioPreviewSurfaceState,
+  domains: readonly { id: string; items: readonly { id: string; label: string }[] }[]) {
+  return isStudioPreviewDedicated(state) ? resolveStudioPreviewContextLabel(state, domains) : undefined
+}

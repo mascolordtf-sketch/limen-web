@@ -11,7 +11,8 @@ import { useStudioNavigation } from './useStudioNavigation'
 import { StudioPreview } from './StudioPreview'
 import { useOrigin01StudioModel } from './useOrigin01StudioModel'
 import { useStudioPreviewAudience } from './useStudioPreviewAudience'
-import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel, transitionStudioPreviewSurface } from './studioPreviewSurface'
+import { createStudioPreviewSurfaceState, isStudioPreviewDedicated, isStudioPreviewEffectivelyCollapsed,
+  selectStudioPreviewContextLabel, transitionStudioPreviewSurface } from './studioPreviewSurface'
 import { useStudioRenderablePreview } from './useStudioRenderablePreview'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
 import { StudioReviewPanel } from './StudioReviewPanel'
@@ -40,8 +41,9 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const activeDomain = domains.find(({ id }) => id === navigation.domainId)
   const activeItem = activeDomain?.items.find(({ id }) => id === navigation.itemId)
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
-  const contextualLabel = resolveStudioPreviewContextLabel(surface, domains)
-  const layerOpen = surface.mobile === 'full-screen' || surface.desktop === 'expanded'
+  const layerOpen = isStudioPreviewDedicated(surface)
+  const previewCollapsed = isStudioPreviewEffectivelyCollapsed(surface)
+  const contextualLabel = selectStudioPreviewContextLabel(surface, domains)
 
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
@@ -100,7 +102,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     <StudioNavigationShell domains={domains} navigation={navigation} validation={model.validation} editor={editor}
       editorResolvable={!navigation.editorId || isStudioEditorId(navigation.editorId)} onNavigate={navigate}
       preview={<div className="limen-studio__embedded-preview"><header><strong>Preview · {audience.audience === 'guest' ? 'Invitado' : 'Protagonista'} · {retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}</strong><div>{layerOpen && <button type="button" onClick={closePreview}>← Volver al editor</button>}<button type="button" onClick={audience.restartPreview}>Reiniciar</button>{!layerOpen && <><button type="button" onClick={() => surfaceDispatch({ type: 'collapse' })}>Contraer</button><button type="button" onClick={openPreview}>Expandir</button></>}<a href={publicInvitationUrl}>Abrir demo público</a></div></header>{preview}</div>}
-      previewCollapsed={surface.desktop === 'collapsed'} previewDedicated={layerOpen}
+      previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
       previewAudience={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
       previewStatus={retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}
       onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
