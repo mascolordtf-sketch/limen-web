@@ -7,6 +7,8 @@ import { origin01Template } from '../src/features/invitations/origin01/origin01T
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
+import { StudioSectionsStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
+import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
@@ -344,6 +346,17 @@ assert(storyIssue.fieldTargetId === 'studio-story-message'
   && storyEditorMarkup.includes(`id="${storyIssue.fieldTargetId}"`),
   'el target estable de la issue coincide con el id renderizado por su editor productivo')
 const noop = () => undefined
+const stageNavigationMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: 'design', onStageChange: noop }))
+assert(studioWorkspaceStages.map(({ label }) => label).every((label) => stageNavigationMarkup.includes(label))
+  && stageNavigationMarkup.includes('aria-current="step"'),
+  'el shell presenta cuatro etapas reversibles e identifica semánticamente la etapa activa')
+assert(!stageNavigationMarkup.includes('Guardado'), 'el shell no comunica un guardado inexistente')
+const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
+  { template: origin01Template, modules: storyDisabled.modules }))
+assert(sectionsMarkup.includes('Sección incluida') && sectionsMarkup.includes('No incluida')
+  && !sectionsMarkup.includes('type="checkbox"'),
+  'Secciones resume la configuración existente sin ofrecer mutaciones anticipadas')
 const identityIssue = validateOrigin01StudioDraft(origin01DemoData,
   updateOrigin01StudioDraftField(initial, 'protagonistName', '')).issues.find(({ fieldId }) => fieldId === 'protagonistName')!
 const identityMarkup = renderToStaticMarkup(createElement(StudioContentEditor,

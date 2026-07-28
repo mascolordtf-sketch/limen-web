@@ -97,11 +97,11 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
         <h3>Editor no disponible</h3><p>Esta sección tiene un destino explícito, pero todavía no posee un editor compatible.</p>
       </section>}
     </main>
-    <aside className={`limen-studio__desktop-preview ${previewDedicated ? 'limen-studio__desktop-preview--dedicated' : ''}`}
+    {preview && <aside className={`limen-studio__desktop-preview ${previewDedicated ? 'limen-studio__desktop-preview--dedicated' : ''}`}
       aria-labelledby={previewDedicated ? 'studio-preview-renderer-title' : undefined} aria-label={previewDedicated ? undefined : 'Preview de la invitación'}>
       {previewCollapsed && <div className="limen-studio__preview-collapsed"><strong>Preview</strong><span>{previewAudience}</span><span>{previewStatus}</span>
         <button type="button" onClick={onShowPreview}>Mostrar preview</button></div>}
       <div hidden={previewCollapsed} inert={previewCollapsed ? true : undefined}>{preview}</div>
-    </aside>
+    </aside>}
   </div>
 }
