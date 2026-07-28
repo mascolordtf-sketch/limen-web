@@ -1,3 +1,8 @@
+const graphemeSegmenter = new Intl.Segmenter('es', { granularity: 'grapheme' })
+
 export function deriveMonogram(displayName: string): string {
-  return displayName.trim().charAt(0).toLocaleUpperCase('es')
+  const normalizedName = displayName.trim().normalize('NFC')
+  const firstSegment = graphemeSegmenter.segment(normalizedName)[Symbol.iterator]().next()
+
+  return firstSegment.done ? '' : firstSegment.value.segment.toLocaleUpperCase('es')
 }
