@@ -1,5 +1,6 @@
 export const studioWorkspaceStages = [
-  { id: 'design', label: 'Diseño' },
+  { id: 'template', label: 'Plantilla' },
+  { id: 'aesthetic', label: 'Estética' },
   { id: 'sections', label: 'Secciones' },
   { id: 'content', label: 'Contenido' },
   { id: 'review', label: 'Revisión' },

@@ -15,7 +15,7 @@ export function StudioStageNavigation({ activeStage, onStageChange }: {
   </nav>
 }
 
-export function StudioDesignStage({ template, onPreview }: {
+export function StudioTemplateStage({ template, onPreview }: {
   template: InvitationTemplateDefinition
   onPreview: () => void
 }) {
@@ -24,6 +24,13 @@ export function StudioDesignStage({ template, onPreview }: {
     <h2 id="studio-design-title">{template.internalName}</h2>
     <p>{template.description}</p>
     <button className="limen-studio__action" type="button" onClick={onPreview}>Ver invitación</button>
+  </section>
+}
+
+export function StudioAestheticStage() {
+  return <section className="limen-studio__stage-panel" aria-labelledby="studio-aesthetic-title">
+    <h2 id="studio-aesthetic-title">Estética</h2>
+    <p>La personalización de la apariencia de esta plantilla se incorporará en una próxima entrega.</p>
   </section>
 }
 

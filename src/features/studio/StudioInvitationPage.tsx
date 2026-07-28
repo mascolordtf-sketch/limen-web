@@ -21,7 +21,7 @@ import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, reso
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
-import { StudioDesignStage, StudioSectionsStage, StudioStageNavigation } from './StudioWorkspaceStages'
+import { StudioAestheticStage, StudioSectionsStage, StudioStageNavigation, StudioTemplateStage } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { StudioWorkspaceFrame } from './StudioWorkspaceFrame'
 import type { StudioPreviewMode } from './StudioWorkspaceFrame'
@@ -43,7 +43,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
-  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('design')
+  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
   const opener = useRef<HTMLElement | null>(null)
   const scrollPosition = useRef(0)
   const layerTitle = useRef<HTMLHeadingElement>(null)
@@ -126,7 +126,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       <button className="limen-studio__action" type="button" onClick={openPreview}>Ver invitación</button>
     </header><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
     <div className="limen-studio__stage-content">
-      {activeStage === 'design' && <StudioDesignStage template={template} onPreview={openPreview} />}
+      {activeStage === 'template' && <StudioTemplateStage template={template} onPreview={openPreview} />}
+      {activeStage === 'aesthetic' && <StudioAestheticStage />}
       {activeStage === 'sections' && <StudioSectionsStage template={template} modules={model.draft.modules} />}
       <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={contentDomains} navigation={contentNavigation} validation={model.validation} editor={editor}
       editorResolvable={!contentNavigation.editorId || isStudioEditorId(contentNavigation.editorId)} onNavigate={navigate}

@@ -7,7 +7,7 @@ import { origin01Template } from '../src/features/invitations/origin01/origin01T
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
-import { StudioSectionsStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
+import { StudioAestheticStage, StudioSectionsStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioWorkspaceFrame } from '../src/features/studio/StudioWorkspaceFrame'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
@@ -349,10 +349,19 @@ assert(storyIssue.fieldTargetId === 'studio-story-message'
   'el target estable de la issue coincide con el id renderizado por su editor productivo')
 const noop = () => undefined
 const stageNavigationMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: 'design', onStageChange: noop }))
-assert(studioWorkspaceStages.map(({ label }) => label).every((label) => stageNavigationMarkup.includes(label))
-  && stageNavigationMarkup.includes('aria-current="step"'),
-  'el shell presenta cuatro etapas reversibles e identifica semánticamente la etapa activa')
+  { activeStage: 'template', onStageChange: noop }))
+const approvedStageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
+assert(studioWorkspaceStages.map(({ label }) => label).join('|') === approvedStageLabels.join('|')
+  && approvedStageLabels.every((label) => stageNavigationMarkup.includes(label))
+  && !stageNavigationMarkup.includes('Diseño') && stageNavigationMarkup.includes('aria-current="step"'),
+  'el shell presenta las cinco etapas aprobadas en orden e identifica semánticamente la activa')
+assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: id, onStageChange: noop })).includes('aria-current="step"')),
+  'cada etapa principal puede activarse, incluida Revisión')
+const aestheticMarkup = renderToStaticMarkup(createElement(StudioAestheticStage))
+assert(aestheticMarkup.includes('Estética') && aestheticMarkup.includes('próxima entrega')
+  && !aestheticMarkup.includes('input') && !aestheticMarkup.includes('button'),
+  'Estética comunica honestamente su alcance temporal sin controles inexistentes')
 assert(!stageNavigationMarkup.includes('Guardado'), 'el shell no comunica un guardado inexistente')
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { template: origin01Template, modules: storyDisabled.modules }))

@@ -163,4 +163,4 @@ Mientras el borrador actual sea estructuralmente renderizable, el renderer consu
 
 ## Fase 2B.6B — Nuevo shell y navegación reversible
 
-Studio reemplaza su navegación principal basada en dominios técnicos por cuatro etapas productivas y libremente accesibles: Diseño, Secciones, Contenido y Revisión. El borrador temporal, las validaciones, los editores y la preview continúan utilizando el motor existente. Esta fase no incorpora persistencia, activación real de módulos, catálogo de plantillas, cambio de diseño, personalización visual, simplificación completa de editores ni preview contextual.
+Studio reemplaza su navegación principal basada en dominios técnicos por cinco etapas productivas y libremente accesibles: Plantilla, Estética, Secciones, Contenido y Revisión. El borrador temporal, las validaciones, los editores y la preview continúan utilizando el motor existente. Estética ofrece por ahora una explicación temporal y no incorpora controles. Esta fase no incorpora persistencia, activación real de módulos, catálogo de plantillas, cambio de diseño, personalización visual, simplificación completa de editores ni preview contextual.
