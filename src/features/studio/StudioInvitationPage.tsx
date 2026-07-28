@@ -17,7 +17,7 @@ import { useStudioRenderablePreview } from './useStudioRenderablePreview'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
 import { StudioReviewPanel } from './StudioReviewPanel'
 import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, resolveStudioIssueDestination,
-  resolveStudioStructuralDestination } from './studioReviewIssues'
+  issueNeedsCorrectionReturn, resolveStudioStructuralDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
@@ -62,7 +62,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const openIssue = (issue: StudioIssue) => {
     const destination = resolveStudioIssueDestination(issue, domains)
     if (!destination) return
-    setCorrectionContext(createStudioIssueCorrectionContext(issue))
+    setCorrectionContext(issueNeedsCorrectionReturn(issue, destination)
+      ? createStudioIssueCorrectionContext(issue) : undefined)
     if (layerOpen) surfaceDispatch({ type: 'close' })
     navigate({ type: 'open-item', domainId: issue.domainId, item: destination })
     requestAnimationFrame(() => requestAnimationFrame(() => {

@@ -11,6 +11,8 @@ export type StudioIssueCorrectionContext = { readonly returnTo: StudioNavigation
 export const createStudioIssueCorrectionContext = (issue: StudioIssue): StudioIssueCorrectionContext => ({
   returnTo: { domainId: 'review', itemId: 'errors', editorId: 'review-errors' }, issueId: issue.id,
 })
+export const issueNeedsCorrectionReturn = (issue: StudioIssue, destination: StudioNavigationItem) =>
+  !(issue.domainId === 'review' && destination.editorId === 'review-errors')
 export const resolveStudioCorrectionReturn = (context: StudioIssueCorrectionContext,
   domains: readonly StudioDomainDefinition[]) => domains.find(({ id }) => id === context.returnTo.domainId)?.items
   .find(({ id }) => id === context.returnTo.itemId) ?? null

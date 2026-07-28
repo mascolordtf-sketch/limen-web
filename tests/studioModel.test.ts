@@ -45,7 +45,7 @@ import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, s
 import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
   selectStudioRenderablePreview } from '../src/features/studio/useStudioRenderablePreview'
 import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
-  resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
+  issueNeedsCorrectionReturn, resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -376,6 +376,10 @@ assert(directStructural?.kind === 'direct' && directStructural.item.editorId ===
   'un bloqueo estructural resoluble conserva su destino directo productivo')
 assert(fallbackStructural?.kind === 'fallback' && fallbackStructural.item.editorId === 'review-errors',
   'un bloqueo estructural no resoluble cae determinísticamente en Revisión / Errores')
+const reviewErrorsDestination = resolveStudioIssueDestination(missingIdentityIssue!, domains)!
+assert(!issueNeedsCorrectionReturn(missingIdentityIssue!, reviewErrorsDestination)
+  && issueNeedsCorrectionReturn(storyIssue, resolveStudioIssueDestination(storyIssue, domains)!),
+  'Review / Errores no crea retorno autorreferencial y un editor corregible sí lo conserva')
 const correctionContext = createStudioIssueCorrectionContext(storyIssue)
 const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!
 const correctionNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: storyIssue.domainId, item: correctionDestination })
@@ -423,6 +427,8 @@ assert(shellMarkup(true, false).includes('hidden=""') && shellMarkup(true, false
   'el estado contraído conserva el host pero retira sus controles del foco')
 assert(shellMarkup(false, true).match(/inert=""/g)?.length === 3,
   'la presentación dedicada vuelve inertes navegación primaria, secundaria y editor')
+assert((shellMarkup(false, false).match(/Ver preview/g) ?? []).length === 3,
+  'el mismo control de apertura está disponible en índice general, índice de dominio y editor móvil')
 const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains,
   navigation: triviaNavigation, validation: validResult, editor: createElement('div'), editorResolvable: true,
   onNavigate: () => undefined, preview: previewElement, previewCollapsed: false, previewDedicated: false,

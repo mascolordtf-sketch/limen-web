@@ -69,6 +69,7 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
     <nav className="limen-studio__secondary-nav" aria-label={`Secciones de ${activeDomain?.label ?? 'dominio'}`} inert={previewDedicated ? true : undefined}>
       <button className="limen-studio__mobile-back" type="button"
         onClick={() => navigate({ type: 'show-general-index' })}>← Índice general</button>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <h2>{activeDomain?.label}</h2><p>{activeDomain?.description}</p>
       <div className="limen-studio__nav-list">
         {activeDomain?.items.map((item) => <button key={item.id} type="button"
