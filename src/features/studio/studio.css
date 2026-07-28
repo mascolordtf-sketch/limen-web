@@ -1159,6 +1159,9 @@
     padding-top: 2.5rem;
   }
 
+}
+
+@media (min-width: 64rem) {
   .limen-studio__shell { grid-template-columns: 12rem 14rem minmax(0, 1fr); align-items: start; }
   .limen-studio__shell .limen-studio__primary-nav,
   .limen-studio__shell .limen-studio__secondary-nav,

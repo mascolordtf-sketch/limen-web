@@ -4,7 +4,9 @@ import { origin01DemoData } from '../src/features/invitations/origin01/origin01D
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
-import { getStudioEditorResolution, isStudioEditorId, studioEditorSurfaceFields } from '../src/features/studio/StudioActiveEditor'
+import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
+import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
+  showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
@@ -217,11 +219,11 @@ assert(triviaNavigation.editorId === 'trivia'
   && initial.trivia.questions.map(({ id }) => id).join() === validBase.trivia.questions.map(({ id }) => id).join()
   && initial.modules.find(({ moduleId }) => moduleId === 'trivia')?.enabled,
   'entrar y salir de Trivia conserva contenido, activación y orden')
-assert(studioEditorSurfaceFields['event-operations'].join() === 'giftsAccount,rsvpRecipientPhone'
-  && !studioEditorSurfaceFields.gifts.includes('giftsAccount' as never)
-  && !studioEditorSurfaceFields.rsvp.includes('rsvpRecipientPhone' as never),
-  'los datos operativos poseen una única superficie propietaria')
-assert(!studioEditorSurfaceFields.countdown.some((field) => field.startsWith('eventDetails')),
+assert(showsOperationalContent('operational') && !showsEditorialContent('operational'),
+  'event-operations expone exclusivamente los campos operativos de Regalos y RSVP')
+assert(showsEditorialContent('editorial') && !showsOperationalContent('editorial'),
+  'las experiencias Regalos y RSVP excluyen sus destinos operativos')
+assert(showsCountdownContent('countdown') && !showsEventDetailsContent('countdown'),
   'Cuenta regresiva no expone Datos del evento')
 const eventOperations = domains.find(({ id }) => id === 'event')!.items.find(({ editorId }) => editorId === 'event-operations')!
 assert(selectStudioItemStatus(invalidGiftResult, eventOperations, 'event').relevantErrorCount === 1

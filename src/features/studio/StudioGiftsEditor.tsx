@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
+import { showsEditorialContent, showsOperationalContent } from './studioEditorVisibility'
+import type { StudioOwnedContentMode } from './studioEditorVisibility'
 
 type StudioGiftsEditorProps = {
-  mode?: 'complete' | 'editorial' | 'operational'
+  mode?: StudioOwnedContentMode
   titleValue: string
   canonicalTitleValue: string
   titleError: string | null
@@ -82,7 +84,7 @@ export function StudioGiftsEditor({
         ? 'Definí el dato operativo que usarán los invitados para regalar.'
         : 'Definí el contenido editorial que verán los invitados.'}</p>
       <div className="limen-studio__gifts-fields">
-        {mode !== 'operational' && <>
+        {showsEditorialContent(mode) && <>
         <GiftsField id={fields.title} label="Título"
           help="Es el mensaje principal de la sección de regalos." error={titleError}
           resetLabel="Restablecer título" resetDisabled={titleValue === canonicalTitleValue}
@@ -116,7 +118,7 @@ export function StudioGiftsEditor({
         </GiftsField>
         </>}
 
-        {mode !== 'editorial' &&
+        {showsOperationalContent(mode) &&
         <GiftsField id={fields.account} label="Alias"
           help="Es el dato que se mostrará o copiará desde la invitación." error={accountError}
           resetLabel="Restablecer dato" resetDisabled={accountValue === canonicalAccountValue}

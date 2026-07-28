@@ -1,4 +1,6 @@
 import type { ChangeEvent } from 'react'
+import { showsCountdownContent, showsEventDetailsContent } from './studioEditorVisibility'
+import type { StudioEventInformationMode } from './studioEditorVisibility'
 
 export type StudioEventInformationField = {
   value: string
@@ -7,7 +9,7 @@ export type StudioEventInformationField = {
 }
 
 type StudioEventInformationEditorProps = {
-  mode?: 'complete' | 'countdown' | 'event-details'
+  mode?: StudioEventInformationMode
   countdown: {
     eyebrow: StudioEventInformationField
     heading: StudioEventInformationField
@@ -72,14 +74,16 @@ export function StudioEventInformationEditor({
       className="limen-studio__event-information-editor"
       aria-labelledby="studio-event-information-heading"
     >
-      <h2 id="studio-event-information-heading">{mode === 'countdown' ? 'Cuenta regresiva' : 'Información del evento'}</h2>
+      <h2 id="studio-event-information-heading">{mode === 'countdown' ? 'Cuenta regresiva'
+        : mode === 'event-details' ? 'Datos del evento' : 'Información del evento y cuenta regresiva'}</h2>
       <p className="limen-studio__event-information-intro">
         {mode === 'countdown' ? 'Editá únicamente los textos de la cuenta regresiva.'
-          : 'Editá los textos informativos de los datos del evento.'}
+          : mode === 'event-details' ? 'Editá los textos informativos de los datos del evento.'
+            : 'Editá los textos de la cuenta regresiva y de los datos del evento.'}
       </p>
 
       <div className="limen-studio__event-information-groups">
-        {mode !== 'event-details' && <section className="limen-studio__event-information-group" aria-labelledby="studio-countdown-copy-heading">
+        {showsCountdownContent(mode) && <section className="limen-studio__event-information-group" aria-labelledby="studio-countdown-copy-heading">
           <h3 id="studio-countdown-copy-heading">Cuenta regresiva</h3>
           <EditorialField id="studio-countdown-eyebrow" label="Texto introductorio"
             help="Es la frase breve que presenta la cuenta regresiva." field={countdown.eyebrow} />
@@ -95,7 +99,7 @@ export function StudioEventInformationEditor({
           </button>
         </section>}
 
-        {mode !== 'countdown' && <section className="limen-studio__event-information-group" aria-labelledby="studio-event-details-copy-heading">
+        {showsEventDetailsContent(mode) && <section className="limen-studio__event-information-group" aria-labelledby="studio-event-details-copy-heading">
           <h3 id="studio-event-details-copy-heading">Datos del evento</h3>
           <EditorialField id="studio-event-details-eyebrow" label="Texto introductorio"
             help="Es la frase breve que presenta los datos del evento." field={eventDetails.eyebrow} />

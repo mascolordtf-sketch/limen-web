@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
+import { showsEditorialContent, showsOperationalContent } from './studioEditorVisibility'
+import type { StudioOwnedContentMode } from './studioEditorVisibility'
 
 type StudioRsvpEditorProps = {
-  mode?: 'complete' | 'editorial' | 'operational'
+  mode?: StudioOwnedContentMode
   titleValue: string
   canonicalTitleValue: string
   titleError: string | null
@@ -87,7 +89,7 @@ export function StudioRsvpEditor({
         ? 'Definí el destino operativo de las confirmaciones.'
         : 'Definí cómo se presenta la confirmación a los invitados.'}</p>
       <div className="limen-studio__rsvp-fields">
-        {mode !== 'operational' && <>
+        {showsEditorialContent(mode) && <>
         <RsvpField
           id={fields.title}
           label="Título"
@@ -134,7 +136,7 @@ export function StudioRsvpEditor({
         </RsvpField>
         </>}
 
-        {mode !== 'editorial' &&
+        {showsOperationalContent(mode) &&
         <RsvpField
           id={fields.recipientPhone}
           label="Número de WhatsApp"
