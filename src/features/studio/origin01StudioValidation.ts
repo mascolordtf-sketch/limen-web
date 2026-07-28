@@ -155,8 +155,18 @@ export function validateOrigin01StudioDraft(
     ...(['dressCodeTitle', 'dressCodeDescription', 'dressCodeNote'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'dress-code', domainId: 'experiences' as const, sceneId: 'dressCode' as const })),
     ...(['galleryEyebrow', 'galleryHeading'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'gallery', domainId: 'experiences' as const, sceneId: 'gallery' as const })),
     { fieldId: 'trivia', error: fieldErrors.trivia, message: fieldErrors.trivia ?? '', editorId: 'trivia', domainId: 'experiences', sceneId: 'trivia' },
-    ...(['giftsTitle', 'giftsDescription', 'giftsNote', 'giftsAccount'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'gifts', domainId: fieldId === 'giftsAccount' ? 'event' as const : 'experiences' as const, sceneId: 'gifts' as const })),
-    ...(['rsvpTitle', 'rsvpDescription', 'rsvpActionLabel', 'rsvpRecipientPhone'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'rsvp', domainId: fieldId === 'rsvpRecipientPhone' ? 'event' as const : 'experiences' as const, sceneId: 'rsvp' as const })),
+    ...(['giftsTitle', 'giftsDescription', 'giftsNote', 'giftsAccount'] as const).map((fieldId) => ({
+      fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
+      editorId: fieldId === 'giftsAccount' ? 'event-operations' : 'gifts',
+      domainId: fieldId === 'giftsAccount' ? 'event' as const : 'experiences' as const,
+      sceneId: 'gifts' as const,
+    })),
+    ...(['rsvpTitle', 'rsvpDescription', 'rsvpActionLabel', 'rsvpRecipientPhone'] as const).map((fieldId) => ({
+      fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
+      editorId: fieldId === 'rsvpRecipientPhone' ? 'event-operations' : 'rsvp',
+      domainId: fieldId === 'rsvpRecipientPhone' ? 'event' as const : 'experiences' as const,
+      sceneId: 'rsvp' as const,
+    })),
     ...draft.gallery.captions.map((caption, index) => ({
       fieldId: `galleryCaption${index}`,
       error: caption.length > 160 ? 'El epígrafe es extenso; revisalo en la invitación.' : null,
@@ -225,19 +235,15 @@ export function validateOrigin01StudioDraft(
   const domainStatuses = (['identity', 'event', 'narrative', 'experiences', 'review'] as const)
     .map((domainId): StudioDomainStatus => {
       const domainIssues = issues.filter((issue) => issue.domainId === domainId)
-      const domainScenes = sceneStatuses.filter((scene) => sceneDomain(scene.sceneId) === domainId)
       return {
         domainId,
         complete: !domainIssues.some((issue) => issue.relevant
-          && (issue.severity === 'active-error' || issue.severity === 'structural'))
-          && domainScenes.every((scene) => scene.complete),
+          && (issue.severity === 'active-error' || issue.severity === 'structural')),
         relevantErrorCount: domainIssues.filter((issue) => issue.relevant && (issue.severity === 'active-error' || issue.severity === 'structural')).length,
         warningCount: domainIssues.filter((issue) => issue.relevant && issue.severity === 'warning').length,
-        blocksPreview: domainIssues.some((issue) => issue.relevant && issue.blocksPreview)
-          || domainScenes.some((scene) => scene.blocksPreview),
+        blocksPreview: domainIssues.some((issue) => issue.relevant && issue.blocksPreview),
         hasContentPendingReview: domainIssues.some((issue) => issue.relevant
-          && issue.severity === 'editorial-review')
-          || domainScenes.some((scene) => scene.hasContentPendingReview),
+          && issue.severity === 'editorial-review'),
       }
     })
   const structurallyValid = !issues.some((issue) => issue.relevant && issue.severity === 'structural')
@@ -255,7 +261,6 @@ export function validateOrigin01StudioDraft(
     previewBlocked: !structurallyValid,
   }
 }
-
 
 export function selectValidStudioPreview<T>(validation: Origin01StudioValidation, preview: T): T | null {
   return validation.invitationValid ? preview : null

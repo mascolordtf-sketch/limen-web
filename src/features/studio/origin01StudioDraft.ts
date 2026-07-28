@@ -54,6 +54,8 @@ export type Origin01StudioDraft = {
   readonly modules: readonly InvitationModuleConfig[]
 }
 
+export const getOrigin01StudioDraftSessionId = (invitation: Origin01InvitationData) => invitation.id
+
 const cloneTrivia = (trivia: Origin01TriviaContent): Origin01TriviaContent => ({
   ...trivia,
   questions: trivia.questions.map((question) => ({

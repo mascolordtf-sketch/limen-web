@@ -7,6 +7,7 @@ import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
+  getOrigin01StudioDraftSessionId,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
   resetOrigin01StudioGroup,
@@ -94,6 +95,36 @@ assert(!validResult.editoriallyReviewed && !validResult.readyToPublish, 'mantien
 assert(validResult.domainStatuses.every(({ complete }) => complete), 'marca completos los dominios técnicamente válidos')
 assert(validResult.domainStatuses.every(({ hasContentPendingReview }) => hasContentPendingReview), 'agrega revisión pendiente en todos los dominios')
 
+const invalidGiftAccount = updateOrigin01StudioDraftGroup(validBase, 'gifts', (gifts) => ({
+  ...gifts, accountValue: '',
+}))
+const invalidGiftResult = validateOrigin01StudioDraft(origin01DemoData, invalidGiftAccount)
+const giftEventDomain = invalidGiftResult.domainStatuses.find(({ domainId }) => domainId === 'event')
+const giftExperiencesDomain = invalidGiftResult.domainStatuses.find(({ domainId }) => domainId === 'experiences')
+const giftScene = invalidGiftResult.sceneStatuses.find(({ sceneId }) => sceneId === 'gifts')
+const giftIssue = invalidGiftResult.issues.find(({ fieldId }) => fieldId === 'giftsAccount')
+assert(giftIssue?.domainId === 'event' && giftIssue.editorId === 'event-operations', 'ubica el dato operativo de Regalos inequívocamente en Evento')
+assert(giftEventDomain?.complete === false && giftEventDomain.relevantErrorCount === 1, 'Evento contabiliza el error operativo de Regalos')
+assert(giftExperiencesDomain?.complete === true && giftExperiencesDomain.relevantErrorCount === 0, 'Experiencias no hereda silenciosamente el error operativo de Regalos')
+assert(giftScene?.complete === false && giftScene.relevantErrorCount === 1, 'la escena Regalos contempla globalmente su campo operativo')
+
+const invalidRsvpPhone = updateOrigin01StudioDraftGroup(validBase, 'rsvp', (rsvp) => ({
+  ...rsvp, recipientPhone: '',
+}))
+const invalidRsvpResult = validateOrigin01StudioDraft(origin01DemoData, invalidRsvpPhone)
+const rsvpEventDomain = invalidRsvpResult.domainStatuses.find(({ domainId }) => domainId === 'event')
+const rsvpExperiencesDomain = invalidRsvpResult.domainStatuses.find(({ domainId }) => domainId === 'experiences')
+const rsvpScene = invalidRsvpResult.sceneStatuses.find(({ sceneId }) => sceneId === 'rsvp')
+const rsvpIssue = invalidRsvpResult.issues.find(({ fieldId }) => fieldId === 'rsvpRecipientPhone')
+assert(rsvpIssue?.domainId === 'event' && rsvpIssue.editorId === 'event-operations', 'ubica el teléfono de RSVP inequívocamente en Evento')
+assert(rsvpEventDomain?.complete === false && rsvpEventDomain.relevantErrorCount === 1, 'Evento contabiliza el error operativo de RSVP')
+assert(rsvpExperiencesDomain?.complete === true && rsvpExperiencesDomain.relevantErrorCount === 0, 'Experiencias no hereda silenciosamente el error operativo de RSVP')
+assert(rsvpScene?.complete === false && rsvpScene.relevantErrorCount === 1, 'la escena RSVP contempla globalmente su campo operativo')
+for (const domain of [...invalidGiftResult.domainStatuses, ...invalidRsvpResult.domainStatuses]) {
+  assert(domain.complete === (domain.relevantErrorCount === 0), `coherencia de completitud y conteo en ${domain.domainId}`)
+  assert(!domain.blocksPreview || (!domain.complete && domain.relevantErrorCount > 0), `coherencia de bloqueo en ${domain.domainId}`)
+}
+
 const emptyName = updateOrigin01StudioDraftField(validBase, 'protagonistName', '')
 assert(validateOrigin01StudioDraft(origin01DemoData, emptyName).fieldErrors.protagonistName !== null, 'reporta un campo obligatorio vacío')
 
@@ -151,6 +182,19 @@ const restartedAudience = transitionStudioPreviewAudience(guestAudience, { type:
 assert(restartedAudience.audience === 'guest' && restartedAudience.run === 2, 'el reinicio manual conserva audiencia e incrementa run')
 assert(getStudioPreviewKey(restartedAudience) === 'guest-2', 'la key productiva refleja audiencia y run')
 assert(initial.protagonistName === 'Valentina', 'audiencia y borrador permanecen independientes')
+
+const secondInvitation = {
+  ...origin01DemoData,
+  id: 'origin01-demo-second-session',
+  code: 'LMN-SECOND',
+  identities: [{ displayName: 'Renata', role: 'protagonist' }],
+  event: { ...origin01DemoData.event, name: 'Renata' },
+}
+const editedFirstSession = updateOrigin01StudioDraftField(initial, 'protagonistName', 'Borrador anterior')
+const secondSessionDraft = createOrigin01StudioDraft(secondInvitation)
+assert(getOrigin01StudioDraftSessionId(origin01DemoData) !== getOrigin01StudioDraftSessionId(secondInvitation), 'cada invitación posee una identidad de sesión estable y distinta')
+assert(editedFirstSession.protagonistName === 'Borrador anterior' && secondSessionDraft.protagonistName === 'Renata', 'una invitación nueva inicializa un borrador independiente')
+assert(secondSessionDraft.event.venue === secondInvitation.event.venue, 'resets y derivaciones de la nueva sesión parten de su propia invitación')
 
 assert(typeof AppRoutes === 'function' && typeof StudioInvitationRoute === 'function', 'la ruta actual de Studio continúa disponible')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')
