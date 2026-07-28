@@ -20,3 +20,9 @@ export function focusStudioEditorHeading(root: Pick<Document, 'querySelector'> =
   heading?.focus()
   return Boolean(heading)
 }
+
+export function focusStudioReviewHeading(root: Pick<Document, 'getElementById'> = document) {
+  const heading = root.getElementById('studio-review-title')
+  heading?.focus()
+  return Boolean(heading)
+}

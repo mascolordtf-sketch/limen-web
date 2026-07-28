@@ -20,7 +20,7 @@ import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, reso
   issueNeedsCorrectionReturn, resolveStudioStructuralDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
+import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import { StudioDesignStage, StudioSectionsStage, StudioStageNavigation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { StudioWorkspaceFrame } from './StudioWorkspaceFrame'
@@ -105,7 +105,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       navigate({ type: 'open-item', domainId: 'review', item: errors })
       setActiveStage('review')
       setCorrectionContext(undefined)
-      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
+      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioReviewHeading()))
     }
   }
   const reviewPanel = (kind: 'status' | 'errors' | 'audiences') => <StudioReviewPanel kind={kind}
@@ -132,7 +132,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       editorResolvable={!contentNavigation.editorId || isStudioEditorId(contentNavigation.editorId)} onNavigate={navigate}
       onOpenPreview={openPreview}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} /></div>
-      {activeStage === 'review' && <section className="limen-studio__stage-panel" aria-labelledby="studio-review-title"><h2 id="studio-review-title">Revisión</h2>{reviewPanel('status')}{reviewPanel('errors')}</section>}
+      {activeStage === 'review' && <section className="limen-studio__stage-panel" aria-labelledby="studio-review-title"><h2 id="studio-review-title" tabIndex={-1}>Revisión</h2>{reviewPanel('status')}{reviewPanel('errors')}</section>}
     </div></>
   const previewSurface = <>
       {previewCollapsed && !layerOpen ? <div className="limen-studio__preview-collapsed"><strong>Vista previa</strong><button type="button" onClick={() => surfaceDispatch({ type: 'show' })}>Mostrar preview</button></div> : null}

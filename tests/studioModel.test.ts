@@ -41,7 +41,7 @@ import {
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, isStudioNavigationAvailable, resolveStudioNavigationForDomains,
   transitionStudioNavigation } from '../src/features/studio/studioNavigation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
+import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading, isStudioPreviewCloseKey,
   restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
 import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
   resolveStudioPreviewContextLabel,
@@ -505,7 +505,13 @@ const headingRoot = { getElementById: () => null, querySelector: () => focusable
 assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
   && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
   'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
-assert(focusStudioEditorHeading(headingRoot), 'la navegación externa y el retorno a Errores enfocan el heading nuevo')
+assert(focusStudioEditorHeading(headingRoot), 'la navegación externa enfoca el heading nuevo del editor')
+let reviewSelector = ''
+let reviewFocused = 0
+const reviewHeading = { focus: () => { reviewFocused += 1 } } as HTMLElement
+const reviewHeadingRoot = { getElementById: (id: string) => { reviewSelector = id; return reviewHeading } } as unknown as Document
+assert(focusStudioReviewHeading(reviewHeadingRoot) && reviewSelector === 'studio-review-title' && reviewFocused === 1,
+  'Volver a Errores enfoca el heading visible y estable de Revisión')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 
