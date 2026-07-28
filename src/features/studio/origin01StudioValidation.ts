@@ -263,5 +263,5 @@ export function validateOrigin01StudioDraft(
 }
 
 export function selectValidStudioPreview<T>(validation: Origin01StudioValidation, preview: T): T | null {
-  return validation.invitationValid ? preview : null
+  return validation.structurallyValid ? preview : null
 }

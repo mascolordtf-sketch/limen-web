@@ -152,3 +152,11 @@ enfocado. En móvil, el recorrido separa índice general, índice del dominio y 
 en escritorio mantiene ambos índices visibles junto al editor. La selección es temporal, independiente del
 borrador y no se persiste ni altera la preview pública. La preview avanzada y las capacidades de revisión
 operativa quedan reservadas para 2B.5, que no fue iniciada.
+
+## Phase 2B.5 — Preview and review architecture
+
+Studio separa la superficie de preview del borrador y de la selección de navegación. En escritorio ofrece un panel real sticky visible, contraído o expandido; al contraerlo el editor recupera ancho. En móvil, la preview se abre como una superficie completa independiente y accesible, con retorno al contexto que la abrió. La audiencia compartida continúa siendo contexto de ejecución: cambiarla o reiniciar manualmente remonta solo Origin 01 y mantiene borrador, validación y navegación.
+
+La intención `previewTarget` orienta mediante una etiqueta contextual y conserva dominio, item y retorno. Origin 01 no expone una API pública segura para navegar escenas, por lo que esta fase no desplaza escenas, consulta su DOM ni introduce estado de Studio en el renderer. El resumen de Revisión agrupa incidencias estructurales, activas, advertencias, contenido inactivo y revisión editorial; sus destinos se resuelven desde `domainId`, `editorId` y `fieldId`, y los destinos desconocidos permanecen visibles sin navegación arbitraria.
+
+Mientras el borrador actual sea estructuralmente renderizable, el renderer consume su derivación incluso con correcciones editoriales locales. Si deja de serlo, la sesión conserva únicamente la última derivación renderizable y declara claramente que el cambio actual no está representado; sin una versión previa válida muestra Preview no disponible. La retención se limita a la identidad de la sesión y nunca usa el fixture como fallback. Origin01Invitation permanece ajena a navegación, validación y revisión de Studio. La optimización del checklist y del flujo profesional se difiere explícitamente a Phase 2B.6.

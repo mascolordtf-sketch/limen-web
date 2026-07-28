@@ -14,6 +14,10 @@ type Props = {
   editor: ReactNode
   editorResolvable: boolean
   onNavigate: (action: StudioNavigationAction) => void
+  preview?: ReactNode
+  previewCollapsed?: boolean
+  onOpenPreview: () => void
+  onShowPreview: () => void
 }
 
 function statusText(status?: StudioVisibleItemStatus) {
@@ -28,7 +32,7 @@ function statusText(status?: StudioVisibleItemStatus) {
 }
 
 export function StudioNavigationShell({ domains, navigation, validation, editor,
-  editorResolvable, onNavigate }: Props) {
+  editorResolvable, onNavigate, preview, previewCollapsed, onOpenPreview, onShowPreview }: Props) {
   const activeDomain = domains.find(({ id }) => id === navigation.domainId) ?? domains[0]
   const activeItem = activeDomain?.items.find(({ id }) => id === navigation.itemId)
   const editorTitle = useRef<HTMLHeadingElement>(null)
@@ -40,9 +44,10 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
   }, [navigation.domainId, navigation.itemId, navigation.mobileLevel])
 
   const itemStatus = (item: StudioNavigationItem) => selectStudioItemStatus(validation, item, activeDomain.id)
-  return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel}`}>
+  return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel} ${previewCollapsed ? 'limen-studio__shell--preview-collapsed' : ''}`}>
     <nav className="limen-studio__primary-nav" aria-label="Dominios de la invitación">
       <h2>Índice general</h2>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <div className="limen-studio__nav-list">
         {domains.map((domain) => {
           const status = validation.domainStatuses.find(({ domainId }) => domainId === domain.id)
@@ -73,6 +78,7 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
         <button type="button" onClick={() => navigate({ type: 'show-domain-index' })}>← {activeDomain?.label}</button>
         <button type="button" onClick={() => navigate({ type: 'show-general-index' })}>Índice</button>
       </div>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <p className="limen-studio__breadcrumb" aria-label="Ubicación">Invitación / {activeDomain?.label} / {activeItem?.label}</p>
       <h2 className="limen-studio__editor-title" ref={editorTitle} tabIndex={-1}>{activeItem?.label ?? 'Elegí una sección'}</h2>
       {activeItem && <p>{activeItem.description}</p>}
@@ -83,5 +89,9 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
         <h3>Editor no disponible</h3><p>Esta sección tiene un destino explícito, pero todavía no posee un editor compatible.</p>
       </section>}
     </main>
+    <aside className="limen-studio__desktop-preview" aria-label="Preview de la invitación">
+      {previewCollapsed ? <div className="limen-studio__preview-collapsed"><strong>Preview</strong><span>Panel contraído</span>
+        <button type="button" onClick={onShowPreview}>Mostrar preview</button></div> : preview}
+    </aside>
   </div>
 }

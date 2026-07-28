@@ -28,6 +28,9 @@ import {
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
+import { createStudioPreviewSurfaceState, transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
+import { createStudioRenderablePreview, retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
+import { groupStudioIssues, resolveStudioIssueDestination } from '../src/features/studio/studioReviewIssues'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -150,7 +153,7 @@ const activeStoryResult = validateOrigin01StudioDraft(origin01DemoData, invalidS
 assert(activeStoryResult.sceneStatuses.find(({ sceneId }) => sceneId === 'story')?.relevantErrorCount === 1, 'cuenta errores de una escena activa')
 assert(!activeStoryResult.domainStatuses.find(({ domainId }) => domainId === 'narrative')?.complete, 'marca incompleto el dominio afectado')
 assert(!activeStoryResult.invitationValid, 'un error editorial activo invalida el borrador actual')
-assert(selectValidStudioPreview(activeStoryResult, validPreview) === null, 'un error activo impide entregar el borrador a la preview visible')
+assert(selectValidStudioPreview(activeStoryResult, validPreview) === validPreview, 'un error editorial activo conserva el borrador actual en preview')
 const inactiveInvalidStory = updateOrigin01StudioModule(origin01DemoData, invalidStory, 'story', false)
 const inactiveStoryResult = validateOrigin01StudioDraft(origin01DemoData, inactiveInvalidStory)
 const storyStatus = inactiveStoryResult.sceneStatuses.find(({ sceneId }) => sceneId === 'story')
@@ -246,6 +249,36 @@ const restartedAudience = transitionStudioPreviewAudience(guestAudience, { type:
 assert(restartedAudience.audience === 'guest' && restartedAudience.run === 2, 'el reinicio manual conserva audiencia e incrementa run')
 assert(getStudioPreviewKey(restartedAudience) === 'guest-2', 'la key productiva refleja audiencia y run')
 assert(initial.protagonistName === 'Valentina', 'audiencia y borrador permanecen independientes')
+
+const initialSurface = createStudioPreviewSurfaceState()
+assert(initialSurface.desktop === 'visible' && initialSurface.mobile === 'closed', 'la superficie preview inicia de forma determinista')
+const editorOrigin = { domainId: triviaNavigation.domainId, itemId: triviaNavigation.itemId, editorId: triviaNavigation.editorId }
+const openedSurface = transitionStudioPreviewSurface(initialSurface, { type: 'open', viewport: 'mobile', origin: editorOrigin,
+  target: triviaItem.previewTarget })
+const expandedSurface = transitionStudioPreviewSurface(transitionStudioPreviewSurface(openedSurface, { type: 'collapse' }), { type: 'expand' })
+const closedSurface = transitionStudioPreviewSurface(expandedSurface, { type: 'close' })
+assert(openedSurface.mobile === 'full-screen' && openedSurface.returnContext?.editorId === 'trivia'
+  && openedSurface.target?.sceneId === 'trivia', 'abrir preview móvil conserva origen, retorno y target contextual')
+assert(closedSurface.mobile === 'closed' && closedSurface.returnContext?.editorId === 'trivia', 'cerrar conserva el contexto exacto de retorno')
+assert(triviaNavigation.mobileLevel === 'editor' && JSON.stringify(initial) === draftBeforeNavigation,
+  'la superficie full-screen es independiente de navegación y borrador')
+assert(getStudioPreviewKey(initialAudience) === 'protagonist-0', 'abrir, contraer y expandir no reinician el renderer')
+
+const renderableA = retainStudioRenderablePreview(createStudioRenderablePreview(), 'session-a', validPreview, true)
+const staleA = retainStudioRenderablePreview(renderableA, 'session-a', renamedPreview, false)
+const renderableB = retainStudioRenderablePreview(staleA, 'session-a', renamedPreview, true)
+const isolated = retainStudioRenderablePreview(staleA, 'session-b', renamedPreview, false)
+assert(renderableA.showing === 'current' && staleA.showing === 'last-renderable' && staleA.invitation === validPreview,
+  'un error estructural conserva y declara el último borrador renderizable')
+assert(renderableB.showing === 'current' && renderableB.invitation === renamedPreview, 'un borrador válido nuevo reemplaza el retenido')
+assert(isolated.showing === 'unavailable' && isolated.invitation === null, 'sesiones distintas no comparten preview retenida')
+
+const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
+assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
+  && !inactiveStoryResult.previewBlocked, 'los grupos conservan contenido inactivo sin bloquear preview')
+const storyIssue = inactiveStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')!
+assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
+assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
 
 const secondInvitation = {
   ...origin01DemoData,

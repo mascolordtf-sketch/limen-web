@@ -19,15 +19,17 @@ import type { useOrigin01StudioModel } from './useOrigin01StudioModel'
 
 import { resolveStudioActiveEditor } from './studioEditorContract'
 import type { StudioEditorSlots } from './studioEditorContract'
+import type { ReactNode } from 'react'
 
 type StudioActiveEditorProps = {
   invitation: Origin01InvitationData
   template?: InvitationTemplateDefinition
   model: ReturnType<typeof useOrigin01StudioModel>
   editorId?: string
+  reviewPanels?: Partial<Record<'review-status' | 'review-errors' | 'review-audiences', ReactNode>>
 }
 
-export function StudioActiveEditor({ invitation, template, model, editorId }: StudioActiveEditorProps) {
+export function StudioActiveEditor({ invitation, template, model, editorId, reviewPanels }: StudioActiveEditorProps) {
   const { draft, initialDraft, validation: studioValidation, configurationValidation,
     update, updateGroup, resetValue, resetField, resetScene,
     resetConfiguration, setModuleEnabled } = model
@@ -498,12 +500,12 @@ export function StudioActiveEditor({ invitation, template, model, editorId }: St
             onCustomMessageChange={setCustomShareMessage}
             onReset={handleShareReset}
           /></div>,
-    'review-status': <section className="limen-studio__panel"><h2>Estado general</h2><p>{studioValidation.invitationValid ? 'Invitación válida' : 'Invitación con errores'}. La revisión editorial sigue pendiente y todavía no está lista para publicar.</p></section>,
-    'review-errors': <section className="limen-studio__panel"><h2>Errores del borrador</h2>
+    'review-status': reviewPanels?.['review-status'] ?? <section className="limen-studio__panel"><h2>Estado general</h2><p>{studioValidation.invitationValid ? 'Invitación válida' : 'Invitación con errores'}. La revisión editorial sigue pendiente y todavía no está lista para publicar.</p></section>,
+    'review-errors': reviewPanels?.['review-errors'] ?? <section className="limen-studio__panel"><h2>Errores del borrador</h2>
       <p>{issueSummary.errorCount} errores relevantes · {issueSummary.warningCount} advertencias relevantes.</p>
       <p>{issueSummary.structurallyBlocked ? 'Existe un bloqueo estructural.' : 'Sin bloqueo estructural.'}</p></section>,
     'review-checklist': <section className="limen-studio__panel"><h2>Revisión editorial</h2><p>La revisión editorial está pendiente. La checklist funcional se incorporará en una fase posterior.</p></section>,
-    'review-audiences': <section className="limen-studio__panel"><h2>Audiencias</h2><p>Usá el selector de audiencia de la preview actual para revisar la invitación.</p></section>,
+    'review-audiences': reviewPanels?.['review-audiences'] ?? <section className="limen-studio__panel"><h2>Audiencias</h2><p>Usá el selector de audiencia de la preview actual para revisar la invitación.</p></section>,
   } satisfies StudioEditorSlots
   return resolveStudioActiveEditor(editorId, editorSlots)
 }
