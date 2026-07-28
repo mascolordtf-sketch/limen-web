@@ -25,6 +25,7 @@ import { StudioStoryEditor } from './StudioStoryEditor'
 import { StudioTriviaEditor } from './StudioTriviaEditor'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
+import { deriveMonogram } from './studioIdentity'
 import './studio.css'
 
 const lifecycleLabels = {
@@ -193,6 +194,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
   const protagonistNameError = protagonistName.trim().length === 0
     ? 'Ingresá el nombre de la protagonista.'
     : null
+  const temporaryProtagonistName = protagonistName.trim()
   const venueError = venue.trim().length === 0
     ? 'Ingresá el nombre del lugar.'
     : null
@@ -296,12 +298,12 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       modules,
       identities: invitation.identities.map((identity) => (
         identity.role === 'protagonist'
-          ? { ...identity, displayName: protagonistName }
+          ? { ...identity, displayName: temporaryProtagonistName }
           : identity
       )),
       event: {
         ...invitation.event,
-        name: protagonistName,
+        name: temporaryProtagonistName,
         startsAt: temporaryStartsAt ?? invitation.event.startsAt,
         endsAt: temporaryEndsAt ?? invitation.event.endsAt,
         venue,
@@ -312,7 +314,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         prelude: {
           ...invitation.content.prelude,
           eyebrow: preludeEyebrow,
-          title: `Hola, ${protagonistName}.`,
+          title: `Hola, ${temporaryProtagonistName}.`,
           body: preludeBody,
           reveal: preludeReveal,
           question: preludeQuestion,
@@ -341,18 +343,22 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             caption: galleryCaptions[index].trim().length > 0 ? galleryCaptions[index] : undefined,
           })),
         },
+        envelope: {
+          ...invitation.content.envelope,
+          monogram: deriveMonogram(temporaryProtagonistName),
+        },
         story: {
           ...invitation.content.story,
           eyebrow: storyEyebrow,
           message: storyMessage,
-          signature: protagonistName,
+          signature: temporaryProtagonistName,
         },
         trivia: {
           ...trivia,
-          protagonistName,
-          accessibleTitle: `Trivia sobre ${protagonistName}`,
-          title: `¿Cuánto conocés de verdad a ${protagonistName}?`,
-          revealSignature: protagonistName,
+          protagonistName: temporaryProtagonistName,
+          accessibleTitle: `Trivia sobre ${temporaryProtagonistName}`,
+          title: `¿Cuánto conocés de verdad a ${temporaryProtagonistName}?`,
+          revealSignature: temporaryProtagonistName,
         },
         closing: {
           ...invitation.content.closing,
@@ -360,8 +366,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           title: closingTitle,
           sharePrompt: closingSharePrompt,
           shareActionLabel: closingShareActionLabel,
-          signature: protagonistName,
-          shareTitle: `Mis 15 de ${protagonistName}`,
+          signature: temporaryProtagonistName,
+          shareTitle: `${invitation.event.celebrationLabel} de ${temporaryProtagonistName}`,
           shareText: shareMode === 'default' ? defaultShareMessage : customShareMessage,
         },
         dressCode: {
@@ -376,6 +382,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
           description: rsvpDescription,
           actionLabel: rsvpActionLabel,
           recipientPhone: rsvpRecipientDigits,
+          message: `Hola, confirmo mi asistencia a ${invitation.event.celebrationLabel} de ${temporaryProtagonistName}.`,
         },
         gifts: {
           ...invitation.content.gifts,
@@ -390,11 +397,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
       customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
       dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
       heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
-      preludeQuestion, preludeReveal, preludeSoundHint, protagonistName, shareMode, storyEyebrow,
+      preludeQuestion, preludeReveal, preludeSoundHint, shareMode, storyEyebrow,
       storyMessage, temporaryDateLabel, trivia, countdownCopy, eventDetailsCopy, galleryCopy,
       galleryCaptions,
       rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
-      temporaryStartsAt, temporaryTimeLabel, venue],
+      temporaryProtagonistName, temporaryStartsAt, temporaryTimeLabel, venue],
   )
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const resetDisabled = modules.length === invitation.modules.length
