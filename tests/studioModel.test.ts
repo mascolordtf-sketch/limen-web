@@ -4,6 +4,9 @@ import { origin01DemoData } from '../src/features/invitations/origin01/origin01D
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
+import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
+import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
+  showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
@@ -18,11 +21,13 @@ import {
 } from '../src/features/studio/origin01StudioDraft'
 import { createOrigin01StudioDomains, origin01TriviaFlow } from '../src/features/studio/origin01StudioConfiguration'
 import { selectValidStudioPreview, validateOrigin01StudioDraft } from '../src/features/studio/origin01StudioValidation'
+import { selectStudioIssueSummary, selectStudioItemStatus } from '../src/features/studio/studioItemStatus'
 import {
   createStudioPreviewAudienceState,
   getStudioPreviewKey,
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
+import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -181,13 +186,60 @@ const experienceScenes = domains.find(({ id }) => id === 'experiences')?.items.m
 const expectedExperiences = origin01Template.canonicalOrder.filter((sceneId) =>
   ['countdown', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
 assert(experienceScenes?.join() === expectedExperiences.join(), 'deriva el orden de experiencias desde la plantilla canónica')
+const narrativeScenes = domains.find(({ id }) => id === 'narrative')?.items.flatMap(({ id, sceneId }) =>
+  id === 'opening' ? ['prelude', 'hero'] : sceneId ? [sceneId] : [])
+const expectedNarrative = origin01Template.canonicalOrder.filter((sceneId) =>
+  ['prelude', 'hero', 'story', 'closing'].includes(sceneId))
+assert(narrativeScenes?.join() === expectedNarrative.join(), 'Narrativa mantiene el orden canónico de la plantilla')
 const storyNavigation = domains.flatMap(({ items }) => items).find(({ sceneId }) => sceneId === 'story')
 assert(storyNavigation?.required === origin01Template.requiredModules.includes('story')
   && storyNavigation.canToggle === origin01Template.optionalModules.includes('story'), 'deriva obligatoriedad y activación desde la plantilla')
 assert(origin01TriviaFlow[1].id === 'questions' && origin01TriviaFlow[1].preservesCanonicalOrder, 'prepara el flujo canónico de Trivia')
+const navigation = createInitialStudioNavigation(domains)
+assert(navigation.domainId === 'identity' && navigation.editorId === 'identity', 'la selección inicial es determinista y resoluble')
+const experiencesDomain = domains.find(({ id }) => id === 'experiences')!
+const triviaItem = experiencesDomain.items.find(({ editorId }) => editorId === 'trivia')!
+const triviaNavigation = transitionStudioNavigation(navigation, { type: 'open-item', domainId: 'experiences', item: triviaItem })
+const returnedNavigation = transitionStudioNavigation(triviaNavigation, { type: 'show-domain-index' })
+assert(triviaNavigation.mobileLevel === 'editor' && triviaNavigation.returnLevel === 'domain-index'
+  && returnedNavigation.mobileLevel === 'domain-index', 'el modelo móvil representa editor y retorno contextual')
+const draftBeforeNavigation = JSON.stringify(initial)
+transitionStudioNavigation(triviaNavigation, { type: 'show-general-index' })
+assert(JSON.stringify(initial) === draftBeforeNavigation, 'navegar no modifica borrador, módulos ni Trivia')
+assert(domains.every((domain) => domain.items.length > 0), 'la navegación secundaria proviene de los metadatos de cada dominio')
+assert(domains.flatMap(({ items }) => items).every(({ editorId }) => isStudioEditorId(editorId)),
+  'todos los editorId configurados se resuelven con el contrato productivo')
+assert(getStudioEditorResolution(undefined) === 'unselected'
+  && getStudioEditorResolution('editor-inexistente') === 'unresolved',
+  'distingue una selección ausente de un editor no resoluble')
+const openedEvent = transitionStudioNavigation(navigation, { type: 'open-domain', domainId: 'event' })
+assert(openedEvent.domainId === 'event' && openedEvent.itemId === undefined && openedEvent.editorId === undefined,
+  'open-domain representa un dominio sin item activo')
+assert(triviaNavigation.editorId === 'trivia'
+  && initial.trivia.questions.map(({ id }) => id).join() === validBase.trivia.questions.map(({ id }) => id).join()
+  && initial.modules.find(({ moduleId }) => moduleId === 'trivia')?.enabled,
+  'entrar y salir de Trivia conserva contenido, activación y orden')
+assert(showsOperationalContent('operational') && !showsEditorialContent('operational'),
+  'event-operations expone exclusivamente los campos operativos de Regalos y RSVP')
+assert(showsEditorialContent('editorial') && !showsOperationalContent('editorial'),
+  'las experiencias Regalos y RSVP excluyen sus destinos operativos')
+assert(showsCountdownContent('countdown') && !showsEventDetailsContent('countdown'),
+  'Cuenta regresiva no expone Datos del evento')
+const eventOperations = domains.find(({ id }) => id === 'event')!.items.find(({ editorId }) => editorId === 'event-operations')!
+assert(selectStudioItemStatus(invalidGiftResult, eventOperations, 'event').relevantErrorCount === 1
+  && selectStudioItemStatus(invalidRsvpResult, eventOperations, 'event').relevantErrorCount === 1,
+  'event-operations refleja los errores relevantes de sus campos propietarios')
+assert(storyStatus?.active === false && invalidStory.story.message === inactiveInvalidStory.story.message,
+  'una experiencia opcional inactiva conserva contenido y comunica estado inactivo')
+assert(selectStudioIssueSummary(activeStoryResult).errorCount >= 1
+  && activeStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')?.severity === 'active-error',
+  'review-errors cuenta errores editoriales relevantes además de bloqueos estructurales')
 
 const initialAudience = createStudioPreviewAudienceState()
 assert(initialAudience.audience === 'protagonist' && initialAudience.run === 0, 'inicializa la audiencia productiva')
+transitionStudioNavigation(navigation, { type: 'open-domain', domainId: 'review' })
+assert(initialAudience.audience === 'protagonist' && getStudioPreviewKey(initialAudience) === 'protagonist-0',
+  'navegar no modifica audiencia ni previewKey')
 const guestAudience = transitionStudioPreviewAudience(initialAudience, { type: 'change-audience', audience: 'guest' })
 assert(guestAudience.audience === 'guest' && guestAudience.run === 1, 'la transición productiva cambia audiencia y reinicia')
 const restartedAudience = transitionStudioPreviewAudience(guestAudience, { type: 'restart' })

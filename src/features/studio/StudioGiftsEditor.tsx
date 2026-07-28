@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
+import { showsEditorialContent, showsOperationalContent } from './studioEditorVisibility'
+import type { StudioOwnedContentMode } from './studioEditorVisibility'
 
 type StudioGiftsEditorProps = {
+  mode?: StudioOwnedContentMode
   titleValue: string
   canonicalTitleValue: string
   titleError: string | null
@@ -67,6 +70,7 @@ function GiftsField({
 }
 
 export function StudioGiftsEditor({
+  mode = 'complete',
   titleValue, canonicalTitleValue, titleError, descriptionValue,
   canonicalDescriptionValue, descriptionError, noteValue, canonicalNoteValue,
   noteError, accountValue, canonicalAccountValue, accountError, onTitleChange,
@@ -76,10 +80,11 @@ export function StudioGiftsEditor({
   return (
     <section className="limen-studio__gifts-editor" aria-labelledby="studio-gifts-heading">
       <h2 id="studio-gifts-heading">Regalos</h2>
-      <p className="limen-studio__gifts-intro">
-        Definí el mensaje y el dato que verán los invitados cuando quieran hacer un regalo.
-      </p>
+      <p className="limen-studio__gifts-intro">{mode === 'operational'
+        ? 'Definí el dato operativo que usarán los invitados para regalar.'
+        : 'Definí el contenido editorial que verán los invitados.'}</p>
       <div className="limen-studio__gifts-fields">
+        {showsEditorialContent(mode) && <>
         <GiftsField id={fields.title} label="Título"
           help="Es el mensaje principal de la sección de regalos." error={titleError}
           resetLabel="Restablecer título" resetDisabled={titleValue === canonicalTitleValue}
@@ -111,7 +116,9 @@ export function StudioGiftsEditor({
             aria-invalid={noteError ? true : undefined}
             aria-describedby={describedBy(fields.note, noteError)} />
         </GiftsField>
+        </>}
 
+        {showsOperationalContent(mode) &&
         <GiftsField id={fields.account} label="Alias"
           help="Es el dato que se mostrará o copiará desde la invitación." error={accountError}
           resetLabel="Restablecer dato" resetDisabled={accountValue === canonicalAccountValue}
@@ -121,7 +128,7 @@ export function StudioGiftsEditor({
             onChange={(event) => onAccountChange(event.target.value)}
             aria-invalid={accountError ? true : undefined}
             aria-describedby={describedBy(fields.account, accountError)} />
-        </GiftsField>
+        </GiftsField>}
       </div>
     </section>
   )

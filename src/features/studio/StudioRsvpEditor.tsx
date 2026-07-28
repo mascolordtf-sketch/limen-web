@@ -1,6 +1,9 @@
 import type { ReactNode } from 'react'
+import { showsEditorialContent, showsOperationalContent } from './studioEditorVisibility'
+import type { StudioOwnedContentMode } from './studioEditorVisibility'
 
 type StudioRsvpEditorProps = {
+  mode?: StudioOwnedContentMode
   titleValue: string
   canonicalTitleValue: string
   titleError: string | null
@@ -71,6 +74,7 @@ function RsvpField({
 }
 
 export function StudioRsvpEditor({
+  mode = 'complete',
   titleValue, canonicalTitleValue, titleError, descriptionValue,
   canonicalDescriptionValue, descriptionError, actionLabelValue,
   canonicalActionLabelValue, actionLabelError, recipientPhoneValue,
@@ -81,10 +85,11 @@ export function StudioRsvpEditor({
   return (
     <section className="limen-studio__rsvp-editor" aria-labelledby="studio-rsvp-heading">
       <h2 id="studio-rsvp-heading">Confirmación de asistencia</h2>
-      <p className="limen-studio__rsvp-intro">
-        Definí cómo se presenta la confirmación y adónde se enviará la respuesta.
-      </p>
+      <p className="limen-studio__rsvp-intro">{mode === 'operational'
+        ? 'Definí el destino operativo de las confirmaciones.'
+        : 'Definí cómo se presenta la confirmación a los invitados.'}</p>
       <div className="limen-studio__rsvp-fields">
+        {showsEditorialContent(mode) && <>
         <RsvpField
           id={fields.title}
           label="Título"
@@ -129,7 +134,9 @@ export function StudioRsvpEditor({
             aria-invalid={actionLabelError ? true : undefined}
             aria-describedby={describedBy(fields.actionLabel, actionLabelError)} />
         </RsvpField>
+        </>}
 
+        {showsOperationalContent(mode) &&
         <RsvpField
           id={fields.recipientPhone}
           label="Número de WhatsApp"
@@ -149,7 +156,7 @@ export function StudioRsvpEditor({
             aria-invalid={recipientPhoneError ? true : undefined}
             aria-describedby={describedBy(fields.recipientPhone, recipientPhoneError)}
           />
-        </RsvpField>
+        </RsvpField>}
       </div>
     </section>
   )
