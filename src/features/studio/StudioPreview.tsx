@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import { Origin01Invitation } from '../invitations/origin01/Origin01Invitation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
@@ -12,6 +13,7 @@ type Props = {
   onAudienceChange: (audience: InvitationAudience) => void
   onRestart: () => void
   onStructuralIssue: () => void
+  headingRef?: RefObject<HTMLHeadingElement | null>
 }
 
 export function StudioAudienceControls({ audience, onAudienceChange }: Pick<Props, 'audience' | 'onAudienceChange'>) {
@@ -23,9 +25,9 @@ export function StudioAudienceControls({ audience, onAudienceChange }: Pick<Prop
 }
 
 export function StudioPreview({ invitation, audience, publicInvitationUrl, previewKey, showing,
-  contextualLabel, onAudienceChange, onRestart, onStructuralIssue }: Props) {
+  contextualLabel, onAudienceChange, onRestart, onStructuralIssue, headingRef }: Props) {
   return <section className="limen-studio__preview-content" aria-labelledby="studio-preview-renderer-title">
-    <h2 id="studio-preview-renderer-title">Preview real</h2>
+    <h2 id="studio-preview-renderer-title" ref={headingRef} tabIndex={-1}>Preview real</h2>
     {contextualLabel && <p><strong>{contextualLabel}</strong></p>}
     <StudioAudienceControls audience={audience} onAudienceChange={onAudienceChange} />
     <button className="limen-studio__action" type="button" onClick={onRestart}>Reiniciar preview</button>

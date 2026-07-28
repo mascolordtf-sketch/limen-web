@@ -1,4 +1,5 @@
 import { AppRoutes } from '../src/app/routes'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { Origin01Invitation } from '../src/features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
@@ -28,9 +29,12 @@ import {
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
-import { createStudioPreviewSurfaceState, transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
-import { createStudioRenderablePreview, retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
-import { groupStudioIssues, resolveStudioIssueDestination } from '../src/features/studio/studioReviewIssues'
+import { createStudioPreviewSurfaceState, resolveStudioPreviewContextLabel, shouldMountStudioPreviewRenderer,
+  transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
+import { createStudioRenderablePreview, createStudioRenderablePreviewBoundary,
+  retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
+import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
+  resolveStudioIssueDestination } from '../src/features/studio/studioReviewIssues'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -255,7 +259,8 @@ assert(initialSurface.desktop === 'visible' && initialSurface.mobile === 'closed
 const editorOrigin = { domainId: triviaNavigation.domainId, itemId: triviaNavigation.itemId, editorId: triviaNavigation.editorId }
 const openedSurface = transitionStudioPreviewSurface(initialSurface, { type: 'open', viewport: 'mobile', origin: editorOrigin,
   target: triviaItem.previewTarget })
-const expandedSurface = transitionStudioPreviewSurface(transitionStudioPreviewSurface(openedSurface, { type: 'collapse' }), { type: 'expand' })
+const expandedSurface = transitionStudioPreviewSurface(transitionStudioPreviewSurface(openedSurface, { type: 'collapse' }),
+  { type: 'open', viewport: 'desktop', origin: editorOrigin, target: triviaItem.previewTarget })
 const closedSurface = transitionStudioPreviewSurface(expandedSurface, { type: 'close' })
 assert(openedSurface.mobile === 'full-screen' && openedSurface.returnContext?.editorId === 'trivia'
   && openedSurface.target?.sceneId === 'trivia', 'abrir preview móvil conserva origen, retorno y target contextual')
@@ -263,6 +268,14 @@ assert(closedSurface.mobile === 'closed' && closedSurface.returnContext?.editorI
 assert(triviaNavigation.mobileLevel === 'editor' && JSON.stringify(initial) === draftBeforeNavigation,
   'la superficie full-screen es independiente de navegación y borrador')
 assert(getStudioPreviewKey(initialAudience) === 'protagonist-0', 'abrir, contraer y expandir no reinician el renderer')
+assert(shouldMountStudioPreviewRenderer(initialSurface) && shouldMountStudioPreviewRenderer(openedSurface)
+  && shouldMountStudioPreviewRenderer(expandedSurface) && shouldMountStudioPreviewRenderer(closedSurface),
+  'la arquitectura productiva conserva exactamente un único host de renderer en todos los estados')
+const storedContextLabel = resolveStudioPreviewContextLabel(openedSurface, domains)
+assert(storedContextLabel === 'Revisando: Trivia'
+  && resolveStudioPreviewContextLabel(openedSurface, domains.map((domain) => domain.id === 'experiences'
+    ? { ...domain, items: domain.items.map((item) => item.id === 'trivia' ? { ...item, label: 'Trivia' } : item) } : domain)) === storedContextLabel,
+  'la etiqueta contextual se resuelve desde el origen almacenado y no desde la navegación activa')
 
 const renderableA = retainStudioRenderablePreview(createStudioRenderablePreview(), 'session-a', validPreview, true)
 const staleA = retainStudioRenderablePreview(renderableA, 'session-a', renamedPreview, false)
@@ -272,6 +285,11 @@ assert(renderableA.showing === 'current' && staleA.showing === 'last-renderable'
   'un error estructural conserva y declara el último borrador renderizable')
 assert(renderableB.showing === 'current' && renderableB.invitation === renamedPreview, 'un borrador válido nuevo reemplaza el retenido')
 assert(isolated.showing === 'unavailable' && isolated.invitation === null, 'sesiones distintas no comparten preview retenida')
+const synchronousBoundary = createStudioRenderablePreviewBoundary<typeof validPreview>()
+assert(synchronousBoundary.select('sync', validPreview, true).showing === 'current'
+  && synchronousBoundary.select('sync', renamedPreview, false).invitation === validPreview
+  && synchronousBoundary.select('new-session', renamedPreview, false).showing === 'unavailable',
+  'la frontera síncrona selecciona current, retained o unavailable sin mezclar sesiones')
 
 const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
 assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
@@ -279,6 +297,13 @@ assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-conte
 const storyIssue = inactiveStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')!
 assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
 assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
+const correctionContext = createStudioIssueCorrectionContext(storyIssue)
+const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!
+const correctionNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: storyIssue.domainId, item: correctionDestination })
+const errorReturn = resolveStudioCorrectionReturn(correctionContext, domains)!
+const returnedToErrors = transitionStudioNavigation(correctionNavigation, { type: 'open-item', domainId: 'review', item: errorReturn })
+assert(returnedToErrors.domainId === 'review' && returnedToErrors.editorId === 'review-errors'
+  && JSON.stringify(initial) === draftBeforeNavigation, 'corregir una issue y volver a Errores conserva borrador y retorno tipado')
 
 const secondInvitation = {
   ...origin01DemoData,
@@ -295,6 +320,12 @@ assert(secondSessionDraft.event.venue === secondInvitation.event.venue, 'resets 
 
 assert(typeof AppRoutes === 'function' && typeof StudioInvitationRoute === 'function', 'la ruta actual de Studio continúa disponible')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')
+const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPreview, audience: 'protagonist',
+  publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
+  onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined }))
+assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
+  && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
+  'la preview productiva expone un heading único y un solo grupo de audiencia')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 

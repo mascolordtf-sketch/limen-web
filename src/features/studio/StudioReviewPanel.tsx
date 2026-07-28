@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import type { Origin01StudioValidation, StudioIssue } from './origin01StudioValidation'
 import type { StudioDomainDefinition } from './studioNavigation'
@@ -5,7 +6,7 @@ import { groupStudioIssues, resolveStudioIssueDestination } from './studioReview
 
 type Props = { kind: 'status' | 'errors' | 'audiences'; validation: Origin01StudioValidation;
   domains: readonly StudioDomainDefinition[]; showing: 'current' | 'last-renderable' | 'unavailable'; audience: InvitationAudience;
-  onIssue: (issue: StudioIssue) => void; onAudience: (value: InvitationAudience) => void; onPreview: () => void }
+  onIssue: (issue: StudioIssue) => void; onAudience: (value: InvitationAudience) => void; onPreview: (event: MouseEvent<HTMLButtonElement>) => void }
 
 export function StudioReviewPanel({ kind, validation, domains, showing, audience, onIssue, onAudience, onPreview }: Props) {
   const counts = (severity: StudioIssue['severity']) => validation.issues.filter((issue) => issue.severity === severity).length

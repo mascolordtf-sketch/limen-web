@@ -1,10 +1,19 @@
 import type { StudioDomainDefinition, StudioNavigationItem } from './studioNavigation'
 import type { StudioIssue, StudioIssueSeverity } from './origin01StudioValidation'
+import type { StudioNavigationSelection } from './studioNavigation'
 
 export const studioIssueGroupLabels: Record<StudioIssueSeverity, string> = {
   structural: 'Bloquea renderizado', 'active-error': 'Requiere corrección', warning: 'Advertencias',
   'inactive-content': 'Contenido inactivo', 'editorial-review': 'Revisión editorial pendiente',
 }
+
+export type StudioIssueCorrectionContext = { readonly returnTo: StudioNavigationSelection; readonly issueId: string }
+export const createStudioIssueCorrectionContext = (issue: StudioIssue): StudioIssueCorrectionContext => ({
+  returnTo: { domainId: 'review', itemId: 'errors', editorId: 'review-errors' }, issueId: issue.id,
+})
+export const resolveStudioCorrectionReturn = (context: StudioIssueCorrectionContext,
+  domains: readonly StudioDomainDefinition[]) => domains.find(({ id }) => id === context.returnTo.domainId)?.items
+  .find(({ id }) => id === context.returnTo.itemId) ?? null
 
 export function groupStudioIssues(issues: readonly StudioIssue[]) {
   return (Object.keys(studioIssueGroupLabels) as StudioIssueSeverity[]).map((severity) => ({

@@ -1174,6 +1174,8 @@
 }
 
 .limen-studio__desktop-preview { display: none; min-width: 0; }
+.limen-studio__desktop-preview--dedicated { display: block; position: fixed; z-index: 100; inset: 0; overflow: auto; background: #f1f1ef; padding: 1rem; }
+.limen-studio__desktop-preview--dedicated .limen-studio__embedded-preview { position: static; max-width: 44rem; max-height: none; margin: 0 auto; }
 .limen-studio__mobile-preview-action, .limen-studio__action,
 .limen-studio__embedded-preview button, .limen-studio__preview-layer button,
 .limen-studio__issue-group button, .limen-studio__review-actions button, .limen-studio__preview-collapsed button {
@@ -1193,10 +1195,7 @@
 .limen-studio__audience p { margin: .6rem 0; color: #55544f; font-size: .85rem; }
 .limen-studio__stale-preview, .limen-studio__preview-unavailable { margin: 1rem 0; border: 2px solid #8b4b43; border-radius: .75rem; padding: 1rem; background: #fff8f6; }
 .limen-studio__preview-collapsed { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #d9d8d3; border-radius: 1rem; padding: .75rem 1rem; background: #fafaf8; }
-.limen-studio__preview-layer { position: fixed; z-index: 100; inset: 0; overflow: auto; background: #f1f1ef; padding: 1rem; }
-.limen-studio__preview-layer > header { display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: center; gap: 1rem; max-width: 70rem; margin: auto; }
-.limen-studio__preview-layer > .limen-studio__preview-content { max-width: 44rem; margin: 1rem auto; }
-.limen-studio__preview-layer h2:focus { outline: 3px solid #315f81; }
+.limen-studio__desktop-preview--dedicated h2:focus { outline: 3px solid #315f81; }
 .limen-studio__review-status { display: grid; gap: .75rem; }
 .limen-studio__review-status div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #ddd; padding-bottom: .5rem; }
 .limen-studio__review-status dd { margin: 0; text-align: right; }
@@ -1207,7 +1206,7 @@
 @media (min-width: 64rem) {
   .limen-studio__desktop-preview { display: block; }
   .limen-studio__mobile-preview-action { display: none; }
-  .limen-studio__preview-layer { padding: 2rem; }
+  .limen-studio__desktop-preview--dedicated { padding: 2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
