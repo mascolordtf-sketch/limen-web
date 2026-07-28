@@ -1,4 +1,4 @@
-export type StudioShareMode = 'default' | 'custom'
+import type { StudioShareMode } from './studioNavigation'
 
 type StudioShareEditorProps = {
   mode: StudioShareMode

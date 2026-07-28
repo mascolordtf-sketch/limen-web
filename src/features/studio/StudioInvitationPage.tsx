@@ -1,445 +1,187 @@
-import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { updateInvitationModuleConfiguration } from '../invitations/engine/moduleConfiguration'
-import type { InvitationAudience } from '../invitations/engine/invitationTypes'
-import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
-import { validateInvitationConfiguration } from '../invitations/engine/invitationValidation'
-import type { Origin01InvitationData, Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioClosingEditor } from './StudioClosingEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
-import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventInformationEditor } from './StudioEventInformationEditor'
+import { StudioEventLocationEditor } from './StudioEventLocationEditor'
 import { StudioEventScheduleEditor } from './StudioEventScheduleEditor'
-import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioGalleryEditor } from './StudioGalleryEditor'
+import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioOpeningEditor } from './StudioOpeningEditor'
 import { StudioPreview } from './StudioPreview'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioShareEditor } from './StudioShareEditor'
-import type { StudioShareMode } from './StudioShareEditor'
 import { StudioStoryEditor } from './StudioStoryEditor'
 import { StudioTriviaEditor } from './StudioTriviaEditor'
-import { isTriviaContentValid } from './studioTriviaValidation'
-import { fromDateTimeLocalValue, toDateTimeLocalValue } from './studioDateTime'
-import { deriveMonogram } from './studioIdentity'
+import { selectValidStudioPreview } from './origin01StudioValidation'
+import { useOrigin01StudioModel } from './useOrigin01StudioModel'
+import { useStudioPreviewAudience } from './useStudioPreviewAudience'
 import './studio.css'
 
 const lifecycleLabels = {
-  draft: 'Borrador',
-  awaiting_content: 'Esperando contenido',
-  in_preparation: 'En preparación',
-  review: 'En revisión',
-  published: 'Publicada',
-  completed: 'Finalizada',
-  archived: 'Archivada',
+  draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
+  review: 'En revisión', published: 'Publicada', completed: 'Finalizada', archived: 'Archivada',
 } as const
 
-type StudioInvitationPageProps = {
-  invitation: Origin01InvitationData
-}
+type StudioInvitationPageProps = { invitation: Origin01InvitationData }
 
 export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) {
   const template = findInvitationTemplate(invitation.templateId)
-  const [modules, setModules] = useState<readonly InvitationModuleConfig[]>(
-    () => invitation.modules.map((module) => ({ ...module })),
-  )
-  const [audience, setAudience] = useState<InvitationAudience>('protagonist')
-  const canonicalProtagonistIdentity = invitation.identities.find(
-    ({ role }) => role === 'protagonist',
-  )
-  const canonicalProtagonistName = canonicalProtagonistIdentity?.displayName ?? ''
-  const [protagonistName, setProtagonistName] = useState<string>(
-    () => canonicalProtagonistIdentity?.displayName ?? '',
-  )
-  const initialShareMessage = `${canonicalProtagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
-  const [shareMode, setShareMode] = useState<StudioShareMode>('default')
-  const [customShareMessage, setCustomShareMessage] = useState<string>(() => initialShareMessage)
-  const [customShareMessageInitialized, setCustomShareMessageInitialized] = useState(false)
-  const canonicalEventStart = useMemo(
-    () => toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone),
-    [invitation.event.startsAt, invitation.event.timeZone],
-  )
-  const [eventStart, setEventStart] = useState<string>(() => canonicalEventStart)
-  const canonicalEventEnd = useMemo(
-    () => toDateTimeLocalValue(invitation.event.endsAt, invitation.event.timeZone),
-    [invitation.event.endsAt, invitation.event.timeZone],
-  )
-  const [eventEnd, setEventEnd] = useState<string>(() => canonicalEventEnd)
-  const canonicalVenue = invitation.event.venue
-  const [venue, setVenue] = useState<string>(() => canonicalVenue)
-  const canonicalAddress = invitation.event.address
-  const [address, setAddress] = useState<string>(() => canonicalAddress)
-  const canonicalDressCodeTitle = invitation.content.dressCode.title
-  const [dressCodeTitle, setDressCodeTitle] = useState<string>(() => canonicalDressCodeTitle)
-  const canonicalDressCodeDescription = invitation.content.dressCode.description
-  const [dressCodeDescription, setDressCodeDescription] = useState<string>(
-    () => canonicalDressCodeDescription,
-  )
-  const canonicalDressCodeNote = invitation.content.dressCode.note
-  const [dressCodeNote, setDressCodeNote] = useState<string>(() => canonicalDressCodeNote)
-  const canonicalRsvpTitle = invitation.content.rsvp.title
-  const [rsvpTitle, setRsvpTitle] = useState<string>(() => canonicalRsvpTitle)
-  const canonicalRsvpDescription = invitation.content.rsvp.description
-  const [rsvpDescription, setRsvpDescription] = useState<string>(() => canonicalRsvpDescription)
-  const canonicalRsvpActionLabel = invitation.content.rsvp.actionLabel
-  const [rsvpActionLabel, setRsvpActionLabel] = useState<string>(() => canonicalRsvpActionLabel)
-  const canonicalRsvpRecipientPhone = invitation.content.rsvp.recipientPhone ?? ''
-  const [rsvpRecipientPhone, setRsvpRecipientPhone] = useState<string>(
-    () => canonicalRsvpRecipientPhone,
-  )
-  const canonicalGiftsTitle = invitation.content.gifts.title
-  const [giftsTitle, setGiftsTitle] = useState<string>(() => canonicalGiftsTitle)
-  const canonicalGiftsDescription = invitation.content.gifts.description
-  const [giftsDescription, setGiftsDescription] = useState<string>(() => canonicalGiftsDescription)
-  const canonicalGiftsNote = invitation.content.gifts.demoNote
-  const [giftsNote, setGiftsNote] = useState<string>(() => canonicalGiftsNote)
-  const canonicalGiftsAccount = invitation.content.gifts.accountValue
-  const [giftsAccount, setGiftsAccount] = useState<string>(() => canonicalGiftsAccount)
-  const canonicalStoryEyebrow = invitation.content.story.eyebrow
-  const [storyEyebrow, setStoryEyebrow] = useState<string>(() => canonicalStoryEyebrow)
-  const canonicalStoryMessage = invitation.content.story.message
-  const [storyMessage, setStoryMessage] = useState<string>(() => canonicalStoryMessage)
-  const canonicalPreludeEyebrow = invitation.content.prelude.eyebrow
-  const [preludeEyebrow, setPreludeEyebrow] = useState<string>(() => canonicalPreludeEyebrow)
-  const canonicalPreludeBody = invitation.content.prelude.body
-  const [preludeBody, setPreludeBody] = useState<string>(() => canonicalPreludeBody)
-  const canonicalPreludeReveal = invitation.content.prelude.reveal
-  const [preludeReveal, setPreludeReveal] = useState<string>(() => canonicalPreludeReveal)
-  const canonicalPreludeQuestion = invitation.content.prelude.question
-  const [preludeQuestion, setPreludeQuestion] = useState<string>(() => canonicalPreludeQuestion)
-  const canonicalPreludeActionLabel = invitation.content.prelude.actionLabel
-  const [preludeActionLabel, setPreludeActionLabel] = useState<string>(
-    () => canonicalPreludeActionLabel,
-  )
-  const canonicalPreludeSoundHint = invitation.content.prelude.soundHint
-  const [preludeSoundHint, setPreludeSoundHint] = useState<string>(() => canonicalPreludeSoundHint)
-  const canonicalHeroPhrase = invitation.content.hero.phrase
-  const [heroPhrase, setHeroPhrase] = useState<string>(() => canonicalHeroPhrase)
-  const canonicalHeroScrollHint = invitation.content.hero.scrollHint
-  const [heroScrollHint, setHeroScrollHint] = useState<string>(() => canonicalHeroScrollHint)
-  const canonicalClosingEyebrow = invitation.content.closing.eyebrow
-  const [closingEyebrow, setClosingEyebrow] = useState<string>(() => canonicalClosingEyebrow)
-  const canonicalClosingTitle = invitation.content.closing.title
-  const [closingTitle, setClosingTitle] = useState<string>(() => canonicalClosingTitle)
-  const canonicalClosingSharePrompt = invitation.content.closing.sharePrompt
-  const [closingSharePrompt, setClosingSharePrompt] = useState<string>(
-    () => canonicalClosingSharePrompt,
-  )
-  const canonicalClosingShareActionLabel = invitation.content.closing.shareActionLabel
-  const [closingShareActionLabel, setClosingShareActionLabel] = useState<string>(
-    () => canonicalClosingShareActionLabel,
-  )
-  const canonicalTrivia = invitation.content.trivia
-  const [trivia, setTrivia] = useState<Origin01TriviaContent>(() => ({
-    ...canonicalTrivia,
-    questions: canonicalTrivia.questions.map((question) => ({
-      ...question,
-      options: question.options.map((option) => ({ ...option })),
-    })),
-    resultTiers: canonicalTrivia.resultTiers.map((tier) => ({ ...tier })),
-  }))
-  const canonicalCountdown = invitation.content.countdown
-  const [countdownCopy, setCountdownCopy] = useState(() => ({ ...canonicalCountdown }))
-  const canonicalEventDetails = invitation.content.eventDetails
-  const [eventDetailsCopy, setEventDetailsCopy] = useState(() => ({
-    eyebrow: canonicalEventDetails.eyebrow,
-    heading: canonicalEventDetails.heading,
-    venueLabel: canonicalEventDetails.venueLabel,
-    mapActionLabel: canonicalEventDetails.mapActionLabel,
-    calendarActionLabel: canonicalEventDetails.calendarActionLabel,
-    calendarDescription: canonicalEventDetails.calendarDescription,
-  }))
-  const canonicalGallery = invitation.content.gallery
-  const [galleryCopy, setGalleryCopy] = useState(() => ({
-    eyebrow: canonicalGallery.eyebrow,
-    heading: canonicalGallery.heading,
-  }))
-  const canonicalGalleryCaptions = canonicalGallery.images.map(({ caption }) => caption ?? '')
-  const [galleryCaptions, setGalleryCaptions] = useState<readonly string[]>(
-    () => [...canonicalGalleryCaptions],
-  )
-  const temporaryStartsAt = useMemo(
-    () => fromDateTimeLocalValue(eventStart, invitation.event.timeZone),
-    [eventStart, invitation.event.timeZone],
-  )
-  const temporaryEndsAt = useMemo(
-    () => fromDateTimeLocalValue(eventEnd, invitation.event.timeZone),
-    [eventEnd, invitation.event.timeZone],
-  )
-  const eventStartError = temporaryStartsAt ? null : 'Ingresá una fecha y hora válidas.'
-  const eventEndError = !temporaryEndsAt
-    ? 'Ingresá una fecha y hora de finalización válidas.'
-    : temporaryStartsAt && new Date(temporaryEndsAt).getTime() <= new Date(temporaryStartsAt).getTime()
-      ? 'La finalización debe ser posterior al inicio.'
-      : null
-  const temporaryDateLabel = temporaryStartsAt
-    ? new Intl.DateTimeFormat('es-AR', {
-      day: 'numeric', month: 'long', year: 'numeric', timeZone: invitation.event.timeZone,
-    }).format(new Date(temporaryStartsAt))
-    : ''
-  const timeFormatter = new Intl.DateTimeFormat('es-AR', {
-      hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: invitation.event.timeZone,
-    })
-  const temporaryTimeLabel = temporaryStartsAt && temporaryEndsAt
-    ? `${timeFormatter.format(new Date(temporaryStartsAt))} a ${timeFormatter.format(new Date(temporaryEndsAt))}`
-    : ''
+  const model = useOrigin01StudioModel(invitation)
+  const previewAudience = useStudioPreviewAudience('protagonist')
+  const { draft, initialDraft, validation: studioValidation, configurationValidation,
+    previewInvitation, update, updateGroup, resetValue, resetField, resetScene,
+    resetConfiguration, setModuleEnabled } = model
+  const errors = studioValidation.fieldErrors
+
+  const protagonistName = draft.protagonistName
+  const canonicalProtagonistName = initialDraft.protagonistName
+  const canonicalProtagonistIdentity = invitation.identities.find(({ role }) => role === 'protagonist')
+  const setProtagonistName = (value: string) => update('protagonistName', value)
+  const shareMode = draft.share.mode
+  const customShareMessage = draft.share.customMessage
   const defaultShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
-  const shareMessageError = shareMode === 'custom' && customShareMessage.trim().length === 0
-    ? 'Ingresá un mensaje para compartir.'
-    : null
-  const protagonistNameError = protagonistName.trim().length === 0
-    ? 'Ingresá el nombre de la protagonista.'
-    : null
-  const temporaryProtagonistName = protagonistName.trim()
-  const venueError = venue.trim().length === 0
-    ? 'Ingresá el nombre del lugar.'
-    : null
-  const addressError = address.trim().length === 0
-    ? 'Ingresá la dirección del evento.'
-    : null
-  const dressCodeTitleError = dressCodeTitle.trim().length === 0
-    ? 'Ingresá el tipo de vestimenta.'
-    : null
-  const dressCodeDescriptionError = dressCodeDescription.trim().length === 0
-    ? 'Ingresá una descripción del Dress Code.'
-    : null
-  const dressCodeNoteError = dressCodeNote.trim().length === 0
-    ? 'Ingresá una nota destacada.'
-    : null
-  const rsvpTitleError = rsvpTitle.trim().length === 0
-    ? 'Ingresá un título para la confirmación.'
-    : null
-  const rsvpDescriptionError = rsvpDescription.trim().length === 0
-    ? 'Ingresá una descripción para la confirmación.'
-    : null
-  const rsvpActionLabelError = rsvpActionLabel.trim().length === 0
-    ? 'Ingresá el texto del botón.'
-    : null
-  const trimmedRsvpRecipientPhone = rsvpRecipientPhone.trim()
-  const rsvpRecipientDigits = trimmedRsvpRecipientPhone.replace(/\D/g, '')
-  const rsvpRecipientPhoneError = !/^\+?[\d ()-]+$/.test(trimmedRsvpRecipientPhone)
-    || rsvpRecipientDigits.length < 7 || rsvpRecipientDigits.length > 15
-    ? 'Ingresá un número de WhatsApp válido.'
-    : null
-  const giftsTitleError = giftsTitle.trim().length === 0
-    ? 'Ingresá un título para la sección de regalos.'
-    : null
-  const giftsDescriptionError = giftsDescription.trim().length === 0
-    ? 'Ingresá una descripción para la sección de regalos.'
-    : null
-  const giftsNoteError = giftsNote.trim().length === 0 ? 'Ingresá una nota destacada.' : null
-  const giftsAccountError = giftsAccount.trim().length === 0
-    ? 'Ingresá el dato para regalar.'
-    : null
-  const storyEyebrowError = storyEyebrow.trim().length === 0
-    ? 'Ingresá el texto introductorio.'
-    : null
-  const storyMessageError = storyMessage.trim().length === 0
-    ? 'Ingresá el texto de la historia.'
-    : null
-  const preludeEyebrowError = preludeEyebrow.trim().length === 0
-    ? 'Ingresá el texto introductorio del preludio.' : null
-  const preludeBodyError = preludeBody.trim().length === 0
-    ? 'Ingresá el mensaje de apertura.' : null
-  const preludeRevealError = preludeReveal.trim().length === 0
-    ? 'Ingresá el texto de revelación.' : null
-  const preludeQuestionError = preludeQuestion.trim().length === 0
-    ? 'Ingresá la pregunta de entrada.' : null
-  const preludeActionLabelError = preludeActionLabel.trim().length === 0
-    ? 'Ingresá el texto de la acción.' : null
-  const preludeSoundHintError = preludeSoundHint.trim().length === 0
-    ? 'Ingresá la indicación de sonido.' : null
-  const heroPhraseError = heroPhrase.trim().length === 0
-    ? 'Ingresá el título principal.' : null
-  const heroScrollHintError = heroScrollHint.trim().length === 0
-    ? 'Ingresá el texto de desplazamiento.' : null
-  const closingEyebrowError = closingEyebrow.trim().length === 0
-    ? 'Ingresá el texto introductorio del cierre.' : null
-  const closingTitleError = closingTitle.trim().length === 0
-    ? 'Ingresá un título para el cierre.' : null
-  const closingSharePromptError = closingSharePrompt.trim().length === 0
-    ? 'Ingresá la invitación a compartir.' : null
-  const closingShareActionLabelError = closingShareActionLabel.trim().length === 0
-    ? 'Ingresá el texto de la acción para compartir.' : null
-  const triviaValid = isTriviaContentValid(trivia)
-  const requiredEditorialError = (value: string) => value.trim().length === 0
-    ? 'Este texto es obligatorio.' : null
-  const countdownErrors = {
-    eyebrow: requiredEditorialError(countdownCopy.eyebrow),
-    heading: requiredEditorialError(countdownCopy.heading),
-    completedMessage: requiredEditorialError(countdownCopy.completedMessage),
-  }
-  const eventDetailsErrors = {
-    eyebrow: requiredEditorialError(eventDetailsCopy.eyebrow),
-    heading: requiredEditorialError(eventDetailsCopy.heading),
-    venueLabel: requiredEditorialError(eventDetailsCopy.venueLabel),
-    mapActionLabel: requiredEditorialError(eventDetailsCopy.mapActionLabel),
-    calendarActionLabel: requiredEditorialError(eventDetailsCopy.calendarActionLabel),
-    calendarDescription: requiredEditorialError(eventDetailsCopy.calendarDescription),
-  }
-  const eventInformationValid = [...Object.values(countdownErrors), ...Object.values(eventDetailsErrors)]
-    .every((error) => error === null)
-  const galleryErrors = {
-    eyebrow: requiredEditorialError(galleryCopy.eyebrow),
-    heading: requiredEditorialError(galleryCopy.heading),
-  }
-  const galleryValid = Object.values(galleryErrors).every((error) => error === null)
-  const validation = useMemo(
-    () => validateInvitationConfiguration({ ...invitation, modules }, findInvitationTemplate),
-    [invitation, modules],
-  )
-  const previewInvitation = useMemo<Origin01InvitationData>(
-    () => ({
-      ...invitation,
-      modules,
-      identities: invitation.identities.map((identity) => (
-        identity.role === 'protagonist'
-          ? { ...identity, displayName: temporaryProtagonistName }
-          : identity
-      )),
-      event: {
-        ...invitation.event,
-        name: temporaryProtagonistName,
-        startsAt: temporaryStartsAt ?? invitation.event.startsAt,
-        endsAt: temporaryEndsAt ?? invitation.event.endsAt,
-        venue,
-        address,
-      },
-      content: {
-        ...invitation.content,
-        prelude: {
-          ...invitation.content.prelude,
-          eyebrow: preludeEyebrow,
-          title: `Hola, ${temporaryProtagonistName}.`,
-          body: preludeBody,
-          reveal: preludeReveal,
-          question: preludeQuestion,
-          actionLabel: preludeActionLabel,
-          soundHint: preludeSoundHint,
-        },
-        hero: {
-          ...invitation.content.hero,
-          dateLabel: temporaryDateLabel,
-          phrase: heroPhrase,
-          scrollHint: heroScrollHint,
-        },
-        countdown: { ...countdownCopy },
-        eventDetails: {
-          ...invitation.content.eventDetails,
-          ...eventDetailsCopy,
-          dateLabel: temporaryDateLabel,
-          timeLabel: temporaryTimeLabel,
-        },
-        gallery: {
-          ...invitation.content.gallery,
-          eyebrow: galleryCopy.eyebrow,
-          heading: galleryCopy.heading,
-          images: invitation.content.gallery.images.map((image, index) => ({
-            ...image,
-            caption: galleryCaptions[index].trim().length > 0 ? galleryCaptions[index] : undefined,
-          })),
-        },
-        envelope: {
-          ...invitation.content.envelope,
-          monogram: deriveMonogram(temporaryProtagonistName),
-        },
-        story: {
-          ...invitation.content.story,
-          eyebrow: storyEyebrow,
-          message: storyMessage,
-          signature: temporaryProtagonistName,
-        },
-        trivia: {
-          ...trivia,
-          protagonistName: temporaryProtagonistName,
-          accessibleTitle: `Trivia sobre ${temporaryProtagonistName}`,
-          title: `¿Cuánto conocés de verdad a ${temporaryProtagonistName}?`,
-          revealSignature: temporaryProtagonistName,
-        },
-        closing: {
-          ...invitation.content.closing,
-          eyebrow: closingEyebrow,
-          title: closingTitle,
-          sharePrompt: closingSharePrompt,
-          shareActionLabel: closingShareActionLabel,
-          signature: temporaryProtagonistName,
-          shareTitle: `${invitation.event.celebrationLabel} de ${temporaryProtagonistName}`,
-          shareText: shareMode === 'default' ? defaultShareMessage : customShareMessage,
-        },
-        dressCode: {
-          ...invitation.content.dressCode,
-          title: dressCodeTitle,
-          description: dressCodeDescription,
-          note: dressCodeNote,
-        },
-        rsvp: {
-          ...invitation.content.rsvp,
-          title: rsvpTitle,
-          description: rsvpDescription,
-          actionLabel: rsvpActionLabel,
-          recipientPhone: rsvpRecipientDigits,
-          message: `Hola, confirmo mi asistencia a ${invitation.event.celebrationLabel} de ${temporaryProtagonistName}.`,
-        },
-        gifts: {
-          ...invitation.content.gifts,
-          title: giftsTitle,
-          description: giftsDescription,
-          demoNote: giftsNote,
-          accountValue: giftsAccount,
-        },
-      },
-    }),
-    [address, closingEyebrow, closingShareActionLabel, closingSharePrompt, closingTitle,
-      customShareMessage, defaultShareMessage, dressCodeDescription, dressCodeNote,
-      dressCodeTitle, giftsAccount, giftsDescription, giftsNote, giftsTitle, heroPhrase,
-      heroScrollHint, invitation, modules, preludeActionLabel, preludeBody, preludeEyebrow,
-      preludeQuestion, preludeReveal, preludeSoundHint, shareMode, storyEyebrow,
-      storyMessage, temporaryDateLabel, trivia, countdownCopy, eventDetailsCopy, galleryCopy,
-      galleryCaptions,
-      rsvpActionLabel, rsvpDescription, rsvpRecipientDigits, rsvpTitle, temporaryEndsAt,
-      temporaryProtagonistName, temporaryStartsAt, temporaryTimeLabel, venue],
-  )
+  const setCustomShareMessage = (value: string) => updateGroup('share', (current) => ({ ...current, customMessage: value }))
+  const handleShareModeChange = (mode: typeof shareMode) => updateGroup('share', (current) => ({
+    ...current, mode,
+    customMessage: mode === 'custom' && !current.customMessageInitialized ? defaultShareMessage : current.customMessage,
+    customMessageInitialized: current.customMessageInitialized || mode === 'custom',
+  }))
+  const handleShareReset = () => update('share', { ...initialDraft.share, customMessage: defaultShareMessage, customMessageInitialized: true })
+
+  const eventStart = draft.event.start
+  const eventEnd = draft.event.end
+  const venue = draft.event.venue
+  const address = draft.event.address
+  const setEventStart = (start: string) => updateGroup('event', (current) => ({ ...current, start }))
+  const setEventEnd = (end: string) => updateGroup('event', (current) => ({ ...current, end }))
+  const setVenue = (venue: string) => updateGroup('event', (current) => ({ ...current, venue }))
+  const setAddress = (address: string) => updateGroup('event', (current) => ({ ...current, address }))
+
+  const { title: dressCodeTitle, description: dressCodeDescription, note: dressCodeNote } = draft.dressCode
+  const setDressCodeTitle = (title: string) => updateGroup('dressCode', (current) => ({ ...current, title }))
+  const setDressCodeDescription = (description: string) => updateGroup('dressCode', (current) => ({ ...current, description }))
+  const setDressCodeNote = (note: string) => updateGroup('dressCode', (current) => ({ ...current, note }))
+  const { title: rsvpTitle, description: rsvpDescription, actionLabel: rsvpActionLabel, recipientPhone: rsvpRecipientPhone } = draft.rsvp
+  const setRsvpTitle = (title: string) => updateGroup('rsvp', (current) => ({ ...current, title }))
+  const setRsvpDescription = (description: string) => updateGroup('rsvp', (current) => ({ ...current, description }))
+  const setRsvpActionLabel = (actionLabel: string) => updateGroup('rsvp', (current) => ({ ...current, actionLabel }))
+  const setRsvpRecipientPhone = (recipientPhone: string) => updateGroup('rsvp', (current) => ({ ...current, recipientPhone }))
+  const { title: giftsTitle, description: giftsDescription, demoNote: giftsNote, accountValue: giftsAccount } = draft.gifts
+  const setGiftsTitle = (title: string) => updateGroup('gifts', (current) => ({ ...current, title }))
+  const setGiftsDescription = (description: string) => updateGroup('gifts', (current) => ({ ...current, description }))
+  const setGiftsNote = (demoNote: string) => updateGroup('gifts', (current) => ({ ...current, demoNote }))
+  const setGiftsAccount = (accountValue: string) => updateGroup('gifts', (current) => ({ ...current, accountValue }))
+  const { eyebrow: storyEyebrow, message: storyMessage } = draft.story
+  const setStoryEyebrow = (eyebrow: string) => updateGroup('story', (current) => ({ ...current, eyebrow }))
+  const setStoryMessage = (message: string) => updateGroup('story', (current) => ({ ...current, message }))
+  const { preludeEyebrow, preludeBody, preludeReveal, preludeQuestion, preludeActionLabel,
+    preludeSoundHint, heroPhrase, heroScrollHint } = draft.opening
+  const setOpening = <K extends keyof typeof draft.opening>(key: K, value: (typeof draft.opening)[K]) =>
+    updateGroup('opening', (current) => ({ ...current, [key]: value }))
+  const { eyebrow: closingEyebrow, title: closingTitle, sharePrompt: closingSharePrompt,
+    shareActionLabel: closingShareActionLabel } = draft.closing
+  const setClosing = <K extends keyof typeof draft.closing>(key: K, value: (typeof draft.closing)[K]) =>
+    updateGroup('closing', (current) => ({ ...current, [key]: value }))
+  const trivia = draft.trivia
+  const setTrivia = (value: typeof trivia) => update('trivia', value)
+  const countdownCopy = draft.countdown
+  const setCountdownCopy = (updater: (current: typeof countdownCopy) => typeof countdownCopy) => updateGroup('countdown', updater)
+  const eventDetailsCopy = draft.eventDetails
+  const setEventDetailsCopy = (updater: (current: typeof eventDetailsCopy) => typeof eventDetailsCopy) => updateGroup('eventDetails', updater)
+  const galleryCopy = draft.gallery.copy
+  const galleryCaptions = draft.gallery.captions
+  const setGalleryCopy = (updater: (current: typeof galleryCopy) => typeof galleryCopy) =>
+    updateGroup('gallery', (current) => ({ ...current, copy: updater(current.copy) }))
+  const setGalleryCaptions = (updater: (current: readonly string[]) => readonly string[]) =>
+    updateGroup('gallery', (current) => ({ ...current, captions: updater(current.captions) }))
+
+  const canonicalEventStart = initialDraft.event.start
+  const canonicalEventEnd = initialDraft.event.end
+  const canonicalVenue = initialDraft.event.venue
+  const canonicalAddress = initialDraft.event.address
+  const canonicalDressCodeTitle = initialDraft.dressCode.title
+  const canonicalDressCodeDescription = initialDraft.dressCode.description
+  const canonicalDressCodeNote = initialDraft.dressCode.note
+  const canonicalRsvpTitle = initialDraft.rsvp.title
+  const canonicalRsvpDescription = initialDraft.rsvp.description
+  const canonicalRsvpActionLabel = initialDraft.rsvp.actionLabel
+  const canonicalRsvpRecipientPhone = initialDraft.rsvp.recipientPhone
+  const canonicalGiftsTitle = initialDraft.gifts.title
+  const canonicalGiftsDescription = initialDraft.gifts.description
+  const canonicalGiftsNote = initialDraft.gifts.demoNote
+  const canonicalGiftsAccount = initialDraft.gifts.accountValue
+  const canonicalStoryEyebrow = initialDraft.story.eyebrow
+  const canonicalStoryMessage = initialDraft.story.message
+  const canonicalPreludeEyebrow = initialDraft.opening.preludeEyebrow
+  const canonicalPreludeBody = initialDraft.opening.preludeBody
+  const canonicalPreludeReveal = initialDraft.opening.preludeReveal
+  const canonicalPreludeQuestion = initialDraft.opening.preludeQuestion
+  const canonicalPreludeActionLabel = initialDraft.opening.preludeActionLabel
+  const canonicalPreludeSoundHint = initialDraft.opening.preludeSoundHint
+  const canonicalHeroPhrase = initialDraft.opening.heroPhrase
+  const canonicalHeroScrollHint = initialDraft.opening.heroScrollHint
+  const canonicalClosingEyebrow = initialDraft.closing.eyebrow
+  const canonicalClosingTitle = initialDraft.closing.title
+  const canonicalClosingSharePrompt = initialDraft.closing.sharePrompt
+  const canonicalClosingShareActionLabel = initialDraft.closing.shareActionLabel
+  const canonicalTrivia = initialDraft.trivia
+  const canonicalCountdown = initialDraft.countdown
+  const canonicalEventDetails = initialDraft.eventDetails
+  const canonicalGallery = { ...invitation.content.gallery, ...initialDraft.gallery.copy }
+  const canonicalGalleryCaptions = initialDraft.gallery.captions
+
+  const protagonistNameError = errors.protagonistName
+  const shareMessageError = errors.shareMessage
+  const eventStartError = errors.eventStart
+  const eventEndError = errors.eventEnd
+  const venueError = errors.venue
+  const addressError = errors.address
+  const dressCodeTitleError = errors.dressCodeTitle
+  const dressCodeDescriptionError = errors.dressCodeDescription
+  const dressCodeNoteError = errors.dressCodeNote
+  const rsvpTitleError = errors.rsvpTitle
+  const rsvpDescriptionError = errors.rsvpDescription
+  const rsvpActionLabelError = errors.rsvpActionLabel
+  const rsvpRecipientPhoneError = errors.rsvpRecipientPhone
+  const giftsTitleError = errors.giftsTitle
+  const giftsDescriptionError = errors.giftsDescription
+  const giftsNoteError = errors.giftsNote
+  const giftsAccountError = errors.giftsAccount
+  const storyEyebrowError = errors.storyEyebrow
+  const storyMessageError = errors.storyMessage
+  const preludeEyebrowError = errors.preludeEyebrow
+  const preludeBodyError = errors.preludeBody
+  const preludeRevealError = errors.preludeReveal
+  const preludeQuestionError = errors.preludeQuestion
+  const preludeActionLabelError = errors.preludeActionLabel
+  const preludeSoundHintError = errors.preludeSoundHint
+  const heroPhraseError = errors.heroPhrase
+  const heroScrollHintError = errors.heroScrollHint
+  const closingEyebrowError = errors.closingEyebrow
+  const closingTitleError = errors.closingTitle
+  const closingSharePromptError = errors.closingSharePrompt
+  const closingShareActionLabelError = errors.closingShareActionLabel
+  const countdownErrors = { eyebrow: errors.countdownEyebrow, heading: errors.countdownHeading,
+    completedMessage: errors.countdownCompletedMessage }
+  const eventDetailsErrors = { eyebrow: errors.eventDetailsEyebrow, heading: errors.eventDetailsHeading,
+    venueLabel: errors.eventDetailsVenueLabel, mapActionLabel: errors.eventDetailsMapActionLabel,
+    calendarActionLabel: errors.eventDetailsCalendarActionLabel,
+    calendarDescription: errors.eventDetailsCalendarDescription }
+  const galleryErrors = { eyebrow: errors.galleryEyebrow, heading: errors.galleryHeading }
+  const modules = draft.modules
+  const validation = configurationValidation
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
-  const resetDisabled = modules.length === invitation.modules.length
-    && modules.every((module, index) => {
-      const originalModule = invitation.modules[index]
-      return module.moduleId === originalModule.moduleId && module.enabled === originalModule.enabled
-    })
-
-  const handleModuleChange = (moduleId: InvitationModuleId, enabled: boolean) => {
-    if (!template || template.requiredModules.includes(moduleId)) return
-
-    setModules((currentModules) => (
-      updateInvitationModuleConfiguration(currentModules, { [moduleId]: enabled })
-    ))
-  }
-
-  const handleReset = () => {
-    setModules(invitation.modules.map((module) => ({ ...module })))
-  }
-  const handleShareModeChange = (mode: StudioShareMode) => {
-    if (mode === 'custom' && !customShareMessageInitialized) {
-      setCustomShareMessage(defaultShareMessage)
-      setCustomShareMessageInitialized(true)
-    }
-    setShareMode(mode)
-  }
-
-  const handleShareReset = () => {
-    setShareMode('default')
-    setCustomShareMessage(defaultShareMessage)
-    setCustomShareMessageInitialized(true)
-  }
-  const eventDate = new Intl.DateTimeFormat('es-AR', {
-    dateStyle: 'long',
-    timeStyle: 'short',
-    timeZone: invitation.event.timeZone,
-  }).format(new Date(invitation.event.startsAt))
-
+  const resetDisabled = modules.every((module, index) => module.moduleId === initialDraft.modules[index]?.moduleId
+    && module.enabled === initialDraft.modules[index]?.enabled)
+  const handleModuleChange = setModuleEnabled
+  const handleReset = resetConfiguration
+  const eventDate = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeStyle: 'short',
+    timeZone: invitation.event.timeZone }).format(new Date(invitation.event.startsAt))
   return (
     <div className="limen-studio">
       <div className="limen-studio__workspace">
@@ -480,7 +222,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
               canonicalValue={canonicalProtagonistName}
               error={protagonistNameError}
               onChange={setProtagonistName}
-              onReset={() => setProtagonistName(canonicalProtagonistName)}
+              onReset={() => resetValue('protagonistName')}
             />
           ) : (
             <section className="limen-studio__content-editor" aria-labelledby="studio-content-title">
@@ -508,52 +250,52 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalMessageValue={canonicalStoryMessage}
             messageError={storyMessageError}
             onEyebrowChange={setStoryEyebrow}
-            onEyebrowReset={() => setStoryEyebrow(canonicalStoryEyebrow)}
+            onEyebrowReset={() => resetField('story', 'eyebrow')}
             onMessageChange={setStoryMessage}
-            onMessageReset={() => setStoryMessage(canonicalStoryMessage)}
+            onMessageReset={() => resetField('story', 'message')}
           />
           <StudioOpeningEditor
             preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
-              error: preludeEyebrowError, onChange: setPreludeEyebrow,
-              onReset: () => setPreludeEyebrow(canonicalPreludeEyebrow) }}
+              error: preludeEyebrowError, onChange: (value) => setOpening('preludeEyebrow', value),
+              onReset: () => resetField('opening', 'preludeEyebrow') }}
             preludeBody={{ value: preludeBody, canonicalValue: canonicalPreludeBody,
-              error: preludeBodyError, onChange: setPreludeBody,
-              onReset: () => setPreludeBody(canonicalPreludeBody) }}
+              error: preludeBodyError, onChange: (value) => setOpening('preludeBody', value),
+              onReset: () => resetField('opening', 'preludeBody') }}
             preludeReveal={{ value: preludeReveal, canonicalValue: canonicalPreludeReveal,
-              error: preludeRevealError, onChange: setPreludeReveal,
-              onReset: () => setPreludeReveal(canonicalPreludeReveal) }}
+              error: preludeRevealError, onChange: (value) => setOpening('preludeReveal', value),
+              onReset: () => resetField('opening', 'preludeReveal') }}
             preludeQuestion={{ value: preludeQuestion, canonicalValue: canonicalPreludeQuestion,
-              error: preludeQuestionError, onChange: setPreludeQuestion,
-              onReset: () => setPreludeQuestion(canonicalPreludeQuestion) }}
+              error: preludeQuestionError, onChange: (value) => setOpening('preludeQuestion', value),
+              onReset: () => resetField('opening', 'preludeQuestion') }}
             preludeActionLabel={{ value: preludeActionLabel,
               canonicalValue: canonicalPreludeActionLabel, error: preludeActionLabelError,
-              onChange: setPreludeActionLabel,
-              onReset: () => setPreludeActionLabel(canonicalPreludeActionLabel) }}
+              onChange: (value) => setOpening('preludeActionLabel', value),
+              onReset: () => resetField('opening', 'preludeActionLabel') }}
             preludeSoundHint={{ value: preludeSoundHint, canonicalValue: canonicalPreludeSoundHint,
-              error: preludeSoundHintError, onChange: setPreludeSoundHint,
-              onReset: () => setPreludeSoundHint(canonicalPreludeSoundHint) }}
+              error: preludeSoundHintError, onChange: (value) => setOpening('preludeSoundHint', value),
+              onReset: () => resetField('opening', 'preludeSoundHint') }}
             heroPhrase={{ value: heroPhrase, canonicalValue: canonicalHeroPhrase,
-              error: heroPhraseError, onChange: setHeroPhrase,
-              onReset: () => setHeroPhrase(canonicalHeroPhrase) }}
+              error: heroPhraseError, onChange: (value) => setOpening('heroPhrase', value),
+              onReset: () => resetField('opening', 'heroPhrase') }}
             heroScrollHint={{ value: heroScrollHint, canonicalValue: canonicalHeroScrollHint,
-              error: heroScrollHintError, onChange: setHeroScrollHint,
-              onReset: () => setHeroScrollHint(canonicalHeroScrollHint) }}
+              error: heroScrollHintError, onChange: (value) => setOpening('heroScrollHint', value),
+              onReset: () => resetField('opening', 'heroScrollHint') }}
           />
           <StudioClosingEditor
             eyebrow={{ value: closingEyebrow, canonicalValue: canonicalClosingEyebrow,
-              error: closingEyebrowError, onChange: setClosingEyebrow,
-              onReset: () => setClosingEyebrow(canonicalClosingEyebrow) }}
+              error: closingEyebrowError, onChange: (value) => setClosing('eyebrow', value),
+              onReset: () => resetField('closing', 'eyebrow') }}
             title={{ value: closingTitle, canonicalValue: canonicalClosingTitle,
-              error: closingTitleError, onChange: setClosingTitle,
-              onReset: () => setClosingTitle(canonicalClosingTitle) }}
+              error: closingTitleError, onChange: (value) => setClosing('title', value),
+              onReset: () => resetField('closing', 'title') }}
             sharePrompt={{ value: closingSharePrompt,
               canonicalValue: canonicalClosingSharePrompt, error: closingSharePromptError,
-              onChange: setClosingSharePrompt,
-              onReset: () => setClosingSharePrompt(canonicalClosingSharePrompt) }}
+              onChange: (value) => setClosing('sharePrompt', value),
+              onReset: () => resetField('closing', 'sharePrompt') }}
             shareActionLabel={{ value: closingShareActionLabel,
               canonicalValue: canonicalClosingShareActionLabel,
-              error: closingShareActionLabelError, onChange: setClosingShareActionLabel,
-              onReset: () => setClosingShareActionLabel(canonicalClosingShareActionLabel) }}
+              error: closingShareActionLabelError, onChange: (value) => setClosing('shareActionLabel', value),
+              onReset: () => resetField('closing', 'shareActionLabel') }}
           />
           <StudioGalleryEditor
             eyebrow={{ value: galleryCopy.eyebrow, error: galleryErrors.eyebrow,
@@ -569,10 +311,8 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             onCaptionChange={(index, caption) => setGalleryCaptions((current) => (
               current.map((value, currentIndex) => currentIndex === index ? caption : value)
             ))}
-            onCopyReset={() => setGalleryCopy({
-              eyebrow: canonicalGallery.eyebrow, heading: canonicalGallery.heading,
-            })}
-            onCaptionsReset={() => setGalleryCaptions([...canonicalGalleryCaptions])}
+            onCopyReset={() => resetField('gallery', 'copy')}
+            onCaptionsReset={() => resetField('gallery', 'captions')}
           />
           <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} />
           <StudioEventInformationEditor
@@ -586,7 +326,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 onChange: (completedMessage) => setCountdownCopy((current) => ({ ...current, completedMessage })) },
               resetDisabled: Object.keys(canonicalCountdown).every((key) =>
                 countdownCopy[key as keyof typeof countdownCopy] === canonicalCountdown[key as keyof typeof canonicalCountdown]),
-              onReset: () => setCountdownCopy({ ...canonicalCountdown }),
+              onReset: () => resetScene('countdown'),
             }}
             eventDetails={{
               eyebrow: { value: eventDetailsCopy.eyebrow, error: eventDetailsErrors.eyebrow,
@@ -610,13 +350,7 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
                 && eventDetailsCopy.mapActionLabel === canonicalEventDetails.mapActionLabel
                 && eventDetailsCopy.calendarActionLabel === canonicalEventDetails.calendarActionLabel
                 && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
-              onReset: () => setEventDetailsCopy({
-                eyebrow: canonicalEventDetails.eyebrow, heading: canonicalEventDetails.heading,
-                venueLabel: canonicalEventDetails.venueLabel,
-                mapActionLabel: canonicalEventDetails.mapActionLabel,
-                calendarActionLabel: canonicalEventDetails.calendarActionLabel,
-                calendarDescription: canonicalEventDetails.calendarDescription,
-              }),
+              onReset: () => resetScene('eventDetails'),
             }}
           />
           <StudioEventScheduleEditor
@@ -628,9 +362,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             endError={eventEndError}
             timeZone={invitation.event.timeZone}
             onStartChange={setEventStart}
-            onStartReset={() => setEventStart(canonicalEventStart)}
+            onStartReset={() => resetField('event', 'start')}
             onEndChange={setEventEnd}
-            onEndReset={() => setEventEnd(canonicalEventEnd)}
+            onEndReset={() => resetField('event', 'end')}
           />
           <StudioEventLocationEditor
             venueValue={venue}
@@ -640,9 +374,9 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalAddressValue={canonicalAddress}
             addressError={addressError}
             onVenueChange={setVenue}
-            onVenueReset={() => setVenue(canonicalVenue)}
+            onVenueReset={() => resetField('event', 'venue')}
             onAddressChange={setAddress}
-            onAddressReset={() => setAddress(canonicalAddress)}
+            onAddressReset={() => resetField('event', 'address')}
           />
           <StudioDressCodeEditor
             titleValue={dressCodeTitle}
@@ -655,11 +389,11 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalNoteValue={canonicalDressCodeNote}
             noteError={dressCodeNoteError}
             onTitleChange={setDressCodeTitle}
-            onTitleReset={() => setDressCodeTitle(canonicalDressCodeTitle)}
+            onTitleReset={() => resetField('dressCode', 'title')}
             onDescriptionChange={setDressCodeDescription}
-            onDescriptionReset={() => setDressCodeDescription(canonicalDressCodeDescription)}
+            onDescriptionReset={() => resetField('dressCode', 'description')}
             onNoteChange={setDressCodeNote}
-            onNoteReset={() => setDressCodeNote(canonicalDressCodeNote)}
+            onNoteReset={() => resetField('dressCode', 'note')}
           />
           <StudioGiftsEditor
             titleValue={giftsTitle}
@@ -675,13 +409,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalAccountValue={canonicalGiftsAccount}
             accountError={giftsAccountError}
             onTitleChange={setGiftsTitle}
-            onTitleReset={() => setGiftsTitle(canonicalGiftsTitle)}
+            onTitleReset={() => resetField('gifts', 'title')}
             onDescriptionChange={setGiftsDescription}
-            onDescriptionReset={() => setGiftsDescription(canonicalGiftsDescription)}
+            onDescriptionReset={() => resetField('gifts', 'description')}
             onNoteChange={setGiftsNote}
-            onNoteReset={() => setGiftsNote(canonicalGiftsNote)}
+            onNoteReset={() => resetField('gifts', 'demoNote')}
             onAccountChange={setGiftsAccount}
-            onAccountReset={() => setGiftsAccount(canonicalGiftsAccount)}
+            onAccountReset={() => resetField('gifts', 'accountValue')}
           />
           <StudioRsvpEditor
             titleValue={rsvpTitle}
@@ -697,13 +431,13 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
             canonicalRecipientPhoneValue={canonicalRsvpRecipientPhone}
             recipientPhoneError={rsvpRecipientPhoneError}
             onTitleChange={setRsvpTitle}
-            onTitleReset={() => setRsvpTitle(canonicalRsvpTitle)}
+            onTitleReset={() => resetField('rsvp', 'title')}
             onDescriptionChange={setRsvpDescription}
-            onDescriptionReset={() => setRsvpDescription(canonicalRsvpDescription)}
+            onDescriptionReset={() => resetField('rsvp', 'description')}
             onActionLabelChange={setRsvpActionLabel}
-            onActionLabelReset={() => setRsvpActionLabel(canonicalRsvpActionLabel)}
+            onActionLabelReset={() => resetField('rsvp', 'actionLabel')}
             onRecipientPhoneChange={setRsvpRecipientPhone}
-            onRecipientPhoneReset={() => setRsvpRecipientPhone(canonicalRsvpRecipientPhone)}
+            onRecipientPhoneReset={() => resetField('rsvp', 'recipientPhone')}
           />
           <section className="limen-studio__panel" aria-labelledby="studio-scenes-title">
             {template ? (
@@ -725,24 +459,12 @@ export function StudioInvitationPage({ invitation }: StudioInvitationPageProps) 
         </div>
 
         <StudioPreview
-          invitation={validation.valid && canonicalProtagonistIdentity && !protagonistNameError
-            && !shareMessageError && !eventStartError && !eventEndError && !venueError && !addressError
-            && !dressCodeTitleError && !dressCodeDescriptionError && !dressCodeNoteError
-            && !rsvpTitleError && !rsvpDescriptionError && !rsvpActionLabelError
-            && !rsvpRecipientPhoneError
-            && !giftsTitleError && !giftsDescriptionError && !giftsNoteError && !giftsAccountError
-            && !storyEyebrowError && !storyMessageError
-            && !preludeEyebrowError && !preludeBodyError && !preludeRevealError
-            && !preludeQuestionError && !preludeActionLabelError && !preludeSoundHintError
-            && !heroPhraseError && !heroScrollHintError
-            && !closingEyebrowError && !closingTitleError && !closingSharePromptError
-            && !closingShareActionLabelError
-            && triviaValid && eventInformationValid && galleryValid
-            ? previewInvitation
-            : null}
-          audience={audience}
+          key={previewAudience.previewKey}
+          invitation={canonicalProtagonistIdentity
+            ? selectValidStudioPreview(studioValidation, previewInvitation) : null}
+          audience={previewAudience.audience}
           publicInvitationUrl={publicInvitationUrl}
-          onAudienceChange={setAudience}
+          onAudienceChange={previewAudience.changeAudience}
         />
       </div>
     </div>

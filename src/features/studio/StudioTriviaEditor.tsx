@@ -1,11 +1,12 @@
 import type { ChangeEvent } from 'react'
 
-import type { Origin01TriviaContent, Origin01TriviaQuestion } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01TriviaQuestion } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01TriviaEditorialDraft } from './origin01StudioDraft'
 
 type Props = {
-  value: Origin01TriviaContent
-  canonicalValue: Origin01TriviaContent
-  onChange: (value: Origin01TriviaContent) => void
+  value: Origin01TriviaEditorialDraft
+  canonicalValue: Origin01TriviaEditorialDraft
+  onChange: (value: Origin01TriviaEditorialDraft) => void
 }
 
 const presentationFields = [
@@ -19,7 +20,7 @@ const presentationFields = [
   ['scoreTotalLabel', 'Texto del puntaje total', 'Acompaña el puntaje obtenido.'],
   ['revealTitle', 'Título final', 'Presenta el mensaje que aparece después del resultado.'],
   ['revealMessage', 'Mensaje final', 'Cierra la trivia después de mostrar el resultado.'],
-] as const satisfies readonly (readonly [keyof Origin01TriviaContent, string, string])[]
+] as const satisfies readonly (readonly [keyof Origin01TriviaEditorialDraft, string, string])[]
 
 const fieldError = (value: string, message: string) => value.trim() ? null : message
 const describedBy = (id: string, error: string | null, help = true) =>
