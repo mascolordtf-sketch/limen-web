@@ -1162,12 +1162,51 @@
 }
 
 @media (min-width: 64rem) {
-  .limen-studio__shell { grid-template-columns: 12rem 14rem minmax(0, 1fr); align-items: start; }
+  .limen-studio__workspace { max-width: 92rem; }
+  .limen-studio__shell { grid-template-columns: 11rem 13rem minmax(22rem, 1fr) minmax(20rem, .8fr); align-items: start; }
+  .limen-studio__shell--preview-collapsed { grid-template-columns: 11rem 13rem minmax(0, 1fr); }
+  .limen-studio__shell--preview-collapsed .limen-studio__desktop-preview { grid-column: 1 / -1; }
   .limen-studio__shell .limen-studio__primary-nav,
   .limen-studio__shell .limen-studio__secondary-nav,
   .limen-studio__shell .limen-studio__active-editor { display: block; }
   .limen-studio__mobile-back,
   .limen-studio__mobile-context { display: none; }
+}
+
+.limen-studio__desktop-preview { display: none; min-width: 0; }
+.limen-studio__desktop-preview--dedicated { display: block; position: fixed; z-index: 100; inset: 0; overflow: auto; background: #f1f1ef; padding: 1rem; }
+.limen-studio__desktop-preview--dedicated .limen-studio__embedded-preview { position: static; max-width: 44rem; max-height: none; margin: 0 auto; }
+.limen-studio__mobile-preview-action, .limen-studio__action,
+.limen-studio__embedded-preview button, .limen-studio__preview-layer button,
+.limen-studio__issue-group button, .limen-studio__review-actions button, .limen-studio__preview-collapsed button {
+  min-height: 2.75rem; border: 1px solid #aaa8a1; border-radius: .7rem; padding: .55rem .8rem;
+  background: #fff; color: inherit; font: inherit; cursor: pointer;
+}
+.limen-studio__mobile-preview-action { width: 100%; margin: 0 0 1rem; }
+.limen-studio__embedded-preview { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; border: 1px solid #d9d8d3; border-radius: 1rem; background: #fafaf8; padding: 1rem; }
+.limen-studio__embedded-preview > header { display: grid; gap: .75rem; margin-bottom: 1rem; }
+.limen-studio__embedded-preview > header div, .limen-studio__review-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.limen-studio__embedded-preview a { display: inline-flex; align-items: center; min-height: 2.75rem; color: inherit; }
+.limen-studio__preview-shell { min-width: 0; overflow: hidden; border-radius: .75rem; }
+.limen-studio__preview-content > h2 { margin-top: 0; }
+.limen-studio__audience { margin: 1rem 0; border: 0; padding: 0; }
+.limen-studio__audience-options { display: flex; flex-wrap: wrap; gap: .5rem; }
+.limen-studio__audience-option { display: flex; min-height: 2.75rem; align-items: center; gap: .5rem; border: 1px solid #cfcec9; border-radius: .7rem; padding: .5rem .75rem; }
+.limen-studio__audience p { margin: .6rem 0; color: #55544f; font-size: .85rem; }
+.limen-studio__stale-preview, .limen-studio__preview-unavailable { margin: 1rem 0; border: 2px solid #8b4b43; border-radius: .75rem; padding: 1rem; background: #fff8f6; }
+.limen-studio__preview-collapsed { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border: 1px solid #d9d8d3; border-radius: 1rem; padding: .75rem 1rem; background: #fafaf8; }
+.limen-studio__desktop-preview--dedicated h2:focus { outline: 3px solid #315f81; }
+.limen-studio__review-status { display: grid; gap: .75rem; }
+.limen-studio__review-status div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid #ddd; padding-bottom: .5rem; }
+.limen-studio__review-status dd { margin: 0; text-align: right; }
+.limen-studio__issue-group { border-top: 1px solid #d9d8d3; padding-top: 1rem; }
+.limen-studio__issue-group li { margin-bottom: 1rem; }
+.limen-studio__issue-group small, .limen-studio__issue-group span { display: block; margin: .4rem 0; color: #55544f; }
+
+@media (min-width: 64rem) {
+  .limen-studio__desktop-preview { display: block; }
+  .limen-studio__mobile-preview-action { display: none; }
+  .limen-studio__desktop-preview--dedicated { padding: 2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

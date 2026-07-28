@@ -1,9 +1,18 @@
 import { AppRoutes } from '../src/app/routes'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { createElement } from 'react'
 import { Origin01Invitation } from '../src/features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
+import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
+import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
+import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
+import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
+import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
+import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
+import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
 import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
   showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
@@ -28,6 +37,15 @@ import {
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
+import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
+  restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
+import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
+  resolveStudioPreviewContextLabel,
+  transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
+import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
+  selectStudioRenderablePreview } from '../src/features/studio/useStudioRenderablePreview'
+import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
+  issueNeedsCorrectionReturn, resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -150,7 +168,7 @@ const activeStoryResult = validateOrigin01StudioDraft(origin01DemoData, invalidS
 assert(activeStoryResult.sceneStatuses.find(({ sceneId }) => sceneId === 'story')?.relevantErrorCount === 1, 'cuenta errores de una escena activa')
 assert(!activeStoryResult.domainStatuses.find(({ domainId }) => domainId === 'narrative')?.complete, 'marca incompleto el dominio afectado')
 assert(!activeStoryResult.invitationValid, 'un error editorial activo invalida el borrador actual')
-assert(selectValidStudioPreview(activeStoryResult, validPreview) === null, 'un error activo impide entregar el borrador a la preview visible')
+assert(selectValidStudioPreview(activeStoryResult, validPreview) === validPreview, 'un error editorial activo conserva el borrador actual en preview')
 const inactiveInvalidStory = updateOrigin01StudioModule(origin01DemoData, invalidStory, 'story', false)
 const inactiveStoryResult = validateOrigin01StudioDraft(origin01DemoData, inactiveInvalidStory)
 const storyStatus = inactiveStoryResult.sceneStatuses.find(({ sceneId }) => sceneId === 'story')
@@ -247,6 +265,129 @@ assert(restartedAudience.audience === 'guest' && restartedAudience.run === 2, 'e
 assert(getStudioPreviewKey(restartedAudience) === 'guest-2', 'la key productiva refleja audiencia y run')
 assert(initial.protagonistName === 'Valentina', 'audiencia y borrador permanecen independientes')
 
+const initialSurface = createStudioPreviewSurfaceState()
+assert(initialSurface.desktop === 'visible' && initialSurface.mobile === 'closed', 'la superficie preview inicia de forma determinista')
+const editorOrigin = { domainId: triviaNavigation.domainId, itemId: triviaNavigation.itemId, editorId: triviaNavigation.editorId }
+const openedSurface = transitionStudioPreviewSurface(initialSurface, { type: 'open', viewport: 'mobile', origin: editorOrigin,
+  target: triviaItem.previewTarget })
+const expandedSurface = transitionStudioPreviewSurface(transitionStudioPreviewSurface(openedSurface, { type: 'collapse' }),
+  { type: 'open', viewport: 'desktop', origin: editorOrigin, target: triviaItem.previewTarget })
+const closedSurface = transitionStudioPreviewSurface(expandedSurface, { type: 'close' })
+assert(openedSurface.mobile === 'full-screen' && openedSurface.returnContext?.editorId === 'trivia'
+  && openedSurface.target?.sceneId === 'trivia', 'abrir preview móvil conserva origen, retorno y target contextual')
+assert(closedSurface.mobile === 'closed' && closedSurface.returnContext?.editorId === 'trivia', 'cerrar conserva el contexto exacto de retorno')
+assert(triviaNavigation.mobileLevel === 'editor' && JSON.stringify(initial) === draftBeforeNavigation,
+  'la superficie full-screen es independiente de navegación y borrador')
+assert(getStudioPreviewKey(initialAudience) === 'protagonist-0', 'abrir, contraer y expandir no reinician el renderer')
+const storedContextLabel = resolveStudioPreviewContextLabel(openedSurface, domains)
+const navigationAfterOpening = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: 'experiences',
+  item: experiencesDomain.items.find(({ editorId }) => editorId === 'dress-code')! })
+assert(storedContextLabel === 'Revisando: Trivia' && navigationAfterOpening.editorId === 'dress-code'
+  && resolveStudioPreviewContextLabel(openedSurface, domains) === 'Revisando: Trivia',
+  'la etiqueta contextual se resuelve desde el origen almacenado y no desde la navegación activa')
+const desktopCollapsed = transitionStudioPreviewSurface(initialSurface, { type: 'collapse' })
+const mobileFromCollapsed = transitionStudioPreviewSurface(desktopCollapsed, { type: 'open', viewport: 'mobile',
+  origin: editorOrigin, target: triviaItem.previewTarget })
+assert(isStudioPreviewEffectivelyCollapsed(desktopCollapsed)
+  && !isStudioPreviewEffectivelyCollapsed(mobileFromCollapsed),
+  'abrir preview móvil anula visualmente el colapso de escritorio sin perder su preferencia')
+assert(selectStudioPreviewContextLabel(openedSurface, domains) === 'Revisando: Trivia'
+  && selectStudioPreviewContextLabel(closedSurface, domains) === undefined,
+  'la etiqueta contextual solo aparece mientras la superficie dedicada está abierta')
+const dressItem = experiencesDomain.items.find(({ editorId }) => editorId === 'dress-code')!
+const reopenedFromDress = transitionStudioPreviewSurface(closedSurface, { type: 'open', viewport: 'desktop',
+  origin: { domainId: 'experiences', itemId: dressItem.id, editorId: dressItem.editorId }, target: dressItem.previewTarget })
+assert(selectStudioPreviewContextLabel(reopenedFromDress, domains) === 'Revisando: Dress Code',
+  'una apertura nueva reemplaza deliberadamente el contexto anterior')
+
+const committedCell = createStudioCommittedPreviewCell<typeof validPreview>()
+const uncommittedValid = { ...validPreview, code: 'UNCOMMITTED' }
+assert(selectStudioRenderablePreview(committedCell, 'sync', uncommittedValid, true).showing === 'current'
+  && selectStudioRenderablePreview(committedCell, 'sync', renamedPreview, false).showing === 'unavailable',
+  'seleccionar un render válido no confirmado no lo convierte en retenido')
+commitStudioRenderablePreview(committedCell, 'sync', validPreview)
+assert(selectStudioRenderablePreview(committedCell, 'sync', renamedPreview, false).invitation === validPreview
+  && selectStudioRenderablePreview(committedCell, 'new-session', renamedPreview, false).showing === 'unavailable',
+  'la frontera productiva conserva solo output confirmado y aísla sesiones')
+for (let index = 0; index < 25; index += 1) {
+  const unstableCurrent = { ...validPreview, code: `UNSTABLE-${index}` }
+  assert(selectStudioRenderablePreview(committedCell, 'sync', unstableCurrent, true).invitation === unstableCurrent,
+    'cada identidad inestable se devuelve inmediatamente sin programar una actualización')
+}
+assert(committedCell.commitCount === 1,
+  'identidades derivadas inestables no causan commits ni bucles durante render')
+const withoutProtagonist = { ...origin01DemoData,
+  identities: origin01DemoData.identities.filter(({ role }) => role !== 'protagonist') }
+const missingIdentityValidation = validateOrigin01StudioDraft(withoutProtagonist, initial)
+const missingIdentityIssue = missingIdentityValidation.issues.find(({ id }) => id === 'configuration-missing-protagonist')
+assert(!missingIdentityValidation.structurallyValid && missingIdentityValidation.previewBlocked
+  && missingIdentityIssue?.blocksPreview && selectValidStudioPreview(missingIdentityValidation, validPreview) === null,
+  'la ausencia de protagonista es un bloqueo estructural y nunca entrega datos inválidos al renderer')
+const emptyIdentityCell = createStudioCommittedPreviewCell<typeof validPreview>()
+assert(selectStudioRenderablePreview(emptyIdentityCell, 'missing', validPreview, false).showing === 'unavailable',
+  'una sesión inicial sin protagonista muestra preview no disponible')
+commitStudioRenderablePreview(emptyIdentityCell, 'same-session', validPreview)
+assert(selectStudioRenderablePreview(emptyIdentityCell, 'same-session', renamedPreview, false).showing === 'last-renderable'
+  && selectStudioRenderablePreview(emptyIdentityCell, 'other-session', renamedPreview, false).showing === 'unavailable',
+  'el bloqueo identitario usa solo output confirmado de la misma sesión')
+
+const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
+assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
+  && !inactiveStoryResult.previewBlocked, 'los grupos conservan contenido inactivo sin bloquear preview')
+const storyIssue = inactiveStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')!
+assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
+const storyEditorMarkup = renderToStaticMarkup(createElement(StudioStoryEditor, { eyebrowValue: '', canonicalEyebrowValue: '',
+  eyebrowError: null, messageValue: '', canonicalMessageValue: '', messageError: storyIssue.message,
+  onEyebrowChange: () => undefined, onEyebrowReset: () => undefined,
+  onMessageChange: () => undefined, onMessageReset: () => undefined }))
+assert(storyIssue.fieldTargetId === 'studio-story-message'
+  && storyEditorMarkup.includes(`id="${storyIssue.fieldTargetId}"`),
+  'el target estable de la issue coincide con el id renderizado por su editor productivo')
+const noop = () => undefined
+const identityIssue = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftField(initial, 'protagonistName', '')).issues.find(({ fieldId }) => fieldId === 'protagonistName')!
+const identityMarkup = renderToStaticMarkup(createElement(StudioContentEditor,
+  { value: '', canonicalValue: '', error: identityIssue.message, onChange: noop, onReset: noop }))
+const eventIssue = invalidDateResult.issues.find(({ fieldId }) => fieldId === 'eventStart')!
+const eventMarkup = renderToStaticMarkup(createElement(StudioEventScheduleEditor, { startValue: '', canonicalStartValue: '',
+  startError: eventIssue.message, endValue: '', canonicalEndValue: '', endError: null, timeZone: 'UTC',
+  onStartChange: noop, onStartReset: noop, onEndChange: noop, onEndReset: noop }))
+const dressIssue = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftGroup(initial, 'dressCode', (value) => ({ ...value, title: '' })))
+  .issues.find(({ fieldId }) => fieldId === 'dressCodeTitle')!
+const dressMarkup = renderToStaticMarkup(createElement(StudioDressCodeEditor, { titleValue: '', canonicalTitleValue: '',
+  titleError: dressIssue.message, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null,
+  noteValue: '', canonicalNoteValue: '', noteError: null, onTitleChange: noop, onTitleReset: noop,
+  onDescriptionChange: noop, onDescriptionReset: noop, onNoteChange: noop, onNoteReset: noop }))
+const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
+  titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
+  canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
+  onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
+  onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
+for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
+  [dressIssue, dressMarkup], [giftIssue!, giftMarkup]] as const) {
+  assert(Boolean(issue.fieldTargetId) && markup.includes(`id="${issue.fieldTargetId}"`),
+    'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
+}
+assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
+const directStructural = resolveStudioStructuralDestination(eventIssue, domains)
+const fallbackStructural = resolveStudioStructuralDestination({ ...eventIssue, editorId: 'unknown' }, domains)
+assert(directStructural?.kind === 'direct' && directStructural.item.editorId === 'event-canonical',
+  'un bloqueo estructural resoluble conserva su destino directo productivo')
+assert(fallbackStructural?.kind === 'fallback' && fallbackStructural.item.editorId === 'review-errors',
+  'un bloqueo estructural no resoluble cae determinísticamente en Revisión / Errores')
+const reviewErrorsDestination = resolveStudioIssueDestination(missingIdentityIssue!, domains)!
+assert(!issueNeedsCorrectionReturn(missingIdentityIssue!, reviewErrorsDestination)
+  && issueNeedsCorrectionReturn(storyIssue, resolveStudioIssueDestination(storyIssue, domains)!),
+  'Review / Errores no crea retorno autorreferencial y un editor corregible sí lo conserva')
+const correctionContext = createStudioIssueCorrectionContext(storyIssue)
+const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!
+const correctionNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: storyIssue.domainId, item: correctionDestination })
+const errorReturn = resolveStudioCorrectionReturn(correctionContext, domains)!
+const returnedToErrors = transitionStudioNavigation(correctionNavigation, { type: 'open-item', domainId: 'review', item: errorReturn })
+assert(returnedToErrors.domainId === 'review' && returnedToErrors.editorId === 'review-errors'
+  && JSON.stringify(initial) === draftBeforeNavigation, 'corregir una issue y volver a Errores conserva borrador y retorno tipado')
+
 const secondInvitation = {
   ...origin01DemoData,
   id: 'origin01-demo-second-session',
@@ -262,6 +403,57 @@ assert(secondSessionDraft.event.venue === secondInvitation.event.venue, 'resets 
 
 assert(typeof AppRoutes === 'function' && typeof StudioInvitationRoute === 'function', 'la ruta actual de Studio continúa disponible')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')
+const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPreview, audience: 'protagonist',
+  publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
+  onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined }))
+assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
+  && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
+  'la preview productiva expone un heading único y un solo grupo de audiencia')
+const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
+  publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
+  onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
+const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
+  StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
+    editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,
+    previewCollapsed, previewDedicated, previewAudience: 'Protagonista', previewStatus: 'Borrador actual',
+    onOpenPreview: () => undefined, onShowPreview: () => undefined, correctionReturn: false,
+    onReturnToErrors: () => undefined }))
+for (const markup of [shellMarkup(false, false), shellMarkup(false, true), shellMarkup(true, false)]) {
+  assert((markup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
+    && (markup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
+  'el shell productivo mantiene un solo host, heading y grupo de audiencia en cada presentación')
+}
+assert(shellMarkup(true, false).includes('hidden=""') && shellMarkup(true, false).includes('inert=""'),
+  'el estado contraído conserva el host pero retira sus controles del foco')
+assert(shellMarkup(false, true).match(/inert=""/g)?.length === 3,
+  'la presentación dedicada vuelve inertes navegación primaria, secundaria y editor')
+assert((shellMarkup(false, false).match(/Ver preview/g) ?? []).length === 3,
+  'el mismo control de apertura está disponible en índice general, índice de dominio y editor móvil')
+const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains,
+  navigation: triviaNavigation, validation: validResult, editor: createElement('div'), editorResolvable: true,
+  onNavigate: () => undefined, preview: previewElement, previewCollapsed: false, previewDedicated: false,
+  previewAudience: 'Protagonista', previewStatus: 'Borrador actual', onOpenPreview: () => undefined,
+  onShowPreview: () => undefined, correctionReturn: true, onReturnToErrors: () => undefined }))
+assert(correctionShell.includes('Volver a Errores') && !shellMarkup(false, false).includes('Volver a Errores'),
+  'el control productivo de retorno aparece solo durante una corrección')
+const unresolvedPanel = renderToStaticMarkup(createElement(StudioReviewPanel, { kind: 'errors',
+  validation: { ...validResult, issues: [{ ...storyIssue, editorId: 'unknown' }] }, domains,
+  showing: 'current', audience: 'protagonist', onIssue: () => undefined, onAudience: () => undefined,
+  onPreview: () => undefined }))
+assert(unresolvedPanel.includes('Destino no disponible') && !unresolvedPanel.includes('Corregir en'),
+  'Review productiva mantiene destinos no resueltos visibles y no navegables')
+let focused = 0
+const focusable = { isConnected: true, focus: () => { focused += 1 } } as HTMLElement
+assert(restoreStudioPreviewOpener(focusable) && focused === 1
+  && !restoreStudioPreviewOpener({ ...focusable, isConnected: false } as HTMLElement),
+  'el cierre restaura foco solo al opener que continúa conectado')
+assert(isStudioPreviewCloseKey('Escape') && !isStudioPreviewCloseKey('Enter'), 'Escape es la única tecla de cierre dedicada')
+const fieldRoot = { getElementById: () => focusable, querySelector: () => null } as unknown as Document
+const headingRoot = { getElementById: () => null, querySelector: () => focusable } as unknown as Document
+assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
+  && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
+  'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
+assert(focusStudioEditorHeading(headingRoot), 'la navegación externa y el retorno a Errores enfocan el heading nuevo')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 

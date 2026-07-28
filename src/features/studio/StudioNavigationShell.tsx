@@ -14,6 +14,15 @@ type Props = {
   editor: ReactNode
   editorResolvable: boolean
   onNavigate: (action: StudioNavigationAction) => void
+  preview?: ReactNode
+  previewCollapsed?: boolean
+  previewAudience: string
+  previewStatus: string
+  previewDedicated?: boolean
+  onOpenPreview: () => void
+  onShowPreview: () => void
+  correctionReturn?: boolean
+  onReturnToErrors: () => void
 }
 
 function statusText(status?: StudioVisibleItemStatus) {
@@ -28,7 +37,8 @@ function statusText(status?: StudioVisibleItemStatus) {
 }
 
 export function StudioNavigationShell({ domains, navigation, validation, editor,
-  editorResolvable, onNavigate }: Props) {
+  editorResolvable, onNavigate, preview, previewCollapsed, previewAudience, previewStatus, previewDedicated, onOpenPreview, onShowPreview,
+  correctionReturn, onReturnToErrors }: Props) {
   const activeDomain = domains.find(({ id }) => id === navigation.domainId) ?? domains[0]
   const activeItem = activeDomain?.items.find(({ id }) => id === navigation.itemId)
   const editorTitle = useRef<HTMLHeadingElement>(null)
@@ -40,9 +50,10 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
   }, [navigation.domainId, navigation.itemId, navigation.mobileLevel])
 
   const itemStatus = (item: StudioNavigationItem) => selectStudioItemStatus(validation, item, activeDomain.id)
-  return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel}`}>
-    <nav className="limen-studio__primary-nav" aria-label="Dominios de la invitación">
+  return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel} ${previewCollapsed ? 'limen-studio__shell--preview-collapsed' : ''}`}>
+    <nav className="limen-studio__primary-nav" aria-label="Dominios de la invitación" inert={previewDedicated ? true : undefined}>
       <h2>Índice general</h2>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <div className="limen-studio__nav-list">
         {domains.map((domain) => {
           const status = validation.domainStatuses.find(({ domainId }) => domainId === domain.id)
@@ -55,9 +66,10 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
       </div>
     </nav>
 
-    <nav className="limen-studio__secondary-nav" aria-label={`Secciones de ${activeDomain?.label ?? 'dominio'}`}>
+    <nav className="limen-studio__secondary-nav" aria-label={`Secciones de ${activeDomain?.label ?? 'dominio'}`} inert={previewDedicated ? true : undefined}>
       <button className="limen-studio__mobile-back" type="button"
         onClick={() => navigate({ type: 'show-general-index' })}>← Índice general</button>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <h2>{activeDomain?.label}</h2><p>{activeDomain?.description}</p>
       <div className="limen-studio__nav-list">
         {activeDomain?.items.map((item) => <button key={item.id} type="button"
@@ -68,13 +80,15 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
       </div>
     </nav>
 
-    <main className="limen-studio__active-editor">
+    <main className="limen-studio__active-editor" inert={previewDedicated ? true : undefined}>
       <div className="limen-studio__mobile-context">
         <button type="button" onClick={() => navigate({ type: 'show-domain-index' })}>← {activeDomain?.label}</button>
         <button type="button" onClick={() => navigate({ type: 'show-general-index' })}>Índice</button>
       </div>
+      <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <p className="limen-studio__breadcrumb" aria-label="Ubicación">Invitación / {activeDomain?.label} / {activeItem?.label}</p>
       <h2 className="limen-studio__editor-title" ref={editorTitle} tabIndex={-1}>{activeItem?.label ?? 'Elegí una sección'}</h2>
+      {correctionReturn && <button className="limen-studio__return-errors" type="button" onClick={onReturnToErrors}>← Volver a Errores</button>}
       {activeItem && <p>{activeItem.description}</p>}
       {activeItem && <p className="limen-studio__section-status" role="status">{statusText(itemStatus(activeItem))}</p>}
       {!activeItem ? <section className="limen-studio__panel">
@@ -83,5 +97,11 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
         <h3>Editor no disponible</h3><p>Esta sección tiene un destino explícito, pero todavía no posee un editor compatible.</p>
       </section>}
     </main>
+    <aside className={`limen-studio__desktop-preview ${previewDedicated ? 'limen-studio__desktop-preview--dedicated' : ''}`}
+      aria-labelledby={previewDedicated ? 'studio-preview-renderer-title' : undefined} aria-label={previewDedicated ? undefined : 'Preview de la invitación'}>
+      {previewCollapsed && <div className="limen-studio__preview-collapsed"><strong>Preview</strong><span>{previewAudience}</span><span>{previewStatus}</span>
+        <button type="button" onClick={onShowPreview}>Mostrar preview</button></div>}
+      <div hidden={previewCollapsed} inert={previewCollapsed ? true : undefined}>{preview}</div>
+    </aside>
   </div>
 }
