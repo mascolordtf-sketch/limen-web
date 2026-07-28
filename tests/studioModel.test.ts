@@ -37,15 +37,15 @@ import {
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
-import { focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
+import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
+  restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
 import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
   resolveStudioPreviewContextLabel,
   transitionStudioPreviewSurface } from '../src/features/studio/studioPreviewSurface'
-import { createStudioRenderablePreview, retainStudioRenderablePreview } from '../src/features/studio/studioRenderablePreview'
 import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
   selectStudioRenderablePreview } from '../src/features/studio/useStudioRenderablePreview'
 import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
-  resolveStudioIssueDestination } from '../src/features/studio/studioReviewIssues'
+  resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -300,14 +300,6 @@ const reopenedFromDress = transitionStudioPreviewSurface(closedSurface, { type: 
 assert(selectStudioPreviewContextLabel(reopenedFromDress, domains) === 'Revisando: Dress Code',
   'una apertura nueva reemplaza deliberadamente el contexto anterior')
 
-const renderableA = retainStudioRenderablePreview(createStudioRenderablePreview(), 'session-a', validPreview, true)
-const staleA = retainStudioRenderablePreview(renderableA, 'session-a', renamedPreview, false)
-const renderableB = retainStudioRenderablePreview(staleA, 'session-a', renamedPreview, true)
-const isolated = retainStudioRenderablePreview(staleA, 'session-b', renamedPreview, false)
-assert(renderableA.showing === 'current' && staleA.showing === 'last-renderable' && staleA.invitation === validPreview,
-  'un error estructural conserva y declara el último borrador renderizable')
-assert(renderableB.showing === 'current' && renderableB.invitation === renamedPreview, 'un borrador válido nuevo reemplaza el retenido')
-assert(isolated.showing === 'unavailable' && isolated.invitation === null, 'sesiones distintas no comparten preview retenida')
 const committedCell = createStudioCommittedPreviewCell<typeof validPreview>()
 const uncommittedValid = { ...validPreview, code: 'UNCOMMITTED' }
 assert(selectStudioRenderablePreview(committedCell, 'sync', uncommittedValid, true).showing === 'current'
@@ -324,6 +316,20 @@ for (let index = 0; index < 25; index += 1) {
 }
 assert(committedCell.commitCount === 1,
   'identidades derivadas inestables no causan commits ni bucles durante render')
+const withoutProtagonist = { ...origin01DemoData,
+  identities: origin01DemoData.identities.filter(({ role }) => role !== 'protagonist') }
+const missingIdentityValidation = validateOrigin01StudioDraft(withoutProtagonist, initial)
+const missingIdentityIssue = missingIdentityValidation.issues.find(({ id }) => id === 'configuration-missing-protagonist')
+assert(!missingIdentityValidation.structurallyValid && missingIdentityValidation.previewBlocked
+  && missingIdentityIssue?.blocksPreview && selectValidStudioPreview(missingIdentityValidation, validPreview) === null,
+  'la ausencia de protagonista es un bloqueo estructural y nunca entrega datos inválidos al renderer')
+const emptyIdentityCell = createStudioCommittedPreviewCell<typeof validPreview>()
+assert(selectStudioRenderablePreview(emptyIdentityCell, 'missing', validPreview, false).showing === 'unavailable',
+  'una sesión inicial sin protagonista muestra preview no disponible')
+commitStudioRenderablePreview(emptyIdentityCell, 'same-session', validPreview)
+assert(selectStudioRenderablePreview(emptyIdentityCell, 'same-session', renamedPreview, false).showing === 'last-renderable'
+  && selectStudioRenderablePreview(emptyIdentityCell, 'other-session', renamedPreview, false).showing === 'unavailable',
+  'el bloqueo identitario usa solo output confirmado de la misma sesión')
 
 const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
 assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
@@ -364,6 +370,12 @@ for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eve
     'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
 }
 assert(resolveStudioIssueDestination({ ...storyIssue, editorId: 'unknown' }, domains) === null, 'un destino desconocido permanece seguro y sin resolución')
+const directStructural = resolveStudioStructuralDestination(eventIssue, domains)
+const fallbackStructural = resolveStudioStructuralDestination({ ...eventIssue, editorId: 'unknown' }, domains)
+assert(directStructural?.kind === 'direct' && directStructural.item.editorId === 'event-canonical',
+  'un bloqueo estructural resoluble conserva su destino directo productivo')
+assert(fallbackStructural?.kind === 'fallback' && fallbackStructural.item.editorId === 'review-errors',
+  'un bloqueo estructural no resoluble cae determinísticamente en Revisión / Errores')
 const correctionContext = createStudioIssueCorrectionContext(storyIssue)
 const correctionDestination = resolveStudioIssueDestination(storyIssue, domains)!
 const correctionNavigation = transitionStudioNavigation(triviaNavigation, { type: 'open-item', domainId: storyIssue.domainId, item: correctionDestination })
@@ -435,6 +447,7 @@ const headingRoot = { getElementById: () => null, querySelector: () => focusable
 assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
   && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
   'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
+assert(focusStudioEditorHeading(headingRoot), 'la navegación externa y el retorno a Errores enfocan el heading nuevo')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 

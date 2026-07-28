@@ -16,10 +16,11 @@ import { createStudioPreviewSurfaceState, isStudioPreviewDedicated, isStudioPrev
 import { useStudioRenderablePreview } from './useStudioRenderablePreview'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
 import { StudioReviewPanel } from './StudioReviewPanel'
-import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, resolveStudioIssueDestination } from './studioReviewIssues'
+import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, resolveStudioIssueDestination,
+  resolveStudioStructuralDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
-import { focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
+import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -70,16 +71,23 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   }
   const structuralIssue = () => {
     const issue = model.validation.issues.find(({ severity, relevant, blocksPreview }) => severity === 'structural' && relevant && blocksPreview)
-    if (issue && resolveStudioIssueDestination(issue, domains)) openIssue(issue)
+    const destination = resolveStudioStructuralDestination(issue, domains)
+    if (destination?.kind === 'direct' && issue) openIssue(issue)
     else {
-      const errors = domains.find(({ id }) => id === 'review')?.items.find(({ id }) => id === 'errors')
-      if (errors) navigate({ type: 'open-item', domainId: 'review', item: errors })
+      if (destination) {
+        if (layerOpen) surfaceDispatch({ type: 'close' })
+        navigate({ type: 'open-item', domainId: destination.domainId, item: destination.item })
+        requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
+      }
     }
   }
   const returnToErrors = () => {
     const errors = correctionContext ? resolveStudioCorrectionReturn(correctionContext, domains) : null
-    if (errors) navigate({ type: 'open-item', domainId: 'review', item: errors })
-    setCorrectionContext(undefined)
+    if (errors) {
+      navigate({ type: 'open-item', domainId: 'review', item: errors })
+      setCorrectionContext(undefined)
+      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
+    }
   }
   const reviewPanel = (kind: 'status' | 'errors' | 'audiences') => <StudioReviewPanel kind={kind}
     validation={model.validation} domains={domains} showing={retained.showing} audience={audience.audience}

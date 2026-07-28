@@ -14,3 +14,9 @@ export function focusStudioIssueDestination(issue: StudioIssue, root: Pick<Docum
   focusTarget?.focus()
   return destination ? 'field' : focusTarget ? 'heading' : 'unavailable'
 }
+
+export function focusStudioEditorHeading(root: Pick<Document, 'querySelector'> = document) {
+  const heading = root.querySelector<HTMLElement>('.limen-studio__editor-title')
+  heading?.focus()
+  return Boolean(heading)
+}

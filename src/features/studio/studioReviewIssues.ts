@@ -24,3 +24,11 @@ export function groupStudioIssues(issues: readonly StudioIssue[]) {
 export function resolveStudioIssueDestination(issue: StudioIssue, domains: readonly StudioDomainDefinition[]): StudioNavigationItem | null {
   return domains.find(({ id }) => id === issue.domainId)?.items.find(({ editorId }) => editorId === issue.editorId) ?? null
 }
+
+export function resolveStudioStructuralDestination(issue: StudioIssue | undefined,
+  domains: readonly StudioDomainDefinition[]) {
+  const direct = issue ? resolveStudioIssueDestination(issue, domains) : null
+  if (direct && issue) return { domainId: issue.domainId, item: direct, kind: 'direct' as const }
+  const fallback = domains.find(({ id }) => id === 'review')?.items.find(({ id }) => id === 'errors')
+  return fallback ? { domainId: 'review' as const, item: fallback, kind: 'fallback' as const } : null
+}

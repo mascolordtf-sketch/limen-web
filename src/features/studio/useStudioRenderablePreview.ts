@@ -1,6 +1,10 @@
 import { useLayoutEffect, useState } from 'react'
 
-import type { StudioRenderablePreview } from './studioRenderablePreview'
+export type StudioRenderablePreview<T> = {
+  readonly sessionId?: string
+  readonly invitation: T | null
+  readonly showing: 'current' | 'last-renderable' | 'unavailable'
+}
 
 export type StudioCommittedPreviewCell<T> = {
   sessionId?: string

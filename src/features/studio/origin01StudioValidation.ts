@@ -196,7 +196,11 @@ export function validateOrigin01StudioDraft(
     })),
   ]
 
-  const structuralIssues: StudioIssue[] = moduleValidation.errors.map((error, index) => ({
+  const identityIssues: StudioIssue[] = invitation.identities.some(({ role }) => role === 'protagonist') ? [] : [{
+    id: 'configuration-missing-protagonist', message: 'La invitación no tiene una identidad protagonista canónica.',
+    editorId: 'review-errors', domainId: 'review', severity: 'structural', blocksPreview: true, relevant: true,
+  }]
+  const configurationIssues = moduleValidation.errors.map((error, index): StudioIssue => ({
     id: `configuration-${error.code}-${index}`,
     message: error.message,
     fieldId: error.fieldPath,
@@ -207,6 +211,7 @@ export function validateOrigin01StudioDraft(
     blocksPreview: true,
     relevant: true,
   }))
+  const structuralIssues: StudioIssue[] = [...identityIssues, ...configurationIssues]
   const fieldIssues = seeds.filter((seed) => seed.error).map((seed, index): StudioIssue => {
     const active = seed.sceneId ? sceneIsActive(draft, seed.sceneId) : true
     return {
