@@ -25,8 +25,9 @@
 .limen-studio__stage-nav button { flex: 1 0 auto; min-height: 2.75rem; border: 0; border-radius: .7rem; padding: .6rem .9rem; background: transparent; color: #55544f; font: inherit; font-weight: 700; cursor: pointer; }
 .limen-studio__stage-nav button[aria-current='step'] { background: #e5ece8; color: #253b30; }
 .limen-studio__stage-nav button:focus-visible { outline: 3px solid #315f81; outline-offset: 1px; }
-.limen-studio__stage-layout { display: grid; gap: 1rem; margin-top: 1rem; }
-.limen-studio__stage-content { min-width: 0; }
+.limen-studio__workspace-frame { margin-top: 0; }
+.limen-studio__workspace-background { min-width: 0; }
+.limen-studio__stage-content { min-width: 0; margin-top: 1rem; }
 .limen-studio__stage-panel { border: 1px solid #d9d8d3; border-radius: 1.25rem; padding: 1.25rem; background: #fafaf8; }
 .limen-studio__stage-panel > p:not(.limen-studio__eyebrow) { color: #55544f; line-height: 1.55; }
 .limen-studio__section-summary { display: grid; gap: .65rem; margin: 1.25rem 0 0; padding: 0; list-style: none; }
@@ -34,16 +35,17 @@
 .limen-studio__section-summary strong { color: #77756f; font-size: .8rem; text-align: right; }
 .limen-studio__section-summary strong.is-included { color: #365746; }
 .limen-studio__workspace-preview { display: none; min-width: 0; }
-.limen-studio__workspace-preview.is-dedicated { display: block; position: fixed; z-index: 100; inset: 0; overflow: auto; padding: 1rem; background: #f1f1ef; }
-.limen-studio__workspace-preview.is-dedicated .limen-studio__embedded-preview { position: static; max-width: 44rem; max-height: none; margin: 0 auto; }
+.limen-studio__workspace-frame--preview-dedicated .limen-studio__workspace-preview { display: block; position: fixed; z-index: 100; inset: 0; overflow: auto; padding: 1rem; background: #f1f1ef; }
+.limen-studio__workspace-frame--preview-dedicated .limen-studio__embedded-preview { position: static; max-width: 44rem; max-height: none; margin: 0 auto; }
 
 .limen-studio__shell { display: grid; gap: 1rem; margin-top: 1.25rem; }
-.limen-studio__primary-nav,
-.limen-studio__secondary-nav,
+.limen-studio__editorial-nav,
 .limen-studio__active-editor {
   min-width: 0; border: 1px solid #d9d8d3; border-radius: 1.25rem;
   padding: 1rem; background: #fafaf8;
 }
+.limen-studio__primary-nav,
+.limen-studio__secondary-nav { min-width: 0; }
 .limen-studio__nav-list { display: grid; gap: .65rem; }
 .limen-studio__nav-list button {
   width: 100%; min-height: 3.25rem; border: 1px solid #cfcec9; border-radius: .75rem;
@@ -71,8 +73,7 @@
 .limen-studio__shell--general-index .limen-studio__active-editor,
 .limen-studio__shell--domain-index .limen-studio__primary-nav,
 .limen-studio__shell--domain-index .limen-studio__active-editor,
-.limen-studio__shell--editor .limen-studio__primary-nav,
-.limen-studio__shell--editor .limen-studio__secondary-nav { display: none; }
+.limen-studio__shell--editor .limen-studio__editorial-nav { display: none; }
 
 .limen-studio__header {
   display: flex;
@@ -1182,16 +1183,20 @@
 
 @media (min-width: 64rem) {
   .limen-studio__workspace { max-width: 92rem; }
-  .limen-studio__stage-layout { grid-template-columns: minmax(0, 1fr) minmax(20rem, .42fr); align-items: start; }
-  .limen-studio__workspace-preview { display: block; }
-  .limen-studio__shell { grid-template-columns: 12rem 14rem minmax(22rem, 1fr); align-items: start; margin-top: 0; }
-  .limen-studio__shell--preview-collapsed { grid-template-columns: 12rem 14rem minmax(0, 1fr); }
-  .limen-studio__shell--preview-collapsed .limen-studio__desktop-preview { grid-column: 1 / -1; }
-  .limen-studio__shell .limen-studio__primary-nav,
-  .limen-studio__shell .limen-studio__secondary-nav,
+  .limen-studio__shell { grid-template-columns: minmax(15rem, .32fr) minmax(30rem, 1fr); align-items: start; margin-top: 0; }
+  .limen-studio__shell .limen-studio__editorial-nav,
   .limen-studio__shell .limen-studio__active-editor { display: block; }
+  .limen-studio__editorial-nav .limen-studio__primary-nav { border-bottom: 1px solid #d9d8d3; padding-bottom: 1rem; }
+  .limen-studio__editorial-nav .limen-studio__secondary-nav { display: block; padding-top: 1rem; }
   .limen-studio__mobile-back,
   .limen-studio__mobile-context { display: none; }
+}
+
+@media (min-width: 80rem) {
+  .limen-studio__workspace-frame--preview-visible { display: grid; grid-template-columns: minmax(46rem, 1fr) minmax(20rem, 25rem); gap: 1rem; align-items: start; }
+  .limen-studio__workspace-frame--preview-visible .limen-studio__workspace-preview,
+  .limen-studio__workspace-frame--preview-collapsed .limen-studio__workspace-preview { display: block; }
+  .limen-studio__workspace-frame--preview-collapsed .limen-studio__workspace-preview { margin-top: 1rem; }
 }
 
 .limen-studio__desktop-preview { display: none; min-width: 0; }

@@ -23,6 +23,8 @@ import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import { StudioDesignStage, StudioSectionsStage, StudioStageNavigation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
+import { StudioWorkspaceFrame } from './StudioWorkspaceFrame'
+import type { StudioPreviewMode } from './StudioWorkspaceFrame'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -107,14 +109,13 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     contextualLabel={contextualLabel} onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
   if (!template) return null
-  return <div className="limen-studio"><div className="limen-studio__workspace">
-    <header className="limen-studio__project-header" inert={layerOpen ? true : undefined}>
+  const previewMode: StudioPreviewMode = layerOpen ? 'dedicated' : previewCollapsed ? 'collapsed' : 'visible'
+  const background = <><header className="limen-studio__project-header">
       <Link className="limen-studio__back-link" to="/">← Volver</Link><div><p className="limen-studio__eyebrow">LIMEN Studio</p>
       <h1>{model.draft.protagonistName || invitation.event.name}</h1><p>{template.internalName} · {lifecycleLabels[invitation.lifecycleStatus]} temporal</p></div>
       <button className="limen-studio__action" type="button" onClick={openPreview}>Ver invitación</button>
-    </header>
-    <div inert={layerOpen ? true : undefined}><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
-    <div className="limen-studio__stage-layout"><div className="limen-studio__stage-content">
+    </header><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
+    <div className="limen-studio__stage-content">
       {activeStage === 'design' && <StudioDesignStage template={template} onPreview={openPreview} />}
       {activeStage === 'sections' && <StudioSectionsStage template={template} modules={model.draft.modules} />}
       <div hidden={activeStage !== 'content'}><StudioNavigationShell domains={domains} navigation={navigation} validation={model.validation} editor={editor}
@@ -125,9 +126,12 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} /></div>
       {activeStage === 'review' && <section className="limen-studio__stage-panel" aria-labelledby="studio-review-title"><h2 id="studio-review-title">Revisión</h2>{reviewPanel('status')}{reviewPanel('errors')}</section>}
-    </div><aside className={`limen-studio__workspace-preview ${layerOpen ? 'is-dedicated' : ''}`} aria-label="Vista previa de la invitación">
+    </div></>
+  const previewSurface = <>
       {previewCollapsed && !layerOpen ? <div className="limen-studio__preview-collapsed"><strong>Vista previa</strong><button type="button" onClick={() => surfaceDispatch({ type: 'show' })}>Mostrar preview</button></div> : null}
-      <div hidden={previewCollapsed && !layerOpen} inert={previewCollapsed && !layerOpen ? true : undefined} className="limen-studio__embedded-preview"><header><strong>Vista previa · {retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador disponible' : 'No disponible'}</strong><div>{layerOpen && <button type="button" onClick={closePreview}>← Volver al editor</button>}<button type="button" onClick={audience.restartPreview}>Reiniciar</button>{!layerOpen && <button type="button" onClick={() => surfaceDispatch({ type: 'collapse' })}>Contraer</button>}<a href={publicInvitationUrl}>Abrir demo público</a></div></header>{preview}</div>
-    </aside></div></div>
+      <div hidden={previewMode === 'collapsed'} inert={previewMode === 'collapsed' ? true : undefined} className="limen-studio__embedded-preview"><header><strong>Vista previa · {retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador disponible' : 'No disponible'}</strong><div>{layerOpen && <button type="button" onClick={closePreview}>← Volver al editor</button>}<button type="button" onClick={audience.restartPreview}>Reiniciar</button>{!layerOpen && <button type="button" onClick={() => surfaceDispatch({ type: 'collapse' })}>Contraer</button>}<a href={publicInvitationUrl}>Abrir demo público</a></div></header>{preview}</div>
+    </>
+  return <div className="limen-studio"><div className="limen-studio__workspace">
+    <StudioWorkspaceFrame background={background} preview={previewSurface} previewMode={previewMode} />
   </div></div>
 }

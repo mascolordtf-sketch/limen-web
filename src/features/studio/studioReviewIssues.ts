@@ -3,8 +3,8 @@ import type { StudioIssue, StudioIssueSeverity } from './origin01StudioValidatio
 import type { StudioNavigationSelection } from './studioNavigation'
 
 export const studioIssueGroupLabels: Record<StudioIssueSeverity, string> = {
-  structural: 'Bloquea renderizado', 'active-error': 'Requiere corrección', warning: 'Advertencias',
-  'inactive-content': 'Contenido inactivo', 'editorial-review': 'Revisión editorial pendiente',
+  structural: 'Impide ver los cambios actuales', 'active-error': 'Requiere corrección', warning: 'Sugerencias',
+  'inactive-content': 'Contenido no incluido', 'editorial-review': 'Lectura final pendiente',
 }
 
 export type StudioIssueCorrectionContext = { readonly returnTo: StudioNavigationSelection; readonly issueId: string }

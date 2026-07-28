@@ -51,8 +51,8 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
 
   const itemStatus = (item: StudioNavigationItem) => selectStudioItemStatus(validation, item, activeDomain.id)
   return <div className={`limen-studio__shell limen-studio__shell--${navigation.mobileLevel} ${previewCollapsed ? 'limen-studio__shell--preview-collapsed' : ''}`}>
-    <nav className="limen-studio__primary-nav" aria-label="Dominios de la invitación" inert={previewDedicated ? true : undefined}>
-      <h2>Índice general</h2>
+    <nav className="limen-studio__editorial-nav" aria-label="Contenido de la invitación" inert={previewDedicated ? true : undefined}>
+      <div className="limen-studio__primary-nav"><h2>Contenido</h2>
       <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <div className="limen-studio__nav-list">
         {domains.map((domain) => {
@@ -63,12 +63,10 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
             <strong>{domain.label}</strong><span>{statusText(status)}</span>
           </button>
         })}
-      </div>
-    </nav>
-
-    <nav className="limen-studio__secondary-nav" aria-label={`Secciones de ${activeDomain?.label ?? 'dominio'}`} inert={previewDedicated ? true : undefined}>
+      </div></div>
+    <div className="limen-studio__secondary-nav">
       <button className="limen-studio__mobile-back" type="button"
-        onClick={() => navigate({ type: 'show-general-index' })}>← Índice general</button>
+        onClick={() => navigate({ type: 'show-general-index' })}>← Categorías</button>
       <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver preview</button>
       <h2>{activeDomain?.label}</h2><p>{activeDomain?.description}</p>
       <div className="limen-studio__nav-list">
@@ -77,8 +75,7 @@ export function StudioNavigationShell({ domains, navigation, validation, editor,
           onClick={() => navigate({ type: 'open-item', domainId: activeDomain.id, item })}>
           <strong>{item.label}</strong><span>{statusText(itemStatus(item))}</span>
         </button>)}
-      </div>
-    </nav>
+      </div></div></nav>
 
     <main className="limen-studio__active-editor" inert={previewDedicated ? true : undefined}>
       <div className="limen-studio__mobile-context">

@@ -35,12 +35,12 @@ export function StudioSectionsStage({ template, modules }: {
   return <section className="limen-studio__stage-panel" aria-labelledby="studio-sections-title">
     <h2 id="studio-sections-title">Secciones</h2>
     <p>Este es el recorrido actual de tu invitación.</p>
-    <ul className="limen-studio__section-summary">
+    <ol className="limen-studio__section-summary">
       {template.modules.filter(({ moduleId }) => template.canonicalOrder.includes(moduleId)).map((module) => {
         const included = template.requiredModules.includes(module.moduleId) || configured.get(module.moduleId) === true
         return <li key={module.moduleId}><span>{module.internalLabel}</span>
           <strong className={included ? 'is-included' : undefined}>{included ? 'Sección incluida' : 'No incluida'}</strong></li>
       })}
-    </ul>
+    </ol>
   </section>
 }

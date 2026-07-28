@@ -9,6 +9,7 @@ import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioSectionsStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
+import { StudioWorkspaceFrame } from '../src/features/studio/StudioWorkspaceFrame'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
@@ -357,6 +358,19 @@ const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
 assert(sectionsMarkup.includes('Sección incluida') && sectionsMarkup.includes('No incluida')
   && !sectionsMarkup.includes('type="checkbox"'),
   'Secciones resume la configuración existente sin ofrecer mutaciones anticipadas')
+const dedicatedFrameMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
+  previewMode: 'dedicated', background: createElement('button', null, 'Editar contenido'),
+  preview: createElement('button', null, 'Volver al editor'),
+}))
+assert(dedicatedFrameMarkup.includes('workspace-background" inert=""')
+  && dedicatedFrameMarkup.includes('workspace-preview')
+  && !dedicatedFrameMarkup.includes('workspace-preview" inert=""'),
+  'la preview dedicada queda fuera del fondo inerte y conserva controles operables')
+const collapsedFrameMarkup = renderToStaticMarkup(createElement(StudioWorkspaceFrame, {
+  previewMode: 'collapsed', background: createElement('div'), preview: createElement('button', null, 'Mostrar preview'),
+}))
+assert(collapsedFrameMarkup.includes('workspace-frame--preview-collapsed') && collapsedFrameMarkup.includes('Mostrar preview'),
+  'el modo contraído es explícito y conserva la acción para recuperar la preview')
 const identityIssue = validateOrigin01StudioDraft(origin01DemoData,
   updateOrigin01StudioDraftField(initial, 'protagonistName', '')).issues.find(({ fieldId }) => fieldId === 'protagonistName')!
 const identityMarkup = renderToStaticMarkup(createElement(StudioContentEditor,
@@ -438,8 +452,11 @@ for (const markup of [shellMarkup(false, false), shellMarkup(false, true), shell
 }
 assert(shellMarkup(true, false).includes('hidden=""') && shellMarkup(true, false).includes('inert=""'),
   'el estado contraído conserva el host pero retira sus controles del foco')
-assert(shellMarkup(false, true).match(/inert=""/g)?.length === 3,
-  'la presentación dedicada vuelve inertes navegación primaria, secundaria y editor')
+assert(shellMarkup(false, true).match(/inert=""/g)?.length === 2,
+  'la presentación dedicada vuelve inertes la navegación editorial agrupada y el editor')
+assert((shellMarkup(false, false).match(/<nav/g) ?? []).length === 1
+  && shellMarkup(false, false).includes('aria-label="Contenido de la invitación"'),
+  'Contenido presenta categorías y secciones como una única navegación editorial')
 assert((shellMarkup(false, false).match(/Ver preview/g) ?? []).length === 3,
   'el mismo control de apertura está disponible en índice general, índice de dominio y editor móvil')
 const correctionShell = renderToStaticMarkup(createElement(StudioNavigationShell, { domains,
@@ -453,8 +470,11 @@ const unresolvedPanel = renderToStaticMarkup(createElement(StudioReviewPanel, { 
   validation: { ...validResult, issues: [{ ...storyIssue, editorId: 'unknown' }] }, domains,
   showing: 'current', audience: 'protagonist', onIssue: () => undefined, onAudience: () => undefined,
   onPreview: () => undefined }))
-assert(unresolvedPanel.includes('Destino no disponible') && !unresolvedPanel.includes('Corregir en'),
-  'Review productiva mantiene destinos no resueltos visibles y no navegables')
+assert(unresolvedPanel.includes('Revisá esta información') && !unresolvedPanel.includes('Ir a corregir'),
+  'Revisión mantiene problemas no resueltos visibles y no navegables con lenguaje humano')
+assert(!unresolvedPanel.includes('Dominio:') && !unresolvedPanel.includes('Escena:')
+  && !unresolvedPanel.includes('Campo:') && !unresolvedPanel.includes('storyMessage'),
+  'Revisión no expone dominios ni identificadores técnicos')
 let focused = 0
 const focusable = { isConnected: true, focus: () => { focused += 1 } } as HTMLElement
 assert(restoreStudioPreviewOpener(focusable) && focused === 1
