@@ -2907,9 +2907,15 @@
   }
 
   .limen-studio__desktop-preview .limen-studio__preview-shell {
-    width: min(100%, 24.375rem);
+    width: min(100%, 25.3125rem);
     height: calc(100dvh - 7.3rem);
     min-height: 0;
+    margin-inline: auto;
+  }
+
+  .limen-studio__desktop-preview .limen-studio__preview-shell > .origin01 {
+    width: 24.375rem;
+    max-width: none;
     margin-inline: auto;
   }
 
