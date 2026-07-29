@@ -3,32 +3,35 @@ import { Link } from 'react-router-dom'
 
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
-import { StudioNavigationShell } from './StudioNavigationShell'
 import { StudioActiveEditor } from './StudioActiveEditor'
-import { isStudioEditorId } from './studioEditorContract'
 import { createOrigin01StudioDomains } from './origin01StudioConfiguration'
 import { useStudioNavigation } from './useStudioNavigation'
 import { StudioPreview } from './StudioPreview'
+import { StudioPreviewPane } from './StudioPreviewPane'
+import { StudioReviewStage } from './StudioReviewStage'
 import { useOrigin01StudioModel } from './useOrigin01StudioModel'
 import { useStudioPreviewAudience } from './useStudioPreviewAudience'
 import { createStudioPreviewSurfaceState, isStudioPreviewDedicated, isStudioPreviewEffectivelyCollapsed,
-  selectStudioPreviewContextLabel, transitionStudioPreviewSurface } from './studioPreviewSurface'
+  transitionStudioPreviewSurface } from './studioPreviewSurface'
 import { useStudioRenderablePreview } from './useStudioRenderablePreview'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
-import { StudioReviewPanel } from './StudioReviewPanel'
 import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, resolveStudioIssueDestination,
   issueNeedsCorrectionReturn, resolveStudioStructuralDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
-import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from './StudioWorkspaceStages'
+import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading,
+  isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
+import { StudioAestheticStage, StudioStageNavigation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
+import { createStudioReturnToReview } from './studioWorkspaceStages'
 import { StudioTemplateStage } from './StudioTemplateStage'
 import { studioDesktopMediaQuery } from './studioViewport'
+import { StudioSectionsStage } from './StudioSectionsStage'
+import { StudioScenesContent } from './StudioScenesContent'
+import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScene, studioScenes,
+  type StudioSceneId } from './studioScenes'
+import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import './studio.css'
-
-const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
-  review: 'En revisión', published: 'Publicada', completed: 'Finalizada', archived: 'Archivada' } as const
 
 export function StudioInvitationPage({ invitation }: { invitation: Origin01InvitationData }) {
   const template = findInvitationTemplate(invitation.templateId)
@@ -41,7 +44,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
-  const [templateGalleryOpen, setTemplateGalleryOpen] = useState(false)
+  const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
+  const [templateState, setTemplateState] = useState(() => createStudioTemplateGalleryState(template?.id ?? invitation.templateId))
   const opener = useRef<HTMLElement | null>(null)
   const scrollPosition = useRef(0)
   const layerTitle = useRef<HTMLHeadingElement>(null)
@@ -50,7 +54,6 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const layerOpen = isStudioPreviewDedicated(surface)
   const previewCollapsed = isStudioPreviewEffectivelyCollapsed(surface)
-  const contextualLabel = selectStudioPreviewContextLabel(surface, domains)
 
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
@@ -72,6 +75,12 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       ? createStudioIssueCorrectionContext(issue) : undefined)
     if (layerOpen) surfaceDispatch({ type: 'close' })
     navigate({ type: 'open-item', domainId: issue.domainId, item: destination })
+    const issueScene = findStudioSceneByEditorId(destination.editorId)
+    if (issueScene) {
+      setSelectedScene(issueScene.id)
+      setActiveStage('content')
+    } else if (destination.editorId === 'scene-configuration') setActiveStage('sections')
+    else setActiveStage('review')
     requestAnimationFrame(() => requestAnimationFrame(() => {
       focusStudioIssueDestination(issue)
     }))
@@ -84,6 +93,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       if (destination) {
         if (layerOpen) surfaceDispatch({ type: 'close' })
         navigate({ type: 'open-item', domainId: destination.domainId, item: destination.item })
+        setActiveStage(destination.domainId === 'review' ? 'review' : 'sections')
         requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
       }
     }
@@ -91,43 +101,64 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const returnToErrors = () => {
     const errors = correctionContext ? resolveStudioCorrectionReturn(correctionContext, domains) : null
     if (errors) {
-      navigate({ type: 'open-item', domainId: 'review', item: errors })
+      const destination = createStudioReturnToReview(errors)
+      setActiveStage(destination.activeStage)
+      navigate(destination.navigation)
       setCorrectionContext(undefined)
-      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
+      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioReviewHeading()))
     }
   }
-  const reviewPanel = (kind: 'status' | 'errors' | 'audiences') => <StudioReviewPanel kind={kind}
-    validation={model.validation} domains={domains} showing={retained.showing} audience={audience.audience}
-    onIssue={openIssue} onAudience={audience.changeAudience} onPreview={openPreview} />
-  const editor = navigation.editorId ? <StudioActiveEditor invitation={invitation} template={template} model={model}
-    editorId={navigation.editorId} reviewPanels={{ 'review-status': reviewPanel('status'), 'review-errors': reviewPanel('errors'),
-      'review-audiences': reviewPanel('audiences') }} /> : null
+  const visibleScene = studioScenes.find(({ id }) => id === selectedScene) ?? studioGeneralScene
+  const contextualEditor = <div className="limen-studio__contextual-editor-body">{visibleScene.editorIds.map((editorId) =>
+    <StudioActiveEditor key={editorId} invitation={invitation} template={template} model={model} editorId={editorId} />)}</div>
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
-    contextualLabel={contextualLabel} onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
+    contextualLabel={activeStage === 'content' ? visibleScene.label : 'Revisión completa'}
+    onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
-  const eventDate = new Intl.DateTimeFormat('es-AR', { dateStyle: 'long', timeStyle: 'short',
-    timeZone: invitation.event.timeZone }).format(new Date(invitation.event.startsAt))
+  const previewPane = <StudioPreviewPane audienceLabel={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
+    layerOpen={layerOpen} preview={preview} publicInvitationUrl={publicInvitationUrl}
+    onClose={closePreview} onCollapse={() => surfaceDispatch({ type: 'collapse' })}
+    onOpen={openPreview} onRestart={audience.restartPreview} />
 
   return <div className="limen-studio"><div className="limen-studio__workspace">
-    <header className="limen-studio__header" inert={layerOpen ? true : undefined}><div><p className="limen-studio__eyebrow">LIMEN Studio</p><h1>Espacio interno de composición</h1></div><Link className="limen-studio__back-link" to="/">Volver al sitio</Link></header>
-    <div inert={layerOpen ? true : undefined}><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} /></div>
-    <StudioStagePresentation activeStage={activeStage} previewDedicated={layerOpen}
-      templateGalleryOpen={templateGalleryOpen}
-      templateStage={template && <StudioTemplateStage template={template}
-        onGalleryViewChange={(view) => setTemplateGalleryOpen(view === 'gallery')} />}
-      aestheticStage={<StudioAestheticStage />}>
-    <section className="limen-studio__summary" inert={layerOpen ? true : undefined} aria-labelledby="studio-invitation-title"><div className="limen-studio__summary-heading"><p className="limen-studio__eyebrow">Invitación</p><h2 id="studio-invitation-title">{model.draft.protagonistName}</h2><p className="limen-studio__technical">Borrador temporal · Código estable {invitation.code}</p><p className="limen-studio__technical">{model.validation.invitationValid ? 'Invitación válida' : 'Invitación con errores'} · Cambios no persistentes</p></div>
-      <dl className="limen-studio__metadata"><div><dt>Evento</dt><dd>{invitation.event.name}</dd></div><div><dt>Celebración</dt><dd>{invitation.event.celebrationLabel}</dd></div><div><dt>Fecha</dt><dd>{eventDate}</dd></div><div><dt>Plantilla</dt><dd>Origin 01 <span>{invitation.templateId}</span></dd></div><div><dt>Estado</dt><dd>{lifecycleLabels[invitation.lifecycleStatus]}</dd></div><div><dt>Módulos configurados</dt><dd>{invitation.modules.length}</dd></div></dl></section>
-    <section className="limen-studio__notice" inert={layerOpen ? true : undefined}><h2>Estado del prototipo</h2><p><strong>Prototipo interno sin autenticación. No contiene persistencia.</strong></p><p>Los cambios son temporales y se restablecen al recargar.</p></section>
-    <StudioNavigationShell domains={domains} navigation={navigation} validation={model.validation} editor={editor}
-      editorResolvable={!navigation.editorId || isStudioEditorId(navigation.editorId)} onNavigate={navigate}
-      preview={<div className="limen-studio__embedded-preview"><header><strong>Preview · {audience.audience === 'guest' ? 'Invitado' : 'Protagonista'} · {retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}</strong><div>{layerOpen && <button type="button" onClick={closePreview}>← Volver al editor</button>}<button type="button" onClick={audience.restartPreview}>Reiniciar</button>{!layerOpen && <><button type="button" onClick={() => surfaceDispatch({ type: 'collapse' })}>Contraer</button><button type="button" onClick={openPreview}>Expandir</button></>}<a href={publicInvitationUrl}>Abrir demo público</a></div></header>{preview}</div>}
-      previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
-      previewAudience={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
-      previewStatus={retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}
-      onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
-      correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} />
-    </StudioStagePresentation>
+    <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
+      <div className="limen-studio__brand"><h1>LIMEN <span>Studio</span></h1>
+        <div><strong>{model.draft.protagonistName}</strong><small>{invitation.event.celebrationLabel} · {invitation.code}</small></div></div>
+      <div className="limen-studio__header-actions"><span className="limen-studio__draft-status">Cambios temporales</span>
+        <Link className="limen-studio__back-link" to="/">Salir</Link></div>
+    </header>
+    <div className="limen-studio__stage-nav-wrap" inert={layerOpen ? true : undefined}>
+      <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
+    </div>
+    <main className="limen-studio__stage">
+      <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
+        {template && <StudioTemplateStage template={template} state={templateState} onStateChange={setTemplateState} />}
+      </div>
+      {activeStage === 'aesthetic' && <StudioAestheticStage />}
+      {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
+        for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
+        if (!included && selectedScene === scene.id) {
+          const projected = { modules: model.draft.modules.map((module) => scene.moduleIds.includes(module.moduleId)
+            ? { ...module, enabled: false } : module) }
+          setSelectedScene(selectSceneAfterExclusion(scene.id, projected))
+        }
+      }} />}
+      {activeStage === 'content' && <>
+        <header className="limen-studio__stage-heading limen-studio__stage-heading--content">
+          <p className="limen-studio__eyebrow">Contenido</p><h2>Contá la historia, escena por escena</h2>
+          <p>Elegí una escena, editá sus textos y comprobá el resultado en la invitación.</p>
+        </header>
+        <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={setSelectedScene}
+          onManageSections={() => setActiveStage('sections')} editor={contextualEditor} preview={previewPane}
+          previewCollapsed={previewCollapsed} previewDedicated={layerOpen} onOpenPreview={openPreview}
+          onShowPreview={() => surfaceDispatch({ type: 'show' })} correctionReturn={correctionContext !== undefined}
+          onReturnToErrors={returnToErrors} />
+      </>}
+      {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
+        preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
+        validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
+        onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })} />}
+    </main>
   </div></div>
 }

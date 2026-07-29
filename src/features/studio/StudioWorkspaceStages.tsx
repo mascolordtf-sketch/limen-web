@@ -15,8 +15,13 @@ export function StudioStageNavigation({ activeStage, onStageChange }: {
 
 export function StudioAestheticStage() {
   return <section className="limen-studio__aesthetic-placeholder" aria-labelledby="studio-aesthetic-title">
-    <h2 id="studio-aesthetic-title">Estética</h2>
-    <p>La personalización de la apariencia de esta plantilla se incorporará en una próxima entrega.</p>
+    <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Estética</p>
+      <h2 id="studio-aesthetic-title">La identidad visual de la invitación</h2>
+      <p>La personalización de colores, tipografías y recursos visuales se incorporará en una próxima entrega.</p></div>
+    <div className="limen-studio__aesthetic-preview" aria-hidden="true">
+      <span /><span /><span /><span />
+    </div>
+    <p className="limen-studio__quiet-note">Esta etapa es informativa: todavía no modifica la invitación.</p>
   </section>
 }
 
