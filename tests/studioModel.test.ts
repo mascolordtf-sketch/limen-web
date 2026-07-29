@@ -8,6 +8,12 @@ import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRo
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
+import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
+import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
+import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { studioDesktopMediaQuery } from '../src/features/studio/studioViewport'
+import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
+  transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
@@ -53,9 +59,52 @@ const assert = (condition: unknown, message: string) => {
   passed += 1
 }
 
+assert(studioDesktopMediaQuery === '(min-width: 76rem)',
+  'Studio interpreta como escritorio el mismo breakpoint de 76rem usado por CSS')
+
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
+const draftBeforeStageNavigation = JSON.stringify(initial)
+const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
+const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: 'template', onStageChange: () => undefined }))
+assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
+  && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Diseño'),
+  'la navegación superior presenta las cinco etapas aprobadas en orden')
+assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
+  'cada etapa superior puede activarse, incluida Revisión')
+assert(renderToStaticMarkup(createElement(StudioAestheticStage)).includes('próxima entrega')
+  && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Estética es informativa y cambiar la etapa no altera el borrador temporal')
+const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage, { template: origin01Template }))
+assert(templateMainMarkup.includes('Plantilla seleccionada') && templateMainMarkup.includes('Origin 01')
+  && templateMainMarkup.includes('Plantillas destacadas') && templateMainMarkup.includes('Ver todas las plantillas'),
+  'Plantilla muestra la selección actual, opciones destacadas y acceso a la galería')
+const initialTemplateGallery = createStudioTemplateGalleryState(origin01Template.id)
+const openTemplateGallery = transitionStudioTemplateGallery(initialTemplateGallery, { type: 'open-gallery' })
+const templateGalleryMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, initialState: openTemplateGallery }))
+assert(templateGalleryMarkup.includes('Todas las plantillas') && templateGalleryMarkup.includes('← Volver')
+  && templateGalleryMarkup.includes('Tipo de celebración') && templateGalleryMarkup.includes('Estilo visual'),
+  'Ver todas las plantillas abre una vista de galería independiente con retorno y filtros')
+const filteredGallery = transitionStudioTemplateGallery(
+  transitionStudioTemplateGallery(openTemplateGallery, { type: 'filter-celebration', celebration: 'casamiento' }),
+  { type: 'filter-style', style: 'editorial' })
+const visibleFilteredTemplates = filterStudioTemplateOptions(createStudioTemplateOptions(origin01Template), filteredGallery)
+assert(visibleFilteredTemplates.length === 1 && visibleFilteredTemplates[0]?.id === 'example-editorial',
+  'los filtros de celebración y estilo determinan los resultados visibles')
+const selectedTemplateGallery = transitionStudioTemplateGallery(filteredGallery,
+  { type: 'select', templateId: 'example-editorial' })
+const returnedTemplateMain = transitionStudioTemplateGallery(selectedTemplateGallery, { type: 'close-gallery' })
+const returnedTemplateMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, initialState: returnedTemplateMain }))
+assert(returnedTemplateMain.view === 'main' && returnedTemplateMain.selectedId === 'example-editorial'
+  && returnedTemplateMain.celebration === 'casamiento' && returnedTemplateMain.style === 'editorial'
+  && returnedTemplateMarkup.includes('<h2 id="studio-template-title">Editorial</h2>')
+  && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Volver conserva selección y filtros sin reiniciar el borrador de Studio')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
@@ -412,6 +461,35 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
+const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean, activeStage: 'template' | 'aesthetic' = 'template') =>
+  renderToStaticMarkup(createElement('div', null,
+    createElement('header', null, 'LIMEN Studio'),
+    createElement(StudioStageNavigation, { activeStage, onStageChange: () => undefined }),
+    createElement(StudioStagePresentation, {
+      activeStage, previewDedicated, templateGalleryOpen: galleryOpen,
+      templateStage: createElement(StudioTemplateStage, { template: origin01Template,
+        initialState: galleryOpen ? openTemplateGallery : returnedTemplateMain }),
+      aestheticStage: createElement(StudioAestheticStage),
+    }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
+const independentGalleryPresentation = renderStagePresentation(true, false)
+assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')
+  && independentGalleryPresentation.includes('Todas las plantillas')
+  && !independentGalleryPresentation.includes('Resumen de invitación')
+  && !independentGalleryPresentation.includes('Estado del prototipo')
+  && !independentGalleryPresentation.includes('Shell de edición')
+  && !independentGalleryPresentation.includes('studio-preview-renderer-title'),
+  'el boundary real presenta la galería independiente y retira el workspace existente')
+const restoredStagePresentation = renderStagePresentation(false, false)
+assert(restoredStagePresentation.includes('Resumen de invitación')
+  && (restoredStagePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'cerrar la galería restaura el workspace con una única preview real')
+const protectedTemplatePresentation = renderStagePresentation(true, true)
+const protectedAestheticPresentation = renderStagePresentation(false, true, 'aesthetic')
+assert(protectedTemplatePresentation.includes('inert=""')
+  && protectedAestheticPresentation.includes('inert=""')
+  && protectedTemplatePresentation.includes('Resumen de invitación')
+  && (protectedTemplatePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'la preview dedicada vuelve inertes Plantilla y Estética e impide que la galería retire el renderer activo')
 const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
   StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
     editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,
