@@ -110,7 +110,11 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     timeZone: invitation.event.timeZone }).format(new Date(invitation.event.startsAt))
 
   return <div className="limen-studio"><div className="limen-studio__workspace">
-    <header className="limen-studio__header" inert={layerOpen ? true : undefined}><div><p className="limen-studio__eyebrow">LIMEN Studio</p><h1>Espacio interno de composición</h1></div><Link className="limen-studio__back-link" to="/">Volver al sitio</Link></header>
+    <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
+      <div className="limen-studio__brand"><p className="limen-studio__eyebrow">LIMEN</p><h1>Studio</h1></div>
+      <div className="limen-studio__invitation-context"><span>Invitación en edición</span><strong>{model.draft.protagonistName}</strong></div>
+      <Link className="limen-studio__back-link" to="/">Volver al sitio</Link>
+    </header>
     <div inert={layerOpen ? true : undefined}><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} /></div>
     <StudioStagePresentation activeStage={activeStage} previewDedicated={layerOpen}
       templateGalleryOpen={templateGalleryOpen}

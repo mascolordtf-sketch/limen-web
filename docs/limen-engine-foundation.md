@@ -164,3 +164,11 @@ Mientras el borrador actual sea estructuralmente renderizable, el renderer consu
 ## Fase 2B.6B — Navegación principal por etapas
 
 Studio incorpora cinco etapas superiores, reversibles y libremente accesibles: Plantilla, Estética, Secciones, Contenido y Revisión. Plantilla ofrece una primera experiencia temporal de selección, con opciones destacadas y una galería independiente cuyos filtros por celebración y estilo, selección y estado de navegación se conservan durante la sesión. La selección es temporal, no posee persistencia y no modifica la invitación pública; su presentación se integra de forma segura con la preview existente. Estética continúa siendo informativa y no incorpora controles de personalización. El shell, los editores, la validación y el renderer público se conservan sin reorganización.
+
+## Fase 2B.7A — Fundación visual del workspace
+
+Studio adopta una fundación visual cálida, calma y editorial mediante tokens locales de color, superficies, foco, radios, sombras, espaciado y ancho del workspace. La identidad “LIMEN Studio”, el contexto secundario de la invitación y el recorrido principal de cinco etapas forman una cabecera clara; la etapa activa utiliza el verde profundo de acción sin convertir cada destino en una tarjeta independiente.
+
+La jerarquía distingue el fondo del producto, la superficie principal elevada del editor, la navegación contextual integrada, las superficies auxiliares cálidas, los estados seleccionados en verde suave y los mensajes informativos. En escritorio se conserva exactamente el breakpoint compartido de `76rem`: índices, editor y preview continúan formando una única mesa de trabajo con los mínimos de columna existentes. Por debajo de ese punto se mantiene el recorrido de una columna, la acción móvil y la superficie dedicada de preview, sin mostrar simultáneamente una miniatura ilegible.
+
+Esta fase es exclusivamente visual. No modifica el borrador temporal, sus derivaciones o validación, el renderer público ni su instancia única, los datos canónicos, la invitación pública, la navegación funcional, la selección de plantillas, la persistencia o la autenticación. Los formularios internos de Contenido conservan deliberadamente su estructura y su rediseño detallado permanece diferido; Estética continúa sin edición real.
