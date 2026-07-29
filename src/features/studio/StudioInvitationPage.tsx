@@ -126,6 +126,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
     contextualLabel={activeStage === 'content' ? visibleScene.label : 'Revisión completa'}
+    previewScene={activeStage === 'content' ? visibleScene.id : undefined}
     onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
   const previewPane = <StudioPreviewPane audienceLabel={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}

@@ -6,6 +6,7 @@ import { origin01DemoData } from '../src/features/invitations/origin01/origin01D
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
+import { getStudioPreviewMode, studioPreviewSceneSelectors } from '../src/features/studio/studioPreviewScenes'
 import { StudioPreviewPane } from '../src/features/studio/StudioPreviewPane'
 import { StudioReviewStage } from '../src/features/studio/StudioReviewStage'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
@@ -550,6 +551,10 @@ const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPrev
 assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
   'la preview productiva expone un heading único y un solo grupo de audiencia')
+assert(getStudioPreviewMode('trivia') === 'contextual' && getStudioPreviewMode() === 'full'
+  && studioPreviewSceneSelectors.trivia === '.origin01-trivia'
+  && Object.keys(studioPreviewSceneSelectors).length === studioScenes.length,
+  'Contenido abre una escena contextual y Revisión conserva el recorrido completo')
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
