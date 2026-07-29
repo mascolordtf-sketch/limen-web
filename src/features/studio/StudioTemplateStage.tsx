@@ -1,4 +1,5 @@
 import { useMemo, useReducer } from 'react'
+import type { ReactNode } from 'react'
 
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
@@ -27,9 +28,10 @@ function TemplateCard({ template, selected, onSelect }: {
   </li>
 }
 
-export function StudioTemplateStage({ template, initialState }: {
+export function StudioTemplateStage({ template, initialState, onGalleryViewChange }: {
   template: InvitationTemplateDefinition
   initialState?: StudioTemplateGalleryState
+  onGalleryViewChange?: (view: StudioTemplateGalleryState['view']) => void
 }) {
   const templates = useMemo(() => createStudioTemplateOptions(template), [template])
   const [state, dispatch] = useReducer(transitionStudioTemplateGallery,
@@ -37,8 +39,13 @@ export function StudioTemplateStage({ template, initialState }: {
   const selected = templates.find(({ id }) => id === state.selectedId) ?? templates[0]
   const visibleTemplates = filterStudioTemplateOptions(templates, state)
 
+  const changeView = (view: StudioTemplateGalleryState['view']) => {
+    dispatch({ type: view === 'gallery' ? 'open-gallery' : 'close-gallery' })
+    onGalleryViewChange?.(view)
+  }
+
   if (state.view === 'gallery') return <section className="limen-studio__template-stage" aria-labelledby="studio-template-gallery-title">
-    <button className="limen-studio__template-back" type="button" onClick={() => dispatch({ type: 'close-gallery' })}>← Volver</button>
+    <button className="limen-studio__template-back" type="button" onClick={() => changeView('main')}>← Volver</button>
     <h2 id="studio-template-gallery-title">Todas las plantillas</h2>
     <p>Explorá muestras temporales para elegir una dirección. Esta selección no cambia la invitación pública.</p>
     <div className="limen-studio__template-filters">
@@ -65,6 +72,13 @@ export function StudioTemplateStage({ template, initialState }: {
     <ul className="limen-studio__template-grid">{templates.filter(({ featured }) => featured).map((option) => <TemplateCard
       key={option.id} template={option} selected={option.id === state.selectedId}
       onSelect={() => dispatch({ type: 'select', templateId: option.id })} />)}</ul>
-    <button className="limen-studio__primary-link" type="button" onClick={() => dispatch({ type: 'open-gallery' })}>Ver todas las plantillas</button>
+    <button className="limen-studio__primary-link" type="button" onClick={() => changeView('gallery')}>Ver todas las plantillas</button>
   </section>
+}
+
+export function StudioExistingWorkspace({ hiddenByGallery, children }: {
+  hiddenByGallery: boolean
+  children: ReactNode
+}) {
+  return hiddenByGallery ? null : children
 }
