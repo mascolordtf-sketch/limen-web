@@ -116,17 +116,17 @@ assert(['cover', 'event-details', 'rsvp', 'closing'].every((id) =>
 assert(selectSceneAfterExclusion('gifts', giftsOff) === 'rsvp',
   'al excluir la escena seleccionada elige la siguiente escena incluida')
 const contentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: giftsOff, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  draft: giftsOff, selectedScene: 'story', onSceneSelect: () => undefined,
   editor: createElement('div', null, 'EDITOR_CONTEXTUAL'), preview: createElement('div', null, 'PREVIEW_REAL'),
-  previewDedicated: false, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
 }))
 assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Historia')
-  && !contentMarkup.includes('>Regalos<') && contentMarkup.includes('Agregar o quitar secciones')
+  && !contentMarkup.includes('>Regalos<') && !contentMarkup.includes('Agregar o quitar secciones')
   && (contentMarkup.match(/EDITOR_CONTEXTUAL/g) ?? []).length === 1,
-  'Contenido muestra solo escenas incluidas, una región editorial y el acceso único a Secciones')
-assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1 && contentMarkup.includes('Ver invitación')
+  'Contenido muestra solo escenas incluidas y una región editorial sin duplicar el acceso a Secciones')
+assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1 && !contentMarkup.includes('Ver invitación')
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
-  'Contenido mantiene una preview junto al editor y oculta la taxonomía técnica del motor')
+  'Contenido mantiene una preview junto al editor sin duplicar su apertura y oculta la taxonomía técnica del motor')
 const draftBeforeStageNavigation = JSON.stringify(initial)
 const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
@@ -549,8 +549,10 @@ const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPrev
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined }))
 assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
-  && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2,
-  'la preview productiva expone un heading único y un solo grupo de audiencia')
+  && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2
+  && previewMarkup.includes('limen-studio__preview-device')
+  && previewMarkup.includes('limen-studio__preview-device-screen'),
+  'la preview productiva expone un heading único, una audiencia y un viewport dentro de un teléfono')
 assert(getStudioPreviewMode('trivia') === 'contextual' && getStudioPreviewMode() === 'full'
   && studioPreviewSceneSelectors.trivia === '.origin01-trivia'
   && Object.keys(studioPreviewSceneSelectors).length === studioScenes.length,
@@ -564,25 +566,25 @@ const previewPaneElement = createElement(StudioPreviewPane, {
   onOpen: () => undefined, onRestart: () => undefined,
 })
 const realContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: false, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
 }))
 assert((realContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
-  && realContentBoundary.includes('Ver invitación'),
+  && !realContentBoundary.includes('Ver invitación'),
   'Contenido mantiene una única preview real visible junto al editor')
 const collapsedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: false, previewCollapsed: true, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+  previewDedicated: false, previewCollapsed: true, onShowPreview: () => undefined,
 }))
 assert(collapsedContentBoundary.includes('studio-preview-renderer-title')
   && collapsedContentBoundary.includes('hidden=""'),
   'el estado contraído conserva una única preview montada y la retira de la interacción')
 const dedicatedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: true, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+  previewDedicated: true, previewCollapsed: false, onShowPreview: () => undefined,
 }))
 assert((dedicatedContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
   'Contenido monta exactamente una instancia del renderer real al abrir la preview dedicada')

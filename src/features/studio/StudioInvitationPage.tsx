@@ -169,8 +169,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
             setSelectedEditorByScene((current) => ({ ...current, [scene]: nextScene.editorIds[0] }))
           }
         }}
-          onManageSections={() => setActiveStage('sections')} editor={contextualEditor} preview={previewPane}
-          previewCollapsed={previewCollapsed} previewDedicated={layerOpen} onOpenPreview={openPreview}
+          editor={contextualEditor} preview={previewPane}
+          previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
           onShowPreview={() => surfaceDispatch({ type: 'show' })} correctionReturn={correctionContext !== undefined}
           onReturnToErrors={returnToErrors}
           editorTabs={visibleScene.editorIds.length > 1 ? visibleScene.editorIds.map((editorId) => ({

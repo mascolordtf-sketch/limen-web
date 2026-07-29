@@ -34,8 +34,25 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
   previewKey: string
   previewScene?: StudioSceneId
 }) {
+  const stageRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLDivElement>(null)
   const mode = getStudioPreviewMode(previewScene)
+
+  useLayoutEffect(() => {
+    const stage = stageRef.current
+    if (!stage) return
+
+    const updateScale = () => {
+      const availableWidth = Math.max(0, stage.clientWidth - 16)
+      const availableHeight = Math.max(0, stage.clientHeight - 16)
+      const scale = Math.min(1, availableWidth / 414, availableHeight / 868)
+      stage.style.setProperty('--studio-preview-scale', String(scale))
+    }
+    updateScale()
+    const observer = new ResizeObserver(updateScale)
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current
@@ -51,9 +68,16 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
     viewport.scrollTop += target.getBoundingClientRect().top - viewport.getBoundingClientRect().top
   }, [previewScene, previewKey])
 
-  return <div className="limen-studio__preview-shell" ref={viewportRef}><Origin01Invitation
-    key={`${previewKey}:${previewScene ?? mode}`} invitation={invitation} audience={audience}
-    publicInvitationUrl={publicInvitationUrl} startAtInvitation={mode === 'contextual'} /></div>
+  return <div className="limen-studio__preview-device-stage" ref={stageRef}>
+    <div className="limen-studio__preview-device" aria-label="Vista previa en un teléfono">
+      <span className="limen-studio__preview-device-speaker" aria-hidden="true" />
+      <div className="limen-studio__preview-device-screen">
+        <div className="limen-studio__preview-shell" ref={viewportRef}><Origin01Invitation
+          key={`${previewKey}:${previewScene ?? mode}`} invitation={invitation} audience={audience}
+          publicInvitationUrl={publicInvitationUrl} startAtInvitation={mode === 'contextual'} /></div>
+      </div>
+    </div>
+  </div>
 }
 
 export function StudioPreview({ invitation, audience, publicInvitationUrl, previewKey, showing,
