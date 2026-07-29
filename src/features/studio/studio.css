@@ -3223,6 +3223,57 @@
   margin: -.2rem 0 .75rem;
 }
 
+.limen-studio__editor-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .85rem;
+}
+
+.limen-studio__editor-scene-number {
+  display: grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: 50%;
+  color: var(--studio-bronze);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.limen-studio__editor-scene-kind {
+  border: 1px solid var(--studio-line);
+  border-radius: 999px;
+  padding: .35rem .65rem;
+  background: #f4f1e9;
+  color: var(--studio-muted);
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .025em;
+  white-space: nowrap;
+}
+
+.limen-studio__editor-tab-region {
+  margin-bottom: .9rem;
+  border-bottom: 1px solid var(--studio-line);
+}
+
+.limen-studio__editor-tab-region > p {
+  margin: 0 0 .35rem;
+  color: var(--studio-muted);
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.limen-studio__editor-tab-region .limen-studio__editor-tabs {
+  margin: 0;
+  border-bottom: 0;
+}
+
 .limen-studio__editor-tabs button,
 .limen-studio__trivia-tabs button {
   flex: 0 0 auto;
@@ -3410,10 +3461,6 @@
   }
 
   .limen-studio__contextual-editor > header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
     margin-bottom: .55rem;
     padding-bottom: .55rem;
   }
@@ -3423,15 +3470,33 @@
   }
 
   .limen-studio__contextual-editor > header h2 {
-    display: inline;
-    margin: 0 .5rem 0 0;
+    margin: 0;
     font-size: 1.05rem;
   }
 
   .limen-studio__contextual-editor > header p {
-    display: inline;
-    margin: 0;
+    margin: .12rem 0 0;
     font-size: .75rem;
+  }
+
+  .limen-studio__editor-scene-number {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: .64rem;
+  }
+
+  .limen-studio__editor-scene-kind {
+    padding: .3rem .55rem;
+    font-size: .62rem;
+  }
+
+  .limen-studio__editor-tab-region {
+    margin-bottom: .55rem;
+  }
+
+  .limen-studio__editor-tab-region > p {
+    margin-bottom: .18rem;
+    font-size: .58rem;
   }
 
   .limen-studio__contextual-editor-body {
