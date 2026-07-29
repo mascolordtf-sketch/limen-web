@@ -28,6 +28,7 @@ import { StudioTemplateStage } from './StudioTemplateStage'
 import { studioDesktopMediaQuery } from './studioViewport'
 import { StudioSectionsStage } from './StudioSectionsStage'
 import { StudioScenesContent } from './StudioScenesContent'
+import { StudioIcon } from './StudioIcon'
 import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScene, studioScenes,
   type StudioSceneId } from './studioScenes'
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
@@ -136,13 +137,20 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
 
   return <div className="limen-studio"><div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
-      <div className="limen-studio__brand"><h1>LIMEN <span>Studio</span></h1>
-        <div><strong>{model.draft.protagonistName}</strong><small>{invitation.event.celebrationLabel} · {invitation.code}</small></div></div>
+      <div className="limen-studio__brand">
+        <h1><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></h1>
+        <div><span className="limen-studio__context-label">Invitación en edición</span>
+          <strong>{model.draft.protagonistName}</strong>
+          <small>{invitation.event.celebrationLabel} · {invitation.code}</small></div>
+      </div>
       <div className="limen-studio__stage-nav-wrap">
         <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
       </div>
-      <div className="limen-studio__header-actions"><span className="limen-studio__draft-status">Cambios temporales</span>
-        <Link className="limen-studio__back-link" to="/">Salir</Link></div>
+      <div className="limen-studio__header-actions">
+        <span className="limen-studio__draft-status"><StudioIcon name="temporary" />
+          <span><small>Estado</small>Cambios temporales</span></span>
+        <Link className="limen-studio__back-link" to="/"><StudioIcon name="exit" />Salir</Link>
+      </div>
     </header>
     <main className="limen-studio__stage">
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>

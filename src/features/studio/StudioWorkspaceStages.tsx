@@ -1,15 +1,23 @@
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import type { ReactNode } from 'react'
+import { StudioIcon } from './StudioIcon'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
   onStageChange: (stage: StudioWorkspaceStage) => void
 }) {
   return <nav className="limen-studio__stage-nav" aria-label="Etapas de edición">
-    {studioWorkspaceStages.map((stage) => <button key={stage.id} type="button"
+    {studioWorkspaceStages.map((stage, index) => <button key={stage.id} type="button"
       aria-current={activeStage === stage.id ? 'step' : undefined}
-      onClick={() => onStageChange(stage.id)}>{stage.label}</button>)}
+      onClick={() => onStageChange(stage.id)}>{stage.label}<span className="limen-studio__stage-visual" aria-hidden="true">
+        <span className="limen-studio__stage-icon"><StudioIcon name={stage.id} /></span>
+        <span className="limen-studio__stage-copy">
+          <span className="limen-studio__stage-number">Paso {String(index + 1).padStart(2, '0')}</span>
+          <span className="limen-studio__stage-label">{stage.label}</span>
+        </span>
+      </span>
+    </button>)}
   </nav>
 }
 

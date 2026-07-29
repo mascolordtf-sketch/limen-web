@@ -28,7 +28,7 @@
   background: transparent; color: #55544f; font: inherit; font-weight: 700; cursor: pointer;
 }
 .limen-studio__stage-nav button[aria-current='step'] { background: #e5ece8; color: #253b30; }
-.limen-studio__stage-nav button:focus-visible { outline: 3px solid #315f81; outline-offset: 1px; }
+.limen-studio__stage-nav button:focus-visible { outline: 3px solid var(--studio-focus, #315f81); outline-offset: 1px; }
 .limen-studio__aesthetic-placeholder {
   margin-bottom: 1.25rem; border: 1px solid #d9d8d3; border-radius: 1.25rem; padding: 1.25rem; background: #fafaf8;
 }
@@ -1278,13 +1278,22 @@
 
 /* Recovery shell: the visible workflow is editorial; engine taxonomy stays internal. */
 .limen-studio {
-  --studio-ink: #202621;
-  --studio-muted: #68716a;
-  --studio-line: #dde2dd;
-  --studio-paper: #fff;
-  --studio-canvas: #f5f6f3;
-  --studio-accent: #315d47;
-  --studio-accent-soft: #e7eee9;
+  --studio-ink: #202820;
+  --studio-ink-soft: #39433b;
+  --studio-muted: #6f746e;
+  --studio-line: #ddd9cf;
+  --studio-line-strong: #ccc7ba;
+  --studio-paper: #fffdf9;
+  --studio-surface: #f8f6f0;
+  --studio-canvas: #ebe8e0;
+  --studio-accent: #28513e;
+  --studio-accent-strong: #1d4231;
+  --studio-accent-soft: #e5ece6;
+  --studio-bronze: #927251;
+  --studio-bronze-soft: #f1e9dd;
+  --studio-focus: #356b8e;
+  --studio-shadow-soft: 0 1px 2px rgb(44 48 40 / 5%), 0 10px 28px rgb(44 48 40 / 5%);
+  --studio-header-height: 5.25rem;
   padding: 0 1rem 2rem;
   background: var(--studio-canvas);
   color: var(--studio-ink);
@@ -1292,16 +1301,18 @@
 
 .limen-studio__workspace {
   max-width: 92rem;
+  background: var(--studio-surface);
 }
 
 .limen-studio__header {
-  min-height: 4.5rem;
+  min-height: var(--studio-header-height);
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.25rem;
   border-bottom: 1px solid var(--studio-line);
-  padding: .75rem 0;
+  padding: .8rem 1rem;
+  background: rgb(248 246 240 / 96%);
 }
 
 .limen-studio__brand,
@@ -1313,24 +1324,46 @@
 }
 
 .limen-studio__brand h1 {
+  display: grid;
   flex: 0 0 auto;
   margin: 0;
-  font-size: 1.05rem;
-  line-height: 1;
-  letter-spacing: -.025em;
+  gap: .16rem;
+  font-size: .68rem;
+  line-height: 1.05;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .limen-studio__brand h1 span {
   color: var(--studio-muted);
-  font-weight: 500;
+  font-weight: 700;
+}
+
+.limen-studio__brand h1 .limen-studio__brand-name {
+  color: var(--studio-accent-strong);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.22rem;
+  font-weight: 600;
+  letter-spacing: .12em;
 }
 
 .limen-studio__brand > div {
   display: grid;
   min-width: 0;
-  gap: .15rem;
+  grid-template-columns: auto auto;
+  gap: .08rem .45rem;
   border-left: 1px solid var(--studio-line);
   padding-left: 1rem;
+}
+
+.limen-studio__context-label {
+  grid-column: 1 / -1;
+  color: var(--studio-bronze);
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
 .limen-studio__brand strong,
@@ -1341,22 +1374,54 @@
 }
 
 .limen-studio__brand small {
+  align-self: end;
   color: var(--studio-muted);
-  font-size: .75rem;
+  font-size: .7rem;
 }
 
 .limen-studio__draft-status {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  color: var(--studio-ink-soft);
+  font-size: .7rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.limen-studio__draft-status > svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--studio-bronze);
+}
+
+.limen-studio__draft-status > span {
+  display: grid;
+  gap: .1rem;
+}
+
+.limen-studio__draft-status small {
   color: var(--studio-muted);
-  font-size: .78rem;
+  font-size: .58rem;
+  font-weight: 750;
+  letter-spacing: .08em;
+  text-transform: uppercase;
 }
 
 .limen-studio__back-link {
   min-height: 2.35rem;
-  border-color: var(--studio-line);
+  gap: .42rem;
+  border-color: var(--studio-line-strong);
   border-radius: .65rem;
   padding: .45rem .75rem;
   background: var(--studio-paper);
+  box-shadow: 0 1px 2px rgb(44 48 40 / 5%);
   font-size: .85rem;
+}
+
+.limen-studio__back-link svg {
+  width: 1rem;
+  height: 1rem;
 }
 
 .limen-studio__stage-nav-wrap {
@@ -1365,15 +1430,15 @@
   top: 0;
   margin: 0 -1rem;
   border-bottom: 1px solid var(--studio-line);
-  background: rgb(245 246 243 / 94%);
+  background: rgb(248 246 240 / 94%);
   padding: .65rem 1rem;
   backdrop-filter: blur(14px);
 }
 
 .limen-studio__stage-nav {
   display: flex;
-  max-width: 48rem;
-  gap: .2rem;
+  max-width: 51rem;
+  gap: .28rem;
   overflow-x: auto;
   margin: 0 auto;
   border: 0;
@@ -1388,23 +1453,97 @@
 }
 
 .limen-studio__stage-nav button {
+  position: relative;
+  display: flex;
   flex: 1 0 auto;
-  min-height: 2.4rem;
-  border-radius: .65rem;
-  padding: .45rem .8rem;
+  min-height: 3.25rem;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: .85rem;
+  padding: .45rem .72rem;
   color: var(--studio-muted);
-  font-size: .86rem;
+  font-size: 0;
   font-weight: 650;
+  text-align: left;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.limen-studio__stage-visual {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: .58rem;
+}
+
+.limen-studio__stage-nav button:hover {
+  background: rgb(255 253 249 / 65%);
+  color: var(--studio-ink-soft);
+}
+
+.limen-studio__stage-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 1px solid var(--studio-line);
+  border-radius: .68rem;
+  background: rgb(255 253 249 / 58%);
+  color: var(--studio-muted);
+}
+
+.limen-studio__stage-icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.limen-studio__stage-copy {
+  display: grid;
+  min-width: 0;
+  gap: .08rem;
+}
+
+.limen-studio__stage-number {
+  color: var(--studio-bronze);
+  font-size: .54rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.limen-studio__stage-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .limen-studio__stage-nav button[aria-current='step'] {
   background: var(--studio-paper);
-  box-shadow: 0 1px 3px rgb(30 42 34 / 10%);
-  color: var(--studio-accent);
+  border-color: var(--studio-line);
+  box-shadow: var(--studio-shadow-soft);
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__stage-nav button[aria-current='step']::after {
+  position: absolute;
+  right: .72rem;
+  bottom: .28rem;
+  left: .72rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--studio-bronze);
+  content: '';
+}
+
+.limen-studio__stage-nav button[aria-current='step'] .limen-studio__stage-icon {
+  border-color: transparent;
+  background: var(--studio-accent);
+  color: #fffdf9;
 }
 
 .limen-studio__stage {
-  padding-top: 1.75rem;
+  padding: 1.75rem 1rem 0;
 }
 
 .limen-studio__stage-heading {
@@ -1433,7 +1572,7 @@
 
 .limen-studio__eyebrow {
   margin-bottom: .45rem;
-  color: var(--studio-accent);
+  color: var(--studio-bronze);
   font-size: .68rem;
   letter-spacing: .12em;
 }
@@ -2049,7 +2188,7 @@
   }
 
   .limen-studio__header {
-    padding: .75rem 0;
+    padding: .8rem 1.25rem;
   }
 
   .limen-studio__stage-nav-wrap {
@@ -2609,15 +2748,17 @@
   .limen-studio__workspace {
     display: grid;
     height: 100dvh;
-    grid-template-rows: 3.2rem minmax(0, 1fr);
+    grid-template-rows: var(--studio-header-height) minmax(0, 1fr);
+    border-inline: 1px solid rgb(204 199 186 / 75%);
+    box-shadow: 0 0 44px rgb(46 48 40 / 7%);
   }
 
   .limen-studio__header {
     display: grid;
     min-height: 0;
-    grid-template-columns: auto minmax(28rem, 1fr) auto;
-    gap: 1rem;
-    padding: .3rem 0;
+    grid-template-columns: minmax(15rem, auto) minmax(34rem, 1fr) auto;
+    gap: 1.25rem;
+    padding: .7rem 1rem;
   }
 
   .limen-studio__brand,
@@ -2626,8 +2767,8 @@
   }
 
   .limen-studio__brand > div {
-    gap: 0;
-    padding-left: .7rem;
+    gap: .08rem .4rem;
+    padding-left: .8rem;
   }
 
   .limen-studio__brand strong {
@@ -2650,19 +2791,18 @@
   }
 
   .limen-studio__stage-nav {
-    max-width: 38rem;
+    max-width: 43rem;
   }
 
   .limen-studio__stage-nav button {
-    min-height: 2rem;
-    padding: .25rem .6rem;
-    font-size: .78rem;
+    min-height: 3.35rem;
+    padding: .45rem .65rem;
   }
 
   .limen-studio__stage {
     min-height: 0;
     overflow: auto;
-    padding-top: .5rem;
+    padding: .5rem 1rem 0;
   }
 
   .limen-studio__stage-heading {
@@ -2689,7 +2829,7 @@
   }
 
   .limen-studio__content-layout {
-    height: calc(100dvh - 3.7rem);
+    height: calc(100dvh - var(--studio-header-height) - .5rem);
     min-height: 0;
     grid-template-columns: 13rem minmax(0, 1fr) 27rem;
     gap: .65rem;
@@ -2969,7 +3109,7 @@
 
   .limen-studio__review-stage {
     display: grid;
-    height: calc(100dvh - 3.7rem);
+    height: calc(100dvh - var(--studio-header-height) - .5rem);
     min-height: 0;
     grid-template-rows: auto minmax(0, 1fr);
     max-width: none;
