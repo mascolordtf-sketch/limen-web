@@ -33,6 +33,30 @@
   margin-bottom: 1.25rem; border: 1px solid #d9d8d3; border-radius: 1.25rem; padding: 1.25rem; background: #fafaf8;
 }
 .limen-studio__aesthetic-placeholder p { margin-bottom: 0; color: #55544f; line-height: 1.55; }
+.limen-studio__template-stage {
+  margin-bottom: 1.25rem; border: 1px solid #d9d8d3; border-radius: 1.25rem; padding: 1.25rem; background: #fafaf8;
+}
+.limen-studio__template-stage > p { color: #55544f; line-height: 1.55; }
+.limen-studio__template-note { border-left: 3px solid #c7c2b2; padding-left: .75rem; font-size: .875rem; }
+.limen-studio__template-grid { display: grid; gap: .75rem; margin: 1rem 0; padding: 0; list-style: none; }
+.limen-studio__template-card { border: 1px solid #d9d8d3; border-radius: 1rem; padding: 1rem; background: #fff; }
+.limen-studio__template-card div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; }
+.limen-studio__template-card small { color: #62615d; }
+.limen-studio__template-card p { color: #55544f; line-height: 1.5; }
+.limen-studio__template-card button, .limen-studio__template-back {
+  min-height: 2.75rem; border: 1px solid #aaa8a1; border-radius: .7rem; padding: .55rem .8rem;
+  background: #fff; color: inherit; font: inherit; cursor: pointer;
+}
+.limen-studio__template-card button[aria-pressed='true'] { border-color: #315f81; background: #eef3f6; }
+.limen-studio__template-filters { display: grid; gap: 1rem; margin: 1rem 0; }
+.limen-studio__template-filters fieldset { min-width: 0; margin: 0; border: 0; padding: 0; }
+.limen-studio__template-filters legend { margin-bottom: .5rem; font-weight: 700; }
+.limen-studio__template-filters label { display: inline-flex; min-height: 2.75rem; align-items: center; gap: .4rem; margin: 0 .75rem .35rem 0; }
+
+@media (min-width: 48rem) {
+  .limen-studio__template-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .limen-studio__template-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 .limen-studio__shell { display: grid; gap: 1rem; margin-top: 1.25rem; }
 .limen-studio__primary-nav,

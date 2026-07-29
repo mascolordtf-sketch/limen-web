@@ -10,6 +10,9 @@ import { StudioNavigationShell } from '../src/features/studio/StudioNavigationSh
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioAestheticStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
+import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
+  transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
@@ -71,6 +74,33 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
 assert(renderToStaticMarkup(createElement(StudioAestheticStage)).includes('próxima entrega')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Estética es informativa y cambiar la etapa no altera el borrador temporal')
+const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage, { template: origin01Template }))
+assert(templateMainMarkup.includes('Plantilla seleccionada') && templateMainMarkup.includes('Origin 01')
+  && templateMainMarkup.includes('Plantillas destacadas') && templateMainMarkup.includes('Ver todas las plantillas'),
+  'Plantilla muestra la selección actual, opciones destacadas y acceso a la galería')
+const initialTemplateGallery = createStudioTemplateGalleryState(origin01Template.id)
+const openTemplateGallery = transitionStudioTemplateGallery(initialTemplateGallery, { type: 'open-gallery' })
+const templateGalleryMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, initialState: openTemplateGallery }))
+assert(templateGalleryMarkup.includes('Todas las plantillas') && templateGalleryMarkup.includes('← Volver')
+  && templateGalleryMarkup.includes('Tipo de celebración') && templateGalleryMarkup.includes('Estilo visual'),
+  'Ver todas las plantillas abre una vista de galería independiente con retorno y filtros')
+const filteredGallery = transitionStudioTemplateGallery(
+  transitionStudioTemplateGallery(openTemplateGallery, { type: 'filter-celebration', celebration: 'casamiento' }),
+  { type: 'filter-style', style: 'editorial' })
+const visibleFilteredTemplates = filterStudioTemplateOptions(createStudioTemplateOptions(origin01Template), filteredGallery)
+assert(visibleFilteredTemplates.length === 1 && visibleFilteredTemplates[0]?.id === 'example-editorial',
+  'los filtros de celebración y estilo determinan los resultados visibles')
+const selectedTemplateGallery = transitionStudioTemplateGallery(filteredGallery,
+  { type: 'select', templateId: 'example-editorial' })
+const returnedTemplateMain = transitionStudioTemplateGallery(selectedTemplateGallery, { type: 'close-gallery' })
+const returnedTemplateMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, initialState: returnedTemplateMain }))
+assert(returnedTemplateMain.view === 'main' && returnedTemplateMain.selectedId === 'example-editorial'
+  && returnedTemplateMain.celebration === 'casamiento' && returnedTemplateMain.style === 'editorial'
+  && returnedTemplateMarkup.includes('<h2 id="studio-template-title">Editorial</h2>')
+  && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Volver conserva selección y filtros sin reiniciar el borrador de Studio')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
