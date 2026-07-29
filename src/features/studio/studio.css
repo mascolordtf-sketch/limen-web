@@ -2098,3 +2098,414 @@
     grid-template-columns: minmax(32rem, 1fr);
   }
 }
+
+/* Desktop density: use the available canvas without shrinking the interface. */
+.limen-studio__trivia-disclosure {
+  overflow: hidden;
+}
+
+.limen-studio__trivia-disclosure > summary {
+  display: flex;
+  min-height: 3.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: .75rem;
+  padding: .65rem .75rem;
+  color: var(--studio-ink);
+  cursor: pointer;
+  list-style: none;
+}
+
+.limen-studio__trivia-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.limen-studio__trivia-disclosure > summary::after {
+  color: var(--studio-accent);
+  content: '+';
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.limen-studio__trivia-disclosure[open] > summary::after {
+  content: '−';
+}
+
+.limen-studio__trivia-disclosure > summary span {
+  font-weight: 750;
+}
+
+.limen-studio__trivia-disclosure > summary small {
+  color: var(--studio-muted);
+  font-size: .78rem;
+  font-weight: 500;
+}
+
+.limen-studio__trivia-group-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .75rem;
+}
+
+.limen-studio__trivia-group-heading h3,
+.limen-studio__trivia-group-heading p {
+  margin: 0;
+}
+
+.limen-studio__trivia-group-heading p {
+  color: var(--studio-muted);
+  font-size: .78rem;
+}
+
+.limen-studio__trivia-presentation-grid,
+.limen-studio__trivia-results-grid {
+  display: grid;
+  gap: 1rem;
+  padding: .75rem;
+}
+
+.limen-studio__trivia-question-list {
+  display: grid;
+  gap: .5rem;
+}
+
+.limen-studio__trivia-question {
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  padding: 0;
+  background: #fbfcfa;
+}
+
+.limen-studio__trivia-question:first-of-type {
+  border-top: 1px solid var(--studio-line);
+  padding-top: 0;
+}
+
+.limen-studio__trivia-question-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 0;
+  border-radius: .8rem;
+  padding: .6rem .75rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.limen-studio__trivia-question-toggle > span:first-child {
+  display: grid;
+  min-width: 0;
+  gap: .15rem;
+}
+
+.limen-studio__trivia-question-toggle small {
+  overflow: hidden;
+  color: var(--studio-muted);
+  font-size: .76rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limen-studio__trivia-question-toggle > span:last-child {
+  color: var(--studio-accent);
+  font-size: 1.3rem;
+}
+
+.limen-studio__trivia-question-toggle:focus-visible,
+.limen-studio__trivia-disclosure > summary:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__trivia-question-body {
+  border-top: 1px solid var(--studio-line);
+  padding: .9rem;
+}
+
+.limen-studio__trivia-options {
+  display: grid;
+  gap: .8rem;
+  margin: .9rem 0;
+  border: 0;
+  padding: 0;
+}
+
+.limen-studio__trivia-options legend {
+  margin-bottom: .7rem;
+  font-size: .84rem;
+  font-weight: 750;
+}
+
+.limen-studio__trivia-option-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.limen-studio__trivia-correct-choice {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  color: var(--studio-muted);
+  font-size: .75rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.limen-studio__trivia-correct-choice input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--studio-accent);
+}
+
+.limen-studio__trivia-feedback-grid {
+  display: grid;
+  gap: .8rem;
+}
+
+.limen-studio__field-reset:disabled {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .limen-studio__stage {
+    padding-top: 1.25rem;
+  }
+
+  .limen-studio__stage-heading {
+    margin-bottom: 1rem;
+  }
+
+  .limen-studio__stage-heading h2 {
+    font-size: clamp(1.4rem, 2vw, 1.75rem);
+  }
+
+  .limen-studio__template-art {
+    min-height: 7.25rem;
+  }
+
+  .limen-studio__template-card {
+    min-height: 14rem;
+    grid-template-rows: 7.25rem minmax(0, 1fr);
+  }
+
+  .limen-studio__template-card-copy {
+    display: grid;
+    align-content: start;
+    padding: .75rem;
+  }
+
+  .limen-studio__template-card-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: .4rem 0 .6rem;
+    font-size: .82rem;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .limen-studio__template-card button {
+    min-height: 2.15rem;
+    padding-block: .3rem;
+  }
+
+  .limen-studio__aesthetic-placeholder {
+    grid-template-columns: minmax(18rem, .9fr) minmax(24rem, 1.3fr);
+    align-items: center;
+    column-gap: 2rem;
+    row-gap: .5rem;
+  }
+
+  .limen-studio__aesthetic-placeholder .limen-studio__stage-heading {
+    margin: 0;
+  }
+
+  .limen-studio__aesthetic-preview {
+    min-height: 10.5rem;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .limen-studio__aesthetic-placeholder .limen-studio__quiet-note {
+    grid-column: 1;
+  }
+
+  .limen-studio__sections ul {
+    gap: .5rem;
+    margin-top: .75rem;
+  }
+
+  .limen-studio__sections li {
+    min-height: 4.25rem;
+    padding: .55rem .75rem;
+  }
+
+  .limen-studio__sections li p {
+    margin-top: .1rem;
+    font-size: .8rem;
+    line-height: 1.3;
+  }
+
+  .limen-studio__required-badge {
+    padding: .25rem .45rem;
+    font-size: .68rem;
+  }
+
+  .limen-studio__field-group {
+    gap: .3rem;
+  }
+
+  .limen-studio__field-help {
+    font-size: .78rem;
+    line-height: 1.35;
+  }
+
+  .limen-studio__text-input,
+  .limen-studio__datetime-input {
+    min-height: 2.45rem;
+    border-radius: .6rem;
+    padding: .45rem .65rem;
+  }
+
+  .limen-studio__event-information-textarea,
+  .limen-studio__trivia-textarea,
+  .limen-studio__closing-textarea,
+  .limen-studio__dress-code-textarea,
+  .limen-studio__gifts-textarea,
+  .limen-studio__rsvp-textarea,
+  .limen-studio__story-textarea,
+  .limen-studio__opening-textarea,
+  .limen-studio__share-textarea {
+    min-height: 4.5rem;
+    border-radius: .6rem;
+    padding: .55rem .65rem;
+    line-height: 1.4;
+  }
+
+  .limen-studio__field-reset {
+    min-height: 1.75rem;
+    padding: .15rem 0;
+    font-size: .75rem;
+  }
+
+  .limen-studio__event-information-groups,
+  .limen-studio__gallery-groups,
+  .limen-studio__closing-fields,
+  .limen-studio__dress-code-fields,
+  .limen-studio__rsvp-fields,
+  .limen-studio__gifts-fields,
+  .limen-studio__story-fields,
+  .limen-studio__opening-groups {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .limen-studio__event-information-group .limen-studio__field-group + .limen-studio__field-group,
+  .limen-studio__gallery-group .limen-studio__field-group + .limen-studio__field-group,
+  .limen-studio__opening-field-group + .limen-studio__opening-field-group {
+    margin-top: .8rem;
+  }
+
+  .limen-studio__trivia-groups {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .limen-studio__trivia-group + .limen-studio__trivia-group {
+    padding-top: 1rem;
+  }
+
+  .limen-studio__trivia-presentation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .limen-studio__trivia-field--description,
+  .limen-studio__trivia-field--revealMessage {
+    grid-column: 1 / -1;
+  }
+
+  .limen-studio__trivia-options,
+  .limen-studio__trivia-feedback-grid,
+  .limen-studio__trivia-results-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .limen-studio__trivia-options legend {
+    grid-column: 1 / -1;
+  }
+
+  .limen-studio__trivia-result {
+    border: 1px solid var(--studio-line);
+    border-radius: .75rem;
+    padding: .8rem;
+  }
+
+  .limen-studio__trivia-result:first-of-type {
+    border-top: 1px solid var(--studio-line);
+    padding-top: .8rem;
+  }
+
+  .limen-studio__contextual-editor {
+    padding: 1rem;
+  }
+
+  .limen-studio__contextual-editor > header {
+    margin-bottom: 1rem;
+    padding-bottom: .75rem;
+  }
+
+  .limen-studio__contextual-editor > header h2 {
+    font-size: 1.35rem;
+  }
+}
+
+@media (min-width: 76rem) {
+  .limen-studio__stage {
+    padding-top: 1.35rem;
+  }
+
+  .limen-studio__content-layout {
+    grid-template-columns: 12rem minmax(32rem, 1fr) minmax(20rem, 22rem);
+    gap: .75rem;
+  }
+
+  .limen-studio__scene-navigation,
+  .limen-studio__content-layout > .limen-studio__desktop-preview,
+  .limen-studio__review-layout > .limen-studio__desktop-preview {
+    top: 4.7rem;
+  }
+
+  .limen-studio__scene-navigation {
+    padding: .75rem;
+  }
+
+  .limen-studio__scene-navigation-list {
+    gap: .2rem;
+  }
+
+  .limen-studio__scene-navigation-list button {
+    min-height: 2.1rem;
+    padding: .3rem .5rem;
+  }
+
+  .limen-studio__manage-sections {
+    min-height: 2.15rem;
+    margin-top: .5rem;
+  }
+
+  .limen-studio__preview-shell {
+    height: calc(100vh - 10rem);
+  }
+}
