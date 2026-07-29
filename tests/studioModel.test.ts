@@ -123,9 +123,9 @@ assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Hist
   && !contentMarkup.includes('>Regalos<') && contentMarkup.includes('Agregar o quitar secciones')
   && (contentMarkup.match(/EDITOR_CONTEXTUAL/g) ?? []).length === 1,
   'Contenido muestra solo escenas incluidas, una región editorial y el acceso único a Secciones')
-assert(!contentMarkup.includes('PREVIEW_REAL') && contentMarkup.includes('Ver invitación')
+assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1 && contentMarkup.includes('Ver invitación')
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
-  'Contenido prioriza la edición, abre la preview bajo demanda y oculta la taxonomía técnica del motor')
+  'Contenido mantiene una preview junto al editor y oculta la taxonomía técnica del motor')
 const draftBeforeStageNavigation = JSON.stringify(initial)
 const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
@@ -563,16 +563,17 @@ const realContentBoundary = renderToStaticMarkup(createElement(StudioScenesConte
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
   previewDedicated: false, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
 }))
-assert(!realContentBoundary.includes('studio-preview-renderer-title')
+assert((realContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && realContentBoundary.includes('Ver invitación'),
-  'el boundary productivo de Contenido no monta el renderer hasta que la persona abre la preview')
+  'Contenido mantiene una única preview real visible junto al editor')
 const collapsedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
   draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
   previewDedicated: false, previewCollapsed: true, onOpenPreview: () => undefined, onShowPreview: () => undefined,
 }))
-assert(!collapsedContentBoundary.includes('studio-preview-renderer-title'),
-  'el estado contraído de Contenido mantiene la preview fuera del árbol visible')
+assert(collapsedContentBoundary.includes('studio-preview-renderer-title')
+  && collapsedContentBoundary.includes('hidden=""'),
+  'el estado contraído conserva una única preview montada y la retira de la interacción')
 const dedicatedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
   draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
   editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,

@@ -6,7 +6,7 @@ type Props = {
   preview: ReactNode
   publicInvitationUrl: string
   onClose: () => void
-  onCollapse: () => void
+  onCollapse?: () => void
   onOpen: (event: MouseEvent<HTMLButtonElement>) => void
   onRestart: () => void
 }
@@ -21,7 +21,7 @@ export function StudioPreviewPane({ audienceLabel, layerOpen, preview, publicInv
           ? <button type="button" onClick={onClose}>Volver al editor</button>
           : <>
             <button type="button" onClick={onRestart}>Reiniciar</button>
-            <button type="button" onClick={onCollapse}>Contraer</button>
+            {onCollapse && <button type="button" onClick={onCollapse}>Contraer</button>}
             <button type="button" onClick={onOpen}>Ampliar</button>
           </>}
         <a href={publicInvitationUrl}>Abrir demo</a>

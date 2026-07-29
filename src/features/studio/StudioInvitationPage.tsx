@@ -130,7 +130,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
   const previewPane = <StudioPreviewPane audienceLabel={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
     layerOpen={layerOpen} preview={preview} publicInvitationUrl={publicInvitationUrl}
-    onClose={closePreview} onCollapse={() => surfaceDispatch({ type: 'collapse' })}
+    onClose={closePreview}
     onOpen={openPreview} onRestart={audience.restartPreview} />
 
   return <div className="limen-studio"><div className="limen-studio__workspace">

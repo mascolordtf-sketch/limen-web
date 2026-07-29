@@ -45,11 +45,12 @@ export function StudioScenesContent({ draft, selectedScene, onSceneSelect, onMan
       {correctionReturn && <button className="limen-studio__return-errors" type="button"
         onClick={onReturnToErrors}>← Volver a Errores</button>}
     </article>
-    {previewDedicated && <div className="limen-studio__desktop-preview limen-studio__desktop-preview--dedicated">
+    <aside className={`limen-studio__desktop-preview${previewDedicated ? ' limen-studio__desktop-preview--dedicated' : ''}`}
+      aria-label="Vista previa de la invitación">
       {previewCollapsed && !previewDedicated && <div className="limen-studio__preview-collapsed">
         <span>La vista previa está contraída.</span><button type="button" onClick={onShowPreview}>Mostrar</button></div>}
       <div hidden={previewCollapsed && !previewDedicated}
         inert={previewCollapsed && !previewDedicated ? true : undefined}>{preview}</div>
-    </div>}
+    </aside>
   </section>
 }
