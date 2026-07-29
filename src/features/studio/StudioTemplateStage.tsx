@@ -1,5 +1,4 @@
 import { useMemo, useReducer } from 'react'
-import type { ReactNode } from 'react'
 
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
@@ -74,11 +73,4 @@ export function StudioTemplateStage({ template, initialState, onGalleryViewChang
       onSelect={() => dispatch({ type: 'select', templateId: option.id })} />)}</ul>
     <button className="limen-studio__primary-link" type="button" onClick={() => changeView('gallery')}>Ver todas las plantillas</button>
   </section>
-}
-
-export function StudioExistingWorkspace({ hiddenByGallery, children }: {
-  hiddenByGallery: boolean
-  children: ReactNode
-}) {
-  return hiddenByGallery ? null : children
 }

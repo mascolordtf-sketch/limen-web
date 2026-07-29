@@ -21,9 +21,9 @@ import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, reso
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
-import { StudioAestheticStage, StudioStageNavigation } from './StudioWorkspaceStages'
+import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
-import { StudioExistingWorkspace, StudioTemplateStage } from './StudioTemplateStage'
+import { StudioTemplateStage } from './StudioTemplateStage'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -111,10 +111,11 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   return <div className="limen-studio"><div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}><div><p className="limen-studio__eyebrow">LIMEN Studio</p><h1>Espacio interno de composición</h1></div><Link className="limen-studio__back-link" to="/">Volver al sitio</Link></header>
     <div inert={layerOpen ? true : undefined}><StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} /></div>
-    {template && <div hidden={activeStage !== 'template'}><StudioTemplateStage template={template}
-      onGalleryViewChange={(view) => setTemplateGalleryOpen(view === 'gallery')} /></div>}
-    {activeStage === 'aesthetic' && <StudioAestheticStage />}
-    <StudioExistingWorkspace hiddenByGallery={activeStage === 'template' && templateGalleryOpen}>
+    <StudioStagePresentation activeStage={activeStage} previewDedicated={layerOpen}
+      templateGalleryOpen={templateGalleryOpen}
+      templateStage={template && <StudioTemplateStage template={template}
+        onGalleryViewChange={(view) => setTemplateGalleryOpen(view === 'gallery')} />}
+      aestheticStage={<StudioAestheticStage />}>
     <section className="limen-studio__summary" inert={layerOpen ? true : undefined} aria-labelledby="studio-invitation-title"><div className="limen-studio__summary-heading"><p className="limen-studio__eyebrow">Invitación</p><h2 id="studio-invitation-title">{model.draft.protagonistName}</h2><p className="limen-studio__technical">Borrador temporal · Código estable {invitation.code}</p><p className="limen-studio__technical">{model.validation.invitationValid ? 'Invitación válida' : 'Invitación con errores'} · Cambios no persistentes</p></div>
       <dl className="limen-studio__metadata"><div><dt>Evento</dt><dd>{invitation.event.name}</dd></div><div><dt>Celebración</dt><dd>{invitation.event.celebrationLabel}</dd></div><div><dt>Fecha</dt><dd>{eventDate}</dd></div><div><dt>Plantilla</dt><dd>Origin 01 <span>{invitation.templateId}</span></dd></div><div><dt>Estado</dt><dd>{lifecycleLabels[invitation.lifecycleStatus]}</dd></div><div><dt>Módulos configurados</dt><dd>{invitation.modules.length}</dd></div></dl></section>
     <section className="limen-studio__notice" inert={layerOpen ? true : undefined}><h2>Estado del prototipo</h2><p><strong>Prototipo interno sin autenticación. No contiene persistencia.</strong></p><p>Los cambios son temporales y se restablecen al recargar.</p></section>
@@ -126,6 +127,6 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       previewStatus={retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}
       onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
       correctionReturn={correctionContext !== undefined} onReturnToErrors={returnToErrors} />
-    </StudioExistingWorkspace>
+    </StudioStagePresentation>
   </div></div>
 }

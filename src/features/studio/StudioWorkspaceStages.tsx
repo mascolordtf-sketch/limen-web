@@ -1,5 +1,6 @@
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
+import type { ReactNode } from 'react'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
@@ -17,4 +18,21 @@ export function StudioAestheticStage() {
     <h2 id="studio-aesthetic-title">Estética</h2>
     <p>La personalización de la apariencia de esta plantilla se incorporará en una próxima entrega.</p>
   </section>
+}
+
+export function StudioStagePresentation({ activeStage, previewDedicated, templateGalleryOpen,
+  templateStage, aestheticStage, children }: {
+  activeStage: StudioWorkspaceStage
+  previewDedicated: boolean
+  templateGalleryOpen: boolean
+  templateStage: ReactNode
+  aestheticStage: ReactNode
+  children: ReactNode
+}) {
+  const independentGallery = activeStage === 'template' && templateGalleryOpen && !previewDedicated
+  return <>
+    <div hidden={activeStage !== 'template'} inert={previewDedicated ? true : undefined}>{templateStage}</div>
+    {activeStage === 'aesthetic' && <div inert={previewDedicated ? true : undefined}>{aestheticStage}</div>}
+    {!independentGallery && children}
+  </>
 }

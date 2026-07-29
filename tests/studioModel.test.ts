@@ -8,9 +8,9 @@ import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRo
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
-import { StudioAestheticStage, StudioStageNavigation } from '../src/features/studio/StudioWorkspaceStages'
+import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
-import { StudioExistingWorkspace, StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
   transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
@@ -85,20 +85,6 @@ const templateGalleryMarkup = renderToStaticMarkup(createElement(StudioTemplateS
 assert(templateGalleryMarkup.includes('Todas las plantillas') && templateGalleryMarkup.includes('← Volver')
   && templateGalleryMarkup.includes('Tipo de celebración') && templateGalleryMarkup.includes('Estilo visual'),
   'Ver todas las plantillas abre una vista de galería independiente con retorno y filtros')
-const independentGalleryWorkspace = renderToStaticMarkup(createElement('div', null,
-  createElement('header', null, 'LIMEN Studio'),
-  createElement(StudioStageNavigation, { activeStage: 'template', onStageChange: () => undefined }),
-  createElement(StudioTemplateStage, { template: origin01Template, initialState: openTemplateGallery }),
-  createElement(StudioExistingWorkspace, { hiddenByGallery: true },
-    createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición',
-      createElement('span', { id: 'studio-preview-renderer-title' }, 'Preview')))))
-assert(independentGalleryWorkspace.includes('LIMEN Studio') && independentGalleryWorkspace.includes('Etapas de edición')
-  && independentGalleryWorkspace.includes('Todas las plantillas')
-  && !independentGalleryWorkspace.includes('Resumen de invitación')
-  && !independentGalleryWorkspace.includes('Estado del prototipo')
-  && !independentGalleryWorkspace.includes('Shell de edición')
-  && !independentGalleryWorkspace.includes('studio-preview-renderer-title'),
-  'la galería independiente conserva encabezado y etapas, y retira el workspace y su preview')
 const filteredGallery = transitionStudioTemplateGallery(
   transitionStudioTemplateGallery(openTemplateGallery, { type: 'filter-celebration', celebration: 'casamiento' }),
   { type: 'filter-style', style: 'editorial' })
@@ -115,10 +101,6 @@ assert(returnedTemplateMain.view === 'main' && returnedTemplateMain.selectedId =
   && returnedTemplateMarkup.includes('<h2 id="studio-template-title">Editorial</h2>')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Volver conserva selección y filtros sin reiniciar el borrador de Studio')
-const restoredExistingWorkspace = renderToStaticMarkup(createElement(StudioExistingWorkspace,
-  { hiddenByGallery: false }, createElement('div', null, 'Workspace restaurado')))
-assert(restoredExistingWorkspace.includes('Workspace restaurado'),
-  'Volver desde la galería restaura el workspace anterior')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
@@ -475,6 +457,35 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
+const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean, activeStage: 'template' | 'aesthetic' = 'template') =>
+  renderToStaticMarkup(createElement('div', null,
+    createElement('header', null, 'LIMEN Studio'),
+    createElement(StudioStageNavigation, { activeStage, onStageChange: () => undefined }),
+    createElement(StudioStagePresentation, {
+      activeStage, previewDedicated, templateGalleryOpen: galleryOpen,
+      templateStage: createElement(StudioTemplateStage, { template: origin01Template,
+        initialState: galleryOpen ? openTemplateGallery : returnedTemplateMain }),
+      aestheticStage: createElement(StudioAestheticStage),
+    }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
+const independentGalleryPresentation = renderStagePresentation(true, false)
+assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')
+  && independentGalleryPresentation.includes('Todas las plantillas')
+  && !independentGalleryPresentation.includes('Resumen de invitación')
+  && !independentGalleryPresentation.includes('Estado del prototipo')
+  && !independentGalleryPresentation.includes('Shell de edición')
+  && !independentGalleryPresentation.includes('studio-preview-renderer-title'),
+  'el boundary real presenta la galería independiente y retira el workspace existente')
+const restoredStagePresentation = renderStagePresentation(false, false)
+assert(restoredStagePresentation.includes('Resumen de invitación')
+  && (restoredStagePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'cerrar la galería restaura el workspace con una única preview real')
+const protectedTemplatePresentation = renderStagePresentation(true, true)
+const protectedAestheticPresentation = renderStagePresentation(false, true, 'aesthetic')
+assert(protectedTemplatePresentation.includes('inert=""')
+  && protectedAestheticPresentation.includes('inert=""')
+  && protectedTemplatePresentation.includes('Resumen de invitación')
+  && (protectedTemplatePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'la preview dedicada vuelve inertes Plantilla y Estética e impide que la galería retire el renderer activo')
 const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
   StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
     editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,
