@@ -2671,7 +2671,7 @@
   .limen-studio__content-layout {
     height: calc(100dvh - 3.7rem);
     min-height: 0;
-    grid-template-columns: 9.75rem minmax(0, 1fr) clamp(18.5rem, 22vw, 21rem);
+    grid-template-columns: 9.75rem minmax(0, 1fr) 27rem;
     gap: .65rem;
     overflow: hidden;
   }
@@ -2907,13 +2907,15 @@
   }
 
   .limen-studio__desktop-preview .limen-studio__preview-shell {
+    width: min(100%, 24.375rem);
     height: calc(100dvh - 7.3rem);
     min-height: 0;
+    margin-inline: auto;
   }
 
   .limen-studio__content-layout > .limen-studio__desktop-preview--dedicated .limen-studio__preview-pane,
   .limen-studio__review-layout > .limen-studio__desktop-preview--dedicated .limen-studio__preview-pane {
-    width: min(26rem, calc(100vw - 2rem));
+    width: min(27rem, calc(100vw - 2rem));
     height: calc(100dvh - 2rem);
     margin: 0 auto;
   }
@@ -2953,7 +2955,7 @@
 
   .limen-studio__review-layout {
     min-height: 0;
-    grid-template-columns: minmax(0, 1fr) clamp(18.5rem, 25vw, 23rem);
+    grid-template-columns: minmax(0, 1fr) 27rem;
     overflow: hidden;
   }
 
