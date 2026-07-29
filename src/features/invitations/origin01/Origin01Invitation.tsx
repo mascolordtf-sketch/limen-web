@@ -257,12 +257,16 @@ export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
   publicInvitationUrl,
+  startAtInvitation = false,
 }: {
   invitation: Origin01InvitationData
   audience?: InvitationAudience
   publicInvitationUrl?: string
+  startAtInvitation?: boolean
 }) {
-  const [phase, setPhase] = useState<EntryPhase>(audience === 'guest' ? 'envelope' : 'prelude')
+  const [phase, setPhase] = useState<EntryPhase>(
+    startAtInvitation ? 'invitation' : audience === 'guest' ? 'envelope' : 'prelude',
+  )
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMusicLoading, setIsMusicLoading] = useState(false)
   const [isMusicFailed, setIsMusicFailed] = useState(false)

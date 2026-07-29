@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react'
+import { useState, type ChangeEvent } from 'react'
 
 import type { Origin01TriviaQuestion } from '../invitations/origin01/origin01ContentTypes'
 import type { Origin01TriviaEditorialDraft } from './origin01StudioDraft'
@@ -33,6 +33,12 @@ function sameQuestion(a: Origin01TriviaQuestion, b: Origin01TriviaQuestion) {
 }
 
 export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
+  const [expandedQuestion, setExpandedQuestion] = useState<string | undefined>(value.questions[0]?.id)
+  const [activeSection, setActiveSection] = useState<'intro' | 'actions' | 'questions' | 'results'>('questions')
+  const visiblePresentationFields = presentationFields.filter(([key]) => activeSection === 'intro'
+    ? ['introEyebrow', 'description', 'revealTitle', 'revealMessage'].includes(key)
+    : !['introEyebrow', 'description', 'revealTitle', 'revealMessage'].includes(key))
+
   const updateQuestion = (questionIndex: number, update: (question: Origin01TriviaQuestion) => Origin01TriviaQuestion) => {
     onChange({ ...value, questions: value.questions.map((question, index) => (
       index === questionIndex ? update(question) : question
@@ -46,10 +52,25 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
         Personalizá las preguntas y los resultados sin cambiar la dinámica del juego.
       </p>
 
+      <nav className="limen-studio__trivia-tabs" aria-label="Configuraciones de Trivia">
+        {([
+          ['intro', 'Inicio y cierre'],
+          ['actions', 'Botones'],
+          ['questions', 'Preguntas'],
+          ['results', 'Resultados'],
+        ] as const).map(([id, label]) => <button key={id} type="button"
+          aria-current={activeSection === id ? 'page' : undefined}
+          onClick={() => setActiveSection(id)}>{label}</button>)}
+      </nav>
+
       <div className="limen-studio__trivia-groups">
-        <section className="limen-studio__trivia-group" aria-labelledby="studio-trivia-presentation">
-          <h3 id="studio-trivia-presentation">Presentación</h3>
-          {presentationFields.map(([key, label, help]) => {
+        {(activeSection === 'intro' || activeSection === 'actions') && <section
+          className="limen-studio__trivia-group" aria-labelledby="studio-trivia-presentation">
+          <div className="limen-studio__trivia-group-heading">
+            <h3 id="studio-trivia-presentation">{activeSection === 'intro' ? 'Inicio y cierre' : 'Botones y navegación'}</h3>
+          </div>
+          <div className="limen-studio__trivia-presentation-grid">
+            {visiblePresentationFields.map(([key, label, help]) => {
             const id = `studio-trivia-${key}`
             const current = String(value[key])
             const canonical = String(canonicalValue[key])
@@ -63,7 +84,7 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
               'aria-invalid': error ? true as const : undefined,
               'aria-describedby': describedBy(id, error),
             }
-            return <div className="limen-studio__trivia-field" key={key}>
+            return <div className={`limen-studio__trivia-field limen-studio__trivia-field--${key}`} key={key}>
               <div className="limen-studio__field-group">
                 <label className="limen-studio__field-label" htmlFor={id}>{label}</label>
                 <p className="limen-studio__field-help" id={`${id}-help`}>{help}</p>
@@ -78,20 +99,34 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
                 </button>
               </div>
             </div>
-          })}
-        </section>
+            })}
+          </div>
+        </section>}
 
-        <section className="limen-studio__trivia-group" aria-labelledby="studio-trivia-questions">
-          <h3 id="studio-trivia-questions">Preguntas</h3>
-          {value.questions.map((question, questionIndex) => {
+        {activeSection === 'questions' && <section className="limen-studio__trivia-group"
+          aria-labelledby="studio-trivia-questions">
+          <div className="limen-studio__trivia-group-heading">
+            <h3 id="studio-trivia-questions">Preguntas</h3>
+            <p>Editá una pregunta por vez.</p>
+          </div>
+          <div className="limen-studio__trivia-question-list">{value.questions.map((question, questionIndex) => {
             const canonicalQuestion = canonicalValue.questions[questionIndex]
             const promptId = `studio-trivia-question-${question.id}-prompt`
             const promptError = fieldError(question.prompt, `Ingresá el enunciado de la pregunta ${questionIndex + 1}.`)
             const correctAnswerError = !question.isPrediction && !question.options.some(
               (option) => option.id === question.correctOptionId,
             ) ? 'Seleccioná la respuesta correcta.' : null
-            return <div className="limen-studio__trivia-question" key={question.id}>
-              <h4>Pregunta {questionIndex + 1}</h4>
+            const expanded = expandedQuestion === question.id
+            return <article className={`limen-studio__trivia-question${expanded ? ' is-expanded' : ''}`} key={question.id}>
+              <button className="limen-studio__trivia-question-toggle" type="button"
+                aria-expanded={expanded} aria-controls={`studio-trivia-question-${question.id}-body`}
+                onClick={() => setExpandedQuestion(question.id)}>
+                <span><strong>Pregunta {questionIndex + 1}</strong>
+                  <small>{question.prompt || 'Sin enunciado'}</small></span>
+                <span aria-hidden="true">{expanded ? '−' : '+'}</span>
+              </button>
+              {expanded && <div className="limen-studio__trivia-question-body"
+                id={`studio-trivia-question-${question.id}-body`}>
               <div className="limen-studio__field-group">
                 <label className="limen-studio__field-label" htmlFor={promptId}>Enunciado</label>
                 <textarea id={promptId} className="limen-studio__trivia-textarea"
@@ -100,12 +135,21 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
                   onChange={(event) => updateQuestion(questionIndex, (current) => ({ ...current, prompt: event.target.value }))} />
                 {promptError ? <p className="limen-studio__field-error" id={`${promptId}-error`} role="alert">{promptError}</p> : null}
               </div>
-              <div className="limen-studio__trivia-options">
+              <fieldset className="limen-studio__trivia-options">
+                <legend>Opciones {question.isPrediction ? '' : 'y respuesta correcta'}</legend>
                 {question.options.map((option, optionIndex) => {
                   const id = `studio-trivia-question-${question.id}-option-${option.id}`
                   const error = fieldError(option.label, `Ingresá el texto de la opción ${optionIndex + 1}.`)
                   return <div className="limen-studio__field-group" key={option.id}>
-                    <label className="limen-studio__field-label" htmlFor={id}>Opción {optionIndex + 1}</label>
+                    <div className="limen-studio__trivia-option-heading">
+                      <label className="limen-studio__field-label" htmlFor={id}>Opción {optionIndex + 1}</label>
+                      {!question.isPrediction && <label className="limen-studio__trivia-correct-choice">
+                        <input type="radio" name={`studio-trivia-question-${question.id}-correct`}
+                          value={option.id} checked={question.correctOptionId === option.id}
+                          onChange={() => updateQuestion(questionIndex, (current) => ({ ...current, correctOptionId: option.id }))} />
+                        Correcta
+                      </label>}
+                    </div>
                     <input id={id} className="limen-studio__text-input" type="text" value={option.label}
                       aria-invalid={error ? true : undefined} aria-describedby={describedBy(id, error, false)}
                       onChange={(event) => updateQuestion(questionIndex, (current) => ({
@@ -115,24 +159,16 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
                     {error ? <p className="limen-studio__field-error" id={`${id}-error`} role="alert">{error}</p> : null}
                   </div>
                 })}
-              </div>
+              </fieldset>
+              {correctAnswerError ? <p className="limen-studio__field-error"
+                id={`studio-trivia-question-${question.id}-correct-error`} role="alert">{correctAnswerError}</p> : null}
               {question.isPrediction ? (
                 <p className="limen-studio__trivia-note" id={`studio-trivia-question-${question.id}-prediction`}>
                   Esta pregunta no tiene respuesta incorrecta y no modifica el puntaje.
                 </p>
-              ) : (
-                <fieldset className="limen-studio__trivia-correct" aria-describedby={correctAnswerError ? `studio-trivia-question-${question.id}-correct-error` : undefined}>
-                  <legend>Respuesta correcta</legend>
-                  {question.options.map((option) => <label key={option.id}>
-                    <input type="radio" name={`studio-trivia-question-${question.id}-correct`}
-                      value={option.id} checked={question.correctOptionId === option.id}
-                      onChange={() => updateQuestion(questionIndex, (current) => ({ ...current, correctOptionId: option.id }))} />
-                    <span>{option.label || `Opción ${question.options.indexOf(option) + 1}`}</span>
-                  </label>)}
-                  {correctAnswerError ? <p className="limen-studio__field-error" id={`studio-trivia-question-${question.id}-correct-error`} role="alert">{correctAnswerError}</p> : null}
-                </fieldset>
-              )}
-              {(['correctFeedback', ...(question.incorrectFeedback === undefined ? [] : ['incorrectFeedback'])] as readonly ('correctFeedback' | 'incorrectFeedback')[]).map((key) => {
+              ) : null}
+              <div className="limen-studio__trivia-feedback-grid">
+                {(['correctFeedback', ...(question.incorrectFeedback === undefined ? [] : ['incorrectFeedback'])] as readonly ('correctFeedback' | 'incorrectFeedback')[]).map((key) => {
                 const prediction = question.isPrediction
                 const label = prediction ? 'Mensaje de participación' : key === 'correctFeedback' ? 'Mensaje de respuesta correcta' : 'Mensaje de respuesta incorrecta'
                 const id = `studio-trivia-question-${question.id}-${key}`
@@ -145,19 +181,24 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
                     onChange={(event) => updateQuestion(questionIndex, (current) => ({ ...current, [key]: event.target.value }))} />
                   {error ? <p className="limen-studio__field-error" id={`${id}-error`} role="alert">{error}</p> : null}
                 </div>
-              })}
+                })}
+              </div>
               <button className="limen-studio__field-reset" type="button"
                 disabled={sameQuestion(question, canonicalQuestion)}
                 onClick={() => updateQuestion(questionIndex, () => ({ ...canonicalQuestion, options: canonicalQuestion.options.map((option) => ({ ...option })) }))}>
                 Restablecer pregunta
               </button>
-            </div>
-          })}
-        </section>
+              </div>}
+            </article>
+          })}</div>
+        </section>}
 
-        <section className="limen-studio__trivia-group" aria-labelledby="studio-trivia-results">
-          <h3 id="studio-trivia-results">Resultados</h3>
-          {value.resultTiers.map((tier, index) => {
+        {activeSection === 'results' && <section className="limen-studio__trivia-group"
+          aria-labelledby="studio-trivia-results">
+          <div className="limen-studio__trivia-group-heading">
+            <h3 id="studio-trivia-results">Resultados</h3><p>Mensajes según el puntaje.</p>
+          </div>
+          <div className="limen-studio__trivia-results-grid">{value.resultTiers.map((tier, index) => {
             const nextMin = index === 0 ? tier.minScore : value.resultTiers[index - 1].minScore - 1
             const range = tier.minScore === nextMin ? `${tier.minScore} ${tier.minScore === 1 ? 'respuesta correcta' : 'respuestas correctas'}` : `${tier.minScore} a ${nextMin} respuestas correctas`
             const canonicalTier = canonicalValue.resultTiers[index]
@@ -185,8 +226,8 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
                 Restablecer resultado
               </button>
             </div>
-          })}
-        </section>
+          })}</div>
+        </section>}
       </div>
     </section>
   )
