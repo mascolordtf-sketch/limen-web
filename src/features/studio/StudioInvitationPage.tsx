@@ -45,6 +45,9 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
+  const [selectedEditorByScene, setSelectedEditorByScene] = useState<Partial<Record<StudioSceneId, string>>>({
+    general: studioGeneralScene.editorIds[0],
+  })
   const [templateState, setTemplateState] = useState(() => createStudioTemplateGalleryState(template?.id ?? invitation.templateId))
   const opener = useRef<HTMLElement | null>(null)
   const scrollPosition = useRef(0)
@@ -78,6 +81,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     const issueScene = findStudioSceneByEditorId(destination.editorId)
     if (issueScene) {
       setSelectedScene(issueScene.id)
+      setSelectedEditorByScene((current) => ({ ...current, [issueScene.id]: destination.editorId }))
       setActiveStage('content')
     } else if (destination.editorId === 'scene-configuration') setActiveStage('sections')
     else setActiveStage('review')
@@ -109,8 +113,16 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     }
   }
   const visibleScene = studioScenes.find(({ id }) => id === selectedScene) ?? studioGeneralScene
-  const contextualEditor = <div className="limen-studio__contextual-editor-body">{visibleScene.editorIds.map((editorId) =>
-    <StudioActiveEditor key={editorId} invitation={invitation} template={template} model={model} editorId={editorId} />)}</div>
+  const selectedEditorId = selectedEditorByScene[visibleScene.id] ?? visibleScene.editorIds[0]
+  const editorLabels: Record<string, string> = {
+    identity: 'Identidad',
+    'event-canonical': 'Fecha y lugar',
+    'event-operations': 'Datos operativos',
+    share: 'Compartir',
+  }
+  const contextualEditor = <div className="limen-studio__contextual-editor-body">
+    <StudioActiveEditor invitation={invitation} template={template} model={model} editorId={selectedEditorId} />
+  </div>
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
     contextualLabel={activeStage === 'content' ? visibleScene.label : 'Revisión completa'}
@@ -125,12 +137,12 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand"><h1>LIMEN <span>Studio</span></h1>
         <div><strong>{model.draft.protagonistName}</strong><small>{invitation.event.celebrationLabel} · {invitation.code}</small></div></div>
+      <div className="limen-studio__stage-nav-wrap">
+        <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
+      </div>
       <div className="limen-studio__header-actions"><span className="limen-studio__draft-status">Cambios temporales</span>
         <Link className="limen-studio__back-link" to="/">Salir</Link></div>
     </header>
-    <div className="limen-studio__stage-nav-wrap" inert={layerOpen ? true : undefined}>
-      <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
-    </div>
     <main className="limen-studio__stage">
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
         {template && <StudioTemplateStage template={template} state={templateState} onStateChange={setTemplateState} />}
@@ -147,13 +159,26 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       {activeStage === 'content' && <>
         <header className="limen-studio__stage-heading limen-studio__stage-heading--content">
           <p className="limen-studio__eyebrow">Contenido</p><h2>Contá la historia, escena por escena</h2>
-          <p>Elegí una escena, editá sus textos y comprobá el resultado en la invitación.</p>
+          <p>Elegí una escena y editá una configuración por vez.</p>
         </header>
-        <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={setSelectedScene}
+        <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={(scene) => {
+          setSelectedScene(scene)
+          const nextScene = studioScenes.find(({ id }) => id === scene)
+          if (nextScene && !selectedEditorByScene[scene]) {
+            setSelectedEditorByScene((current) => ({ ...current, [scene]: nextScene.editorIds[0] }))
+          }
+        }}
           onManageSections={() => setActiveStage('sections')} editor={contextualEditor} preview={previewPane}
           previewCollapsed={previewCollapsed} previewDedicated={layerOpen} onOpenPreview={openPreview}
           onShowPreview={() => surfaceDispatch({ type: 'show' })} correctionReturn={correctionContext !== undefined}
-          onReturnToErrors={returnToErrors} />
+          onReturnToErrors={returnToErrors}
+          editorTabs={visibleScene.editorIds.length > 1 ? visibleScene.editorIds.map((editorId) => ({
+            id: editorId, label: editorLabels[editorId] ?? editorId,
+          })) : undefined}
+          selectedEditorId={selectedEditorId}
+          onEditorSelect={(editorId) => setSelectedEditorByScene((current) => ({
+            ...current, [visibleScene.id]: editorId,
+          }))} />
       </>}
       {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}

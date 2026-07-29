@@ -2509,3 +2509,393 @@
     height: calc(100vh - 10rem);
   }
 }
+
+/* Desktop workspace: one task per screen, with preview available only on demand. */
+.limen-studio__open-preview,
+.limen-studio__editor-tabs button,
+.limen-studio__trivia-tabs button {
+  border: 1px solid var(--studio-line);
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.limen-studio__open-preview {
+  flex: 0 0 auto;
+  min-height: 2.25rem;
+  border-radius: .6rem;
+  padding: .4rem .7rem;
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.limen-studio__editor-tabs,
+.limen-studio__trivia-tabs {
+  display: flex;
+  gap: .25rem;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--studio-line);
+  padding-bottom: .55rem;
+  scrollbar-width: thin;
+}
+
+.limen-studio__editor-tabs {
+  margin: -.2rem 0 .75rem;
+}
+
+.limen-studio__editor-tabs button,
+.limen-studio__trivia-tabs button {
+  flex: 0 0 auto;
+  min-height: 2.1rem;
+  border-color: transparent;
+  border-radius: .55rem;
+  padding: .35rem .65rem;
+  color: var(--studio-muted);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.limen-studio__editor-tabs button[aria-current='page'],
+.limen-studio__trivia-tabs button[aria-current='page'] {
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+}
+
+.limen-studio__trivia-tabs {
+  margin-top: .7rem;
+  border: 0;
+  border-radius: .7rem;
+  padding: .25rem;
+  background: #f0f3f0;
+}
+
+.limen-studio__trivia-tabs button {
+  flex: 1 0 auto;
+}
+
+.limen-studio__trivia-groups {
+  min-height: 0;
+}
+
+@media (min-width: 76rem) {
+  .limen-studio {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 1rem;
+  }
+
+  .limen-studio__workspace {
+    display: grid;
+    height: 100dvh;
+    grid-template-rows: 3.6rem minmax(0, 1fr);
+  }
+
+  .limen-studio__header {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: auto minmax(28rem, 1fr) auto;
+    gap: 1.25rem;
+    padding: .45rem 0;
+  }
+
+  .limen-studio__brand,
+  .limen-studio__header-actions {
+    gap: .7rem;
+  }
+
+  .limen-studio__brand > div {
+    gap: 0;
+    padding-left: .7rem;
+  }
+
+  .limen-studio__brand strong {
+    font-size: .82rem;
+  }
+
+  .limen-studio__brand small,
+  .limen-studio__draft-status {
+    font-size: .68rem;
+  }
+
+  .limen-studio__stage-nav-wrap {
+    position: static;
+    min-width: 0;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  .limen-studio__stage-nav {
+    max-width: 38rem;
+  }
+
+  .limen-studio__stage-nav button {
+    min-height: 2.2rem;
+    padding: .35rem .65rem;
+    font-size: .78rem;
+  }
+
+  .limen-studio__stage {
+    min-height: 0;
+    overflow: auto;
+    padding-top: .75rem;
+  }
+
+  .limen-studio__stage-heading {
+    margin-bottom: .65rem;
+  }
+
+  .limen-studio__stage-heading--content {
+    display: flex;
+    max-width: none;
+    align-items: baseline;
+    gap: .75rem;
+  }
+
+  .limen-studio__stage-heading--content .limen-studio__eyebrow {
+    display: none;
+  }
+
+  .limen-studio__stage-heading--content h2 {
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  .limen-studio__stage-heading--content p {
+    margin: 0;
+    font-size: .78rem;
+  }
+
+  .limen-studio__content-layout {
+    height: calc(100dvh - 6.8rem);
+    min-height: 0;
+    grid-template-columns: 10.5rem minmax(0, 1fr);
+    gap: .65rem;
+    overflow: hidden;
+  }
+
+  .limen-studio__scene-navigation {
+    position: static;
+    display: grid;
+    min-height: 0;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    padding: .6rem;
+  }
+
+  .limen-studio__scene-navigation .limen-studio__eyebrow {
+    margin-bottom: .15rem;
+  }
+
+  .limen-studio__scene-navigation h2 {
+    margin-bottom: .35rem;
+    font-size: .9rem;
+  }
+
+  .limen-studio__scene-navigation-list {
+    align-content: start;
+    overflow-y: auto;
+    padding-right: .15rem;
+  }
+
+  .limen-studio__scene-navigation-list button {
+    min-height: 1.9rem;
+    padding: .25rem .45rem;
+    font-size: .75rem;
+  }
+
+  .limen-studio__manage-sections {
+    min-height: 2rem;
+    font-size: .7rem;
+  }
+
+  .limen-studio__contextual-editor {
+    display: grid;
+    min-height: 0;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    overflow: hidden;
+    padding: .7rem .85rem;
+  }
+
+  .limen-studio__contextual-editor > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .55rem;
+    padding-bottom: .55rem;
+  }
+
+  .limen-studio__contextual-editor > header .limen-studio__eyebrow {
+    display: none;
+  }
+
+  .limen-studio__contextual-editor > header h2 {
+    display: inline;
+    margin: 0 .5rem 0 0;
+    font-size: 1.05rem;
+  }
+
+  .limen-studio__contextual-editor > header p {
+    display: inline;
+    margin: 0;
+    font-size: .75rem;
+  }
+
+  .limen-studio__contextual-editor-body {
+    min-height: 0;
+    overflow: auto;
+    padding: .1rem .35rem .75rem 0;
+  }
+
+  .limen-studio__contextual-editor-body > * + * {
+    margin-top: .75rem;
+    padding-top: .75rem !important;
+  }
+
+  .limen-studio__panel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .8rem;
+  }
+
+  .limen-studio__panel-grid > :only-child {
+    grid-column: 1 / -1;
+  }
+
+  .limen-studio__field-group,
+  .limen-studio__share-radio-group,
+  .limen-studio__message-preview {
+    max-width: none;
+  }
+
+  .limen-studio__field-label {
+    font-size: .78rem;
+  }
+
+  .limen-studio__field-help {
+    font-size: .68rem;
+    line-height: 1.2;
+  }
+
+  .limen-studio__text-input,
+  .limen-studio__datetime-input {
+    min-height: 2.15rem;
+    padding: .35rem .55rem;
+    font-size: .84rem;
+  }
+
+  .limen-studio__event-information-textarea,
+  .limen-studio__trivia-textarea,
+  .limen-studio__closing-textarea,
+  .limen-studio__dress-code-textarea,
+  .limen-studio__gifts-textarea,
+  .limen-studio__rsvp-textarea,
+  .limen-studio__story-textarea,
+  .limen-studio__opening-textarea,
+  .limen-studio__share-textarea {
+    min-height: 3.5rem;
+    padding: .4rem .55rem;
+    font-size: .84rem;
+  }
+
+  .limen-studio__trivia-editor > h2 {
+    display: none;
+  }
+
+  .limen-studio__trivia-intro {
+    font-size: .75rem;
+  }
+
+  .limen-studio__trivia-tabs {
+    max-width: 38rem;
+  }
+
+  .limen-studio__trivia-groups {
+    margin-top: .65rem;
+  }
+
+  .limen-studio__trivia-presentation-grid,
+  .limen-studio__trivia-results-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .65rem;
+    padding: 0;
+  }
+
+  .limen-studio__trivia-field--description,
+  .limen-studio__trivia-field--revealMessage {
+    grid-column: auto;
+  }
+
+  .limen-studio__trivia-question-list {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .35rem;
+  }
+
+  .limen-studio__trivia-question {
+    min-width: 0;
+  }
+
+  .limen-studio__trivia-question.is-expanded {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .limen-studio__trivia-question-toggle {
+    min-height: 2.25rem;
+    padding: .35rem .5rem;
+  }
+
+  .limen-studio__trivia-question:not(.is-expanded) .limen-studio__trivia-question-toggle small,
+  .limen-studio__trivia-question-toggle > span:last-child {
+    display: none;
+  }
+
+  .limen-studio__trivia-question-body {
+    padding: .65rem;
+  }
+
+  .limen-studio__trivia-options,
+  .limen-studio__trivia-feedback-grid {
+    gap: .55rem;
+    margin-block: .55rem;
+  }
+
+  .limen-studio__trivia-result {
+    padding: .6rem;
+  }
+
+  .limen-studio__desktop-preview {
+    display: none;
+  }
+
+  .limen-studio__desktop-preview--dedicated {
+    display: block;
+  }
+
+  .limen-studio__template-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .limen-studio__template-card {
+    min-height: 11.5rem;
+    grid-template-rows: 5.6rem minmax(0, 1fr);
+  }
+
+  .limen-studio__template-art {
+    min-height: 5.6rem;
+  }
+
+  .limen-studio__aesthetic-preview {
+    min-height: 8.5rem;
+  }
+
+  .limen-studio__sections li {
+    min-height: 3.6rem;
+    padding: .4rem .65rem;
+  }
+}

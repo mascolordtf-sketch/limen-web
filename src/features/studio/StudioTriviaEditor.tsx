@@ -34,8 +34,10 @@ function sameQuestion(a: Origin01TriviaQuestion, b: Origin01TriviaQuestion) {
 
 export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
   const [expandedQuestion, setExpandedQuestion] = useState<string | undefined>(value.questions[0]?.id)
-  const [presentationOpen, setPresentationOpen] = useState(true)
-  const [resultsOpen, setResultsOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<'intro' | 'actions' | 'questions' | 'results'>('questions')
+  const visiblePresentationFields = presentationFields.filter(([key]) => activeSection === 'intro'
+    ? ['introEyebrow', 'description', 'revealTitle', 'revealMessage'].includes(key)
+    : !['introEyebrow', 'description', 'revealTitle', 'revealMessage'].includes(key))
 
   const updateQuestion = (questionIndex: number, update: (question: Origin01TriviaQuestion) => Origin01TriviaQuestion) => {
     onChange({ ...value, questions: value.questions.map((question, index) => (
@@ -50,13 +52,25 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
         Personalizá las preguntas y los resultados sin cambiar la dinámica del juego.
       </p>
 
+      <nav className="limen-studio__trivia-tabs" aria-label="Configuraciones de Trivia">
+        {([
+          ['intro', 'Inicio y cierre'],
+          ['actions', 'Botones'],
+          ['questions', 'Preguntas'],
+          ['results', 'Resultados'],
+        ] as const).map(([id, label]) => <button key={id} type="button"
+          aria-current={activeSection === id ? 'page' : undefined}
+          onClick={() => setActiveSection(id)}>{label}</button>)}
+      </nav>
+
       <div className="limen-studio__trivia-groups">
-        <details className="limen-studio__trivia-group limen-studio__trivia-disclosure"
-          open={presentationOpen} onToggle={(event) => setPresentationOpen(event.currentTarget.open)}>
-          <summary><span id="studio-trivia-presentation">Presentación y navegación</span>
-            <small>Textos iniciales, botones y cierre</small></summary>
+        {(activeSection === 'intro' || activeSection === 'actions') && <section
+          className="limen-studio__trivia-group" aria-labelledby="studio-trivia-presentation">
+          <div className="limen-studio__trivia-group-heading">
+            <h3 id="studio-trivia-presentation">{activeSection === 'intro' ? 'Inicio y cierre' : 'Botones y navegación'}</h3>
+          </div>
           <div className="limen-studio__trivia-presentation-grid">
-            {presentationFields.map(([key, label, help]) => {
+            {visiblePresentationFields.map(([key, label, help]) => {
             const id = `studio-trivia-${key}`
             const current = String(value[key])
             const canonical = String(canonicalValue[key])
@@ -87,9 +101,10 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
             </div>
             })}
           </div>
-        </details>
+        </section>}
 
-        <section className="limen-studio__trivia-group" aria-labelledby="studio-trivia-questions">
+        {activeSection === 'questions' && <section className="limen-studio__trivia-group"
+          aria-labelledby="studio-trivia-questions">
           <div className="limen-studio__trivia-group-heading">
             <h3 id="studio-trivia-questions">Preguntas</h3>
             <p>Editá una pregunta por vez.</p>
@@ -102,10 +117,10 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
               (option) => option.id === question.correctOptionId,
             ) ? 'Seleccioná la respuesta correcta.' : null
             const expanded = expandedQuestion === question.id
-            return <article className="limen-studio__trivia-question" key={question.id}>
+            return <article className={`limen-studio__trivia-question${expanded ? ' is-expanded' : ''}`} key={question.id}>
               <button className="limen-studio__trivia-question-toggle" type="button"
                 aria-expanded={expanded} aria-controls={`studio-trivia-question-${question.id}-body`}
-                onClick={() => setExpandedQuestion(expanded ? undefined : question.id)}>
+                onClick={() => setExpandedQuestion(question.id)}>
                 <span><strong>Pregunta {questionIndex + 1}</strong>
                   <small>{question.prompt || 'Sin enunciado'}</small></span>
                 <span aria-hidden="true">{expanded ? '−' : '+'}</span>
@@ -176,12 +191,13 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
               </div>}
             </article>
           })}</div>
-        </section>
+        </section>}
 
-        <details className="limen-studio__trivia-group limen-studio__trivia-disclosure"
-          open={resultsOpen} onToggle={(event) => setResultsOpen(event.currentTarget.open)}>
-          <summary><span id="studio-trivia-results">Resultados</span>
-            <small>Mensajes según el puntaje</small></summary>
+        {activeSection === 'results' && <section className="limen-studio__trivia-group"
+          aria-labelledby="studio-trivia-results">
+          <div className="limen-studio__trivia-group-heading">
+            <h3 id="studio-trivia-results">Resultados</h3><p>Mensajes según el puntaje.</p>
+          </div>
           <div className="limen-studio__trivia-results-grid">{value.resultTiers.map((tier, index) => {
             const nextMin = index === 0 ? tier.minScore : value.resultTiers[index - 1].minScore - 1
             const range = tier.minScore === nextMin ? `${tier.minScore} ${tier.minScore === 1 ? 'respuesta correcta' : 'respuestas correctas'}` : `${tier.minScore} a ${nextMin} respuestas correctas`
@@ -211,7 +227,7 @@ export function StudioTriviaEditor({ value, canonicalValue, onChange }: Props) {
               </button>
             </div>
           })}</div>
-        </details>
+        </section>}
       </div>
     </section>
   )
