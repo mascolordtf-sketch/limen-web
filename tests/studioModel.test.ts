@@ -137,6 +137,20 @@ assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Hist
   && !contentMarkup.includes('>Regalos<') && !contentMarkup.includes('Agregar o quitar secciones')
   && (contentMarkup.match(/EDITOR_CONTEXTUAL/g) ?? []).length === 1,
   'Contenido muestra solo escenas incluidas y una región editorial sin duplicar el acceso a Secciones')
+assert(contentMarkup.includes('Editando ahora') && contentMarkup.includes('Escena opcional')
+  && contentMarkup.includes('limen-studio__editor-scene-number')
+  && contentMarkup.includes('limen-studio__editor-heading'),
+  'el workspace editorial identifica la escena activa, su orden y su carácter narrativo')
+const generalContentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
+  draft: initial, selectedScene: 'general', onSceneSelect: () => undefined,
+  editor: createElement('div', null, 'EDITOR_GENERAL'), preview: createElement('div', null, 'PREVIEW_GENERAL'),
+  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
+  editorTabs: [{ id: 'identity', label: 'Identidad' }], selectedEditorId: 'identity',
+  onEditorSelect: () => undefined,
+}))
+assert(generalContentMarkup.includes('Base compartida') && generalContentMarkup.includes('Áreas de edición')
+  && generalContentMarkup.includes('aria-label="Configuraciones de Datos generales"'),
+  'Datos generales presenta su condición compartida y agrupa la navegación interna como áreas de edición')
 assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1 && !contentMarkup.includes('Ver invitación')
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
   'Contenido mantiene una preview junto al editor sin duplicar su apertura y oculta la taxonomía técnica del motor')
