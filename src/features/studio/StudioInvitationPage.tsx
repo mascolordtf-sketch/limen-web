@@ -20,14 +20,17 @@ import { createStudioIssueCorrectionContext, resolveStudioCorrectionReturn, reso
   issueNeedsCorrectionReturn, resolveStudioStructuralDestination } from './studioReviewIssues'
 import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
+import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading,
+  isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import { StudioAestheticStage, StudioStageNavigation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
+import { createStudioReturnToReview } from './studioWorkspaceStages'
 import { StudioTemplateStage } from './StudioTemplateStage'
 import { studioDesktopMediaQuery } from './studioViewport'
 import { StudioSectionsStage } from './StudioSectionsStage'
 import { StudioScenesContent } from './StudioScenesContent'
 import { selectSceneAfterExclusion, studioGeneralScene, studioPublicScenes, type StudioSceneId } from './studioScenes'
+import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -45,6 +48,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
+  const [templateState, setTemplateState] = useState(() => createStudioTemplateGalleryState(template?.id ?? invitation.templateId))
   const opener = useRef<HTMLElement | null>(null)
   const scrollPosition = useRef(0)
   const layerTitle = useRef<HTMLHeadingElement>(null)
@@ -97,9 +101,11 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const returnToErrors = () => {
     const errors = correctionContext ? resolveStudioCorrectionReturn(correctionContext, domains) : null
     if (errors) {
-      navigate({ type: 'open-item', domainId: 'review', item: errors })
+      const destination = createStudioReturnToReview(errors)
+      setActiveStage(destination.activeStage)
+      navigate(destination.navigation)
       setCorrectionContext(undefined)
-      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
+      requestAnimationFrame(() => requestAnimationFrame(() => focusStudioReviewHeading()))
     }
   }
   const reviewPanel = (kind: 'status' | 'errors' | 'audiences') => <StudioReviewPanel kind={kind}
@@ -127,7 +133,9 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
         if (review?.items[0]) navigate({ type: 'open-item', domainId: 'review', item: review.items[0] })
       }
     }} /></div>
-    {activeStage === 'template' && template && <StudioTemplateStage template={template} />}
+    <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
+      {template && <StudioTemplateStage template={template} state={templateState} onStateChange={setTemplateState} />}
+    </div>
     {activeStage === 'aesthetic' && <StudioAestheticStage />}
     {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
       for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
@@ -151,7 +159,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={setSelectedScene}
         onManageSections={() => setActiveStage('sections')} editor={contextualEditor} preview={<div className="limen-studio__embedded-preview"><header><strong>Preview · {audience.audience === 'guest' ? 'Invitado' : 'Protagonista'} · {retained.showing === 'current' ? 'Borrador actual' : retained.showing === 'last-renderable' ? 'Último borrador renderizable' : 'No disponible'}</strong><div>{layerOpen && <button type="button" onClick={closePreview}>← Volver al editor</button>}<button type="button" onClick={audience.restartPreview}>Reiniciar</button>{!layerOpen && <><button type="button" onClick={() => surfaceDispatch({ type: 'collapse' })}>Contraer</button><button type="button" onClick={openPreview}>Expandir</button></>}<a href={publicInvitationUrl}>Abrir demo público</a></div></header>{preview}</div>}
         previewCollapsed={previewCollapsed} previewDedicated={layerOpen} onOpenPreview={openPreview}
-        onShowPreview={() => surfaceDispatch({ type: 'show' })} />}
+        onShowPreview={() => surfaceDispatch({ type: 'show' })} correctionReturn={correctionContext !== undefined}
+        onReturnToErrors={returnToErrors} />}
     </>}
   </div></div>
 }

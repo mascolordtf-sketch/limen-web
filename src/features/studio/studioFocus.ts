@@ -20,3 +20,9 @@ export function focusStudioEditorHeading(root: Pick<Document, 'querySelector'> =
   heading?.focus()
   return Boolean(heading)
 }
+
+export function focusStudioReviewHeading(root: Pick<Document, 'querySelector'> = document) {
+  const heading = root.querySelector<HTMLElement>('.limen-studio__shell .limen-studio__editor-title')
+  heading?.focus()
+  return Boolean(heading)
+}

@@ -27,19 +27,26 @@ function TemplateCard({ template, selected, onSelect }: {
   </li>
 }
 
-export function StudioTemplateStage({ template, initialState, onGalleryViewChange }: {
+export function StudioTemplateStage({ template, initialState, state: controlledState, onStateChange, onGalleryViewChange }: {
   template: InvitationTemplateDefinition
   initialState?: StudioTemplateGalleryState
+  state?: StudioTemplateGalleryState
+  onStateChange?: (state: StudioTemplateGalleryState) => void
   onGalleryViewChange?: (view: StudioTemplateGalleryState['view']) => void
 }) {
   const templates = useMemo(() => createStudioTemplateOptions(template), [template])
-  const [state, dispatch] = useReducer(transitionStudioTemplateGallery,
+  const [internalState, dispatch] = useReducer(transitionStudioTemplateGallery,
     initialState ?? createStudioTemplateGalleryState(template.id))
+  const state = controlledState ?? internalState
+  const transition = (action: Parameters<typeof transitionStudioTemplateGallery>[1]) => {
+    if (controlledState) onStateChange?.(transitionStudioTemplateGallery(controlledState, action))
+    else dispatch(action)
+  }
   const selected = templates.find(({ id }) => id === state.selectedId) ?? templates[0]
   const visibleTemplates = filterStudioTemplateOptions(templates, state)
 
   const changeView = (view: StudioTemplateGalleryState['view']) => {
-    dispatch({ type: view === 'gallery' ? 'open-gallery' : 'close-gallery' })
+    transition({ type: view === 'gallery' ? 'open-gallery' : 'close-gallery' })
     onGalleryViewChange?.(view)
   }
 
@@ -51,14 +58,14 @@ export function StudioTemplateStage({ template, initialState, onGalleryViewChang
       <fieldset><legend>Tipo de celebración</legend>{celebrationFilters.map((filter) => <label key={filter.value}>
         <input type="radio" name="studio-template-celebration" value={filter.value}
           checked={state.celebration === filter.value}
-          onChange={() => dispatch({ type: 'filter-celebration', celebration: filter.value })} />{filter.label}</label>)}</fieldset>
+          onChange={() => transition({ type: 'filter-celebration', celebration: filter.value })} />{filter.label}</label>)}</fieldset>
       <fieldset><legend>Estilo visual</legend>{styleFilters.map((filter) => <label key={filter.value}>
         <input type="radio" name="studio-template-style" value={filter.value} checked={state.style === filter.value}
-          onChange={() => dispatch({ type: 'filter-style', style: filter.value })} />{filter.label}</label>)}</fieldset>
+          onChange={() => transition({ type: 'filter-style', style: filter.value })} />{filter.label}</label>)}</fieldset>
     </div>
     {visibleTemplates.length ? <ul className="limen-studio__template-grid">{visibleTemplates.map((option) => <TemplateCard
       key={option.id} template={option} selected={option.id === state.selectedId}
-      onSelect={() => dispatch({ type: 'select', templateId: option.id })} />)}</ul>
+      onSelect={() => transition({ type: 'select', templateId: option.id })} />)}</ul>
       : <p role="status">No hay muestras para esta combinación de filtros.</p>}
   </section>
 
@@ -70,7 +77,7 @@ export function StudioTemplateStage({ template, initialState, onGalleryViewChang
     <h3>Plantillas destacadas</h3>
     <ul className="limen-studio__template-grid">{templates.filter(({ featured }) => featured).map((option) => <TemplateCard
       key={option.id} template={option} selected={option.id === state.selectedId}
-      onSelect={() => dispatch({ type: 'select', templateId: option.id })} />)}</ul>
+      onSelect={() => transition({ type: 'select', templateId: option.id })} />)}</ul>
     <button className="limen-studio__primary-link" type="button" onClick={() => changeView('gallery')}>Ver todas las plantillas</button>
   </section>
 }

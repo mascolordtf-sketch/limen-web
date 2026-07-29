@@ -3,7 +3,7 @@ import type { Origin01StudioDraft } from './origin01StudioDraft'
 import { getVisibleStudioScenes, type StudioSceneId } from './studioScenes'
 
 export function StudioScenesContent({ draft, selectedScene, onSceneSelect, onManageSections, editor, preview,
-  previewDedicated, previewCollapsed, onOpenPreview, onShowPreview }: {
+  previewDedicated, previewCollapsed, onOpenPreview, onShowPreview, correctionReturn, onReturnToErrors }: {
   draft: Pick<Origin01StudioDraft, 'modules'>
   selectedScene: StudioSceneId
   onSceneSelect: (scene: StudioSceneId) => void
@@ -14,6 +14,8 @@ export function StudioScenesContent({ draft, selectedScene, onSceneSelect, onMan
   previewCollapsed: boolean
   onOpenPreview: (event: React.MouseEvent<HTMLButtonElement>) => void
   onShowPreview: () => void
+  correctionReturn?: boolean
+  onReturnToErrors?: () => void
 }) {
   const scenes = getVisibleStudioScenes(draft)
   const selected = scenes.find(({ id }) => id === selectedScene) ?? scenes[0]
@@ -26,6 +28,8 @@ export function StudioScenesContent({ draft, selectedScene, onSceneSelect, onMan
     </nav>
     <article className="limen-studio__contextual-editor" aria-labelledby="studio-contextual-editor-title" inert={previewDedicated ? true : undefined}>
       <header><h2 id="studio-contextual-editor-title">{selected.label}</h2><p>{selected.description}</p></header>{editor}
+      {correctionReturn && <button className="limen-studio__return-errors" type="button"
+        onClick={onReturnToErrors}>← Volver a Errores</button>}
     </article>
     <button className="limen-studio__mobile-preview-action" type="button" onClick={onOpenPreview}>Ver invitación</button>
     {previewCollapsed && !previewDedicated

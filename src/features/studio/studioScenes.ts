@@ -37,7 +37,7 @@ export function isStudioSceneIncluded(draft: Pick<Origin01StudioDraft, 'modules'
 }
 
 export function getVisibleStudioScenes(draft: Pick<Origin01StudioDraft, 'modules'>) {
-  return [studioGeneralScene, ...studioPublicScenes.filter((scene) => isStudioSceneIncluded(draft, scene))]
+  return [studioGeneralScene, ...studioPublicScenes.filter((scene) => scene.required || isStudioSceneIncluded(draft, scene))]
 }
 
 export function selectSceneAfterExclusion(sceneId: StudioSceneId, draft: Pick<Origin01StudioDraft, 'modules'>): StudioSceneId {

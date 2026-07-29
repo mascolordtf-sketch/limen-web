@@ -11,6 +11,7 @@ Esta entrega reemplaza la navegación visible por dominios técnicos con un fluj
 - La taxonomía interna (dominios, proyecciones y datos canónicos) deja de ser navegación visible en Secciones y Contenido.
 - Contenido mantiene una sola instancia del renderer real de preview. En móvil conserva la presentación dedicada; el breakpoint compartido continúa en `76rem`.
 - No hay persistencia, cambios en la invitación pública, autenticación, backend ni modificaciones del contrato de Origin 01.
+- Las escenas obligatorias se normalizan como visibles en la proyección de Studio incluso si llega un borrador inconsistente con un módulo requerido desactivado; no se modifica silenciosamente ese borrador.
 
 Origin 01 exige Cierre además de Portada e Información del evento. La Confirmación se protege también como obligatoria por el contrato de producto aprobado para Studio, aunque el contrato técnico histórico todavía la clasifica como módulo opcional.
 

@@ -9,7 +9,7 @@ import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
-import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
+import { createStudioReturnToReview, studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
 import { StudioSectionsStage } from '../src/features/studio/StudioSectionsStage'
 import { StudioScenesContent } from '../src/features/studio/StudioScenesContent'
@@ -46,7 +46,7 @@ import {
   transitionStudioPreviewAudience,
 } from '../src/features/studio/studioPreviewAudience'
 import { createInitialStudioNavigation, transitionStudioNavigation } from '../src/features/studio/studioNavigation'
-import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewCloseKey,
+import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading, isStudioPreviewCloseKey,
   restoreStudioPreviewOpener } from '../src/features/studio/studioFocus'
 import { createStudioPreviewSurfaceState, isStudioPreviewEffectivelyCollapsed, selectStudioPreviewContextLabel,
   resolveStudioPreviewContextLabel,
@@ -82,6 +82,23 @@ assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
   && getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('gifts')
     < getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('rsvp'),
   'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
+const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
+const editedGiftsOff = updateOrigin01StudioModule(origin01DemoData, editedGifts, 'gifts', false)
+const editedGiftsOn = updateOrigin01StudioModule(origin01DemoData, editedGiftsOff, 'gifts', true)
+assert(!getVisibleStudioScenes(editedGiftsOff).some(({ id }) => id === 'gifts')
+  && getVisibleStudioScenes(editedGiftsOn).map(({ id }) => id).join('|') === getVisibleStudioScenes(initial).map(({ id }) => id).join('|')
+  && editedGiftsOn.gifts.accountValue === 'Alias.Editado',
+  'excluir y reactivar Regalos restaura su posición sin perder el valor temporal editado')
+const sceneEditors = Object.fromEntries(studioPublicScenes.map(({ id, editorIds }) => [id, editorIds]))
+assert(sceneEditors.story?.join() === 'story' && sceneEditors['event-details']?.join() === 'event-copy'
+  && sceneEditors['dress-code']?.join() === 'dress-code'
+  && new Set([sceneEditors.story?.[0], sceneEditors['event-details']?.[0], sceneEditors['dress-code']?.[0]]).size === 3,
+  'Historia, Información del evento y Dress code resuelven grupos de editores distintos')
+const inconsistentRequired = { ...initial, modules: initial.modules.map((module) =>
+  ['prelude', 'hero', 'eventDetails', 'rsvp', 'closing'].includes(module.moduleId) ? { ...module, enabled: false } : module) }
+assert(['cover', 'event-details', 'rsvp', 'closing'].every((id) =>
+  getVisibleStudioScenes(inconsistentRequired).some((scene) => scene.id === id)),
+  'la proyección visible normaliza las escenas obligatorias de un borrador inconsistente')
 assert(selectSceneAfterExclusion('gifts', giftsOff) === 'rsvp',
   'al excluir la escena seleccionada elige la siguiente escena incluida')
 const contentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
@@ -128,6 +145,18 @@ assert(visibleFilteredTemplates.length === 1 && visibleFilteredTemplates[0]?.id 
   'los filtros de celebración y estilo determinan los resultados visibles')
 const selectedTemplateGallery = transitionStudioTemplateGallery(filteredGallery,
   { type: 'select', templateId: 'example-editorial' })
+const templateAwayMarkup = renderToStaticMarkup(createElement('div', null,
+  createElement('div', { hidden: true, inert: true }, createElement(StudioTemplateStage,
+    { template: origin01Template, state: selectedTemplateGallery, onStateChange: () => undefined })),
+  createElement(StudioSectionsStage, { draft: initial, onSceneChange: () => undefined })))
+const templateReturnedMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, state: selectedTemplateGallery, onStateChange: () => undefined }))
+assert(selectedTemplateGallery.view === 'gallery' && selectedTemplateGallery.celebration === 'casamiento'
+  && selectedTemplateGallery.style === 'editorial' && selectedTemplateGallery.selectedId === 'example-editorial'
+  && templateAwayMarkup.includes('hidden=""') && templateAwayMarkup.includes('inert=""')
+  && templateReturnedMarkup.includes('Todas las plantillas')
+  && (templateReturnedMarkup.match(/checked=""/g) ?? []).length === 2,
+  'Plantilla conserva galería, selección y filtros al quedar oculta durante otra etapa')
 const returnedTemplateMain = transitionStudioTemplateGallery(selectedTemplateGallery, { type: 'close-gallery' })
 const returnedTemplateMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, initialState: returnedTemplateMain }))
@@ -415,6 +444,24 @@ const groupedIssues = groupStudioIssues(inactiveStoryResult.issues)
 assert(groupedIssues.some(({ severity, issues }) => severity === 'inactive-content' && issues.length > 0)
   && !inactiveStoryResult.previewBlocked, 'los grupos conservan contenido inactivo sin bloquear preview')
 const storyIssue = inactiveStoryResult.issues.find(({ fieldId }) => fieldId === 'storyMessage')!
+const reviewErrorsItem = domains.find(({ id }) => id === 'review')!.items.find(({ id }) => id === 'errors')!
+const returnDestination = createStudioReturnToReview(reviewErrorsItem)
+const reviewErrorsNavigation = transitionStudioNavigation(triviaNavigation, returnDestination.navigation)
+const returnedReviewMarkup = renderToStaticMarkup(createElement('div', null,
+  createElement(StudioStageNavigation, { activeStage: returnDestination.activeStage, onStageChange: () => undefined }),
+  returnDestination.activeStage === 'review' ? createElement(StudioNavigationShell, {
+    domains, navigation: reviewErrorsNavigation, validation: inactiveStoryResult,
+    editor: createElement(StudioReviewPanel, { kind: 'errors', validation: inactiveStoryResult, domains,
+      showing: 'current', audience: 'protagonist', onIssue: () => undefined,
+      onAudience: () => undefined, onPreview: () => undefined }),
+    editorResolvable: true, previewAudience: 'Protagonista', previewStatus: 'Borrador actual',
+    onNavigate: () => undefined, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+    onReturnToErrors: () => undefined,
+  }) : createElement('div', null, 'Contenido activo')))
+assert(returnDestination.activeStage === 'review' && reviewErrorsNavigation.domainId === 'review'
+  && reviewErrorsNavigation.itemId === 'errors' && returnedReviewMarkup.includes('Problemas del borrador')
+  && returnedReviewMarkup.includes('aria-current="step">Revisión') && !returnedReviewMarkup.includes('Contenido activo'),
+  'Volver a Errores restaura Revisión, abre su panel de errores y deja Contenido inactivo')
 assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
 const storyEditorMarkup = renderToStaticMarkup(createElement(StudioStoryEditor, { eyebrowValue: '', canonicalEyebrowValue: '',
   eyebrowError: null, messageValue: '', canonicalMessageValue: '', messageError: storyIssue.message,
@@ -492,6 +539,13 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
   onAudienceChange: () => undefined, onRestart: () => undefined, onStructuralIssue: () => undefined })
+const realContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
+  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  editor: createElement('div', null, 'Editor de Historia'), preview: previewElement,
+  previewDedicated: false, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+}))
+assert((realContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'el boundary productivo de Contenido monta exactamente una instancia del renderer real')
 const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean, activeStage: 'template' | 'aesthetic' = 'template') =>
   renderToStaticMarkup(createElement('div', null,
     createElement('header', null, 'LIMEN Studio'),
@@ -563,6 +617,11 @@ assert(focusStudioIssueDestination(storyIssue, fieldRoot) === 'field'
   && focusStudioIssueDestination({ ...storyIssue, fieldId: undefined, fieldTargetId: undefined }, headingRoot) === 'heading',
   'la navegación estructural enfoca campo estable y, si no existe, el heading del editor')
 assert(focusStudioEditorHeading(headingRoot), 'la navegación externa y el retorno a Errores enfocan el heading nuevo')
+const reviewHeadingRoot = { querySelector: (selector: string) =>
+  selector === '.limen-studio__shell .limen-studio__editor-title' ? focusable : null } as unknown as Document
+const focusedBeforeReviewReturn = focused
+assert(focusStudioReviewHeading(reviewHeadingRoot) && focused === focusedBeforeReviewReturn + 1,
+  'el retorno a Errores enfoca específicamente el heading visible de Revisión')
 assert(origin01DemoData.event.venue === 'Palacio del Lago', 'el fixture canónico no se muta')
 assert(origin01DemoData.content.hero.phrase === 'Antes era un sueño. Ahora empieza.', 'la narrativa pública no cambia')
 
