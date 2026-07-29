@@ -3834,11 +3834,15 @@
 
 .limen-studio__narrative-chapter {
   position: relative;
+  display: block;
   min-width: 0;
+  min-height: 0;
+  grid-template-columns: none;
   border: 1px solid var(--studio-line);
   border-radius: 1.1rem;
   padding: 1rem;
   background: rgb(255 255 255 / 45%);
+  opacity: 1;
 }
 
 .limen-studio__narrative-chapter > header {
