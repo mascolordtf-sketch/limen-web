@@ -14,14 +14,51 @@ export function StudioStageNavigation({ activeStage, onStageChange }: {
 }
 
 export function StudioAestheticStage() {
-  return <section className="limen-studio__aesthetic-placeholder" aria-labelledby="studio-aesthetic-title">
+  return <section className="limen-studio__aesthetic-stage" aria-labelledby="studio-aesthetic-title">
     <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Estética</p>
-      <h2 id="studio-aesthetic-title">La identidad visual de la invitación</h2>
-      <p>La personalización de colores, tipografías y recursos visuales se incorporará en una próxima entrega.</p></div>
-    <div className="limen-studio__aesthetic-preview" aria-hidden="true">
-      <span /><span /><span /><span />
+      <h2 id="studio-aesthetic-title">El universo visual de Origin 01</h2>
+      <p>Una lectura de los elementos que construyen su atmósfera: íntima, nocturna y ceremonial.</p></div>
+    <div className="limen-studio__aesthetic-board">
+      <article className="limen-studio__aesthetic-hero">
+        <div className="limen-studio__aesthetic-hero-art" aria-hidden="true">
+          <span>Origin</span><strong>01</strong><i /><i />
+        </div>
+        <div><p className="limen-studio__eyebrow">Dirección visual</p><h3>Noche botánica</h3>
+          <p>Contraste profundo, luz contenida y detalles orgánicos para abrir la historia con misterio.</p>
+          <dl><div><dt>Carácter</dt><dd>Íntimo</dd></div><div><dt>Ritmo</dt><dd>Cinematográfico</dd></div>
+            <div><dt>Gesto</dt><dd>Editorial</dd></div></dl>
+        </div>
+      </article>
+      <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-colors">
+        <header><span>01</span><div><h3>Paleta</h3><p>Color y función</p></div></header>
+        <ul aria-label="Paleta de Origin 01">
+          <li><span style={{ background: '#14241f' }} /><strong>Noche</strong><small>Fondo</small></li>
+          <li><span style={{ background: '#e8e0d0' }} /><strong>Marfil</strong><small>Texto</small></li>
+          <li><span style={{ background: '#a78462' }} /><strong>Bronce</strong><small>Acento</small></li>
+          <li><span style={{ background: '#6b7c6d' }} /><strong>Salvia</strong><small>Detalle</small></li>
+        </ul>
+      </article>
+      <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-type">
+        <header><span>02</span><div><h3>Tipografía</h3><p>Voz y contraste</p></div></header>
+        <div aria-label="Muestra tipográfica"><strong>Una historia</strong><span>merece un gran comienzo</span>
+          <small>Editorial · Caligráfica · Funcional</small></div>
+      </article>
+      <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-image">
+        <header><span>03</span><div><h3>Imagen</h3><p>Tratamiento fotográfico</p></div></header>
+        <div aria-hidden="true"><span /><i /><i /></div>
+        <p>Luz suave, encuadre protagonista y profundidad nocturna.</p>
+      </article>
+      <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-detail">
+        <header><span>04</span><div><h3>Detalle</h3><p>Recurso ornamental</p></div></header>
+        <div aria-hidden="true"><i /><i /><i /><span /></div>
+        <p>Líneas botánicas finas que acompañan sin ocupar la escena.</p>
+      </article>
     </div>
-    <p className="limen-studio__quiet-note">Esta etapa es informativa: todavía no modifica la invitación.</p>
+    <aside className="limen-studio__aesthetic-note"><span aria-hidden="true">i</span>
+      <div><strong>Vista informativa</strong>
+        <p>La identidad está asociada a Origin 01. La edición de colores, tipografías y recursos llegará en una próxima entrega;
+          esta etapa todavía no modifica la invitación.</p></div>
+    </aside>
   </section>
 }
 
