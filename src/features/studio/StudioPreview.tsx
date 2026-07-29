@@ -45,7 +45,7 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
     const updateScale = () => {
       const availableWidth = Math.max(0, stage.clientWidth - 16)
       const availableHeight = Math.max(0, stage.clientHeight - 16)
-      const scale = Math.min(1, availableWidth / 414, availableHeight / 868)
+      const scale = Math.min(1, availableWidth / 424, availableHeight / 868)
       stage.style.setProperty('--studio-preview-scale', String(scale))
     }
     updateScale()

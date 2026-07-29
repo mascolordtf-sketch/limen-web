@@ -1830,7 +1830,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 25.875rem;
+  width: 26.5rem;
   height: 54.25rem;
   transform: translate(-50%, -50%) scale(var(--studio-preview-scale));
   transform-origin: center;
@@ -1855,7 +1855,7 @@
 }
 
 .limen-studio__preview-device-screen {
-  width: 24.375rem;
+  width: 25rem;
   height: 52.75rem;
   overflow: hidden;
   border-radius: 2.3rem;
@@ -1863,7 +1863,7 @@
 }
 
 .limen-studio__preview-shell {
-  width: 24.375rem;
+  width: 25rem;
   height: 52.75rem;
   overflow-y: auto;
   border-radius: inherit;
@@ -2693,6 +2693,7 @@
     min-height: 0;
     grid-template-columns: 13rem minmax(0, 1fr) 27rem;
     gap: .65rem;
+    align-items: stretch;
     overflow: hidden;
   }
 
@@ -2943,7 +2944,7 @@
   }
 
   .limen-studio__desktop-preview .limen-studio__preview-shell {
-    width: 24.375rem;
+    width: 25rem;
     height: 52.75rem;
   }
 
@@ -2961,7 +2962,7 @@
   }
 
   .limen-studio__desktop-preview--dedicated .limen-studio__preview-shell {
-    width: 24.375rem;
+    width: 25rem;
     height: 52.75rem;
     overflow-y: auto;
   }
