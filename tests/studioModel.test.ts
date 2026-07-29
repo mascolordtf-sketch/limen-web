@@ -79,13 +79,26 @@ assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes(
   && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las diez escenas públicas, sin Datos generales')
 assert(studioPublicScenes.filter(({ required }) => required).map(({ label }) => label).join('|')
   === 'Portada|Información del evento|Confirmación|Cierre'
-  && (sectionsMarkup.match(/Obligatoria/g) ?? []).length === 4,
+  && (sectionsMarkup.match(/Siempre incluida/g) ?? []).length === 4,
   'Secciones protege las escenas aprobadas y la obligatoriedad adicional de Cierre definida por Origin 01')
+assert(sectionsMarkup.includes('El umbral') && sectionsMarkup.includes('La celebración')
+  && sectionsMarkup.includes('La participación') && sectionsMarkup.includes('La despedida')
+  && sectionsMarkup.includes('10 escenas') && sectionsMarkup.includes('4 esenciales')
+  && sectionsMarkup.includes('6 de 6 opcionales')
+  && sectionsMarkup.indexOf('Portada') < sectionsMarkup.indexOf('Cuenta regresiva')
+  && sectionsMarkup.indexOf('Cuenta regresiva') < sectionsMarkup.indexOf('Historia')
+  && sectionsMarkup.indexOf('Confirmación') < sectionsMarkup.indexOf('Cierre'),
+  'Secciones organiza el orden canónico en cuatro capítulos narrativos y resume su composición')
 const giftsOff = updateOrigin01StudioModule(origin01DemoData, initial, 'gifts', false)
 assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
   && getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('gifts')
     < getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('rsvp'),
   'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
+const giftsOffSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
+  { draft: giftsOff, onSceneChange: () => undefined }))
+assert(giftsOffSectionsMarkup.includes('5 de 6 opcionales')
+  && giftsOffSectionsMarkup.includes('No incluida') && giftsOffSectionsMarkup.includes('Fuera del recorrido'),
+  'Secciones actualiza el resumen y el estado editorial al excluir una escena opcional')
 const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
 const editedGiftsOff = updateOrigin01StudioModule(origin01DemoData, editedGifts, 'gifts', false)
 const editedGiftsOn = updateOrigin01StudioModule(origin01DemoData, editedGiftsOff, 'gifts', true)

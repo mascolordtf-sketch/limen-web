@@ -3727,3 +3727,422 @@
     -webkit-line-clamp: unset;
   }
 }
+
+/* PR 58: narrative section map. Kept after legacy density rules so the story remains legible. */
+.limen-studio .limen-studio__sections {
+  max-width: 74rem;
+}
+
+.limen-studio__sections-intro {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.limen-studio__sections-intro .limen-studio__stage-heading {
+  margin: 0;
+}
+
+.limen-studio__sections-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  overflow: hidden;
+  background: rgb(255 255 255 / 50%);
+}
+
+.limen-studio__sections-summary div {
+  min-width: 0;
+  padding: .8rem .9rem;
+}
+
+.limen-studio__sections-summary div + div {
+  border-left: 1px solid var(--studio-line);
+}
+
+.limen-studio__sections-summary dt {
+  margin-bottom: .22rem;
+  color: var(--studio-muted);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.limen-studio__sections-summary dd {
+  margin: 0;
+  color: var(--studio-ink);
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.limen-studio__narrative-key {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .6rem 1.2rem;
+  margin: 1.25rem 0 .85rem;
+  border-block: 1px solid var(--studio-line);
+  padding: .75rem 0;
+}
+
+.limen-studio__narrative-key p {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin: 0;
+  color: var(--studio-ink);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.limen-studio__narrative-key p span {
+  width: .55rem;
+  height: .55rem;
+  border: 1px solid var(--studio-bronze);
+  border-radius: 50%;
+}
+
+.limen-studio__narrative-key p span.is-essential {
+  background: var(--studio-accent);
+  border-color: var(--studio-accent);
+}
+
+.limen-studio__narrative-key p span.is-optional {
+  background: transparent;
+}
+
+.limen-studio__narrative-key small {
+  flex: 1 1 17rem;
+  color: var(--studio-muted);
+  font-size: .72rem;
+  text-align: right;
+}
+
+.limen-studio .limen-studio__narrative-chapters,
+.limen-studio .limen-studio__narrative-chapter > ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limen-studio .limen-studio__narrative-chapters {
+  display: grid;
+  gap: 1rem;
+}
+
+.limen-studio .limen-studio__narrative-chapter {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: none;
+  border: 1px solid var(--studio-line);
+  border-radius: 1.1rem;
+  padding: 1rem;
+  background: rgb(255 255 255 / 45%);
+  opacity: 1;
+}
+
+.limen-studio__narrative-chapter > header {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: .8rem;
+  align-items: start;
+  min-height: 4.2rem;
+  border-bottom: 1px solid var(--studio-line);
+  padding: 0 .15rem .85rem;
+}
+
+.limen-studio__chapter-number {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--studio-bronze) 48%, transparent);
+  border-radius: 50%;
+  color: var(--studio-bronze);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: .88rem;
+}
+
+.limen-studio__narrative-chapter > header p,
+.limen-studio__narrative-chapter > header h3,
+.limen-studio__narrative-chapter > header small {
+  margin: 0;
+}
+
+.limen-studio__narrative-chapter > header p {
+  margin-bottom: .18rem;
+  color: var(--studio-bronze);
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.limen-studio__narrative-chapter > header h3 {
+  color: var(--studio-ink);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: -.015em;
+}
+
+.limen-studio__narrative-chapter > header small {
+  display: block;
+  margin-top: .22rem;
+  color: var(--studio-muted);
+  font-size: .72rem;
+  line-height: 1.35;
+}
+
+.limen-studio .limen-studio__narrative-chapter > ol {
+  display: grid;
+  gap: .5rem;
+  padding-top: .75rem;
+}
+
+.limen-studio .limen-studio__narrative-scene {
+  display: grid;
+  min-height: 5.25rem;
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  gap: .7rem;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: .85rem;
+  padding: .65rem .7rem;
+  background: var(--studio-paper);
+  opacity: 1;
+  transition: border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+}
+
+.limen-studio .limen-studio__narrative-scene.is-required {
+  border-color: color-mix(in srgb, var(--studio-accent) 18%, var(--studio-line));
+  background: color-mix(in srgb, var(--studio-accent-soft) 44%, var(--studio-paper));
+}
+
+.limen-studio .limen-studio__narrative-scene.is-excluded {
+  background: rgb(255 255 255 / 38%);
+  opacity: .63;
+}
+
+.limen-studio .limen-studio__narrative-scene.is-excluded:focus-within,
+.limen-studio .limen-studio__narrative-scene.is-excluded:hover {
+  opacity: .88;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-order {
+  display: grid;
+  align-self: stretch;
+  align-content: center;
+  justify-items: center;
+  border-right: 1px solid var(--studio-line);
+  padding-right: .65rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-order small {
+  color: var(--studio-muted);
+  font-size: .48rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-order strong {
+  color: var(--studio-bronze);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.limen-studio__scene-copy {
+  min-width: 0;
+}
+
+.limen-studio__scene-copy > span {
+  display: block;
+  margin-bottom: .12rem;
+  color: var(--studio-muted);
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.limen-studio__scene-copy h4,
+.limen-studio__narrative-scene .limen-studio__scene-copy p {
+  margin: 0;
+}
+
+.limen-studio__scene-copy h4 {
+  color: var(--studio-ink);
+  font-size: .88rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-copy p {
+  margin-top: .12rem;
+  color: var(--studio-muted);
+  font-size: .72rem;
+  line-height: 1.32;
+}
+
+.limen-studio__narrative-scene .limen-studio__required-badge {
+  display: inline-flex;
+  grid-column: 2;
+  align-items: center;
+  justify-self: start;
+  gap: .35rem;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--studio-accent);
+  font-size: .66rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__required-badge span {
+  display: grid;
+  width: 1rem;
+  height: 1rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--studio-accent);
+  color: #fff;
+  font-size: .55rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch {
+  display: flex;
+  grid-column: 2;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch > span {
+  display: grid;
+  justify-items: start;
+  gap: .05rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch strong {
+  color: var(--studio-ink);
+  font-size: .66rem;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch small {
+  color: var(--studio-muted);
+  font-size: .6rem;
+  font-weight: 400;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch input {
+  position: relative;
+  flex: 0 0 auto;
+  width: 2.65rem;
+  height: 1.45rem;
+  margin: 0;
+  appearance: none;
+  border: 1px solid #a9aea9;
+  border-radius: 999px;
+  background: #d8dcd8;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch input::before {
+  position: absolute;
+  top: .15rem;
+  left: .15rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(20 32 26 / 24%);
+  content: '';
+  transition: transform 160ms ease;
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch input:checked {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent);
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch input:checked::before {
+  transform: translateX(1.18rem);
+}
+
+.limen-studio__narrative-scene .limen-studio__scene-switch input:focus-visible {
+  outline: 3px solid var(--studio-focus, #315f81);
+  outline-offset: 2px;
+}
+
+@media (min-width: 48rem) {
+  .limen-studio__sections-intro {
+    grid-template-columns: minmax(0, 1.35fr) minmax(23rem, .65fr);
+    align-items: end;
+  }
+
+  .limen-studio .limen-studio__narrative-chapters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .limen-studio .limen-studio__narrative-scene {
+    grid-template-columns: 2.4rem minmax(0, 1fr) auto;
+  }
+
+  .limen-studio__narrative-scene .limen-studio__required-badge,
+  .limen-studio__narrative-scene .limen-studio__scene-switch {
+    grid-column: 3;
+    width: auto;
+  }
+
+  .limen-studio__narrative-scene .limen-studio__scene-switch > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 76rem) and (max-height: 58rem) {
+  .limen-studio__narrative-chapter {
+    padding: .8rem;
+  }
+
+  .limen-studio__narrative-chapter > header {
+    min-height: 3.6rem;
+    padding-bottom: .65rem;
+  }
+
+  .limen-studio .limen-studio__narrative-chapter > ol {
+    gap: .35rem;
+    padding-top: .6rem;
+  }
+
+  .limen-studio .limen-studio__narrative-scene {
+    min-height: 4.35rem;
+    padding-block: .45rem;
+  }
+
+  .limen-studio__narrative-key {
+    margin-block: .85rem .65rem;
+    padding-block: .55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .limen-studio .limen-studio__narrative-scene,
+  .limen-studio__narrative-scene .limen-studio__scene-switch input,
+  .limen-studio__narrative-scene .limen-studio__scene-switch input::before {
+    transition: none;
+  }
+}
