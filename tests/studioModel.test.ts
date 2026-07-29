@@ -11,6 +11,9 @@ import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { StudioSectionsStage } from '../src/features/studio/StudioSectionsStage'
+import { StudioScenesContent } from '../src/features/studio/StudioScenesContent'
+import { getVisibleStudioScenes, selectSceneAfterExclusion, studioPublicScenes } from '../src/features/studio/studioScenes'
 import { studioDesktopMediaQuery } from '../src/features/studio/studioViewport'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
   transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
@@ -65,6 +68,34 @@ assert(studioDesktopMediaQuery === '(min-width: 76rem)',
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
+const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
+  { draft: initial, onSceneChange: () => undefined }))
+assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Definí qué escenas forman parte')
+  && studioPublicScenes.length === 10 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
+  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las diez escenas públicas, sin Datos generales')
+assert(studioPublicScenes.filter(({ required }) => required).map(({ label }) => label).join('|')
+  === 'Portada|Información del evento|Confirmación|Cierre'
+  && (sectionsMarkup.match(/Obligatoria/g) ?? []).length === 4,
+  'Secciones protege las escenas aprobadas y la obligatoriedad adicional de Cierre definida por Origin 01')
+const giftsOff = updateOrigin01StudioModule(origin01DemoData, initial, 'gifts', false)
+assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
+  && getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('gifts')
+    < getVisibleStudioScenes(initial).map(({ id }) => id).indexOf('rsvp'),
+  'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
+assert(selectSceneAfterExclusion('gifts', giftsOff) === 'rsvp',
+  'al excluir la escena seleccionada elige la siguiente escena incluida')
+const contentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
+  draft: giftsOff, selectedScene: 'story', onSceneSelect: () => undefined, onManageSections: () => undefined,
+  editor: createElement('div', null, 'EDITOR_CONTEXTUAL'), preview: createElement('div', null, 'PREVIEW_REAL'),
+  previewDedicated: false, previewCollapsed: false, onOpenPreview: () => undefined, onShowPreview: () => undefined,
+}))
+assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Historia')
+  && !contentMarkup.includes('>Regalos<') && contentMarkup.includes('Agregar o quitar secciones')
+  && (contentMarkup.match(/EDITOR_CONTEXTUAL/g) ?? []).length === 1,
+  'Contenido muestra solo escenas incluidas, una región editorial y el acceso único a Secciones')
+assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1
+  && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
+  'Contenido conserva una preview y oculta la taxonomía técnica del motor')
 const draftBeforeStageNavigation = JSON.stringify(initial)
 const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
