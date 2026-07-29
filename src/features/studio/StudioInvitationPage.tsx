@@ -24,6 +24,7 @@ import { focusStudioEditorHeading, focusStudioIssueDestination, isStudioPreviewC
 import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { StudioTemplateStage } from './StudioTemplateStage'
+import { studioDesktopMediaQuery } from './studioViewport'
 import './studio.css'
 
 const lifecycleLabels = { draft: 'Borrador', awaiting_content: 'Esperando contenido', in_preparation: 'En preparación',
@@ -54,7 +55,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
     scrollPosition.current = window.scrollY
-    surfaceDispatch({ type: 'open', viewport: window.matchMedia('(min-width: 64rem)').matches ? 'desktop' : 'mobile',
+    surfaceDispatch({ type: 'open', viewport: window.matchMedia(studioDesktopMediaQuery).matches ? 'desktop' : 'mobile',
       origin: navigation, target: activeItem?.previewTarget })
   }
   const closePreview = () => { surfaceDispatch({ type: 'close' }); requestAnimationFrame(() => {

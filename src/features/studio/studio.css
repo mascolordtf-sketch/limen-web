@@ -1200,7 +1200,7 @@
 
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 76rem) {
   .limen-studio__workspace { max-width: 92rem; }
   .limen-studio__shell { grid-template-columns: 11rem 13rem minmax(22rem, 1fr) minmax(20rem, .8fr); align-items: start; }
   .limen-studio__shell--preview-collapsed { grid-template-columns: 11rem 13rem minmax(0, 1fr); }
@@ -1242,7 +1242,7 @@
 .limen-studio__issue-group li { margin-bottom: 1rem; }
 .limen-studio__issue-group small, .limen-studio__issue-group span { display: block; margin: .4rem 0; color: #55544f; }
 
-@media (min-width: 64rem) {
+@media (min-width: 76rem) {
   .limen-studio__desktop-preview { display: block; }
   .limen-studio__mobile-preview-action { display: none; }
   .limen-studio__desktop-preview--dedicated { padding: 2rem; }

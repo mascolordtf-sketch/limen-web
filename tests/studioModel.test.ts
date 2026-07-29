@@ -11,6 +11,7 @@ import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
 import { studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { studioDesktopMediaQuery } from '../src/features/studio/studioViewport'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
   transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
@@ -57,6 +58,9 @@ const assert = (condition: unknown, message: string) => {
   if (!condition) throw new Error(message)
   passed += 1
 }
+
+assert(studioDesktopMediaQuery === '(min-width: 76rem)',
+  'Studio interpreta como escritorio el mismo breakpoint de 76rem usado por CSS')
 
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
