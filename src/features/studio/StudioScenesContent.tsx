@@ -23,10 +23,11 @@ export function StudioScenesContent({ draft, selectedScene, onSceneSelect, edito
   const selected = scenes.find(({ id }) => id === selectedScene) ?? scenes[0]
   return <section className={`limen-studio__content-layout${previewCollapsed ? ' limen-studio__content-layout--preview-collapsed' : ''}`}>
     <nav className="limen-studio__scene-navigation" aria-label="Escenas de contenido" inert={previewDedicated ? true : undefined}>
-      <p className="limen-studio__eyebrow">Contenido</p><h2>Escenas</h2>
-      <div className="limen-studio__scene-navigation-list">{scenes.map((scene) =>
+      <header><p className="limen-studio__eyebrow">Contenido</p><h2>Escenas de la invitación</h2></header>
+      <div className="limen-studio__scene-navigation-list">{scenes.map((scene, index) =>
         <button key={scene.id} type="button" aria-current={scene.id === selected.id ? 'page' : undefined}
-          onClick={() => onSceneSelect(scene.id)}>{scene.label}</button>)}</div>
+          onClick={() => onSceneSelect(scene.id)}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <strong>{scene.label}</strong></button>)}</div>
     </nav>
     <article className="limen-studio__contextual-editor" aria-labelledby="studio-contextual-editor-title" inert={previewDedicated ? true : undefined}>
       <header><div><p className="limen-studio__eyebrow">Editando</p>
