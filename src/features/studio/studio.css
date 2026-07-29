@@ -3832,7 +3832,7 @@
   gap: 1rem;
 }
 
-.limen-studio__narrative-chapter {
+.limen-studio .limen-studio__narrative-chapter {
   position: relative;
   display: block;
   min-width: 0;
