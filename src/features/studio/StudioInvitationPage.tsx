@@ -154,7 +154,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     </header>
     <main className="limen-studio__stage">
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
-        {template && <StudioTemplateStage template={template} state={templateState} onStateChange={setTemplateState} />}
+        {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
+          state={templateState} onStateChange={setTemplateState} />}
       </div>
       {activeStage === 'aesthetic' && <StudioAestheticStage />}
       {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {

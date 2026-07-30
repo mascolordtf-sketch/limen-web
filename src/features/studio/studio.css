@@ -4211,3 +4211,109 @@
     transition: none;
   }
 }
+
+/* Selector de plantillas: una opción real y anticipos explícitamente no interactivos. */
+.limen-studio__template-card--available {
+  display: grid;
+  overflow: hidden;
+  margin: 1.25rem 0;
+  padding: 0;
+  border: 2px solid #315f81;
+}
+
+.limen-studio__template-preview {
+  position: relative;
+  min-height: 18rem;
+  overflow: hidden;
+  background: #241b28;
+}
+
+.limen-studio__template-preview img,
+.limen-studio__template-card--future > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.limen-studio__template-preview span {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  padding: .45rem .7rem;
+  border-radius: .55rem;
+  color: #fff;
+  background: rgb(22 17 25 / 82%);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.limen-studio__template-card--available .limen-studio__template-card-copy {
+  padding: 1.15rem;
+}
+
+.limen-studio__template-card-meta strong {
+  color: #315f81;
+}
+
+.limen-studio__template-card-title h3,
+.limen-studio__template-card--future h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.limen-studio__template-highlights {
+  display: grid;
+  gap: .45rem;
+  margin: .9rem 0 1.1rem;
+  padding-left: 1.2rem;
+  color: #45443f;
+}
+
+.limen-studio__template-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem;
+}
+
+.limen-studio__template-actions a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: .55rem .8rem;
+  color: #244b68;
+  font-weight: 700;
+  text-underline-offset: .2em;
+}
+
+.limen-studio__template-actions a:focus-visible,
+.limen-studio__template-stage button:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
+.limen-studio__template-grid--future .limen-studio__template-card--future {
+  display: grid;
+  overflow: hidden;
+  padding: 0;
+  border-style: dashed;
+  background: #f5f4f0;
+}
+
+.limen-studio__template-card--future > img {
+  height: 10rem;
+  filter: saturate(.45);
+}
+
+.limen-studio__template-card--future .limen-studio__template-card-copy {
+  padding: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .limen-studio__template-card--available {
+    grid-template-columns: minmax(15rem, .9fr) minmax(20rem, 1.1fr);
+  }
+
+  .limen-studio__template-preview { min-height: 25rem; }
+  .limen-studio__template-grid--future { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

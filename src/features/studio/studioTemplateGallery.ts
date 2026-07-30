@@ -1,48 +1,63 @@
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
 
-export type StudioTemplateCelebration = 'all' | 'cumpleanos' | 'casamiento' | 'general'
-export type StudioTemplateStyle = 'all' | 'narrativa' | 'editorial' | 'minimalista'
+export type StudioTemplateAvailability = 'available' | 'coming-soon'
 
 export type StudioTemplateOption = {
   readonly id: string
   readonly name: string
+  readonly collection: string
   readonly description: string
-  readonly celebration: Exclude<StudioTemplateCelebration, 'all'>
-  readonly style: Exclude<StudioTemplateStyle, 'all'>
-  readonly featured: boolean
-  readonly source: 'production' | 'isolated-example'
+  readonly availability: StudioTemplateAvailability
+  readonly preview: { readonly src: string; readonly alt: string }
+  readonly demoPath?: string
+  readonly highlights: readonly string[]
+  readonly selectable: boolean
+  readonly exploration: boolean
 }
 
 export type StudioTemplateGalleryState = {
   readonly view: 'main' | 'gallery'
   readonly selectedId: string
-  readonly celebration: StudioTemplateCelebration
-  readonly style: StudioTemplateStyle
 }
 
 export type StudioTemplateGalleryAction =
   | { readonly type: 'open-gallery' }
   | { readonly type: 'close-gallery' }
   | { readonly type: 'select'; readonly templateId: string }
-  | { readonly type: 'filter-celebration'; readonly celebration: StudioTemplateCelebration }
-  | { readonly type: 'filter-style'; readonly style: StudioTemplateStyle }
 
-const isolatedExamples: readonly StudioTemplateOption[] = [
-  { id: 'example-editorial', name: 'Editorial', description: 'Una muestra de composición serena y directa.',
-    celebration: 'casamiento', style: 'editorial', featured: true, source: 'isolated-example' },
-  { id: 'example-minimal', name: 'Esencial', description: 'Una muestra de estructura simple y espaciosa.',
-    celebration: 'general', style: 'minimalista', featured: true, source: 'isolated-example' },
-  { id: 'example-celebration', name: 'Celebración', description: 'Una muestra pensada para un recorrido festivo.',
-    celebration: 'cumpleanos', style: 'narrativa', featured: false, source: 'isolated-example' },
-]
+const futureExplorations: readonly StudioTemplateOption[] = [
+  ['example-editorial', 'Editorial', 'Una exploración de composición serena y directa.', '/images/origin-01/dress-detail.webp'],
+  ['example-minimal', 'Esencial', 'Una exploración de estructura simple y espaciosa.', '/images/origin-01/gift-still-life.webp'],
+  ['example-celebration', 'Celebración', 'Una exploración pensada para un recorrido festivo.', '/images/origin-01/closing-valentina.webp'],
+].map(([id, name, description, src]) => ({
+  id, name, collection: 'Exploración futura', description, availability: 'coming-soon' as const,
+  preview: { src, alt: `Referencia visual de la exploración ${name}` }, highlights: [],
+  selectable: false, exploration: true,
+}))
 
-export function createStudioTemplateOptions(template: InvitationTemplateDefinition): readonly StudioTemplateOption[] {
-  return [{ id: template.id, name: template.internalName, description: template.description,
-    celebration: 'cumpleanos', style: 'narrativa', featured: true, source: 'production' }, ...isolatedExamples]
+export function createStudioTemplateOptions(
+  template: InvitationTemplateDefinition,
+  demoPath = '/demo/LMN-015-001',
+): readonly StudioTemplateOption[] {
+  return [{
+    id: template.id,
+    name: template.internalName,
+    collection: 'Origen',
+    description: 'Una experiencia nocturna, elegante y narrativa, construida como un recorrido de escenas.',
+    availability: 'available',
+    preview: {
+      src: '/images/origin-01/hero-valentina.webp',
+      alt: 'Vista de Origin 01 con el retrato de Valentina en una escena nocturna',
+    },
+    demoPath,
+    highlights: ['Apertura narrativa', 'Historia y galería', 'Detalles del evento', 'Trivia, regalos y confirmación'],
+    selectable: true,
+    exploration: false,
+  }, ...futureExplorations]
 }
 
 export function createStudioTemplateGalleryState(selectedId: string): StudioTemplateGalleryState {
-  return { view: 'main', selectedId, celebration: 'all', style: 'all' }
+  return { view: 'main', selectedId: selectedId === 'origin01' ? selectedId : 'origin01' }
 }
 
 export function transitionStudioTemplateGallery(
@@ -51,15 +66,5 @@ export function transitionStudioTemplateGallery(
 ): StudioTemplateGalleryState {
   if (action.type === 'open-gallery') return { ...state, view: 'gallery' }
   if (action.type === 'close-gallery') return { ...state, view: 'main' }
-  if (action.type === 'select') return { ...state, selectedId: action.templateId }
-  if (action.type === 'filter-celebration') return { ...state, celebration: action.celebration }
-  return { ...state, style: action.style }
-}
-
-export function filterStudioTemplateOptions(
-  templates: readonly StudioTemplateOption[],
-  state: Pick<StudioTemplateGalleryState, 'celebration' | 'style'>,
-) {
-  return templates.filter((template) => (state.celebration === 'all' || template.celebration === state.celebration)
-    && (state.style === 'all' || template.style === state.style))
+  return action.templateId === 'origin01' ? { ...state, selectedId: action.templateId } : state
 }

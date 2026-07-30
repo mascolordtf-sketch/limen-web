@@ -1,61 +1,63 @@
 import { useMemo, useReducer } from 'react'
 
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
-import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
+import { createStudioTemplateGalleryState, createStudioTemplateOptions,
   transitionStudioTemplateGallery } from './studioTemplateGallery'
-import type { StudioTemplateCelebration, StudioTemplateOption, StudioTemplateStyle } from './studioTemplateGallery'
-import type { StudioTemplateGalleryState } from './studioTemplateGallery'
+import type { StudioTemplateGalleryState, StudioTemplateOption } from './studioTemplateGallery'
 
-const celebrationFilters: readonly { value: StudioTemplateCelebration; label: string }[] = [
-  { value: 'all', label: 'Todas' }, { value: 'cumpleanos', label: 'Cumpleaños' },
-  { value: 'casamiento', label: 'Casamientos' }, { value: 'general', label: 'Otras celebraciones' },
-]
-const styleFilters: readonly { value: StudioTemplateStyle; label: string }[] = [
-  { value: 'all', label: 'Todos' }, { value: 'narrativa', label: 'Narrativa' },
-  { value: 'editorial', label: 'Editorial' }, { value: 'minimalista', label: 'Minimalista' },
-]
-
-function TemplateCard({ template, selected, onSelect }: {
+function AvailableTemplateCard({ template, selected, onSelect }: {
   template: StudioTemplateOption
   selected: boolean
   onSelect: () => void
 }) {
-  const celebrationLabel = template.celebration === 'cumpleanos'
-    ? 'Cumpleaños'
-    : template.celebration === 'casamiento' ? 'Casamiento' : 'Celebración'
-  const styleLabel = template.style === 'narrativa'
-    ? 'Narrativa'
-    : template.style === 'editorial' ? 'Editorial' : 'Minimalista'
-
-  return <li className={`limen-studio__template-card${selected ? ' is-selected' : ''}`}>
-    <div className={`limen-studio__template-art limen-studio__template-art--${template.style}`} aria-hidden="true">
-      <span className="limen-studio__template-art-kicker">LIMEN · {styleLabel}</span>
-      <span className="limen-studio__template-art-mark">{template.name.slice(0, 1)}</span>
-      <span className="limen-studio__template-art-name">{template.name}</span>
-      <i /><i />
+  return <article className={`limen-studio__template-card limen-studio__template-card--available${selected ? ' is-selected' : ''}`}
+    aria-label={`${template.name}, ${selected ? 'seleccionada' : 'disponible'}`}>
+    <div className="limen-studio__template-preview">
+      <img src={template.preview.src} alt={template.preview.alt} />
+      <span>Experiencia narrativa</span>
     </div>
     <div className="limen-studio__template-card-copy">
-      <div className="limen-studio__template-card-meta">
-        <span>{celebrationLabel}</span><span>{styleLabel}</span>
-      </div>
-      <div className="limen-studio__template-card-title"><strong>{template.name}</strong>
-        <small>{template.source === 'production' ? 'Plantilla disponible' : 'Dirección en exploración'}</small></div>
+      <div className="limen-studio__template-card-meta"><span>Colección {template.collection}</span>
+        <strong><span aria-hidden="true">✓</span> {selected ? 'Seleccionada' : 'Disponible'}</strong></div>
+      <div className="limen-studio__template-card-title"><h3>{template.name}</h3></div>
       <p>{template.description}</p>
-      <button type="button" aria-pressed={selected} onClick={onSelect}>
-        <span aria-hidden="true">{selected ? '✓' : '→'}</span>{selected ? 'Seleccionada' : 'Explorar plantilla'}
-      </button>
+      <ul className="limen-studio__template-highlights" aria-label="Escenas y capacidades destacadas">
+        {template.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+      </ul>
+      <div className="limen-studio__template-actions">
+        <button type="button" aria-pressed={selected} onClick={onSelect}>
+          <span aria-hidden="true">{selected ? '✓' : '○'}</span> {selected ? 'Plantilla seleccionada' : 'Seleccionar plantilla'}
+        </button>
+        {template.demoPath && <a href={template.demoPath} target="_blank" rel="noopener noreferrer"
+          aria-label={`Ver demostración completa de ${template.name} (se abre en una pestaña nueva)`}>
+          Ver demostración <span aria-hidden="true">↗</span>
+        </a>}
+      </div>
+    </div>
+  </article>
+}
+
+function FutureTemplateCard({ template }: { template: StudioTemplateOption }) {
+  return <li className="limen-studio__template-card limen-studio__template-card--future">
+    <img src={template.preview.src} alt={template.preview.alt} />
+    <div className="limen-studio__template-card-copy">
+      <div className="limen-studio__template-card-meta"><span>{template.collection}</span><strong>Próximamente</strong></div>
+      <h3>{template.name}</h3><p>{template.description}</p>
+      <p className="limen-studio__quiet-note">Este anticipo todavía no se puede seleccionar.</p>
     </div>
   </li>
 }
 
-export function StudioTemplateStage({ template, initialState, state: controlledState, onStateChange, onGalleryViewChange }: {
+export function StudioTemplateStage({ template, demoPath, initialState, state: controlledState, onStateChange,
+  onGalleryViewChange }: {
   template: InvitationTemplateDefinition
+  demoPath?: string
   initialState?: StudioTemplateGalleryState
   state?: StudioTemplateGalleryState
   onStateChange?: (state: StudioTemplateGalleryState) => void
   onGalleryViewChange?: (view: StudioTemplateGalleryState['view']) => void
 }) {
-  const templates = useMemo(() => createStudioTemplateOptions(template), [template])
+  const templates = useMemo(() => createStudioTemplateOptions(template, demoPath), [template, demoPath])
   const [internalState, dispatch] = useReducer(transitionStudioTemplateGallery,
     initialState ?? createStudioTemplateGalleryState(template.id))
   const state = controlledState ?? internalState
@@ -63,51 +65,31 @@ export function StudioTemplateStage({ template, initialState, state: controlledS
     if (controlledState) onStateChange?.(transitionStudioTemplateGallery(controlledState, action))
     else dispatch(action)
   }
-  const selected = templates.find(({ id }) => id === state.selectedId) ?? templates[0]
-  const visibleTemplates = filterStudioTemplateOptions(templates, state)
-
+  const available = templates.find(({ selectable }) => selectable)!
+  const selected = state.selectedId === available.id
   const changeView = (view: StudioTemplateGalleryState['view']) => {
-    transition({ type: view === 'gallery' ? 'open-gallery' : 'close-gallery' })
-    onGalleryViewChange?.(view)
+    transition({ type: view === 'gallery' ? 'open-gallery' : 'close-gallery' }); onGalleryViewChange?.(view)
   }
 
   if (state.view === 'gallery') return <section className="limen-studio__template-stage" aria-labelledby="studio-template-gallery-title">
-    <button className="limen-studio__template-back" type="button" onClick={() => changeView('main')}>← Volver</button>
-    <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Plantilla</p>
-      <h2 id="studio-template-gallery-title">Todas las plantillas</h2>
-      <p>Explorá las direcciones disponibles. La elección es temporal y no cambia la invitación pública.</p></div>
-    <div className="limen-studio__template-filters">
-      <fieldset><legend>Tipo de celebración</legend>{celebrationFilters.map((filter) => <label key={filter.value}>
-        <input type="radio" name="studio-template-celebration" value={filter.value}
-          checked={state.celebration === filter.value}
-          onChange={() => transition({ type: 'filter-celebration', celebration: filter.value })} />{filter.label}</label>)}</fieldset>
-      <fieldset><legend>Estilo visual</legend>{styleFilters.map((filter) => <label key={filter.value}>
-        <input type="radio" name="studio-template-style" value={filter.value} checked={state.style === filter.value}
-          onChange={() => transition({ type: 'filter-style', style: filter.value })} />{filter.label}</label>)}</fieldset>
-    </div>
-    {visibleTemplates.length ? <ul className="limen-studio__template-grid">{visibleTemplates.map((option) => <TemplateCard
-      key={option.id} template={option} selected={option.id === state.selectedId}
-      onSelect={() => transition({ type: 'select', templateId: option.id })} />)}</ul>
-      : <p role="status">No hay muestras para esta combinación de filtros.</p>}
+    <button className="limen-studio__template-back" type="button" onClick={() => changeView('main')}>← Volver a Origin 01</button>
+    <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Exploraciones futuras</p>
+      <h2 id="studio-template-gallery-title">Próximamente</h2>
+      <p>Estas direcciones visuales son anticipos. No son plantillas funcionales y no modifican tu borrador.</p></div>
+    <ul className="limen-studio__template-grid limen-studio__template-grid--future">
+      {templates.filter(({ exploration }) => exploration).map((option) => <FutureTemplateCard key={option.id} template={option} />)}
+    </ul>
   </section>
 
   return <section className="limen-studio__template-stage" aria-labelledby="studio-template-title">
     <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Plantilla</p>
-      <h2 id="studio-template-title">Elegí el punto de partida</h2>
-      <p>Cada plantilla propone una forma distinta de contar la celebración. Actualmente está seleccionada {selected?.name}.</p></div>
-    <div className="limen-studio__collection-heading">
-      <div><p className="limen-studio__eyebrow">Colección curada</p>
-        <h3 className="limen-studio__subheading">Plantillas destacadas</h3></div>
-      <p>Una selección breve de universos narrativos.</p>
-    </div>
-    <ul className="limen-studio__template-grid">{templates.filter(({ featured }) => featured).map((option) => <TemplateCard
-      key={option.id} template={option} selected={option.id === state.selectedId}
-      onSelect={() => transition({ type: 'select', templateId: option.id })} />)}</ul>
+      <h2 id="studio-template-title">Elegí cómo contar la celebración</h2>
+      <p>Origin 01 es la plantilla disponible para este borrador.</p></div>
+    <AvailableTemplateCard template={available} selected={selected}
+      onSelect={() => transition({ type: 'select', templateId: available.id })} />
     <footer className="limen-studio__template-stage-footer">
-      <button className="limen-studio__primary-link" type="button" onClick={() => changeView('gallery')}>
-        Ver todas las plantillas <span aria-hidden="true">→</span>
-      </button>
-      <p className="limen-studio__quiet-note">La selección es temporal y no modifica la invitación pública.</p>
+      <button className="limen-studio__primary-link" type="button" onClick={() => changeView('gallery')}>Ver exploraciones futuras <span aria-hidden="true">→</span></button>
+      <p className="limen-studio__quiet-note">Las opciones próximas no alteran el contenido ni la vista previa.</p>
     </footer>
   </section>
 }
