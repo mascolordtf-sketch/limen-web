@@ -1920,6 +1920,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 160ms ease, object-position 160ms ease;
 }
 
 .limen-studio__photo-preview > strong,
@@ -2014,6 +2015,12 @@
 
 .limen-studio__photo-fields details label {
   margin-top: .65rem;
+}
+
+.limen-studio__photo-fields output {
+  justify-self: end;
+  color: var(--studio-ink);
+  font-variant-numeric: tabular-nums;
 }
 
 .limen-studio__photo-fields input[type='range'] {

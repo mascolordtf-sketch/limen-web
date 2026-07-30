@@ -69,7 +69,7 @@ const projectedAssignment = (
   fallback = '',
 ) => {
   if (!assignment) return { mediaId: fallback }
-  if (!assignment.focalPoint) return { mediaId: assignment.mediaId }
+  if (!assignment.focalPoint && assignment.zoom === undefined) return { mediaId: assignment.mediaId }
   const media = findStudioMediaById(state.items, assignment.mediaId)
   if (!media || media.kind !== 'image' || media.status !== 'ready') return { mediaId: assignment.mediaId }
   return {
@@ -78,6 +78,7 @@ const projectedAssignment = (
       ...projectRenderableMedia([media])[0],
       id: `studio-slot:${assignment.slotId}:${assignment.position ?? 0}:${assignment.mediaId}`,
       focalPoint: assignment.focalPoint,
+      zoom: assignment.zoom,
     },
   }
 }

@@ -11,6 +11,7 @@ import {
   updateStudioPhotoAccessibility,
   updateStudioPhotoFocalPoint,
   updateStudioPhotoItem,
+  updateStudioPhotoZoom,
 } from './origin01StudioPhotos'
 import { createPendingStudioPhoto, processStudioPhoto, validateStudioPhotoFile } from './studioPhotoProcessing'
 
@@ -45,12 +46,13 @@ const defaultAlt = (label: string, name: string) =>
   `${label === 'Galería' ? 'Fotografía' : `Imagen de ${label.toLowerCase()}`} de ${name.trim() || 'la protagonista'}`
 
 function StudioPhotoCard({
-  target, media, focalPoint, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
-  onChoose, onReset, onRemove, onMove, onAltChange, onFocalPoint,
+  target, media, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
+  onChoose, onReset, onRemove, onMove, onAltChange, onFocalPoint, onZoom,
 }: {
   target: PhotoTarget
   media?: StudioImageMedia
   focalPoint?: { readonly x: number; readonly y: number }
+  zoom?: number
   canonical: boolean
   canRemove: boolean
   canMoveUp: boolean
@@ -64,6 +66,7 @@ function StudioPhotoCard({
   onMove: (direction: -1 | 1) => void
   onAltChange: (value: string) => void
   onFocalPoint: (axis: 'x' | 'y', value: number) => void
+  onZoom: (value: number) => void
 }) {
   const inputId = useId()
   const alt = media?.accessibility.kind === 'informative' ? media.accessibility.alt : ''
@@ -72,6 +75,8 @@ function StudioPhotoCard({
     <div className="limen-studio__photo-preview">
       {src ? <img src={src} alt="" style={{
         objectPosition: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
+        transform: `scale(${zoom})`,
+        transformOrigin: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
       }} /> : <span>Sin fotografía</span>}
       <strong>{target.label}{target.position === undefined ? '' : ` ${target.position + 1}`}</strong>
       {processing && <span className="limen-studio__photo-progress">Procesando…</span>}
@@ -108,6 +113,14 @@ function StudioPhotoCard({
           <label>Vertical
             <input type="range" min="0" max="100" value={focalPoint?.y ?? 50}
               onChange={(event) => onFocalPoint('y', Number(event.target.value))} />
+          </label>
+          <label>Zoom <output>{zoom.toLocaleString('es-AR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}×</output>
+            <input type="range" min="1" max="2" step=".05" value={zoom}
+              aria-valuetext={`${zoom.toLocaleString('es-AR', { maximumFractionDigits: 2 })} aumentos`}
+              onChange={(event) => onZoom(Number(event.target.value))} />
           </label>
         </details>
       </div>}
@@ -186,7 +199,8 @@ export function StudioPhotographyManager({
       : undefined
     return <StudioPhotoCard key={target.key} target={target} media={media}
       focalPoint={assignment?.focalPoint}
-      canonical={assignment?.mediaId === initial?.mediaId && !assignment?.focalPoint}
+      zoom={assignment?.zoom}
+      canonical={assignment?.mediaId === initial?.mediaId && !assignment?.focalPoint && assignment?.zoom === undefined}
       canRemove={(target.slotId === 'gallery.images' && galleryAssignments.length > 1)
         || target.slotId === 'dressCode.image' || target.slotId === 'gifts.image'}
       canMoveUp={target.slotId === 'gallery.images' && (index ?? 0) > 0}
@@ -216,6 +230,8 @@ export function StudioPhotographyManager({
         updateStudioPhotoAccessibility(current, assignment.mediaId, { kind: 'informative', alt: value }))}
       onFocalPoint={(axis, value) => onMediaChange((current) =>
         updateStudioPhotoFocalPoint(current, target.slotId, target.position, axis, value))}
+      onZoom={(value) => onMediaChange((current) =>
+        updateStudioPhotoZoom(current, target.slotId, target.position, value))}
     />
   }
 

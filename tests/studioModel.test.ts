@@ -61,6 +61,7 @@ import {
   removeStudioPhotoAssignment,
   updateStudioPhotoAccessibility,
   updateStudioPhotoFocalPoint,
+  updateStudioPhotoZoom,
 } from '../src/features/studio/origin01StudioPhotos'
 import {
   createPendingStudioPhoto,
@@ -225,6 +226,24 @@ assert(focusedHeroId.startsWith('studio-slot:hero.image')
 const boundedFocus = updateStudioPhotoFocalPoint(canonicalMediaState, 'hero.image', undefined, 'y', 140)
 assert(getStudioMediaAssignments(boundedFocus.assignments, 'hero.image')[0]?.focalPoint?.y === 100,
   'el encuadre queda limitado al rango visible')
+const zoomedHero = updateStudioPhotoZoom(canonicalMediaState, 'hero.image', undefined, 1.45)
+const zoomedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: zoomedHero })
+const zoomedHeroId = zoomedPreview.content.hero.imageMediaId
+assert(zoomedHeroId.startsWith('studio-slot:hero.image')
+  && zoomedPreview.media.find(({ id }) => id === zoomedHeroId)?.zoom === 1.45
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'hero.image')[0]?.zoom === undefined,
+  'el zoom pertenece al uso de la foto, se proyecta y no altera el medio compartido')
+const boundedZoom = updateStudioPhotoZoom(canonicalMediaState, 'hero.image', undefined, 4)
+const resetZoom = updateStudioPhotoZoom(zoomedHero, 'hero.image', undefined, 1)
+assert(getStudioMediaAssignments(boundedZoom.assignments, 'hero.image')[0]?.zoom === 2
+  && getStudioMediaAssignments(resetZoom.assignments, 'hero.image')[0]?.zoom === undefined,
+  'el zoom se limita a 2× y volver a 1× restaura la representación canónica')
+assert(validateOrigin01StudioMedia({
+  ...canonicalMediaState,
+  assignments: canonicalMediaState.assignments.map((assignment) =>
+    assignment.slotId === 'hero.image' ? { ...assignment, zoom: .5 } : assignment),
+}).some(({ code }) => code === 'invalid-zoom'),
+  'el contrato rechaza un zoom fuera del rango permitido')
 const withoutDress = removeStudioPhotoAssignment(canonicalMediaState, 'dressCode.image')
 const withoutDressPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: withoutDress })
 assert(withoutDressPreview.content.dressCode.imageMediaId === '',
@@ -337,6 +356,7 @@ const aestheticStageElement = createElement(StudioAestheticStage, {
 const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
 assert(aestheticMarkup.includes('próxima entrega')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
+  && aestheticMarkup.includes('Zoom')
   && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Estética conserva la dirección visual y suma los siete usos fotográficos actuales')

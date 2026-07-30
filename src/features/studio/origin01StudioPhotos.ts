@@ -144,3 +144,23 @@ export function updateStudioPhotoFocalPoint(
       : assignment),
   }
 }
+
+export function updateStudioPhotoZoom(
+  state: Origin01StudioMediaState,
+  slotId: Origin01MediaSlotId,
+  position: number | undefined,
+  value: number,
+): Origin01StudioMediaState {
+  const bounded = Math.max(1, Math.min(2, Math.round(value * 100) / 100))
+  return {
+    ...state,
+    assignments: state.assignments.map((assignment) => {
+      if (assignment.slotId !== slotId
+        || slotId === 'gallery.images' && assignment.position !== position) return assignment
+      if (bounded === 1) {
+        return { ...assignment, zoom: undefined }
+      }
+      return { ...assignment, zoom: bounded }
+    }),
+  }
+}

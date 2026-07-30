@@ -53,6 +53,7 @@ export type StudioMediaAssignment<TSlotId extends string = string> = {
     readonly x: number
     readonly y: number
   }
+  readonly zoom?: number
 }
 
 export type StudioMediaState<TSlotId extends string = string> = {
@@ -71,6 +72,7 @@ export type StudioMediaValidationErrorCode =
   | 'error-without-message'
   | 'missing-informative-alt'
   | 'invalid-focal-point'
+  | 'invalid-zoom'
 
 export type StudioMediaValidationError = {
   readonly code: StudioMediaValidationErrorCode
@@ -285,6 +287,18 @@ export function validateStudioMediaContract<TSlotId extends string>(
         slotId: assignment.slotId,
         mediaId: assignment.mediaId,
         message: `El encuadre del slot "${assignment.slotId}" está fuera del rango permitido.`,
+      })
+    }
+    if (assignment.zoom !== undefined && (
+      !Number.isFinite(assignment.zoom)
+      || assignment.zoom < 1
+      || assignment.zoom > 2
+    )) {
+      errors.push({
+        code: 'invalid-zoom',
+        slotId: assignment.slotId,
+        mediaId: assignment.mediaId,
+        message: `El zoom del slot "${assignment.slotId}" está fuera del rango permitido.`,
       })
     }
   }
