@@ -157,7 +157,17 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
         {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
           state={templateState} onStateChange={setTemplateState} />}
       </div>
-      {activeStage === 'aesthetic' && <StudioAestheticStage />}
+      {activeStage === 'aesthetic' && <StudioAestheticStage
+        media={model.draft.media}
+        initialMedia={model.initialDraft.media}
+        protagonistName={model.draft.protagonistName}
+        initialGalleryCaptions={model.initialDraft.gallery.captions}
+        onMediaChange={(updater) => model.updateGroup('media', updater)}
+        onGalleryCaptionsChange={(updater) => model.updateGroup('gallery', (current) => ({
+          ...current,
+          captions: updater(current.captions),
+        }))}
+        onTemporaryUrl={model.registerTemporaryMediaUrl} />}
       {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
         for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
         if (!included && selectedScene === scene.id) {

@@ -238,6 +238,7 @@ function InvitationImageAsset({
   decorative?: boolean
 }) {
   if (image?.src) {
+    const focalPoint = image.focalPoint ?? { x: 50, y: 50 }
     return (
       <img
         className={className}
@@ -246,6 +247,11 @@ function InvitationImageAsset({
         aria-hidden={decorative || undefined}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'auto'}
+        style={image.focalPoint || image.zoom !== undefined ? {
+          objectPosition: `${focalPoint.x}% ${focalPoint.y}%`,
+          transform: image.zoom === undefined ? undefined : `scale(${image.zoom})`,
+          transformOrigin: image.zoom === undefined ? undefined : `${focalPoint.x}% ${focalPoint.y}%`,
+        } : undefined}
       />
     )
   }
@@ -657,7 +663,9 @@ export function Origin01Invitation({
                 const media = mediaById.get(image.mediaId)
                 return (
                 <figure className={`origin01-gallery__item origin01-gallery__item--${index + 1}`} key={`${image.mediaId}-${index}`}>
-                  <InvitationImageAsset image={media} className="origin01-gallery__image" />
+                  <div className="origin01-gallery__media">
+                    <InvitationImageAsset image={media} className="origin01-gallery__image" />
+                  </div>
                   {image.caption ? (
                     <figcaption>
                       <span>0{index + 1}</span>

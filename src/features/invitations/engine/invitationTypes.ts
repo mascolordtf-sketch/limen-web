@@ -40,6 +40,11 @@ export type InvitationMediaReference = {
   readonly src: string
   readonly alt?: string
   readonly title?: string
+  readonly focalPoint?: {
+    readonly x: number
+    readonly y: number
+  }
+  readonly zoom?: number
 }
 
 export type InvitationSceneContent = {
