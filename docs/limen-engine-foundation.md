@@ -164,3 +164,9 @@ Mientras el borrador actual sea estructuralmente renderizable, el renderer consu
 ## Fase 2B.6B — Navegación principal por etapas
 
 Studio incorpora cinco etapas superiores, reversibles y libremente accesibles: Plantilla, Estética, Secciones, Contenido y Revisión. Plantilla ofrece una primera experiencia temporal de selección, con opciones destacadas y una galería independiente cuyos filtros por celebración y estilo, selección y estado de navegación se conservan durante la sesión. La selección es temporal, no posee persistencia y no modifica la invitación pública; su presentación se integra de forma segura con la preview existente. Estética continúa siendo informativa y no incorpora controles de personalización. El shell, los editores, la validación y el renderer público se conservan sin reorganización.
+
+## Fase 2C.2 — selector real de Plantillas
+
+La Fase 2C.1 cerró la matriz de producto de Studio Esencial. A partir de esa base, Origin 01 es la única plantilla real disponible y seleccionable: Plantilla presenta su universo Origen, su carácter narrativo, capacidades existentes, una miniatura derivada de sus medios locales y un acceso a la demostración pública real. La selección continúa siendo temporal y cualquier identificador anterior no disponible se normaliza a Origin 01 sin modificar contenido, escenas, validación ni preview.
+
+Editorial, Esencial y Celebración se conservan exclusivamente como nombres de exploraciones visuales futuras. Aparecen bajo el estado “Próximamente”, no ofrecen controles interactivos y no pueden alterar el borrador. Esta fase no incorpora plantillas nuevas, catálogo remoto, persistencia ni publicación; Studio no se considera completo ni publicable. Las variantes estéticas continúan reservadas para la Fase 2C.6.

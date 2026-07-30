@@ -1,65 +1,72 @@
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
 
-export type StudioTemplateCelebration = 'all' | 'cumpleanos' | 'casamiento' | 'general'
-export type StudioTemplateStyle = 'all' | 'narrativa' | 'editorial' | 'minimalista'
+export type StudioTemplateAvailability = 'available' | 'coming-soon'
 
 export type StudioTemplateOption = {
   readonly id: string
   readonly name: string
+  readonly collection: string
   readonly description: string
-  readonly celebration: Exclude<StudioTemplateCelebration, 'all'>
-  readonly style: Exclude<StudioTemplateStyle, 'all'>
-  readonly featured: boolean
-  readonly source: 'production' | 'isolated-example'
+  readonly availability: StudioTemplateAvailability
+  readonly preview:
+    | { readonly kind: 'image'; readonly src: string; readonly alt: string }
+    | { readonly kind: 'concept'; readonly motif: 'editorial' | 'essential' | 'celebration'; readonly label: string }
+  readonly demoPath?: string
+  readonly highlights: readonly string[]
+  readonly selectable: boolean
+  readonly exploration: boolean
 }
 
 export type StudioTemplateGalleryState = {
-  readonly view: 'main' | 'gallery'
   readonly selectedId: string
-  readonly celebration: StudioTemplateCelebration
-  readonly style: StudioTemplateStyle
 }
 
-export type StudioTemplateGalleryAction =
-  | { readonly type: 'open-gallery' }
-  | { readonly type: 'close-gallery' }
-  | { readonly type: 'select'; readonly templateId: string }
-  | { readonly type: 'filter-celebration'; readonly celebration: StudioTemplateCelebration }
-  | { readonly type: 'filter-style'; readonly style: StudioTemplateStyle }
-
-const isolatedExamples: readonly StudioTemplateOption[] = [
-  { id: 'example-editorial', name: 'Editorial', description: 'Una muestra de composición serena y directa.',
-    celebration: 'casamiento', style: 'editorial', featured: true, source: 'isolated-example' },
-  { id: 'example-minimal', name: 'Esencial', description: 'Una muestra de estructura simple y espaciosa.',
-    celebration: 'general', style: 'minimalista', featured: true, source: 'isolated-example' },
-  { id: 'example-celebration', name: 'Celebración', description: 'Una muestra pensada para un recorrido festivo.',
-    celebration: 'cumpleanos', style: 'narrativa', featured: false, source: 'isolated-example' },
-]
-
-export function createStudioTemplateOptions(template: InvitationTemplateDefinition): readonly StudioTemplateOption[] {
-  return [{ id: template.id, name: template.internalName, description: template.description,
-    celebration: 'cumpleanos', style: 'narrativa', featured: true, source: 'production' }, ...isolatedExamples]
+export type StudioTemplateGalleryAction = {
+  readonly type: 'select'
+  readonly templateId: string
+  readonly selectable: boolean
 }
 
-export function createStudioTemplateGalleryState(selectedId: string): StudioTemplateGalleryState {
-  return { view: 'main', selectedId, celebration: 'all', style: 'all' }
+const futureExplorations = [
+  ['example-editorial', 'Editorial', 'Una exploración de composición serena y directa.', 'editorial'],
+  ['example-minimal', 'Esencial', 'Una exploración de estructura simple y espaciosa.', 'essential'],
+  ['example-celebration', 'Celebración', 'Una exploración pensada para un recorrido festivo.', 'celebration'],
+] as const
+
+const futureTemplateOptions = futureExplorations.map(([id, name, description, motif]) => ({
+  id, name, collection: 'Exploración futura', description, availability: 'coming-soon' as const,
+  preview: { kind: 'concept' as const, motif, label: `Composición conceptual ${name}` }, highlights: [],
+  selectable: false, exploration: true,
+}))
+
+export function createStudioTemplateOptions(
+  template: InvitationTemplateDefinition,
+  demoPath?: string,
+): readonly StudioTemplateOption[] {
+  return [{
+    id: template.id,
+    name: template.internalName,
+    collection: 'Origen',
+    description: 'Experiencia narrativa, nocturna y elegante.',
+    availability: 'available',
+    preview: {
+      kind: 'image', src: '/images/origin-01/hero-valentina.webp',
+      alt: 'Vista de Origin 01 con el retrato de Valentina en una escena nocturna',
+    },
+    demoPath,
+    highlights: ['Portada', 'Historia', 'Galería', 'Trivia'],
+    selectable: true,
+    exploration: false,
+  }, ...futureTemplateOptions]
+}
+
+export function createStudioTemplateGalleryState(selectedId: string, availableId = selectedId): StudioTemplateGalleryState {
+  return { selectedId: selectedId === availableId ? selectedId : availableId }
 }
 
 export function transitionStudioTemplateGallery(
   state: StudioTemplateGalleryState,
   action: StudioTemplateGalleryAction,
 ): StudioTemplateGalleryState {
-  if (action.type === 'open-gallery') return { ...state, view: 'gallery' }
-  if (action.type === 'close-gallery') return { ...state, view: 'main' }
-  if (action.type === 'select') return { ...state, selectedId: action.templateId }
-  if (action.type === 'filter-celebration') return { ...state, celebration: action.celebration }
-  return { ...state, style: action.style }
-}
-
-export function filterStudioTemplateOptions(
-  templates: readonly StudioTemplateOption[],
-  state: Pick<StudioTemplateGalleryState, 'celebration' | 'style'>,
-) {
-  return templates.filter((template) => (state.celebration === 'all' || template.celebration === state.celebration)
-    && (state.style === 'all' || template.style === state.style))
+  return action.selectable ? { selectedId: action.templateId } : state
 }
