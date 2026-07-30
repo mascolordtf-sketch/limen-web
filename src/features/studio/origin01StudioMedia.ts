@@ -1,5 +1,6 @@
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import {
+  findStudioMediaById,
   getStudioMediaAssignments,
   normalizeInvitationMediaReference,
   projectRenderableMedia,
@@ -62,38 +63,68 @@ const singleMediaId = (
   fallback: string,
 ) => getStudioMediaAssignments(state.assignments, slotId)[0]?.mediaId ?? fallback
 
+const projectedAssignment = (
+  state: Origin01StudioMediaState,
+  assignment: StudioMediaAssignment<Origin01MediaSlotId> | undefined,
+  fallback = '',
+) => {
+  if (!assignment) return { mediaId: fallback }
+  if (!assignment.focalPoint) return { mediaId: assignment.mediaId }
+  const media = findStudioMediaById(state.items, assignment.mediaId)
+  if (!media || media.kind !== 'image' || media.status !== 'ready') return { mediaId: assignment.mediaId }
+  return {
+    mediaId: `studio-slot:${assignment.slotId}:${assignment.position ?? 0}:${assignment.mediaId}`,
+    media: {
+      ...projectRenderableMedia([media])[0],
+      id: `studio-slot:${assignment.slotId}:${assignment.position ?? 0}:${assignment.mediaId}`,
+      focalPoint: assignment.focalPoint,
+    },
+  }
+}
+
 export function deriveOrigin01MediaInvitation(
   invitation: Origin01InvitationData,
   state: Origin01StudioMediaState,
 ): Origin01InvitationData {
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
+  const hero = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'hero.image')[0],
+    invitation.content.hero.imageMediaId)
+  const dressCode = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'dressCode.image')[0],
+    '')
+  const gifts = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'gifts.image')[0],
+    '')
+  const closing = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'closing.image')[0],
+    invitation.content.closing.imageMediaId)
+  const gallery = galleryAssignments.map((assignment) => projectedAssignment(state, assignment, assignment.mediaId))
+  const projected = [hero.media, dressCode.media, gifts.media, closing.media, ...gallery.map(({ media }) => media)]
+    .filter((media): media is NonNullable<typeof media> => Boolean(media))
   return {
     ...invitation,
-    media: projectRenderableMedia(state.items),
+    media: [...projectRenderableMedia(state.items), ...projected],
     content: {
       ...invitation.content,
       hero: {
         ...invitation.content.hero,
-        imageMediaId: singleMediaId(state, 'hero.image', invitation.content.hero.imageMediaId),
+        imageMediaId: hero.mediaId,
       },
       dressCode: {
         ...invitation.content.dressCode,
-        imageMediaId: singleMediaId(state, 'dressCode.image', invitation.content.dressCode.imageMediaId),
+        imageMediaId: dressCode.mediaId,
       },
       gallery: {
         ...invitation.content.gallery,
-        images: galleryAssignments.map((assignment, index) => ({
+        images: gallery.map((assignment, index) => ({
           mediaId: assignment.mediaId,
           caption: invitation.content.gallery.images[index]?.caption,
         })),
       },
       gifts: {
         ...invitation.content.gifts,
-        imageMediaId: singleMediaId(state, 'gifts.image', invitation.content.gifts.imageMediaId),
+        imageMediaId: gifts.mediaId,
       },
       closing: {
         ...invitation.content.closing,
-        imageMediaId: singleMediaId(state, 'closing.image', invitation.content.closing.imageMediaId),
+        imageMediaId: closing.mediaId,
       },
       music: {
         mediaId: singleMediaId(state, 'music.audio', invitation.content.music.mediaId),

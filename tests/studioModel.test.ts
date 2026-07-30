@@ -54,6 +54,19 @@ import {
   replaceStudioMediaAssignment,
   validateStudioMediaContract,
 } from '../src/features/studio/studioMedia'
+import {
+  addStudioPhotoItem,
+  assignStudioPhoto,
+  moveStudioGalleryPhoto,
+  removeStudioPhotoAssignment,
+  updateStudioPhotoAccessibility,
+  updateStudioPhotoFocalPoint,
+} from '../src/features/studio/origin01StudioPhotos'
+import {
+  createPendingStudioPhoto,
+  studioPhotoMaxBytes,
+  validateStudioPhotoFile,
+} from '../src/features/studio/studioPhotoProcessing'
 import { createOrigin01StudioDomains, origin01TriviaFlow } from '../src/features/studio/origin01StudioConfiguration'
 import { selectValidStudioPreview, validateOrigin01StudioDraft } from '../src/features/studio/origin01StudioValidation'
 import { selectStudioIssueSummary, selectStudioItemStatus } from '../src/features/studio/studioItemStatus'
@@ -178,6 +191,48 @@ const mediaDerivedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, in
 assert(mediaDerivedPreview.media.map(({ id }) => id).join('|') === origin01DemoData.media.map(({ id }) => id).join('|')
   && mediaDerivedPreview.content.gallery.images.map(({ mediaId }) => mediaId).join('|') === 'hero|dress|closing',
   'Studio deriva medios renderizables y asignaciones sin cambiar la invitación actual')
+assert(validateStudioPhotoFile({ name: 'foto.gif', type: 'image/gif', size: 1_000 })?.includes('JPG')
+  && validateStudioPhotoFile({ name: 'foto.jpg', type: 'image/jpeg', size: studioPhotoMaxBytes + 1 })?.includes('12 MB')
+  && validateStudioPhotoFile({ name: 'foto.webp', type: 'image/webp', size: 1_000 }) === null,
+  'la selección de fotografías acepta solo formatos y tamaño del alcance')
+const pendingPhoto = createPendingStudioPhoto('studio-new', {
+  name: 'valentina.jpg', type: 'image/jpeg', size: 2_000,
+}, 'Retrato de Valentina')
+const withPendingPhoto = addStudioPhotoItem(canonicalMediaState, pendingPhoto)
+assert(findStudioMediaById(withPendingPhoto.items, 'studio-new')?.status === 'pending'
+  && findStudioMediaById(canonicalMediaState.items, 'studio-new') === undefined,
+  'una fotografía temporal se incorpora sin mutar el estado canónico')
+const readyPhoto = { ...pendingPhoto, status: 'ready' as const, src: 'blob:studio-new' }
+const assignedPhoto = assignStudioPhoto(addStudioPhotoItem(canonicalMediaState, readyPhoto),
+  'hero.image', readyPhoto.id)
+assert(getStudioMediaAssignments(assignedPhoto.assignments, 'hero.image')[0]?.mediaId === readyPhoto.id
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'hero.image')[0]?.mediaId === 'hero',
+  'el reemplazo de una fotografía conserva identidad e inmutabilidad')
+const galleryMoved = moveStudioGalleryPhoto(canonicalMediaState, 0, 2)
+assert(getStudioMediaAssignments(galleryMoved.assignments, 'gallery.images')
+  .map(({ mediaId }) => mediaId).join('|') === 'dress|closing|hero',
+  'la galería reordena asignaciones y normaliza posiciones')
+const galleryReduced = removeStudioPhotoAssignment(canonicalMediaState, 'gallery.images', 1)
+assert(getStudioMediaAssignments(galleryReduced.assignments, 'gallery.images')
+  .map(({ position }) => position).join('|') === '0|1',
+  'quitar una fotografía de galería mantiene posiciones continuas')
+const focusedHero = updateStudioPhotoFocalPoint(canonicalMediaState, 'hero.image', undefined, 'x', 18)
+const focusedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: focusedHero })
+const focusedHeroId = focusedPreview.content.hero.imageMediaId
+assert(focusedHeroId.startsWith('studio-slot:hero.image')
+  && focusedPreview.media.find(({ id }) => id === focusedHeroId)?.focalPoint?.x === 18,
+  'el encuadre pertenece al uso de la foto y se proyecta sin alterar el medio compartido')
+const boundedFocus = updateStudioPhotoFocalPoint(canonicalMediaState, 'hero.image', undefined, 'y', 140)
+assert(getStudioMediaAssignments(boundedFocus.assignments, 'hero.image')[0]?.focalPoint?.y === 100,
+  'el encuadre queda limitado al rango visible')
+const withoutDress = removeStudioPhotoAssignment(canonicalMediaState, 'dressCode.image')
+const withoutDressPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: withoutDress })
+assert(withoutDressPreview.content.dressCode.imageMediaId === '',
+  'un slot fotográfico opcional puede quedar vacío sin recuperar silenciosamente la imagen canónica')
+const withoutAlt = updateStudioPhotoAccessibility(canonicalMediaState, 'hero',
+  { kind: 'informative', alt: '' })
+assert(validateOrigin01StudioMedia(withoutAlt).some(({ code }) => code === 'missing-informative-alt'),
+  'la edición de texto alternativo conserva la validación accesible')
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')
@@ -270,9 +325,21 @@ assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels
 assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
-assert(renderToStaticMarkup(createElement(StudioAestheticStage)).includes('próxima entrega')
+const aestheticStageElement = createElement(StudioAestheticStage, {
+  media: initial.media,
+  initialMedia: initial.media,
+  protagonistName: initial.protagonistName,
+  initialGalleryCaptions: initial.gallery.captions,
+  onMediaChange: () => undefined,
+  onGalleryCaptionsChange: () => undefined,
+  onTemporaryUrl: () => undefined,
+})
+const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
+assert(aestheticMarkup.includes('próxima entrega')
+  && aestheticMarkup.includes('Las imágenes que cuentan la historia')
+  && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
   && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Estética es informativa y cambiar la etapa no altera el borrador temporal')
+  'Estética conserva la dirección visual y suma los siete usos fotográficos actuales')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Elegí cómo contar la celebración') && templateMainMarkup.includes('Origin 01')
@@ -728,7 +795,7 @@ const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean
     createElement(StudioStagePresentation, {
       activeStage, previewDedicated, templateGalleryOpen: galleryOpen,
       templateStage: createElement(StudioTemplateStage, { template: origin01Template }),
-      aestheticStage: createElement(StudioAestheticStage),
+      aestheticStage: aestheticStageElement,
     }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
 const independentGalleryPresentation = renderStagePresentation(true, false)
 assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')

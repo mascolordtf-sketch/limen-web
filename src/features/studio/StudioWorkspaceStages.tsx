@@ -1,6 +1,8 @@
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import type { ReactNode } from 'react'
+import { StudioPhotographyManager } from './StudioPhotographyManager'
+import type { Origin01StudioMediaState } from './origin01StudioMedia'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
@@ -13,7 +15,23 @@ export function StudioStageNavigation({ activeStage, onStageChange }: {
   </nav>
 }
 
-export function StudioAestheticStage() {
+export function StudioAestheticStage({
+  media,
+  initialMedia,
+  protagonistName,
+  initialGalleryCaptions,
+  onMediaChange,
+  onGalleryCaptionsChange,
+  onTemporaryUrl,
+}: {
+  media: Origin01StudioMediaState
+  initialMedia: Origin01StudioMediaState
+  protagonistName: string
+  initialGalleryCaptions: readonly string[]
+  onMediaChange: (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
+  onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
+  onTemporaryUrl: (url: string) => void
+}) {
   return <section className="limen-studio__aesthetic-stage" aria-labelledby="studio-aesthetic-title">
     <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Estética</p>
       <h2 id="studio-aesthetic-title">El universo visual de Origin 01</h2>
@@ -56,9 +74,12 @@ export function StudioAestheticStage() {
     </div>
     <aside className="limen-studio__aesthetic-note"><span aria-hidden="true">i</span>
       <div><strong>Vista informativa</strong>
-        <p>La identidad está asociada a Origin 01. La edición de colores, tipografías y recursos llegará en una próxima entrega;
-          esta etapa todavía no modifica la invitación.</p></div>
+        <p>La identidad visual está asociada a Origin 01. Colores, tipografías y recursos siguen reservados para una próxima entrega.</p></div>
     </aside>
+    <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
+      initialGalleryCaptions={initialGalleryCaptions}
+      onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
+      onTemporaryUrl={onTemporaryUrl} />
   </section>
 }
 

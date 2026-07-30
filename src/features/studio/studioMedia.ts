@@ -49,6 +49,10 @@ export type StudioMediaAssignment<TSlotId extends string = string> = {
   readonly slotId: TSlotId
   readonly mediaId: string
   readonly position?: number
+  readonly focalPoint?: {
+    readonly x: number
+    readonly y: number
+  }
 }
 
 export type StudioMediaState<TSlotId extends string = string> = {
@@ -66,6 +70,7 @@ export type StudioMediaValidationErrorCode =
   | 'ready-without-source'
   | 'error-without-message'
   | 'missing-informative-alt'
+  | 'invalid-focal-point'
 
 export type StudioMediaValidationError = {
   readonly code: StudioMediaValidationErrorCode
@@ -265,6 +270,21 @@ export function validateStudioMediaContract<TSlotId extends string>(
         slotId: assignment.slotId,
         mediaId: assignment.mediaId,
         message: `El medio "${assignment.mediaId}" no es compatible con el slot "${assignment.slotId}".`,
+      })
+    }
+    if (assignment.focalPoint && (
+      !Number.isFinite(assignment.focalPoint.x)
+      || !Number.isFinite(assignment.focalPoint.y)
+      || assignment.focalPoint.x < 0
+      || assignment.focalPoint.x > 100
+      || assignment.focalPoint.y < 0
+      || assignment.focalPoint.y > 100
+    )) {
+      errors.push({
+        code: 'invalid-focal-point',
+        slotId: assignment.slotId,
+        mediaId: assignment.mediaId,
+        message: `El encuadre del slot "${assignment.slotId}" está fuera del rango permitido.`,
       })
     }
   }

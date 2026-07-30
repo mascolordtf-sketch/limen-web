@@ -1819,6 +1819,244 @@
   .limen-studio *, .limen-studio *::before, .limen-studio *::after { scroll-behavior: auto !important; }
 }
 
+/* Fase 2C.4: administración temporal de fotografías. */
+.limen-studio__photography {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--studio-line);
+  padding-top: 1.5rem;
+}
+
+.limen-studio__photography > header,
+.limen-studio__gallery-manager > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio__photography > header h2,
+.limen-studio__photography > header p,
+.limen-studio__gallery-manager h3,
+.limen-studio__gallery-manager p {
+  margin: 0;
+}
+
+.limen-studio__photography > header h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.6rem, 5vw, 2.35rem);
+  font-weight: 500;
+}
+
+.limen-studio__photography > header p:last-child,
+.limen-studio__gallery-manager p {
+  max-width: 42rem;
+  margin-top: .35rem;
+  color: var(--studio-muted);
+  line-height: 1.5;
+}
+
+.limen-studio__photography button,
+.limen-studio__photo-action {
+  min-height: 2.65rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .7rem;
+  padding: .62rem .8rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.limen-studio__photography button:disabled,
+.limen-studio__photo-action:has(+ input:disabled) {
+  cursor: not-allowed;
+  opacity: .52;
+}
+
+.limen-studio__photo-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: var(--studio-accent);
+  background: var(--studio-accent);
+  color: #fff;
+}
+
+.limen-studio__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.limen-studio__photo-grid {
+  display: grid;
+  gap: .85rem;
+}
+
+.limen-studio__photo-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photo-preview {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #e4e2dc;
+}
+
+.limen-studio__photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.limen-studio__photo-preview > strong,
+.limen-studio__photo-preview > span {
+  position: absolute;
+  z-index: 1;
+  left: .7rem;
+  border-radius: .45rem;
+  padding: .32rem .48rem;
+  background: rgb(24 29 26 / 76%);
+  color: #fff;
+  font-size: .68rem;
+}
+
+.limen-studio__photo-preview > strong {
+  bottom: .7rem;
+}
+
+.limen-studio__photo-preview > span {
+  top: 50%;
+  right: .7rem;
+  left: .7rem;
+  background: transparent;
+  color: var(--studio-muted);
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.limen-studio__photo-preview > .limen-studio__photo-progress {
+  top: .7rem;
+  right: auto;
+  bottom: auto;
+  left: .7rem;
+  background: rgb(24 29 26 / 82%);
+  color: #fff;
+  transform: none;
+}
+
+.limen-studio__photo-card-body,
+.limen-studio__photo-fields {
+  display: grid;
+  gap: .75rem;
+}
+
+.limen-studio__photo-card-body {
+  padding: .85rem;
+}
+
+.limen-studio__photo-actions,
+.limen-studio__photo-order {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+
+.limen-studio__photo-fields {
+  border-top: 1px solid var(--studio-line);
+  padding-top: .75rem;
+}
+
+.limen-studio__photo-fields label {
+  display: grid;
+  gap: .35rem;
+  color: var(--studio-muted);
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.limen-studio__photo-fields input[type='text'] {
+  width: 100%;
+  min-height: 2.65rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .6rem;
+  padding: .55rem .65rem;
+  background: #fff;
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .8rem;
+}
+
+.limen-studio__photo-fields details {
+  border-radius: .65rem;
+  padding: .65rem;
+  background: var(--studio-paper-muted, #f5f4f0);
+}
+
+.limen-studio__photo-fields summary {
+  cursor: pointer;
+  font-size: .75rem;
+  font-weight: 750;
+}
+
+.limen-studio__photo-fields details label {
+  margin-top: .65rem;
+}
+
+.limen-studio__photo-fields input[type='range'] {
+  width: 100%;
+  accent-color: var(--studio-accent);
+}
+
+.limen-studio__gallery-manager {
+  display: grid;
+  gap: .85rem;
+  margin-top: .5rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgb(255 255 255 / 46%);
+}
+
+.limen-studio__photo-status {
+  margin: 0;
+  color: var(--studio-muted);
+  font-size: .76rem;
+  line-height: 1.45;
+}
+
+@media (min-width: 42rem) {
+  .limen-studio__photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .limen-studio__photo-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 41.99rem) {
+  .limen-studio__photography > header,
+  .limen-studio__gallery-manager > header {
+    display: grid;
+  }
+}
+
 /* Recovery shell: the visible workflow is editorial; engine taxonomy stays internal. */
 .limen-studio {
   --studio-ink: #202820;

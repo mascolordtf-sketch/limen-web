@@ -246,6 +246,9 @@ function InvitationImageAsset({
         aria-hidden={decorative || undefined}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'auto'}
+        style={image.focalPoint ? {
+          objectPosition: `${image.focalPoint.x}% ${image.focalPoint.y}%`,
+        } : undefined}
       />
     )
   }
