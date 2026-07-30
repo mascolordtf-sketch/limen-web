@@ -49,6 +49,7 @@ export type StudioMediaAssignment<TSlotId extends string = string> = {
   readonly slotId: TSlotId
   readonly mediaId: string
   readonly position?: number
+  readonly accessibility?: StudioImageAccessibility
   readonly focalPoint?: {
     readonly x: number
     readonly y: number
@@ -272,6 +273,15 @@ export function validateStudioMediaContract<TSlotId extends string>(
         slotId: assignment.slotId,
         mediaId: assignment.mediaId,
         message: `El medio "${assignment.mediaId}" no es compatible con el slot "${assignment.slotId}".`,
+      })
+    }
+    if (media.kind === 'image' && assignment.accessibility?.kind === 'informative'
+      && assignment.accessibility.alt.trim().length === 0) {
+      errors.push({
+        code: 'missing-informative-alt',
+        slotId: assignment.slotId,
+        mediaId: assignment.mediaId,
+        message: `El uso de la imagen "${assignment.mediaId}" no tiene texto alternativo.`,
       })
     }
     if (assignment.focalPoint && (

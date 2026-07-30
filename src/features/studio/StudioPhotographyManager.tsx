@@ -46,11 +46,12 @@ const defaultAlt = (label: string, name: string) =>
   `${label === 'Galería' ? 'Fotografía' : `Imagen de ${label.toLowerCase()}`} de ${name.trim() || 'la protagonista'}`
 
 function StudioPhotoCard({
-  target, media, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
+  target, media, alt, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
   onChoose, onReset, onRemove, onMove, onAltChange, onFocalPoint, onZoom,
 }: {
   target: PhotoTarget
   media?: StudioImageMedia
+  alt: string
   focalPoint?: { readonly x: number; readonly y: number }
   zoom?: number
   canonical: boolean
@@ -69,7 +70,6 @@ function StudioPhotoCard({
   onZoom: (value: number) => void
 }) {
   const inputId = useId()
-  const alt = media?.accessibility.kind === 'informative' ? media.accessibility.alt : ''
   const src = media?.status === 'ready' ? media.src : media?.previewSrc
   return <article className="limen-studio__photo-card">
     <div className="limen-studio__photo-preview">
@@ -193,14 +193,17 @@ export function StudioPhotographyManager({
     const initial = assignmentFor(target, initialState)
     const found = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
     const media = found?.kind === 'image' ? found : undefined
-    const accessibilityError = media?.accessibility.kind === 'informative'
-      && media.accessibility.alt.trim().length === 0
+    const accessibility = assignment?.accessibility ?? media?.accessibility
+    const alt = accessibility?.kind === 'informative' ? accessibility.alt : ''
+    const accessibilityError = accessibility?.kind === 'informative'
+      && alt.trim().length === 0
       ? 'Describí brevemente qué muestra esta fotografía.'
       : undefined
-    return <StudioPhotoCard key={target.key} target={target} media={media}
+    return <StudioPhotoCard key={target.key} target={target} media={media} alt={alt}
       focalPoint={assignment?.focalPoint}
       zoom={assignment?.zoom}
-      canonical={assignment?.mediaId === initial?.mediaId && !assignment?.focalPoint && assignment?.zoom === undefined}
+      canonical={assignment?.mediaId === initial?.mediaId && !assignment?.accessibility
+        && !assignment?.focalPoint && assignment?.zoom === undefined}
       canRemove={(target.slotId === 'gallery.images' && galleryAssignments.length > 1)
         || target.slotId === 'dressCode.image' || target.slotId === 'gifts.image'}
       canMoveUp={target.slotId === 'gallery.images' && (index ?? 0) > 0}
@@ -227,7 +230,8 @@ export function StudioPhotographyManager({
         })
       }}
       onAltChange={(value) => assignment && onMediaChange((current) =>
-        updateStudioPhotoAccessibility(current, assignment.mediaId, { kind: 'informative', alt: value }))}
+        updateStudioPhotoAccessibility(current, target.slotId, target.position,
+          { kind: 'informative', alt: value }))}
       onFocalPoint={(axis, value) => onMediaChange((current) =>
         updateStudioPhotoFocalPoint(current, target.slotId, target.position, axis, value))}
       onZoom={(value) => onMediaChange((current) =>

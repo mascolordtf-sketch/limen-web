@@ -217,6 +217,12 @@ const galleryReduced = removeStudioPhotoAssignment(canonicalMediaState, 'gallery
 assert(getStudioMediaAssignments(galleryReduced.assignments, 'gallery.images')
   .map(({ position }) => position).join('|') === '0|1',
   'quitar una fotografía de galería mantiene posiciones continuas')
+const galleryReplacement = assignStudioPhoto(addStudioPhotoItem(canonicalMediaState, readyPhoto),
+  'gallery.images', readyPhoto.id, 1)
+const galleryReducedAfterReplacement = removeStudioPhotoAssignment(galleryReplacement, 'gallery.images', 0)
+assert(getStudioMediaAssignments(galleryReducedAfterReplacement.assignments, 'gallery.images')
+  .map(({ mediaId }) => mediaId).join('|') === `${readyPhoto.id}|closing`,
+  'quitar después de reemplazar conserva el orden visual declarado de la galería')
 const focusedHero = updateStudioPhotoFocalPoint(canonicalMediaState, 'hero.image', undefined, 'x', 18)
 const focusedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: focusedHero })
 const focusedHeroId = focusedPreview.content.hero.imageMediaId
@@ -248,10 +254,22 @@ const withoutDress = removeStudioPhotoAssignment(canonicalMediaState, 'dressCode
 const withoutDressPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: withoutDress })
 assert(withoutDressPreview.content.dressCode.imageMediaId === '',
   'un slot fotográfico opcional puede quedar vacío sin recuperar silenciosamente la imagen canónica')
-const withoutAlt = updateStudioPhotoAccessibility(canonicalMediaState, 'hero',
+const withoutAlt = updateStudioPhotoAccessibility(canonicalMediaState, 'hero.image', undefined,
   { kind: 'informative', alt: '' })
 assert(validateOrigin01StudioMedia(withoutAlt).some(({ code }) => code === 'missing-informative-alt'),
   'la edición de texto alternativo conserva la validación accesible')
+const distinctHeroAlt = updateStudioPhotoAccessibility(canonicalMediaState, 'hero.image', undefined,
+  { kind: 'informative', alt: 'Valentina en la portada' })
+const distinctGalleryAlt = updateStudioPhotoAccessibility(distinctHeroAlt, 'gallery.images', 0,
+  { kind: 'informative', alt: 'Valentina durante la celebración' })
+const distinctAltPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: distinctGalleryAlt })
+const distinctHeroId = distinctAltPreview.content.hero.imageMediaId
+const distinctGalleryId = distinctAltPreview.content.gallery.images[0]?.mediaId
+assert(distinctHeroId !== distinctGalleryId
+  && distinctAltPreview.media.find(({ id }) => id === distinctHeroId)?.alt === 'Valentina en la portada'
+  && distinctAltPreview.media.find(({ id }) => id === distinctGalleryId)?.alt === 'Valentina durante la celebración'
+  && findStudioMediaById(distinctGalleryAlt.items, 'hero') === normalizedHero,
+  'cada uso compartido conserva un texto alternativo independiente sin mutar el medio')
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')

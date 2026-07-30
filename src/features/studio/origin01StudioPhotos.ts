@@ -18,11 +18,13 @@ export const origin01PhotoSlotIds = [
 export type Origin01SinglePhotoSlotId = (typeof origin01PhotoSlotIds)[number]
 
 const normalizeGalleryPositions = (state: Origin01StudioMediaState): Origin01StudioMediaState => {
+  const gallery = getStudioMediaAssignments(state.assignments, 'gallery.images')
+    .map((assignment, position) => ({ ...assignment, position }))
   let position = 0
   return {
     ...state,
     assignments: state.assignments.map((assignment) => assignment.slotId === 'gallery.images'
-      ? { ...assignment, position: position++ }
+      ? gallery[position++]!
       : assignment),
   }
 }
@@ -115,10 +117,17 @@ export function moveStudioGalleryPhoto(
 
 export function updateStudioPhotoAccessibility(
   state: Origin01StudioMediaState,
-  mediaId: string,
+  slotId: Origin01MediaSlotId,
+  position: number | undefined,
   accessibility: StudioImageAccessibility,
 ): Origin01StudioMediaState {
-  return updateStudioPhotoItem(state, mediaId, (item) => ({ ...item, accessibility }))
+  return {
+    ...state,
+    assignments: state.assignments.map((assignment) => assignment.slotId === slotId
+      && (slotId !== 'gallery.images' || assignment.position === position)
+      ? { ...assignment, accessibility }
+      : assignment),
+  }
 }
 
 export function updateStudioPhotoFocalPoint(
