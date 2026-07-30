@@ -31,6 +31,11 @@ import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
   showsOperationalContent } from '../src/features/studio/studioEditorVisibility'
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
+  createOrigin01StudioMediaState,
+  origin01MediaSlots,
+  validateOrigin01StudioMedia,
+} from '../src/features/studio/origin01StudioMedia'
+import {
   createOrigin01StudioDraft,
   getOrigin01StudioDraftSessionId,
   resetOrigin01StudioConfiguration,
@@ -41,6 +46,14 @@ import {
   updateOrigin01StudioDraftGroup,
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
+import {
+  findStudioMediaById,
+  getStudioMediaAssignments,
+  normalizeInvitationMediaReference,
+  projectRenderableMedia,
+  replaceStudioMediaAssignment,
+  validateStudioMediaContract,
+} from '../src/features/studio/studioMedia'
 import { createOrigin01StudioDomains, origin01TriviaFlow } from '../src/features/studio/origin01StudioConfiguration'
 import { selectValidStudioPreview, validateOrigin01StudioDraft } from '../src/features/studio/origin01StudioValidation'
 import { selectStudioIssueSummary, selectStudioItemStatus } from '../src/features/studio/studioItemStatus'
@@ -72,6 +85,99 @@ assert(studioDesktopMediaQuery === '(min-width: 76rem)',
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
+const canonicalMediaState = createOrigin01StudioMediaState(origin01DemoData)
+assert(canonicalMediaState.items.map(({ id }) => id).join('|') === origin01DemoData.media.map(({ id }) => id).join('|')
+  && canonicalMediaState.items.every(({ origin }) => origin === 'canonical'),
+  'normaliza los medios canónicos sin perder identidad ni procedencia')
+assert(getStudioMediaAssignments(canonicalMediaState.assignments, 'hero.image')[0]?.mediaId === 'hero'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'dressCode.image')[0]?.mediaId === 'dress'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'gifts.image')[0]?.mediaId === 'gift'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'closing.image')[0]?.mediaId === 'closing'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'music.audio')[0]?.mediaId === 'music',
+  'asocia cada referencia única de Origin 01 con su slot declarativo')
+assert(getStudioMediaAssignments(canonicalMediaState.assignments, 'gallery.images')
+  .map(({ mediaId }) => mediaId).join('|') === 'hero|dress|closing',
+  'normaliza la galería conservando el orden canónico')
+const normalizedHero = findStudioMediaById(canonicalMediaState.items, 'hero')
+const normalizedMusic = findStudioMediaById(canonicalMediaState.items, 'music')
+assert(normalizedHero?.kind === 'image' && 'accessibility' in normalizedHero
+  && normalizedMusic?.kind === 'audio' && !('accessibility' in normalizedMusic),
+  'imagen y audio comparten el contrato sin recibir propiedades incompatibles')
+assert(validateOrigin01StudioMedia(canonicalMediaState).length === 0,
+  'los medios y asignaciones canónicos satisfacen el contrato estructural')
+assert(projectRenderableMedia(canonicalMediaState.items).length === origin01DemoData.media.length,
+  'todos los medios canónicos listos se proyectan al contrato renderizable')
+const nonReadyMedia = [
+  { id: 'pending', kind: 'image', origin: 'studio', accessibility: { kind: 'decorative' }, status: 'pending' },
+  { id: 'processing', kind: 'audio', origin: 'studio', status: 'processing', progress: 40 },
+  { id: 'failed', kind: 'audio', origin: 'studio', status: 'error', message: 'No se pudo procesar.' },
+] as const
+assert(projectRenderableMedia(nonReadyMedia).length === 0,
+  'los medios pendientes, procesándose o con error no se proyectan como listos')
+const imageIntoMusic = replaceStudioMediaAssignment(canonicalMediaState, origin01MediaSlots,
+  'music.audio', 'hero')
+const audioIntoHero = replaceStudioMediaAssignment(canonicalMediaState, origin01MediaSlots,
+  'hero.image', 'music')
+assert(!imageIntoMusic.ok && imageIntoMusic.error.code === 'incompatible-media-kind'
+  && !audioIntoHero.ok && audioIntoHero.error.code === 'incompatible-media-kind',
+  'los slots de imagen y música rechazan tipos incompatibles en ambas direcciones')
+const repeatedSingleState = {
+  ...canonicalMediaState,
+  assignments: [...canonicalMediaState.assignments, { slotId: 'hero.image', mediaId: 'closing' }] as const,
+}
+assert(validateOrigin01StudioMedia(repeatedSingleState).some(({ code, slotId }) =>
+  code === 'invalid-cardinality' && slotId === 'hero.image'),
+  'un slot único rechaza múltiples asignaciones')
+assert(getStudioMediaAssignments(canonicalMediaState.assignments, 'gallery.images').length === 3
+  && !validateOrigin01StudioMedia(canonicalMediaState).some(({ slotId }) => slotId === 'gallery.images'),
+  'la galería admite múltiples asignaciones ordenadas')
+const missingMediaState = {
+  ...canonicalMediaState,
+  assignments: [...canonicalMediaState.assignments, { slotId: 'gallery.images', mediaId: 'missing', position: 3 }] as const,
+}
+assert(validateOrigin01StudioMedia(missingMediaState).some(({ code, message }) =>
+  code === 'missing-media' && message.includes('missing')),
+  'una asignación inexistente produce un error de dominio comprensible')
+const duplicateMediaState = {
+  ...canonicalMediaState,
+  items: [...canonicalMediaState.items, canonicalMediaState.items[0]!],
+}
+assert(validateOrigin01StudioMedia(duplicateMediaState).some(({ code }) => code === 'duplicate-media-id'),
+  'detecta identificadores de medios duplicados')
+const replacement = replaceStudioMediaAssignment(canonicalMediaState, origin01MediaSlots,
+  'hero.image', 'closing')
+assert(replacement.ok
+  && getStudioMediaAssignments(replacement.state.assignments, 'hero.image')[0]?.mediaId === 'closing'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'hero.image')[0]?.mediaId === 'hero'
+  && replacement.state.items === canonicalMediaState.items,
+  'la sustitución de una asignación es inmutable y conserva la biblioteca')
+const informativeWithoutAlt = {
+  items: [{
+    id: 'informative', kind: 'image', origin: 'studio',
+    accessibility: { kind: 'informative', alt: '' }, status: 'ready', src: '/informative.webp',
+  }],
+  assignments: [],
+} as const
+const decorativeWithoutAlt = {
+  items: [{
+    id: 'decorative', kind: 'image', origin: 'studio',
+    accessibility: { kind: 'decorative' }, status: 'ready', src: '/decorative.webp',
+  }],
+  assignments: [],
+} as const
+assert(validateStudioMediaContract(informativeWithoutAlt, origin01MediaSlots)
+  .some(({ code }) => code === 'missing-informative-alt')
+  && !validateStudioMediaContract(decorativeWithoutAlt, origin01MediaSlots)
+    .some(({ code }) => code === 'missing-informative-alt'),
+  'exige alt a imágenes informativas y permite declarar imágenes decorativas')
+assert(normalizeInvitationMediaReference({
+  id: 'future-video', kind: 'video', src: '/future.mp4',
+}) === null,
+  'el contrato editorial del MVP no habilita video')
+const mediaDerivedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, initial)
+assert(mediaDerivedPreview.media.map(({ id }) => id).join('|') === origin01DemoData.media.map(({ id }) => id).join('|')
+  && mediaDerivedPreview.content.gallery.images.map(({ mediaId }) => mediaId).join('|') === 'hero|dress|closing',
+  'Studio deriva medios renderizables y asignaciones sin cambiar la invitación actual')
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')

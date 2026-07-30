@@ -2,6 +2,7 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { fromDateTimeLocalValue } from './studioDateTime'
 import { deriveMonogram } from './studioIdentity'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
+import { deriveOrigin01MediaInvitation } from './origin01StudioMedia'
 
 export function deriveOrigin01PreviewInvitation(
   invitation: Origin01InvitationData,
@@ -20,7 +21,7 @@ export function deriveOrigin01PreviewInvitation(
     ? `${timeFormatter.format(new Date(startsAt))} a ${timeFormatter.format(new Date(endsAt))}` : ''
   const suggestedShareMessage = `${name} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
   const recipientDigits = draft.rsvp.recipientPhone.replace(/\D/g, '')
-  return {
+  const derivedInvitation: Origin01InvitationData = {
     ...invitation,
     modules: draft.modules,
     identities: invitation.identities.map((identity) => identity.role === 'protagonist'
@@ -59,4 +60,5 @@ export function deriveOrigin01PreviewInvitation(
         shareText: draft.share.mode === 'default' ? suggestedShareMessage : draft.share.customMessage },
     },
   }
+  return deriveOrigin01MediaInvitation(derivedInvitation, draft.media)
 }
