@@ -2,6 +2,8 @@ import { updateInvitationModuleConfiguration } from '../invitations/engine/modul
 import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData, Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
+import { createOrigin01StudioMediaState } from './origin01StudioMedia'
+import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { toDateTimeLocalValue } from './studioDateTime'
 import type { StudioShareMode } from './studioNavigation'
 
@@ -56,6 +58,7 @@ export type Origin01StudioDraft = {
     readonly actionLabel: string
     readonly recipientPhone: string
   }
+  readonly media: Origin01StudioMediaState
   readonly modules: readonly InvitationModuleConfig[]
 }
 
@@ -138,6 +141,7 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
       actionLabel: invitation.content.rsvp.actionLabel,
       recipientPhone: invitation.content.rsvp.recipientPhone ?? '',
     },
+    media: createOrigin01StudioMediaState(invitation),
     modules: invitation.modules.map((module) => ({ ...module })),
   }
 }
