@@ -19,7 +19,7 @@ import { StudioScenesContent } from '../src/features/studio/StudioScenesContent'
 import { findStudioSceneByEditorId, getVisibleStudioScenes, selectSceneAfterExclusion, studioGeneralScene,
   studioPublicScenes, studioScenes } from '../src/features/studio/studioScenes'
 import { studioDesktopMediaQuery } from '../src/features/studio/studioViewport'
-import { createStudioTemplateGalleryState, createStudioTemplateOptions, filterStudioTemplateOptions,
+import { createStudioTemplateGalleryState, createStudioTemplateOptions,
   transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
@@ -167,46 +167,33 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
 assert(renderToStaticMarkup(createElement(StudioAestheticStage)).includes('próxima entrega')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Estética es informativa y cambiar la etapa no altera el borrador temporal')
-const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage, { template: origin01Template }))
-assert(templateMainMarkup.includes('Elegí el punto de partida') && templateMainMarkup.includes('Origin 01')
-  && templateMainMarkup.includes('Plantillas destacadas') && templateMainMarkup.includes('Ver todas las plantillas'),
-  'Plantilla muestra la selección actual, opciones destacadas y acceso a la galería')
-const initialTemplateGallery = createStudioTemplateGalleryState(origin01Template.id)
-const openTemplateGallery = transitionStudioTemplateGallery(initialTemplateGallery, { type: 'open-gallery' })
-const templateGalleryMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
-  { template: origin01Template, initialState: openTemplateGallery }))
-assert(templateGalleryMarkup.includes('Todas las plantillas') && templateGalleryMarkup.includes('← Volver')
-  && templateGalleryMarkup.includes('Tipo de celebración') && templateGalleryMarkup.includes('Estilo visual'),
-  'Ver todas las plantillas abre una vista de galería independiente con retorno y filtros')
-const filteredGallery = transitionStudioTemplateGallery(
-  transitionStudioTemplateGallery(openTemplateGallery, { type: 'filter-celebration', celebration: 'casamiento' }),
-  { type: 'filter-style', style: 'editorial' })
-const visibleFilteredTemplates = filterStudioTemplateOptions(createStudioTemplateOptions(origin01Template), filteredGallery)
-assert(visibleFilteredTemplates.length === 1 && visibleFilteredTemplates[0]?.id === 'example-editorial',
-  'los filtros de celebración y estilo determinan los resultados visibles')
-const selectedTemplateGallery = transitionStudioTemplateGallery(filteredGallery,
-  { type: 'select', templateId: 'example-editorial' })
-const templateAwayMarkup = renderToStaticMarkup(createElement('div', null,
-  createElement('div', { hidden: true, inert: true }, createElement(StudioTemplateStage,
-    { template: origin01Template, state: selectedTemplateGallery, onStateChange: () => undefined })),
-  createElement(StudioSectionsStage, { draft: initial, onSceneChange: () => undefined })))
-const templateReturnedMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
-  { template: origin01Template, state: selectedTemplateGallery, onStateChange: () => undefined }))
-assert(selectedTemplateGallery.view === 'gallery' && selectedTemplateGallery.celebration === 'casamiento'
-  && selectedTemplateGallery.style === 'editorial' && selectedTemplateGallery.selectedId === 'example-editorial'
-  && templateAwayMarkup.includes('hidden=""') && templateAwayMarkup.includes('inert=""')
-  && templateReturnedMarkup.includes('Todas las plantillas')
-  && (templateReturnedMarkup.match(/checked=""/g) ?? []).length === 2,
-  'Plantilla conserva galería, selección y filtros al quedar oculta durante otra etapa')
-const returnedTemplateMain = transitionStudioTemplateGallery(selectedTemplateGallery, { type: 'close-gallery' })
-const returnedTemplateMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
-  { template: origin01Template, initialState: returnedTemplateMain }))
-assert(returnedTemplateMain.view === 'main' && returnedTemplateMain.selectedId === 'example-editorial'
-  && returnedTemplateMain.celebration === 'casamiento' && returnedTemplateMain.style === 'editorial'
-  && returnedTemplateMarkup.includes('Actualmente está seleccionada Editorial')
-  && returnedTemplateMarkup.includes('aria-pressed="true"')
-  && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Volver conserva selección y filtros sin reiniciar el borrador de Studio')
+const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
+assert(templateMainMarkup.includes('Elegí cómo contar la celebración') && templateMainMarkup.includes('Origin 01')
+  && templateMainMarkup.includes('Universo Origen') && templateMainMarkup.includes('Experiencia narrativa')
+  && templateMainMarkup.includes('Seleccionada') && templateMainMarkup.includes('Ver demostración')
+  && templateMainMarkup.includes('/demo/RUTA-DINAMICA')
+  && templateMainMarkup.includes('/images/origin-01/hero-valentina.webp'),
+  'Plantilla presenta Origin 01 con preview vertical, nomenclatura aprobada, estado y demo dinámica')
+assert(['Editorial', 'Esencial', 'Celebración'].every((name) => templateMainMarkup.includes(name))
+  && (templateMainMarkup.match(/Próximamente/g) ?? []).length === 3
+  && !templateMainMarkup.includes('Seleccionar plantilla')
+  && !templateMainMarkup.includes('/images/origin-01/dress-detail.webp')
+  && !templateMainMarkup.includes('/images/origin-01/gift-still-life.webp')
+  && !templateMainMarkup.includes('/images/origin-01/closing-valentina.webp'),
+  'las exploraciones son conceptos visibles sin controles ni fotografías de Origin 01')
+const options = createStudioTemplateOptions(origin01Template)
+assert(options.filter(({ selectable }) => selectable).map(({ id }) => id).join() === 'origin01'
+  && options.filter(({ availability }) => availability === 'coming-soon').length === 3
+  && options.every(({ demoPath }) => demoPath === undefined),
+  'el contrato distingue disponibilidad y no contiene un fallback de demostración específico')
+const initialTemplateGallery = createStudioTemplateGalleryState(origin01Template.id, origin01Template.id)
+const unavailableSelection = transitionStudioTemplateGallery(initialTemplateGallery,
+  { type: 'select', templateId: 'example-editorial', selectable: false })
+assert(unavailableSelection === initialTemplateGallery && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'una exploración no seleccionable no cambia el estado ni el borrador')
+assert(createStudioTemplateGalleryState('example-editorial', origin01Template.id).selectedId === origin01Template.id,
+  'un identificador anterior se normaliza al identificador disponible sin acoplarse a un literal interno')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
@@ -634,13 +621,12 @@ const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean
     createElement(StudioStageNavigation, { activeStage, onStageChange: () => undefined }),
     createElement(StudioStagePresentation, {
       activeStage, previewDedicated, templateGalleryOpen: galleryOpen,
-      templateStage: createElement(StudioTemplateStage, { template: origin01Template,
-        initialState: galleryOpen ? openTemplateGallery : returnedTemplateMain }),
+      templateStage: createElement(StudioTemplateStage, { template: origin01Template }),
       aestheticStage: createElement(StudioAestheticStage),
     }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
 const independentGalleryPresentation = renderStagePresentation(true, false)
 assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')
-  && independentGalleryPresentation.includes('Todas las plantillas')
+  && independentGalleryPresentation.includes('Exploraciones futuras')
   && !independentGalleryPresentation.includes('Resumen de invitación')
   && !independentGalleryPresentation.includes('Estado del prototipo')
   && !independentGalleryPresentation.includes('Shell de edición')

@@ -4211,3 +4211,255 @@
     transition: none;
   }
 }
+
+
+/* Fase 2C.2: la experiencia vertical precede a la información. */
+.limen-studio__template-stage {
+  width: min(100%, 64rem);
+}
+
+.limen-studio__template-feature {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+  width: min(100%, 41rem);
+  margin: 1rem auto 0;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: 1.4rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  background: var(--studio-paper);
+}
+
+.limen-studio__template-feature.is-selected {
+  border-color: var(--studio-accent);
+  box-shadow: 0 0 0 1px var(--studio-accent);
+}
+
+.limen-studio__template-preview {
+  position: relative;
+  width: min(68vw, 15rem);
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 1.35rem;
+  background: #211820;
+  box-shadow: 0 18px 38px rgb(24 18 22 / 18%);
+}
+
+.limen-studio__template-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.limen-studio__template-preview::after {
+  position: absolute;
+  inset: 40% 0 0;
+  background: linear-gradient(transparent, rgb(17 11 17 / 80%));
+  content: '';
+}
+
+.limen-studio__template-preview-caption {
+  position: absolute;
+  z-index: 1;
+  right: 1.15rem;
+  bottom: 1.35rem;
+  left: 1.15rem;
+  display: grid;
+  gap: .35rem;
+  color: #fff;
+}
+
+.limen-studio__template-preview-caption small {
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+
+.limen-studio__template-preview-caption span {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.15rem, 5vw, 1.55rem);
+  line-height: 1.08;
+}
+
+.limen-studio__template-feature-copy {
+  width: min(100%, 21rem);
+}
+
+.limen-studio__template-feature-copy h3 {
+  margin: .3rem 0 .65rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 8vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -.04em;
+}
+
+.limen-studio__template-description {
+  margin: 0;
+  color: var(--studio-ink);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.limen-studio__template-attributes {
+  margin: .8rem 0 1.1rem;
+  color: var(--studio-muted);
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
+.limen-studio__template-selected {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  width: fit-content;
+  margin-bottom: 1rem;
+  color: var(--studio-accent);
+  font-size: .88rem;
+  font-weight: 750;
+}
+
+.limen-studio__template-selected > span {
+  display: grid;
+  width: 1.35rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid currentcolor;
+  border-radius: 50%;
+  font-size: .72rem;
+}
+
+.limen-studio__template-demo {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: .45rem;
+  border-bottom: 1px solid currentcolor;
+  color: var(--studio-ink);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.limen-studio__template-demo:focus-visible {
+  outline: 3px solid var(--studio-accent);
+  outline-offset: 4px;
+}
+
+.limen-studio__template-future {
+  margin-top: clamp(2rem, 5vw, 3rem);
+  border-top: 1px solid var(--studio-line);
+  padding-top: 1.5rem;
+}
+
+.limen-studio__template-future > div {
+  max-width: 34rem;
+}
+
+.limen-studio__template-future h3 {
+  margin: .2rem 0 .35rem;
+  font-size: 1.25rem;
+}
+
+.limen-studio__template-future > div > p:last-child {
+  margin: 0;
+  color: var(--studio-muted);
+  line-height: 1.5;
+}
+
+.limen-studio .limen-studio__template-grid--future {
+  grid-template-columns: 1fr;
+  gap: .75rem;
+  margin-top: 1.15rem;
+}
+
+.limen-studio .limen-studio__template-card--future {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  overflow: hidden;
+  min-width: 0;
+  padding: 0;
+  border-style: dashed;
+  background: color-mix(in srgb, var(--studio-paper) 72%, var(--studio-canvas));
+  box-shadow: none;
+  transform: none;
+}
+
+.limen-studio__template-concept {
+  position: relative;
+  display: grid;
+  min-height: 8rem;
+  overflow: hidden;
+  place-items: center;
+  background: #dedbd3;
+  color: #535149;
+}
+
+.limen-studio__template-concept span {
+  z-index: 1;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  writing-mode: vertical-rl;
+}
+
+.limen-studio__template-concept i {
+  position: absolute;
+  width: 3.5rem;
+  height: 1px;
+  background: currentcolor;
+  transform: rotate(55deg);
+}
+
+.limen-studio__template-concept i:last-child { transform: rotate(-55deg); }
+.limen-studio__template-concept--essential { background: #e8e6df; color: #77746b; }
+.limen-studio__template-concept--essential i { width: 1px; height: 4rem; transform: none; }
+.limen-studio__template-concept--essential i:last-child { width: 3rem; height: 1px; transform: none; }
+.limen-studio__template-concept--celebration { background: #ded6d0; color: #75645b; }
+.limen-studio__template-concept--celebration i { width: 3rem; height: 3rem; border: 1px solid currentcolor; border-radius: 50%; background: none; transform: translate(-1rem, -1.5rem); }
+.limen-studio__template-concept--celebration i:last-child { transform: translate(1rem, 1.5rem); }
+
+.limen-studio__template-card--future .limen-studio__template-card-copy {
+  min-width: 0;
+  padding: .85rem;
+}
+
+.limen-studio__template-card--future h4 {
+  margin: .45rem 0 .25rem;
+  font-size: 1rem;
+}
+
+.limen-studio__template-card--future p {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: .8rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 42rem) {
+  .limen-studio__template-feature {
+    grid-template-columns: 13.5rem minmax(16rem, 19rem);
+    justify-content: center;
+    align-items: center;
+    gap: clamp(2rem, 4vw, 2.5rem);
+  }
+
+  .limen-studio__template-preview { width: 100%; }
+  .limen-studio__template-feature-copy h3 { font-size: 3rem; }
+
+  .limen-studio .limen-studio__template-grid--future {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .limen-studio .limen-studio__template-card--future {
+    grid-template-columns: 1fr;
+  }
+
+  .limen-studio__template-concept { min-height: 7rem; }
+  .limen-studio__template-concept span { writing-mode: initial; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .limen-studio__template-card,
+  .limen-studio__template-demo { transition: none; }
+}
