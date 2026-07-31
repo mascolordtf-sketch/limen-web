@@ -205,9 +205,158 @@
   max-width: 48rem;
 }
 
+.limen-studio__visual-variants {
+  margin: 1.5rem 0 .85rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1.15rem;
+  padding: 1.1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__visual-variants > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.limen-studio__visual-variants h3 {
+  margin: 0 0 .35rem;
+  font-size: 1.05rem;
+}
+
+.limen-studio__visual-variants header p:last-child {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--studio-muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.limen-studio__visual-variants .limen-studio__reset-button {
+  flex: 0 0 auto;
+}
+
+.limen-studio__variant-grid {
+  display: grid;
+  gap: .7rem;
+}
+
+.limen-studio__variant-card {
+  position: relative;
+  display: grid;
+  gap: .65rem;
+  min-width: 0;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .95rem;
+  padding: .85rem;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.limen-studio__variant-card:hover {
+  border-color: #aaa493;
+  transform: translateY(-1px);
+}
+
+.limen-studio__variant-card--selected {
+  border-color: var(--studio-accent);
+  box-shadow: 0 0 0 1px var(--studio-accent), 0 8px 22px rgb(29 66 49 / 8%);
+}
+
+.limen-studio__variant-card input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: -1px;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+.limen-studio__variant-card:has(input:focus-visible) {
+  outline: 3px solid #315f81;
+  outline-offset: 3px;
+}
+
+.limen-studio__variant-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+
+.limen-studio__variant-card-topline strong {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.limen-studio__variant-card-topline > span {
+  color: var(--studio-accent-strong);
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.limen-studio__variant-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(32 32 30 / 10%);
+  border-radius: .6rem;
+}
+
+.limen-studio__variant-swatches i {
+  min-height: 2.5rem;
+}
+
+.limen-studio__variant-card small {
+  color: var(--studio-muted);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+.limen-studio__variant-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem .75rem;
+  margin: .85rem 0 0;
+  color: var(--studio-muted);
+  font-size: .72rem;
+}
+
+.limen-studio__variant-summary strong {
+  color: var(--studio-ink);
+}
+
 .limen-studio__aesthetic-board {
+  --studio-variant-deep: #3b1d2d;
+  --studio-variant-soft: #5b3045;
+  --studio-variant-accent: #c49b62;
+  --studio-variant-light: #f5efe7;
+  --studio-variant-detail: #d8b8bc;
   display: grid;
   gap: .85rem;
+}
+
+.limen-studio__aesthetic-board--origin01-midnight {
+  --studio-variant-deep: #101c2d;
+  --studio-variant-soft: #263c57;
+  --studio-variant-accent: #aebbc8;
+  --studio-variant-light: #eef1f5;
+  --studio-variant-detail: #8298b1;
+}
+
+.limen-studio__aesthetic-board--origin01-garden {
+  --studio-variant-deep: #1d3028;
+  --studio-variant-soft: #385244;
+  --studio-variant-accent: #b28a5f;
+  --studio-variant-light: #f2eee4;
+  --studio-variant-detail: #aab7a5;
 }
 
 .limen-studio__aesthetic-board article {
@@ -229,9 +378,9 @@
   justify-items: center;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 24%, rgb(183 148 102 / 32%), transparent 22%),
-    linear-gradient(145deg, #10231d, #284238);
-  color: #eee5d5;
+    radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--studio-variant-accent) 32%, transparent), transparent 22%),
+    linear-gradient(145deg, var(--studio-variant-deep), var(--studio-variant-soft));
+  color: var(--studio-variant-light);
 }
 
 .limen-studio__aesthetic-hero-art::after {
@@ -255,7 +404,7 @@
 }
 
 .limen-studio__aesthetic-hero-art strong {
-  color: #b89975;
+  color: var(--studio-variant-accent);
   font-size: 3.8rem;
   font-weight: 400;
   line-height: .85;
@@ -386,7 +535,7 @@
 .limen-studio__aesthetic-type > div {
   display: grid;
   gap: .15rem;
-  border-left: 2px solid var(--studio-bronze);
+  border-left: 2px solid var(--studio-variant-accent);
   padding: .25rem 0 .25rem .85rem;
 }
 
@@ -397,7 +546,7 @@
 }
 
 .limen-studio__aesthetic-type div > span {
-  color: var(--studio-bronze);
+  color: var(--studio-variant-accent);
   font-family: 'Segoe Script', cursive;
   font-size: 1rem;
 }
@@ -416,15 +565,15 @@
   min-height: 6rem;
   overflow: hidden;
   border-radius: .7rem;
-  background: linear-gradient(145deg, #33473d, #111d18);
+  background: linear-gradient(145deg, var(--studio-variant-soft), var(--studio-variant-deep));
 }
 
 .limen-studio__aesthetic-image > div span {
   position: absolute;
   inset: 12% 25%;
   border-radius: 48% 48% 40% 40%;
-  background: linear-gradient(#c7ae91, #654f43);
-  box-shadow: 0 0 30px rgb(211 178 135 / 26%);
+  background: linear-gradient(var(--studio-variant-accent), var(--studio-variant-soft));
+  box-shadow: 0 0 30px color-mix(in srgb, var(--studio-variant-accent) 26%, transparent);
 }
 
 .limen-studio__aesthetic-image > div i {
@@ -446,13 +595,13 @@
 .limen-studio__aesthetic-detail > div {
   display: grid;
   place-items: center;
-  background: #f0eadd;
+  background: var(--studio-variant-light);
 }
 
 .limen-studio__aesthetic-detail > div span {
   width: 5.4rem;
   height: 5.4rem;
-  border: 1px solid #7f8c77;
+  border: 1px solid var(--studio-variant-detail);
   border-radius: 50%;
 }
 
@@ -460,7 +609,7 @@
   position: absolute;
   width: 1px;
   height: 72%;
-  background: #87927f;
+  background: var(--studio-variant-detail);
   transform: rotate(34deg);
 }
 
@@ -516,6 +665,10 @@
 }
 
 @media (min-width: 48rem) {
+  .limen-studio__variant-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .limen-studio__template-card {
     min-height: 16rem;
     grid-template-rows: 8.25rem minmax(0, 1fr);

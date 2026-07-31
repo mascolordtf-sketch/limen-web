@@ -23,6 +23,7 @@ export function deriveOrigin01PreviewInvitation(
   const recipientDigits = draft.rsvp.recipientPhone.replace(/\D/g, '')
   const derivedInvitation: Origin01InvitationData = {
     ...invitation,
+    themeVariant: draft.themeVariant,
     modules: draft.modules,
     identities: invitation.identities.map((identity) => identity.role === 'protagonist'
       ? { ...identity, displayName: name } : identity),

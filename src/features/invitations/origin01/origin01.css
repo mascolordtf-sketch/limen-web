@@ -50,6 +50,44 @@
   text-rendering: optimizeLegibility;
 }
 
+.origin01--theme-origin01-midnight {
+  --origin-wine-deep: #101c2d;
+  --origin-wine-soft: #263c57;
+  --origin-old-rose: #b7c5d4;
+  --origin-ivory: #eef1f5;
+  --origin-photo-surface: #dfe5eb;
+  --origin-text-primary: #172538;
+  --origin-text-muted: #657486;
+  --origin-text-light: #f4f6f8;
+  --origin-border: #c4ced8;
+  --origin-divider: #aebbc8;
+  --origin-accent: #aebbc8;
+  --origin-focus: #d7e4ef;
+  --origin-charcoal: #0b1420;
+  --origin-rose: #8298b1;
+  --origin-rose-haze: #d9e1e9;
+  --origin-shadow-soft: 0 14px 36px rgba(16, 28, 45, .11);
+}
+
+.origin01--theme-origin01-garden {
+  --origin-wine-deep: #1d3028;
+  --origin-wine-soft: #385244;
+  --origin-old-rose: #c8c8ae;
+  --origin-ivory: #f2eee4;
+  --origin-photo-surface: #e4dfd0;
+  --origin-text-primary: #26372f;
+  --origin-text-muted: #68736a;
+  --origin-text-light: #f5f1e8;
+  --origin-border: #d1c9b7;
+  --origin-divider: #b9b197;
+  --origin-accent: #b28a5f;
+  --origin-focus: #d4ac7c;
+  --origin-charcoal: #14221c;
+  --origin-rose: #879b89;
+  --origin-rose-haze: #dce1d7;
+  --origin-shadow-soft: 0 14px 36px rgba(29, 48, 40, .11);
+}
+
 .origin01 *,
 .origin01 *::before,
 .origin01 *::after {
@@ -141,6 +179,18 @@
   background:
     radial-gradient(circle at 50% 42%, rgba(129, 75, 85, .2), transparent 22rem),
     linear-gradient(160deg, #1f1719 0%, #140f10 68%, #24171a 100%);
+}
+
+.origin01--theme-origin01-midnight .origin01-prelude {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(102, 132, 165, .22), transparent 22rem),
+    linear-gradient(160deg, #14243a 0%, #09111d 68%, #172b43 100%);
+}
+
+.origin01--theme-origin01-garden .origin01-prelude {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(116, 145, 119, .2), transparent 22rem),
+    linear-gradient(160deg, #1c3329 0%, #101c17 68%, #263c30 100%);
 }
 
 .origin01-prelude::before {
@@ -296,6 +346,27 @@
     radial-gradient(circle at 50% 48%, rgba(191, 133, 137, .16), transparent 23rem),
     linear-gradient(155deg, #26191c, #140f10 66%, #2c1b20);
   animation: origin01-scene-arrives .8s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.origin01--theme-origin01-midnight .origin01-envelope-stage {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(130, 152, 177, .18), transparent 23rem),
+    linear-gradient(155deg, #17283d, #09111d 66%, #1b3048);
+}
+
+.origin01--theme-origin01-garden .origin01-envelope-stage {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(170, 183, 165, .17), transparent 23rem),
+    linear-gradient(155deg, #21382e, #101c17 66%, #294234);
+}
+
+.origin01--theme-origin01-midnight .origin01-primary-action,
+.origin01--theme-origin01-midnight .origin01-envelope-stage::before,
+.origin01--theme-origin01-midnight .origin01-envelope-stage::after,
+.origin01--theme-origin01-garden .origin01-primary-action,
+.origin01--theme-origin01-garden .origin01-envelope-stage::before,
+.origin01--theme-origin01-garden .origin01-envelope-stage::after {
+  border-color: color-mix(in srgb, var(--origin-accent) 60%, transparent);
 }
 
 .origin01-envelope-stage::before,
@@ -867,6 +938,18 @@
   background:
     linear-gradient(to top, rgba(18, 12, 14, .96) 0%, rgba(24, 15, 18, .3) 58%, rgba(16, 12, 13, .18) 100%),
     linear-gradient(to right, rgba(21, 14, 16, .28), transparent 62%);
+}
+
+.origin01--theme-origin01-midnight .origin01-hero__veil {
+  background:
+    linear-gradient(to top, rgba(7, 15, 26, .97) 0%, rgba(14, 32, 53, .32) 58%, rgba(8, 18, 30, .2) 100%),
+    linear-gradient(to right, rgba(11, 28, 47, .3), transparent 62%);
+}
+
+.origin01--theme-origin01-garden .origin01-hero__veil {
+  background:
+    linear-gradient(to top, rgba(12, 24, 19, .97) 0%, rgba(24, 45, 35, .34) 58%, rgba(13, 27, 21, .2) 100%),
+    linear-gradient(to right, rgba(18, 38, 29, .3), transparent 62%);
 }
 
 .origin01-hero__brand {
@@ -1634,6 +1717,14 @@
   inset: 0;
   z-index: -1;
   background: linear-gradient(to top, rgba(18, 12, 14, .99), rgba(31, 19, 23, .42) 67%, rgba(18, 12, 14, .18));
+}
+
+.origin01--theme-origin01-midnight .origin01-closing__veil {
+  background: linear-gradient(to top, rgba(6, 13, 23, .99), rgba(16, 34, 55, .46) 67%, rgba(8, 18, 30, .2));
+}
+
+.origin01--theme-origin01-garden .origin01-closing__veil {
+  background: linear-gradient(to top, rgba(10, 21, 16, .99), rgba(24, 45, 35, .46) 67%, rgba(13, 27, 21, .2));
 }
 
 .origin01-closing__content {

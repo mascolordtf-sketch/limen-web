@@ -163,6 +163,8 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       {activeStage === 'aesthetic' && <StudioAestheticStage
         media={model.draft.media}
         initialMedia={model.initialDraft.media}
+        themeVariant={model.draft.themeVariant}
+        initialThemeVariant={model.initialDraft.themeVariant}
         protagonistName={model.draft.protagonistName}
         initialGalleryCaptions={model.initialDraft.gallery.captions}
         onMediaChange={(updater) => model.updateGroup('media', updater)}
@@ -170,6 +172,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
           ...current,
           captions: updater(current.captions),
         }))}
+        onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)}
         onTemporaryUrl={model.registerTemporaryMediaUrl} />}
       {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
         for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
