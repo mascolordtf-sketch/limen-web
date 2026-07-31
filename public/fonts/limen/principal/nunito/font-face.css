@@ -1,0 +1,16 @@
+/* Nunito */
+@font-face {
+  font-family: 'Nunito';
+  src: url('./Nunito-Italic-wght-.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 200 1000;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Nunito';
+  src: url('./Nunito-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 200 1000;
+  font-display: swap;
+}

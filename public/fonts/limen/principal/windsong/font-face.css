@@ -1,0 +1,16 @@
+/* WindSong */
+@font-face {
+  font-family: 'WindSong';
+  src: url('./WindSong-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'WindSong';
+  src: url('./WindSong-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

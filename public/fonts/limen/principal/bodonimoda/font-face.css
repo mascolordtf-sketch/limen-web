@@ -1,0 +1,16 @@
+/* Bodoni Moda */
+@font-face {
+  font-family: 'Bodoni Moda';
+  src: url('./BodoniModa-Italic-opsz-wght-.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bodoni Moda';
+  src: url('./BodoniModa-opsz-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 900;
+  font-display: swap;
+}

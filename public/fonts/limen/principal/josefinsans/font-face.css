@@ -1,0 +1,16 @@
+/* Josefin Sans */
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('./JosefinSans-Italic-wght-.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 100 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Josefin Sans';
+  src: url('./JosefinSans-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 700;
+  font-display: swap;
+}

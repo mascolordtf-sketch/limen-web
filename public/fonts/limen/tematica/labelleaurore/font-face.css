@@ -1,0 +1,8 @@
+/* La Belle Aurore */
+@font-face {
+  font-family: 'La Belle Aurore';
+  src: url('./LaBelleAurore.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

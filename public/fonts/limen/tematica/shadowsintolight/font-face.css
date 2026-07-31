@@ -1,0 +1,8 @@
+/* Shadows Into Light */
+@font-face {
+  font-family: 'Shadows Into Light';
+  src: url('./ShadowsIntoLight.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

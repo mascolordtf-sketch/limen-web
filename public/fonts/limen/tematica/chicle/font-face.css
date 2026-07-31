@@ -1,0 +1,8 @@
+/* Chicle */
+@font-face {
+  font-family: 'Chicle';
+  src: url('./Chicle-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

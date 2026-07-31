@@ -1,0 +1,8 @@
+/* Domine */
+@font-face {
+  font-family: 'Domine';
+  src: url('./Domine-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}

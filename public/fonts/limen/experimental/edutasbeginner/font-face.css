@@ -1,0 +1,8 @@
+/* Edu TAS Beginner */
+@font-face {
+  font-family: 'Edu TAS Beginner';
+  src: url('./EduTASBeginner-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}

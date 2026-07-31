@@ -1,0 +1,8 @@
+/* DynaPuff */
+@font-face {
+  font-family: 'DynaPuff';
+  src: url('./DynaPuff-wdth-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
