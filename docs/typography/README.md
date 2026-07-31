@@ -82,3 +82,16 @@ del repositorio web.
 Probar las doce combinaciones de `catalog/combinaciones_iniciales.csv` sobre escenas reales de
 Origin 01 en celular y escritorio. El selector tipográfico de Studio se diseña después de esa
 aprobación visual.
+
+## Laboratorio de evaluación
+
+Studio incorpora una comparación temporal de las doce combinaciones dentro de la etapa `Estética`.
+Cada tarjeta muestra los roles protagonista, editorial y funcional con texto real en español. La
+combinación elegida puede abrirse sobre la invitación completa mediante los parámetros internos
+`tipografia` e `inicio=invitacion` de la ruta de demostración.
+
+Este laboratorio no forma parte del modelo persistente, no modifica el borrador canónico y no
+define todavía la tipografía aprobada de Origin 01. Su finalidad es comparar la misma composición
+en escritorio y celular antes de construir el selector definitivo. Una prueba carga solamente las
+dos o tres hojas `font-face.css` correspondientes; un identificador desconocido conserva la
+tipografía actual sin producir una configuración parcial.

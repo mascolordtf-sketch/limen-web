@@ -2,6 +2,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../features/invitations/origin01/origin01DemoData'
+import { findOrigin01TypographyCombination } from '../features/invitations/origin01/origin01Typography'
 
 const demoInvitations = {
   [origin01DemoData.code]: origin01DemoData,
@@ -17,7 +18,10 @@ export function DemoPage() {
 
   if (invitation) {
     const audience = searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist'
-    return <Origin01Invitation invitation={invitation} audience={audience} />
+    const typography = findOrigin01TypographyCombination(searchParams.get('tipografia'))
+    const startAtInvitation = searchParams.get('inicio') === 'invitacion'
+    return <Origin01Invitation invitation={invitation} audience={audience}
+      typography={typography} startAtInvitation={startAtInvitation} />
   }
 
   return (
