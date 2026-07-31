@@ -97,6 +97,8 @@ const studioFieldTargetIds: Readonly<Record<string, string>> = {
   eventDetailsCalendarDescription: 'studio-event-details-calendar-description', galleryEyebrow: 'studio-gallery-eyebrow', galleryHeading: 'studio-gallery-title',
   scheduleEyebrow: 'studio-schedule-eyebrow', scheduleHeading: 'studio-schedule-heading-field',
   scheduleIntroduction: 'studio-schedule-introduction',
+  weatherEyebrow: 'studio-weather-eyebrow', weatherHeading: 'studio-weather-heading',
+  weatherIntroduction: 'studio-weather-introduction', weatherLocation: 'studio-weather-location-title',
 }
 
 export function validateOrigin01StudioDraft(
@@ -162,6 +164,17 @@ export function validateOrigin01StudioDraft(
     galleryHeading: required(draft.gallery.copy.heading, 'Este texto es obligatorio.'),
     trivia: triviaValid ? null : 'La Trivia tiene contenido obligatorio incompleto.',
     ...validateOrigin01Schedule(draft.schedule),
+    weatherEyebrow: required(draft.weather.eyebrow, 'Este texto es obligatorio.'),
+    weatherHeading: required(draft.weather.heading, 'Este texto es obligatorio.'),
+    weatherIntroduction: required(draft.weather.introduction, 'Este texto es obligatorio.'),
+    weatherLocation: draft.weather.location.name.trim().length > 0
+      && draft.weather.location.country.trim().length > 0
+      && draft.weather.location.timezone.trim().length > 0
+      && Number.isFinite(draft.weather.location.latitude)
+      && draft.weather.location.latitude >= -90 && draft.weather.location.latitude <= 90
+      && Number.isFinite(draft.weather.location.longitude)
+      && draft.weather.location.longitude >= -180 && draft.weather.location.longitude <= 180
+      ? null : 'Confirmá una localidad meteorológica válida.',
   }
 
   const seeds: readonly IssueSeed[] = [
@@ -193,6 +206,9 @@ export function validateOrigin01StudioDraft(
         sceneId: 'schedule' as const,
       }
     })),
+    ...(['weatherEyebrow', 'weatherHeading', 'weatherIntroduction', 'weatherLocation'] as const)
+      .map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
+        editorId: 'weather', domainId: 'experiences' as const, sceneId: 'weather' as const })),
     ...(['dressCodeTitle', 'dressCodeDescription', 'dressCodeNote'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'dress-code', domainId: 'experiences' as const, sceneId: 'dressCode' as const })),
     ...(['galleryEyebrow', 'galleryHeading'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'gallery', domainId: 'experiences' as const, sceneId: 'gallery' as const })),
     { fieldId: 'trivia', error: fieldErrors.trivia, message: fieldErrors.trivia ?? '', editorId: 'trivia', domainId: 'experiences', sceneId: 'trivia' },

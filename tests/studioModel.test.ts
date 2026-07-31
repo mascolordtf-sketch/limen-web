@@ -1,10 +1,11 @@
 import { AppRoutes } from '../src/app/routes'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
-import { Origin01Invitation, Origin01Schedule } from '../src/features/invitations/origin01/Origin01Invitation'
+import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
+import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '../src/features/invitations/origin01/origin01Weather'
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
@@ -28,6 +29,7 @@ import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
 import { StudioScheduleEditor } from '../src/features/studio/StudioScheduleEditor'
+import { StudioWeatherEditor } from '../src/features/studio/StudioWeatherEditor'
 import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
 import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
@@ -342,20 +344,21 @@ assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.m
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')
-  && studioPublicScenes.length === 11 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
-  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las once escenas públicas, sin Datos generales')
+  && studioPublicScenes.length === 12 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
+  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las doce escenas públicas, sin Datos generales')
 assert(studioPublicScenes.filter(({ required }) => required).map(({ label }) => label).join('|')
   === 'Portada|Información del evento|Confirmación|Cierre'
   && (sectionsMarkup.match(/Siempre incluida/g) ?? []).length === 4,
   'Secciones protege las escenas aprobadas y la obligatoriedad adicional de Cierre definida por Origin 01')
 assert(sectionsMarkup.includes('El umbral') && sectionsMarkup.includes('La celebración')
   && sectionsMarkup.includes('La participación') && sectionsMarkup.includes('La despedida')
-  && sectionsMarkup.includes('11 escenas') && sectionsMarkup.includes('4 esenciales')
-  && sectionsMarkup.includes('7 de 7 opcionales')
+  && sectionsMarkup.includes('12 escenas') && sectionsMarkup.includes('4 esenciales')
+  && sectionsMarkup.includes('8 de 8 opcionales')
   && sectionsMarkup.indexOf('Portada') < sectionsMarkup.indexOf('Cuenta regresiva')
   && sectionsMarkup.indexOf('Cuenta regresiva') < sectionsMarkup.indexOf('Historia')
   && sectionsMarkup.indexOf('Información del evento') < sectionsMarkup.indexOf('Cronograma')
-  && sectionsMarkup.indexOf('Cronograma') < sectionsMarkup.indexOf('Dress code')
+  && sectionsMarkup.indexOf('Cronograma') < sectionsMarkup.indexOf('Clima')
+  && sectionsMarkup.indexOf('Clima') < sectionsMarkup.indexOf('Dress code')
   && sectionsMarkup.indexOf('Confirmación') < sectionsMarkup.indexOf('Cierre'),
   'Secciones organiza el orden canónico en cuatro capítulos narrativos y resume su composición')
 const giftsOff = updateOrigin01StudioModule(origin01DemoData, initial, 'gifts', false)
@@ -365,7 +368,7 @@ assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
   'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
 const giftsOffSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: giftsOff, onSceneChange: () => undefined }))
-assert(giftsOffSectionsMarkup.includes('6 de 7 opcionales')
+assert(giftsOffSectionsMarkup.includes('7 de 8 opcionales')
   && giftsOffSectionsMarkup.includes('No incluida') && giftsOffSectionsMarkup.includes('Fuera del recorrido'),
   'Secciones actualiza el resumen y el estado editorial al excluir una escena opcional')
 const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
@@ -623,6 +626,41 @@ assert(validateInvitationConfiguration(invitationWithoutSchedule, findInvitation
   && getVisibleStudioScenes(scheduleEnabledFromAbsentConfiguration).some(({ id }) => id === 'schedule'),
   'activar Cronograma agrega su configuración cuando una invitación válida omite el módulo opcional')
 
+const weatherFuture = getOrigin01WeatherAvailability(
+  '2027-03-20T21:00:00-03:00', 'America/Argentina/Buenos_Aires', new Date('2027-03-04T15:00:00Z'),
+)
+const weatherAvailable = getOrigin01WeatherAvailability(
+  '2027-03-20T21:00:00-03:00', 'America/Argentina/Buenos_Aires', new Date('2027-03-05T15:00:00Z'),
+)
+assert(weatherFuture.kind === 'future' && weatherFuture.availableFrom === '2027-03-05'
+  && weatherAvailable.kind === 'available',
+  'respeta el horizonte real de dieciséis días sin fabricar un pronóstico anticipado')
+const parsedWeather = parseOrigin01WeatherForecast({ daily: {
+  time: ['2027-03-20'], weather_code: [61], temperature_2m_min: [16.4], temperature_2m_max: [24.6],
+  apparent_temperature_min: [15.8], apparent_temperature_max: [25.2],
+  precipitation_probability_max: [70], wind_speed_10m_max: [22.1],
+} }, '2027-03-20', '2027-03-20T12:00:00.000Z')
+assert(parsedWeather.condition === 'Con lluvia' && parsedWeather.precipitationProbability === 70
+  && parsedWeather.temperatureMax === 24.6,
+  'normaliza exclusivamente los datos reales devueltos por el proveedor')
+const futureWeatherMarkup = renderToStaticMarkup(createElement(Origin01WeatherPanel, {
+  weather: initial.weather, availability: weatherFuture, state: { kind: 'loading' },
+}))
+const readyWeatherMarkup = renderToStaticMarkup(createElement(Origin01WeatherPanel, {
+  weather: initial.weather, availability: weatherAvailable, state: { kind: 'ready', forecast: parsedWeather },
+}))
+assert(futureWeatherMarkup.includes('todavía no está disponible')
+  && !futureWeatherMarkup.includes('Prob. de lluvia')
+  && readyWeatherMarkup.includes('70%') && readyWeatherMarkup.includes('Open-Meteo'),
+  'la escena diferencia el estado futuro del pronóstico real disponible y atribuye la fuente')
+const changedWeather = updateOrigin01StudioDraftGroup(initial, 'weather', (weather) => ({
+  ...weather, location: { name: 'Rosario', admin1: 'Santa Fe', country: 'Argentina', latitude: -32.9468,
+    longitude: -60.6393, timezone: 'America/Argentina/Cordoba' },
+}))
+assert(deriveOrigin01PreviewInvitation(origin01DemoData, changedWeather).content.weather.location.name === 'Rosario'
+  && origin01DemoData.content.weather.location.name === 'Buenos Aires',
+  'proyecta una localidad meteorológica confirmada sin mutar el fixture')
+
 const validBase = updateOrigin01StudioDraftGroup(initial, 'rsvp', (rsvp) => ({
   ...rsvp,
   recipientPhone: '+54 11 5555 5555',
@@ -701,6 +739,20 @@ assert(inactiveScheduleResult.invitationValid
   && inactiveScheduleResult.sceneStatuses.find(({ sceneId }) => sceneId === 'schedule')?.relevantErrorCount === 0,
   'el contenido inválido de Cronograma se conserva pero deja de ser relevante al excluir la escena')
 
+const invalidWeather = updateOrigin01StudioDraftGroup(validBase, 'weather', (weather) => ({
+  ...weather, location: { ...weather.location, name: '', latitude: Number.NaN },
+}))
+const activeWeatherResult = validateOrigin01StudioDraft(origin01DemoData, invalidWeather)
+const weatherIssue = activeWeatherResult.issues.find(({ fieldId }) => fieldId === 'weatherLocation')
+assert(weatherIssue?.editorId === 'weather' && weatherIssue.sceneId === 'weather'
+  && activeWeatherResult.sceneStatuses.find(({ sceneId }) => sceneId === 'weather')?.relevantErrorCount === 1,
+  'una ubicación meteorológica inválida navega al editor real de Clima')
+const inactiveWeatherResult = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioModule(origin01DemoData, invalidWeather, 'weather', false))
+assert(inactiveWeatherResult.invitationValid
+  && inactiveWeatherResult.sceneStatuses.find(({ sceneId }) => sceneId === 'weather')?.relevantErrorCount === 0,
+  'Clima excluido conserva la ubicación pendiente sin bloquear la invitación')
+
 const invalidDate = updateOrigin01StudioDraftGroup(validBase, 'event', (event) => ({ ...event, start: 'fecha inválida' }))
 const invalidDateResult = validateOrigin01StudioDraft(origin01DemoData, invalidDate)
 assert(invalidDateResult.previewBlocked && !invalidDateResult.structurallyValid, 'un error canónico estructural bloquea la derivación actual')
@@ -726,7 +778,7 @@ const domains = createOrigin01StudioDomains(origin01Template)
 assert(domains.map(({ id }) => id).join(',') === 'identity,event,narrative,experiences,review', 'define los cinco dominios en orden')
 const experienceScenes = domains.find(({ id }) => id === 'experiences')?.items.map(({ sceneId }) => sceneId)
 const expectedExperiences = origin01Template.canonicalOrder.filter((sceneId) =>
-  ['countdown', 'schedule', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
+  ['countdown', 'schedule', 'weather', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
 assert(experienceScenes?.join() === expectedExperiences.join(), 'deriva el orden de experiencias desde la plantilla canónica')
 const narrativeScenes = domains.find(({ id }) => id === 'narrative')?.items.flatMap(({ id, sceneId }) =>
   id === 'opening' ? ['prelude', 'hero'] : sceneId ? [sceneId] : [])
@@ -908,13 +960,21 @@ const scheduleMarkup = renderToStaticMarkup(createElement(StudioScheduleEditor, 
   onChange: noop,
   onReset: noop,
 }))
+const weatherMarkup = renderToStaticMarkup(createElement(StudioWeatherEditor, {
+  value: invalidWeather.weather,
+  canonicalValue: initial.weather,
+  errors: activeWeatherResult.fieldErrors,
+  onChange: noop,
+  onReset: noop,
+}))
 const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
   titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
   canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
   onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
   onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
 for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
-  [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [giftIssue!, giftMarkup]] as const) {
+  [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [weatherIssue!, weatherMarkup],
+  [giftIssue!, giftMarkup]] as const) {
   assert(Boolean(issue.fieldTargetId) && markup.includes(`id="${issue.fieldTargetId}"`),
     'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
 }

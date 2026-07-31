@@ -14,6 +14,7 @@ const item = (
 const sceneLabels: Readonly<Partial<Record<InvitationModuleId, readonly [string, string, string]>>> = {
   countdown: ['Cuenta regresiva', 'Textos de anticipación.', 'countdown'],
   schedule: ['Cronograma', 'Horarios y momentos de la celebración.', 'schedule'],
+  weather: ['Clima', 'Pronóstico real y localidad confirmada.', 'weather'],
   dressCode: ['Dress Code', 'Indicaciones de vestimenta.', 'dress-code'],
   gallery: ['Galería', 'Textos y epígrafes de medios canónicos.', 'gallery'],
   trivia: ['Trivia', 'Presentación, preguntas canónicas y resultados.', 'trivia'],

@@ -4,6 +4,9 @@ import type { InvitationAudience, InvitationMediaReference } from '../engine/inv
 import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
 import { Origin01Trivia } from './Origin01Trivia'
 import type { Origin01InvitationData } from './origin01ContentTypes'
+import { fetchOrigin01WeatherForecast, formatOrigin01WeatherLocation,
+  getOrigin01WeatherAvailability } from './origin01Weather'
+import type { Origin01WeatherAvailability, Origin01WeatherForecast } from './origin01Weather'
 import './origin01.css'
 
 type CountdownValue = {
@@ -286,6 +289,100 @@ export function Origin01Schedule({ schedule }: {
   </section>
 }
 
+type Origin01WeatherState =
+  | { readonly kind: 'loading' }
+  | { readonly kind: 'ready'; readonly forecast: Origin01WeatherForecast }
+  | { readonly kind: 'error' }
+
+const formatWeatherDate = (isoDate: string) => new Intl.DateTimeFormat('es-AR', {
+  day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+}).format(new Date(`${isoDate}T12:00:00Z`))
+
+export function Origin01WeatherPanel({ weather, availability, state }: {
+  weather: Origin01InvitationData['content']['weather']
+  availability: Origin01WeatherAvailability
+  state: Origin01WeatherState
+}) {
+  const locationLabel = formatOrigin01WeatherLocation(weather.location)
+  const body = availability.kind === 'future' ? (
+    <div className="origin01-weather__notice">
+      <strong>El pronóstico todavía no está disponible.</strong>
+      <p>Podrás consultarlo desde el {formatWeatherDate(availability.availableFrom)}.</p>
+    </div>
+  ) : availability.kind === 'past' ? (
+    <div className="origin01-weather__notice">
+      <strong>El evento ya pasó.</strong>
+      <p>El pronóstico de esa fecha ya no se muestra como información actual.</p>
+    </div>
+  ) : state.kind === 'loading' ? (
+    <div className="origin01-weather__notice" aria-live="polite">
+      <strong>Consultando el pronóstico real…</strong>
+      <p>Estamos conectando con el servicio meteorológico.</p>
+    </div>
+  ) : state.kind === 'error' ? (
+    <div className="origin01-weather__notice" role="status">
+      <strong>Pronóstico temporalmente no disponible.</strong>
+      <p>Volvé a intentarlo más tarde. No mostraremos datos estimados como si fueran actuales.</p>
+    </div>
+  ) : (
+    <div className="origin01-weather__forecast" aria-live="polite">
+      <div className="origin01-weather__condition">
+        <span>{Math.round(state.forecast.temperatureMax)}°</span>
+        <div><strong>{state.forecast.condition}</strong>
+          <p>Mínima de {Math.round(state.forecast.temperatureMin)}°</p></div>
+      </div>
+      <dl className="origin01-weather__metrics">
+        <div><dt>Sensación</dt><dd>{Math.round(state.forecast.apparentTemperatureMin)}° a {Math.round(state.forecast.apparentTemperatureMax)}°</dd></div>
+        <div><dt>Prob. de lluvia</dt><dd>{Math.round(state.forecast.precipitationProbability)}%</dd></div>
+        <div><dt>Viento máximo</dt><dd>{Math.round(state.forecast.windSpeedMax)} km/h</dd></div>
+      </dl>
+      <p className="origin01-weather__updated">Actualizado el {new Intl.DateTimeFormat('es-AR', {
+        dateStyle: 'short', timeStyle: 'short', timeZone: weather.location.timezone,
+      }).format(new Date(state.forecast.fetchedAt))} hs</p>
+    </div>
+  )
+
+  return <section className="origin01-section origin01-weather" aria-labelledby="origin01-weather-title">
+    <div className="origin01-weather__inner">
+      <div className="origin01-section-heading">
+        <p className="origin01-kicker">{weather.eyebrow}</p>
+        <h2 id="origin01-weather-title">{weather.heading}</h2>
+      </div>
+      <p className="origin01-weather__introduction">{weather.introduction}</p>
+      <p className="origin01-weather__location">Pronóstico para <strong>{locationLabel}</strong></p>
+      {body}
+      <p className="origin01-weather__source">Datos meteorológicos de <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>.</p>
+    </div>
+  </section>
+}
+
+export function Origin01Weather({ invitation }: { invitation: Origin01InvitationData }) {
+  const { weather } = invitation.content
+  const requestKey = [invitation.event.startsAt, weather.location.latitude, weather.location.longitude,
+    weather.location.timezone].join('|')
+  const availability = useMemo(() => getOrigin01WeatherAvailability(
+    invitation.event.startsAt, weather.location.timezone,
+  ), [invitation.event.startsAt, weather.location.timezone])
+  const [result, setResult] = useState<{ readonly key: string; readonly state: Origin01WeatherState }>(
+    { key: requestKey, state: { kind: 'loading' } },
+  )
+  const state: Origin01WeatherState = result.key === requestKey ? result.state : { kind: 'loading' }
+
+  useEffect(() => {
+    if (availability.kind !== 'available') return
+    const controller = new AbortController()
+    void fetchOrigin01WeatherForecast(invitation.event.startsAt, weather.location, controller.signal)
+      .then((forecast) => setResult({ key: requestKey, state: { kind: 'ready', forecast } }))
+      .catch(() => {
+        if (controller.signal.aborted) return
+        setResult({ key: requestKey, state: { kind: 'error' } })
+      })
+    return () => controller.abort()
+  }, [availability.kind, invitation.event.startsAt, requestKey, weather.location])
+
+  return <Origin01WeatherPanel weather={weather} availability={availability} state={state} />
+}
+
 export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
@@ -354,6 +451,8 @@ export function Origin01Invitation({
       { selector: '.origin01-info > .origin01-actions', motion: 'scale', level: 'action', delay: 'action' },
       { selector: '.origin01-schedule > .origin01-section-heading, .origin01-schedule__introduction', motion: 'up', level: 'content' },
       { selector: '.origin01-schedule__moment', motion: 'up', level: 'content', delay: 'follow' },
+      { selector: '.origin01-weather .origin01-section-heading, .origin01-weather__introduction', motion: 'up', level: 'content' },
+      { selector: '.origin01-weather__location, .origin01-weather__notice, .origin01-weather__forecast', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-dress__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-dress__content > .origin01-kicker, .origin01-dress__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
       { selector: '.origin01-dress__content > p:not(.origin01-kicker), .origin01-dress__note', motion: 'fade', level: 'content', delay: 'supporting' },
@@ -668,6 +767,10 @@ export function Origin01Invitation({
 
           {enabledModules.has('schedule') ? (
           <Origin01Schedule schedule={invitation.content.schedule} />
+          ) : null}
+
+          {enabledModules.has('weather') ? (
+          <Origin01Weather invitation={invitation} />
           ) : null}
 
           {enabledModules.has('dressCode') ? (

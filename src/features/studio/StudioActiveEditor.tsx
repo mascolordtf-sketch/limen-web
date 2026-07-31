@@ -15,6 +15,7 @@ import { StudioScheduleEditor } from './StudioScheduleEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import { StudioStoryEditor } from './StudioStoryEditor'
 import { StudioTriviaEditor } from './StudioTriviaEditor'
+import { StudioWeatherEditor } from './StudioWeatherEditor'
 import { selectStudioIssueSummary } from './studioItemStatus'
 import type { useOrigin01StudioModel } from './useOrigin01StudioModel'
 
@@ -99,6 +100,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
     updateGroup('gallery', (current) => ({ ...current, captions: updater(current.captions) }))
   const schedule = draft.schedule
   const setSchedule = (value: typeof schedule) => update('schedule', value)
+  const weather = draft.weather
+  const setWeather = (value: typeof weather) => update('weather', value)
 
   const canonicalEventStart = initialDraft.event.start
   const canonicalEventEnd = initialDraft.event.end
@@ -135,6 +138,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const canonicalGallery = { ...invitation.content.gallery, ...initialDraft.gallery.copy }
   const canonicalGalleryCaptions = initialDraft.gallery.captions
   const canonicalSchedule = initialDraft.schedule
+  const canonicalWeather = initialDraft.weather
 
   const protagonistNameError = errors.protagonistName
   const shareMessageError = errors.shareMessage
@@ -176,6 +180,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const galleryErrors = { eyebrow: errors.galleryEyebrow, heading: errors.galleryHeading }
   const scheduleErrors = Object.fromEntries(Object.entries(errors).filter(([key]) =>
     key.startsWith('schedule'))) as Readonly<Record<string, string | null>>
+  const weatherErrors = Object.fromEntries(Object.entries(errors).filter(([key]) =>
+    key.startsWith('weather'))) as Readonly<Record<string, string | null>>
   const modules = draft.modules
   const validation = configurationValidation
   const resetDisabled = modules.every((module, index) => module.moduleId === initialDraft.modules[index]?.moduleId
@@ -406,6 +412,13 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             errors={scheduleErrors}
             onChange={setSchedule}
             onReset={() => resetScene('schedule')}
+          /></div>,
+    'weather': <div className="limen-studio__panel-grid">          <StudioWeatherEditor
+            value={weather}
+            canonicalValue={canonicalWeather}
+            errors={weatherErrors}
+            onChange={setWeather}
+            onReset={() => resetScene('weather')}
           /></div>,
     'dress-code': <div className="limen-studio__panel-grid">          <StudioDressCodeEditor
             titleValue={dressCodeTitle}

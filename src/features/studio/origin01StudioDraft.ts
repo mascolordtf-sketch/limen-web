@@ -48,6 +48,7 @@ export type Origin01StudioDraft = {
   readonly eventDetails: Pick<Origin01InvitationData['content']['eventDetails'],
     'eyebrow' | 'heading' | 'venueLabel' | 'mapActionLabel' | 'calendarActionLabel' | 'calendarDescription'>
   readonly schedule: Origin01InvitationData['content']['schedule']
+  readonly weather: Origin01InvitationData['content']['weather']
   readonly dressCode: Pick<Origin01InvitationData['content']['dressCode'], 'title' | 'description' | 'note'>
   readonly gallery: {
     readonly copy: Pick<Origin01InvitationData['content']['gallery'], 'eyebrow' | 'heading'>
@@ -127,6 +128,7 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
       ...invitation.content.schedule,
       moments: invitation.content.schedule.moments.map((moment) => ({ ...moment })),
     },
+    weather: { ...invitation.content.weather, location: { ...invitation.content.weather.location } },
     dressCode: {
       title: invitation.content.dressCode.title,
       description: invitation.content.dressCode.description,
@@ -173,7 +175,7 @@ export function updateOrigin01StudioDraftGroup<K extends keyof Origin01StudioDra
 type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'protagonistName' | 'modules'>
 export type Origin01EditableSceneId =
   | 'prelude' | 'hero' | 'countdown' | 'story' | 'eventDetails' | 'dressCode'
-  | 'schedule' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'
+  | 'schedule' | 'weather' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'
 
 export function resetOrigin01StudioValue<K extends keyof Origin01StudioDraft>(
   draft: Origin01StudioDraft,
