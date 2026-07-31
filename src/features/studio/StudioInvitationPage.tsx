@@ -135,7 +135,10 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
     onClose={closePreview}
     onOpen={openPreview} onRestart={audience.restartPreview} />
 
-  return <div className="limen-studio"><div className="limen-studio__workspace">
+  const documentScroll = activeStage === 'template' || activeStage === 'aesthetic' || activeStage === 'sections'
+
+  return <div className={`limen-studio${documentScroll ? ' limen-studio--document-scroll' : ''}`}>
+    <div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand">
         <h1><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></h1>

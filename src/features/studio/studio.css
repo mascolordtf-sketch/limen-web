@@ -4815,6 +4815,32 @@
   .limen-studio__template-concept span { writing-mode: initial; }
 }
 
+/*
+ * Long editorial stages use the document scroll on desktop. Content and Review
+ * keep their viewport workspace because those stages include a persistent preview.
+ */
+@media (min-width: 76rem) {
+  .limen-studio--document-scroll {
+    height: auto;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding-bottom: 2rem;
+  }
+
+  .limen-studio--document-scroll .limen-studio__workspace {
+    height: auto;
+    min-height: 100dvh;
+    grid-template-rows: auto auto;
+  }
+
+  .limen-studio--document-scroll .limen-studio__stage {
+    min-height: auto;
+    overflow: visible;
+    padding-bottom: 2rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .limen-studio__template-card,
   .limen-studio__template-demo { transition: none; }
