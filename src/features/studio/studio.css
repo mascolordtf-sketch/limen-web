@@ -238,6 +238,248 @@
   flex: 0 0 auto;
 }
 
+.limen-studio__typography-evaluation {
+  margin: .85rem 0 1.5rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1.15rem;
+  padding: 1.1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__typography-evaluation > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.limen-studio__typography-evaluation h3,
+.limen-studio__typography-evaluation header p,
+.limen-studio__typography-evaluation footer p {
+  margin: 0;
+}
+
+.limen-studio__typography-evaluation h3 {
+  margin-bottom: .35rem;
+  font-size: 1.05rem;
+}
+
+.limen-studio__typography-evaluation header div > p:last-child {
+  max-width: 48rem;
+  color: var(--studio-muted);
+  font-size: .82rem;
+  line-height: 1.5;
+}
+
+.limen-studio__typography-evaluation > header > span {
+  flex: 0 0 auto;
+  border: 1px solid var(--studio-line);
+  border-radius: 999px;
+  padding: .35rem .55rem;
+  color: var(--studio-muted);
+  font-size: .62rem;
+  font-weight: 750;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.limen-studio__typography-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .75rem;
+}
+
+.limen-studio__typography-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  gap: .45rem;
+  overflow: hidden;
+  border: 1px solid var(--studio-line);
+  border-radius: .9rem;
+  padding: .85rem;
+  background: #fafaf8;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.limen-studio__typography-card:hover {
+  border-color: var(--studio-line-strong);
+  transform: translateY(-1px);
+}
+
+.limen-studio__typography-card.is-selected {
+  border-color: var(--studio-accent);
+  box-shadow: 0 0 0 1px var(--studio-accent), var(--studio-shadow-soft);
+}
+
+.limen-studio__typography-card > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.limen-studio__typography-card:has(input:focus-visible) {
+  outline: 3px solid var(--studio-accent-soft);
+  outline-offset: 3px;
+}
+
+.limen-studio__typography-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  border-bottom: 1px solid var(--studio-line);
+  padding-bottom: .55rem;
+  font-family: var(--studio-type-functional);
+}
+
+.limen-studio__typography-card-heading strong {
+  color: var(--studio-ink);
+  font-size: .76rem;
+}
+
+.limen-studio__typography-card-heading small {
+  color: var(--studio-accent-strong);
+  font-size: .58rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.limen-studio__typography-protagonist {
+  min-height: 2.7rem;
+  overflow-wrap: anywhere;
+  color: var(--studio-ink);
+  font-family: var(--studio-type-protagonist);
+  font-size: clamp(1.9rem, 3vw, 2.55rem);
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.limen-studio__typography-editorial {
+  min-height: 2.3rem;
+  color: var(--studio-ink);
+  font-family: var(--studio-type-editorial);
+  font-size: 1.1rem;
+  line-height: 1.12;
+}
+
+.limen-studio__typography-functional {
+  color: var(--studio-muted);
+  font-family: var(--studio-type-functional);
+  font-size: .65rem;
+  letter-spacing: .05em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.limen-studio__typography-roles {
+  display: grid;
+  gap: .12rem;
+  margin-top: .25rem;
+  border-top: 1px solid var(--studio-line);
+  padding-top: .5rem;
+  color: var(--studio-muted);
+  font-family: var(--studio-type-functional);
+  font-size: .62rem;
+  line-height: 1.35;
+}
+
+.limen-studio__typography-evaluation > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  border: 1px solid color-mix(in srgb, var(--studio-accent) 30%, var(--studio-line));
+  border-radius: .9rem;
+  padding: .8rem;
+  background: color-mix(in srgb, var(--studio-accent-soft) 35%, white);
+  font-family: var(--studio-type-functional);
+}
+
+.limen-studio__typography-evaluation footer div {
+  display: grid;
+  gap: .12rem;
+}
+
+.limen-studio__typography-evaluation footer p {
+  color: var(--studio-muted);
+  font-size: .6rem;
+  font-weight: 750;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.limen-studio__typography-evaluation footer strong {
+  font-family: var(--studio-type-editorial);
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.limen-studio__typography-evaluation footer span {
+  color: var(--studio-muted);
+  font-size: .68rem;
+}
+
+.limen-studio__typography-evaluation footer i {
+  font-family: var(--studio-type-protagonist);
+  font-size: 1rem;
+  font-style: normal;
+}
+
+.limen-studio__typography-evaluation footer a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: .7rem;
+  padding: .65rem .85rem;
+  background: var(--studio-accent);
+  color: white;
+  font-family: inherit;
+  font-size: .72rem;
+  font-weight: 750;
+  text-align: center;
+  text-decoration: none;
+}
+
+.limen-studio__typography-note {
+  margin: .75rem 0 0;
+  color: var(--studio-muted);
+  font-size: .72rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 62rem) {
+  .limen-studio__typography-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 42rem) {
+  .limen-studio__typography-evaluation > header,
+  .limen-studio__typography-evaluation > footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .limen-studio__typography-evaluation > header > span {
+    align-self: flex-start;
+  }
+
+  .limen-studio__typography-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .limen-studio__typography-evaluation footer a {
+    width: 100%;
+  }
+}
+
 .limen-studio__variant-grid {
   display: grid;
   gap: .7rem;

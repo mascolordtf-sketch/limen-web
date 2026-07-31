@@ -7,6 +7,7 @@ import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
 import { findOrigin01ThemeVariant } from '../invitations/origin01/origin01ThemeVariants'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
+import { StudioTypographyEvaluation } from './StudioTypographyEvaluation'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
@@ -30,6 +31,7 @@ export function StudioAestheticStage({
   onGalleryCaptionsChange,
   onTemporaryUrl,
   onThemeVariantChange,
+  demoPath,
 }: {
   media: Origin01StudioMediaState
   initialMedia: Origin01StudioMediaState
@@ -41,6 +43,7 @@ export function StudioAestheticStage({
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onTemporaryUrl: (url: string) => void
   onThemeVariantChange: (variant: Origin01ThemeVariantId) => void
+  demoPath: string
 }) {
   const visualVariant = findOrigin01ThemeVariant(themeVariant)
   return <section className="limen-studio__aesthetic-stage" aria-labelledby="studio-aesthetic-title">
@@ -49,6 +52,7 @@ export function StudioAestheticStage({
       <p>Elegí una atmósfera curada y administrá las fotografías y la música de la experiencia.</p></div>
     <StudioVisualVariantSelector value={themeVariant} initialValue={initialThemeVariant}
       onChange={onThemeVariantChange} />
+    <StudioTypographyEvaluation demoPath={demoPath} />
     <div className={`limen-studio__aesthetic-board limen-studio__aesthetic-board--${themeVariant}`}>
       <article className="limen-studio__aesthetic-hero">
         <div className={`limen-studio__aesthetic-hero-art limen-studio__aesthetic-hero-art--${themeVariant}`}
@@ -72,7 +76,7 @@ export function StudioAestheticStage({
       <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-type">
         <header><span>02</span><div><h3>Tipografía</h3><p>Voz y contraste</p></div></header>
         <div aria-label="Muestra tipográfica"><strong>Una historia</strong><span>merece un gran comienzo</span>
-          <small>Editorial · Caligráfica · Funcional</small></div>
+          <small>La comparación detallada está en el laboratorio superior</small></div>
       </article>
       <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-image">
         <header><span>03</span><div><h3>Imagen</h3><p>Tratamiento fotográfico</p></div></header>
@@ -87,7 +91,7 @@ export function StudioAestheticStage({
     </div>
     <aside className="limen-studio__aesthetic-note"><span aria-hidden="true">i</span>
       <div><strong>Sistema visual curado</strong>
-        <p>La variante aplica una paleta completa y accesible. Las tipografías y los recursos narrativos continúan asociados a Origin 01.</p></div>
+        <p>La variante aplica una paleta completa y accesible. El laboratorio tipográfico permite evaluar combinaciones sin guardar cambios.</p></div>
     </aside>
     <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
       initialGalleryCaptions={initialGalleryCaptions}

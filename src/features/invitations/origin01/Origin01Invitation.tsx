@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import type { CSSProperties } from 'react'
 
 import type { InvitationAudience, InvitationMediaReference } from '../engine/invitationTypes'
 import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
 import { Origin01Trivia } from './Origin01Trivia'
 import { Origin01Community } from './Origin01Community'
 import type { Origin01InvitationData } from './origin01ContentTypes'
+import { Origin01TypographyAssets } from './Origin01TypographyAssets'
+import type { Origin01TypographyCombination } from './origin01Typography'
 import { fetchOrigin01WeatherForecast, formatOrigin01WeatherLocation,
   getOrigin01WeatherAvailability } from './origin01Weather'
 import type { Origin01WeatherAvailability, Origin01WeatherForecast } from './origin01Weather'
@@ -389,11 +392,13 @@ export function Origin01Invitation({
   audience = 'protagonist',
   publicInvitationUrl,
   startAtInvitation = false,
+  typography,
 }: {
   invitation: Origin01InvitationData
   audience?: InvitationAudience
   publicInvitationUrl?: string
   startAtInvitation?: boolean
+  typography?: Origin01TypographyCombination
 }) {
   const [phase, setPhase] = useState<EntryPhase>(
     startAtInvitation ? 'invitation' : audience === 'guest' ? 'envelope' : 'prelude',
@@ -594,8 +599,17 @@ export function Origin01Invitation({
     copyResetRef.current = window.setTimeout(() => setCopyStatus('idle'), 2_400)
   }
 
+  const typographyStyle = typography ? {
+    '--origin-script': `'${typography.protagonist.family}', cursive`,
+    '--origin-accent-font': `'${typography.protagonist.family}', cursive`,
+    '--origin-display': `'${typography.editorial.family}', serif`,
+    '--origin-reading': `'${typography.functional.family}', sans-serif`,
+  } as CSSProperties : undefined
+
   return (
-    <main className={`origin01 origin01--${phase} origin01--theme-${invitation.themeVariant}`}>
+    <main className={`origin01 origin01--${phase} origin01--theme-${invitation.themeVariant}`}
+      style={typographyStyle}>
+      <Origin01TypographyAssets combination={typography} />
       {hasMusic && musicSrc ? (
         <audio
           ref={audioRef}

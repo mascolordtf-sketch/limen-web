@@ -6,6 +6,8 @@ import { Origin01Community } from '../src/features/invitations/origin01/Origin01
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
+import { findOrigin01TypographyCombination, getOrigin01TypographyStylesheets,
+  origin01TypographyCombinations } from '../src/features/invitations/origin01/origin01Typography'
 import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '../src/features/invitations/origin01/origin01Weather'
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
@@ -233,6 +235,25 @@ const midnightMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
 }))
 assert(midnightMarkup.includes('origin01--theme-origin01-midnight'),
   'el renderer expone la variante seleccionada como un límite visual propio')
+assert(origin01TypographyCombinations.length === 12
+  && new Set(origin01TypographyCombinations.map(({ id }) => id)).size === 12
+  && origin01TypographyCombinations.every((combination) =>
+    getOrigin01TypographyStylesheets(combination).length >= 2
+    && getOrigin01TypographyStylesheets(combination).length <= 3
+    && getOrigin01TypographyStylesheets(combination).every((path) => path.endsWith('/font-face.css'))),
+  'el laboratorio registra doce combinaciones únicas y limita cada prueba a sus fuentes reales')
+const gardenTypography = findOrigin01TypographyCombination('garden-antigua')
+const typographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: origin01DemoData,
+  audience: 'protagonist',
+  typography: gardenTypography,
+}))
+assert(gardenTypography?.protagonist.family === 'WindSong'
+  && typographyMarkup.includes('--origin-script:&#x27;WindSong&#x27;, cursive')
+  && typographyMarkup.includes('--origin-display:&#x27;Fraunces&#x27;, serif')
+  && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
+  && findOrigin01TypographyCombination('desconocida') === undefined,
+  'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
 assert(validateStudioPhotoFile({ name: 'foto.gif', type: 'image/gif', size: 1_000 })?.includes('JPG')
   && validateStudioPhotoFile({ name: 'foto.jpg', type: 'image/jpeg', size: studioPhotoMaxBytes + 1 })?.includes('12 MB')
   && validateStudioPhotoFile({ name: 'foto.webp', type: 'image/webp', size: 1_000 }) === null,
@@ -443,6 +464,7 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
 const aestheticStageElement = createElement(StudioAestheticStage, {
+  demoPath: '/demo/LMN-015-001',
   media: initial.media,
   initialMedia: initial.media,
   themeVariant: initial.themeVariant,
@@ -457,6 +479,10 @@ const aestheticStageElement = createElement(StudioAestheticStage, {
 const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
 assert(aestheticMarkup.includes('Elegí la atmósfera de Origin 01')
   && origin01ThemeVariants.every(({ name }) => aestheticMarkup.includes(name))
+  && aestheticMarkup.includes('Compará las doce voces de Origin 01')
+  && origin01TypographyCombinations.every(({ name }) => aestheticMarkup.includes(name))
+  && aestheticMarkup.includes('/demo/LMN-015-001?tipografia=noche-plateada&amp;inicio=invitacion')
+  && aestheticMarkup.includes('Evaluación · sin persistencia')
   && aestheticMarkup.includes('Sistema visual curado')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
   && aestheticMarkup.includes('Zoom')
