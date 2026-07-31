@@ -795,6 +795,7 @@
 .origin01-section-heading h2,
 .origin01-info h2,
 .origin01-schedule h2,
+.origin01-weather h2,
 .origin01-gallery h2,
 .origin01-gift h2,
 .origin01-rsvp h2 {
@@ -915,6 +916,127 @@
   background:
     radial-gradient(circle at 90% 10%, rgba(206, 191, 145, .13), transparent 22rem),
     linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
+}
+
+/* Weather — live information with an explicit source and graceful horizon states. */
+
+.origin01-weather {
+  padding-top: 4.5rem;
+  padding-bottom: 5rem;
+  color: var(--origin-ink);
+  background:
+    radial-gradient(circle at 12% 8%, color-mix(in srgb, var(--origin-accent) 18%, transparent), transparent 22rem),
+    linear-gradient(150deg, var(--origin-cream), var(--origin-photo-surface));
+}
+
+.origin01-weather__inner {
+  width: min(100%, 68rem);
+  margin: 0 auto;
+}
+
+.origin01-weather .origin01-section-heading {
+  margin-bottom: 1.15rem;
+}
+
+.origin01-weather__introduction {
+  max-width: 39rem;
+  margin: 0 0 1.4rem;
+  color: var(--origin-muted);
+  font-size: clamp(1rem, 3.8cqw, 1.3rem);
+  line-height: 1.65;
+}
+
+.origin01-weather__location {
+  margin: 0 0 1.5rem;
+  font-size: .82rem;
+  letter-spacing: .025em;
+}
+
+.origin01-weather__notice,
+.origin01-weather__forecast {
+  border: 1px solid color-mix(in srgb, var(--origin-border) 78%, transparent);
+  border-radius: var(--origin-radius-feature);
+  padding: 1.6rem;
+  background: color-mix(in srgb, var(--origin-ivory) 90%, transparent);
+  box-shadow: var(--origin-shadow-soft);
+}
+
+.origin01-weather__notice strong {
+  display: block;
+  font-family: var(--origin-display);
+  font-size: clamp(1.35rem, 5cqw, 2rem);
+  font-weight: 400;
+}
+
+.origin01-weather__notice p,
+.origin01-weather__condition p {
+  margin: .55rem 0 0;
+  color: var(--origin-muted);
+  line-height: 1.55;
+}
+
+.origin01-weather__condition {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.4rem;
+}
+
+.origin01-weather__condition > span {
+  color: var(--origin-wine-deep);
+  font-family: var(--origin-display);
+  font-size: clamp(4.5rem, 20cqw, 7rem);
+  letter-spacing: -.08em;
+  line-height: .75;
+}
+
+.origin01-weather__condition strong {
+  font-size: clamp(1.15rem, 4.3cqw, 1.6rem);
+}
+
+.origin01-weather__metrics {
+  display: grid;
+  gap: .75rem;
+  margin: 0;
+}
+
+.origin01-weather__metrics div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--origin-border);
+  padding-top: .8rem;
+}
+
+.origin01-weather__metrics dt {
+  color: var(--origin-muted);
+}
+
+.origin01-weather__metrics dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.origin01-weather__updated,
+.origin01-weather__source {
+  color: var(--origin-muted);
+  font-size: .72rem;
+  line-height: 1.5;
+}
+
+.origin01-weather__updated {
+  margin: 1rem 0 0;
+}
+
+.origin01-weather__source {
+  margin: 1rem 0 0;
+}
+
+.origin01-weather__source a {
+  color: inherit;
+  font-weight: 750;
+  text-underline-offset: .2em;
 }
 
 .origin01-demo-label {
@@ -2077,6 +2199,29 @@
   .origin01-schedule {
     padding-top: 7rem;
     padding-bottom: 7rem;
+  }
+
+  .origin01-weather {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+
+  .origin01-weather__notice,
+  .origin01-weather__forecast {
+    padding: 2.5rem;
+  }
+
+  .origin01-weather__metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .origin01-weather__metrics div {
+    display: block;
+  }
+
+  .origin01-weather__metrics dd {
+    margin-top: .4rem;
+    text-align: left;
   }
 
   .origin01-schedule__moment {

@@ -1,5 +1,6 @@
 import type { LimenInvitation, LimenInvitationContent } from '../engine/invitationTypes'
 import type { Origin01ThemeVariantId } from './origin01ThemeVariants'
+import type { Origin01WeatherLocation } from './origin01Weather'
 
 export type Origin01ImageContent = {
   readonly mediaId: string
@@ -86,6 +87,12 @@ export type Origin01Content = LimenInvitationContent & {
     readonly heading: string
     readonly introduction: string
     readonly moments: readonly Origin01ScheduleMoment[]
+  }
+  readonly weather: {
+    readonly eyebrow: string
+    readonly heading: string
+    readonly introduction: string
+    readonly location: Origin01WeatherLocation
   }
   readonly dressCode: {
     readonly eyebrow: string

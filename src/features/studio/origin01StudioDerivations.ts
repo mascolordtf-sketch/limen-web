@@ -52,6 +52,7 @@ export function deriveOrigin01PreviewInvitation(
           description: moment.description?.trim() ? moment.description : undefined,
         })),
       },
+      weather: { ...draft.weather, location: { ...draft.weather.location } },
       envelope: { ...invitation.content.envelope, monogram: deriveMonogram(name) },
       story: { ...invitation.content.story, eyebrow: draft.story.eyebrow, message: draft.story.message, signature: name },
       dressCode: { ...invitation.content.dressCode, ...draft.dressCode },

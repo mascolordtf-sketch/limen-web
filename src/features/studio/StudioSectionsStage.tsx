@@ -17,7 +17,7 @@ const narrativeChapters = [
     eyebrow: 'La celebración',
     title: 'Situar el encuentro',
     description: 'Todo lo que permite imaginar y preparar ese día.',
-    sceneIds: ['event-details', 'schedule', 'dress-code'],
+    sceneIds: ['event-details', 'schedule', 'weather', 'dress-code'],
   },
   {
     id: 'participation',
