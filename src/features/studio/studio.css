@@ -2064,6 +2064,117 @@
   }
 }
 
+/* Fase 2C.5: administración temporal de música. */
+.limen-studio__music {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--studio-line);
+  padding-top: 1.5rem;
+}
+
+.limen-studio__music > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio__music > header h2,
+.limen-studio__music > header p {
+  margin: 0;
+}
+
+.limen-studio__music > header h2 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.6rem, 5vw, 2.35rem);
+  font-weight: 500;
+}
+
+.limen-studio__music > header p:last-child {
+  max-width: 42rem;
+  margin-top: .35rem;
+  color: var(--studio-muted);
+  line-height: 1.5;
+}
+
+.limen-studio__music button {
+  min-height: 2.65rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .7rem;
+  padding: .62rem .8rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.limen-studio__music-card {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__music-summary {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: .85rem;
+}
+
+.limen-studio__music-summary > span {
+  display: grid;
+  flex: 0 0 auto;
+  width: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+  font-size: 1.25rem;
+}
+
+.limen-studio__music-summary > div {
+  display: grid;
+  min-width: 0;
+  gap: .15rem;
+}
+
+.limen-studio__music-summary small,
+.limen-studio__music-summary > div > span {
+  overflow: hidden;
+  color: var(--studio-muted);
+  font-size: .72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limen-studio__music-summary strong {
+  overflow-wrap: anywhere;
+}
+
+.limen-studio__music-card audio {
+  width: 100%;
+  max-width: 34rem;
+}
+
+.limen-studio__music-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+@media (max-width: 41.99rem) {
+  .limen-studio__music > header {
+    display: grid;
+  }
+}
+
 /* Recovery shell: the visible workflow is editorial; engine taxonomy stays internal. */
 .limen-studio {
   --studio-ink: #202820;

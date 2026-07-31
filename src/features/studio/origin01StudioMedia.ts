@@ -132,7 +132,7 @@ export function deriveOrigin01MediaInvitation(
         imageMediaId: closing.mediaId,
       },
       music: {
-        mediaId: singleMediaId(state, 'music.audio', invitation.content.music.mediaId),
+        mediaId: singleMediaId(state, 'music.audio', ''),
       },
     },
   }
