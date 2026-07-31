@@ -3,7 +3,7 @@ import type { InvitationModuleDefinition, InvitationModuleId } from './moduleTyp
 export const invitationTemplateIds = ['origin01'] as const
 export type InvitationTemplateId = (typeof invitationTemplateIds)[number]
 
-export const themeVariantIds = ['origin01-wine'] as const
+export const themeVariantIds = ['origin01-wine', 'origin01-midnight', 'origin01-garden'] as const
 export type ThemeVariantId = (typeof themeVariantIds)[number]
 
 export type InvitationTemplateDefinition = {

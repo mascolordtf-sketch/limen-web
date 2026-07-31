@@ -2,6 +2,7 @@ import { updateInvitationModuleConfiguration } from '../invitations/engine/modul
 import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData, Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
+import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
 import { createOrigin01StudioMediaState } from './origin01StudioMedia'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { toDateTimeLocalValue } from './studioDateTime'
@@ -13,6 +14,7 @@ export type Origin01TriviaEditorialDraft = Omit<
 >
 
 export type Origin01StudioDraft = {
+  readonly themeVariant: Origin01ThemeVariantId
   readonly protagonistName: string
   readonly event: {
     readonly start: string
@@ -85,6 +87,7 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
   const protagonistName = invitation.identities.find(({ role }) => role === 'protagonist')?.displayName ?? ''
   const suggestedShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
   return {
+    themeVariant: invitation.themeVariant,
     protagonistName,
     event: {
       start: toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone),
@@ -162,7 +165,7 @@ export function updateOrigin01StudioDraftGroup<K extends keyof Origin01StudioDra
   return { ...draft, [key]: updater(draft[key]) }
 }
 
-type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'protagonistName' | 'modules'>
+type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'protagonistName' | 'modules'>
 export type Origin01EditableSceneId =
   | 'prelude' | 'hero' | 'countdown' | 'story' | 'eventDetails' | 'dressCode'
   | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'

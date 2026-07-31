@@ -4,6 +4,9 @@ import type { ReactNode } from 'react'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
 import { StudioMusicManager } from './StudioMusicManager'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
+import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
+import { findOrigin01ThemeVariant } from '../invitations/origin01/origin01ThemeVariants'
+import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
@@ -19,42 +22,51 @@ export function StudioStageNavigation({ activeStage, onStageChange }: {
 export function StudioAestheticStage({
   media,
   initialMedia,
+  themeVariant,
+  initialThemeVariant,
   protagonistName,
   initialGalleryCaptions,
   onMediaChange,
   onGalleryCaptionsChange,
   onTemporaryUrl,
+  onThemeVariantChange,
 }: {
   media: Origin01StudioMediaState
   initialMedia: Origin01StudioMediaState
+  themeVariant: Origin01ThemeVariantId
+  initialThemeVariant: Origin01ThemeVariantId
   protagonistName: string
   initialGalleryCaptions: readonly string[]
   onMediaChange: (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onTemporaryUrl: (url: string) => void
+  onThemeVariantChange: (variant: Origin01ThemeVariantId) => void
 }) {
+  const visualVariant = findOrigin01ThemeVariant(themeVariant)
   return <section className="limen-studio__aesthetic-stage" aria-labelledby="studio-aesthetic-title">
     <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Estética</p>
       <h2 id="studio-aesthetic-title">El universo visual de Origin 01</h2>
-      <p>Una lectura de los elementos que construyen su atmósfera: íntima, nocturna y ceremonial.</p></div>
-    <div className="limen-studio__aesthetic-board">
+      <p>Elegí una atmósfera curada y administrá las fotografías y la música de la experiencia.</p></div>
+    <StudioVisualVariantSelector value={themeVariant} initialValue={initialThemeVariant}
+      onChange={onThemeVariantChange} />
+    <div className={`limen-studio__aesthetic-board limen-studio__aesthetic-board--${themeVariant}`}>
       <article className="limen-studio__aesthetic-hero">
-        <div className="limen-studio__aesthetic-hero-art" aria-hidden="true">
+        <div className={`limen-studio__aesthetic-hero-art limen-studio__aesthetic-hero-art--${themeVariant}`}
+          aria-hidden="true">
           <span>Origin</span><strong>01</strong><i /><i />
         </div>
-        <div><p className="limen-studio__eyebrow">Dirección visual</p><h3>Noche botánica</h3>
-          <p>Contraste profundo, luz contenida y detalles orgánicos para abrir la historia con misterio.</p>
-          <dl><div><dt>Carácter</dt><dd>Íntimo</dd></div><div><dt>Ritmo</dt><dd>Cinematográfico</dd></div>
-            <div><dt>Gesto</dt><dd>Editorial</dd></div></dl>
+        <div><p className="limen-studio__eyebrow">Dirección visual</p><h3>{visualVariant?.name}</h3>
+          <p>{visualVariant?.description}</p>
+          <dl>{visualVariant?.character.split(' · ').map((value, index) =>
+            <div key={value}><dt>{['Carácter', 'Ritmo', 'Gesto'][index]}</dt><dd>{value}</dd></div>)}</dl>
         </div>
       </article>
       <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-colors">
         <header><span>01</span><div><h3>Paleta</h3><p>Color y función</p></div></header>
-        <ul aria-label="Paleta de Origin 01">
-          <li><span style={{ background: '#14241f' }} /><strong>Noche</strong><small>Fondo</small></li>
-          <li><span style={{ background: '#e8e0d0' }} /><strong>Marfil</strong><small>Texto</small></li>
-          <li><span style={{ background: '#a78462' }} /><strong>Bronce</strong><small>Acento</small></li>
-          <li><span style={{ background: '#6b7c6d' }} /><strong>Salvia</strong><small>Detalle</small></li>
+        <ul aria-label={`Paleta ${visualVariant?.name ?? ''}`}>
+          {visualVariant?.palette.map((color) => <li key={color.role}>
+            <span style={{ background: color.value }} /><strong>{color.name}</strong><small>{color.role}</small>
+          </li>)}
         </ul>
       </article>
       <article className="limen-studio__aesthetic-panel limen-studio__aesthetic-type">
@@ -74,8 +86,8 @@ export function StudioAestheticStage({
       </article>
     </div>
     <aside className="limen-studio__aesthetic-note"><span aria-hidden="true">i</span>
-      <div><strong>Vista informativa</strong>
-        <p>La identidad visual está asociada a Origin 01. Colores, tipografías y recursos siguen reservados para una próxima entrega.</p></div>
+      <div><strong>Sistema visual curado</strong>
+        <p>La variante aplica una paleta completa y accesible. Las tipografías y los recursos narrativos continúan asociados a Origin 01.</p></div>
     </aside>
     <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
       initialGalleryCaptions={initialGalleryCaptions}

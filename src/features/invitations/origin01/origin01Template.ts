@@ -1,4 +1,5 @@
 import type { InvitationTemplateDefinition } from '../engine/templateTypes'
+import { origin01ThemeVariantIds } from './origin01ThemeVariants'
 
 export const origin01Template = {
   id: 'origin01',
@@ -23,5 +24,5 @@ export const origin01Template = {
   optionalModules: ['countdown', 'story', 'gallery', 'trivia', 'dressCode', 'gifts', 'rsvp'],
   canonicalOrder: ['prelude', 'hero', 'countdown', 'story', 'eventDetails', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp', 'closing'],
   defaultThemeVariant: 'origin01-wine',
-  supportedThemeVariants: ['origin01-wine'],
+  supportedThemeVariants: origin01ThemeVariantIds,
 } satisfies InvitationTemplateDefinition

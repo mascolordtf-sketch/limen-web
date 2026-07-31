@@ -30,8 +30,12 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
   const validation = useMemo(() => validateOrigin01StudioDraft(invitation, draft), [draft, invitation])
   const previewInvitation = useMemo(() => deriveOrigin01PreviewInvitation(invitation, draft), [draft, invitation])
   const configurationValidation = useMemo(
-    () => validateInvitationConfiguration({ ...invitation, modules: draft.modules }, findInvitationTemplate),
-    [draft.modules, invitation],
+    () => validateInvitationConfiguration({
+      ...invitation,
+      themeVariant: draft.themeVariant,
+      modules: draft.modules,
+    }, findInvitationTemplate),
+    [draft.modules, draft.themeVariant, invitation],
   )
 
   const update = <K extends keyof Origin01StudioDraft>(key: K, value: Origin01StudioDraft[K]) =>
@@ -43,10 +47,10 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
   const resetValue = <K extends keyof Origin01StudioDraft>(key: K) =>
     setDraft((current) => resetOrigin01StudioValue(current, initialDraft, key))
   const resetField = <
-    G extends Exclude<keyof Origin01StudioDraft, 'protagonistName' | 'modules'>,
+    G extends Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'protagonistName' | 'modules'>,
     F extends keyof Origin01StudioDraft[G],
   >(group: G, field: F) => setDraft((current) => resetOrigin01StudioField(current, initialDraft, group, field))
-  const resetGroup = <G extends Exclude<keyof Origin01StudioDraft, 'protagonistName' | 'modules'>>(group: G) =>
+  const resetGroup = <G extends Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'protagonistName' | 'modules'>>(group: G) =>
     setDraft((current) => resetOrigin01StudioGroup(current, initialDraft, group))
   const resetScene = (sceneId: Origin01EditableSceneId) =>
     setDraft((current) => resetOrigin01StudioScene(current, initialDraft, sceneId))

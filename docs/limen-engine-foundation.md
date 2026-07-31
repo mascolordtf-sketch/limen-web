@@ -198,3 +198,11 @@ La etapa Estética incorpora el administrador de música sobre el mismo contrato
 Studio admite MP3, M4A, OGG y WAV de hasta 20 MB. El archivo se valida en la frontera del componente y se representa mediante una object URL temporal registrada por la sesión; el borrador conserva solo identidad, metadatos y fuente de preview, nunca el objeto `File`. No se procesa, recorta ni transcodifica el audio y la invitación canónica permanece inmutable.
 
 La fase no incorpora persistencia, carga remota, biblioteca, catálogo musical, licencias, edición de audio, waveform ni reproducción avanzada. Las variantes visuales continúan reservadas para 2C.6 y `readyToPublish` permanece en `false`.
+
+## Fase 2C.6 — variantes visuales curadas
+
+Origin 01 admite tres variantes visuales reales y coherentes: `origin01-wine` (Vino nocturno), `origin01-midnight` (Noche plateada) y `origin01-garden` (Jardín antiguo). La etapa Estética las presenta como un selector accesible con sus paletas por roles, descripción y carácter; la elección se conserva en el borrador temporal, se proyecta mediante `themeVariant` al renderer real y puede restablecerse independientemente a la variante canónica de la invitación.
+
+Las variantes modifican el sistema de color completo de Origin 01 y sus atmósferas oscuras principales sin cambiar tipografías, estructura, contenido, escenas, fotografías, música ni comportamiento. El registro de la plantilla continúa siendo la fuente de compatibilidad y la validación estructural rechaza variantes no admitidas. La invitación pública canónica conserva `origin01-wine`.
+
+Esta fase no incorpora selección libre de colores, combinaciones arbitrarias, nuevas plantillas, variantes tipográficas, edición de ornamentos, persistencia, almacenamiento, autenticación ni publicación. `readyToPublish` continúa en `false`; la condición definitiva de publicación permanece reservada para 2C.12 y el almacenamiento y la persistencia continúan diferidos a 2C.13 y 2C.14.

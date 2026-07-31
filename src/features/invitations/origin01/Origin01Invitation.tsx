@@ -464,7 +464,7 @@ export function Origin01Invitation({
   }
 
   return (
-    <main className={`origin01 origin01--${phase}`}>
+    <main className={`origin01 origin01--${phase} origin01--theme-${invitation.themeVariant}`}>
       {hasMusic && musicSrc ? (
         <audio
           ref={audioRef}

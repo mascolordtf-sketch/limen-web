@@ -1,4 +1,5 @@
 import type { LimenInvitation, LimenInvitationContent } from '../engine/invitationTypes'
+import type { Origin01ThemeVariantId } from './origin01ThemeVariants'
 
 export type Origin01ImageContent = {
   readonly mediaId: string
@@ -115,7 +116,7 @@ export type Origin01Content = LimenInvitationContent & {
 
 export type Origin01InvitationData = LimenInvitation<Origin01Content> & {
   readonly templateId: 'origin01'
-  readonly themeVariant: 'origin01-wine'
+  readonly themeVariant: Origin01ThemeVariantId
   readonly eventType: 'quince'
   readonly event: {
     readonly name: string

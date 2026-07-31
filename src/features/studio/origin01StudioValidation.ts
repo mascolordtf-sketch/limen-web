@@ -102,7 +102,11 @@ export function validateOrigin01StudioDraft(
 ): Origin01StudioValidation {
   const start = fromDateTimeLocalValue(draft.event.start, invitation.event.timeZone)
   const end = fromDateTimeLocalValue(draft.event.end, invitation.event.timeZone)
-  const moduleValidation = validateInvitationConfiguration({ ...invitation, modules: draft.modules }, findInvitationTemplate)
+  const moduleValidation = validateInvitationConfiguration({
+    ...invitation,
+    themeVariant: draft.themeVariant,
+    modules: draft.modules,
+  }, findInvitationTemplate)
   const triviaValid = isTriviaContentValid(draft.trivia)
   const fieldErrors: Record<string, string | null> = {
     protagonistName: required(draft.protagonistName, 'Ingresá el nombre de la protagonista.'),

@@ -4,6 +4,7 @@ import { createElement } from 'react'
 import { Origin01Invitation } from '../src/features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
+import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { getStudioPreviewMode, studioPreviewSceneSelectors } from '../src/features/studio/studioPreviewScenes'
@@ -107,6 +108,9 @@ assert(studioDesktopMediaQuery === '(min-width: 76rem)',
   'Studio interpreta como escritorio el mismo breakpoint de 76rem usado por CSS')
 
 const initial = createOrigin01StudioDraft(origin01DemoData)
+assert(initial.themeVariant === 'origin01-wine'
+  && origin01ThemeVariants.map(({ id }) => id).join('|') === origin01Template.supportedThemeVariants.join('|'),
+  'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
 const canonicalMediaState = createOrigin01StudioMediaState(origin01DemoData)
@@ -202,6 +206,18 @@ const mediaDerivedPreview = deriveOrigin01PreviewInvitation(origin01DemoData, in
 assert(mediaDerivedPreview.media.map(({ id }) => id).join('|') === origin01DemoData.media.map(({ id }) => id).join('|')
   && mediaDerivedPreview.content.gallery.images.map(({ mediaId }) => mediaId).join('|') === 'hero|dress|closing',
   'Studio deriva medios renderizables y asignaciones sin cambiar la invitación actual')
+const midnightDraft = updateOrigin01StudioDraftField(initial, 'themeVariant', 'origin01-midnight')
+const midnightPreview = deriveOrigin01PreviewInvitation(origin01DemoData, midnightDraft)
+assert(midnightPreview.themeVariant === 'origin01-midnight'
+  && origin01DemoData.themeVariant === 'origin01-wine'
+  && validateOrigin01StudioDraft(origin01DemoData, midnightDraft).structurallyValid,
+  'cambia la variante visual en la preview sin mutar la invitación canónica')
+const midnightMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: midnightPreview,
+  audience: 'protagonist',
+}))
+assert(midnightMarkup.includes('origin01--theme-origin01-midnight'),
+  'el renderer expone la variante seleccionada como un límite visual propio')
 assert(validateStudioPhotoFile({ name: 'foto.gif', type: 'image/gif', size: 1_000 })?.includes('JPG')
   && validateStudioPhotoFile({ name: 'foto.jpg', type: 'image/jpeg', size: studioPhotoMaxBytes + 1 })?.includes('12 MB')
   && validateStudioPhotoFile({ name: 'foto.webp', type: 'image/webp', size: 1_000 }) === null,
@@ -407,14 +423,19 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
 const aestheticStageElement = createElement(StudioAestheticStage, {
   media: initial.media,
   initialMedia: initial.media,
+  themeVariant: initial.themeVariant,
+  initialThemeVariant: initial.themeVariant,
   protagonistName: initial.protagonistName,
   initialGalleryCaptions: initial.gallery.captions,
   onMediaChange: () => undefined,
   onGalleryCaptionsChange: () => undefined,
+  onThemeVariantChange: () => undefined,
   onTemporaryUrl: () => undefined,
 })
 const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
-assert(aestheticMarkup.includes('próxima entrega')
+assert(aestheticMarkup.includes('Elegí la atmósfera de Origin 01')
+  && origin01ThemeVariants.every(({ name }) => aestheticMarkup.includes(name))
+  && aestheticMarkup.includes('Sistema visual curado')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
   && aestheticMarkup.includes('Zoom')
   && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
@@ -424,7 +445,7 @@ assert(aestheticMarkup.includes('próxima entrega')
   && aestheticMarkup.includes('Desactivar música')
   && aestheticMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Estética conserva la dirección visual y administra fotografías y música sin mutar el borrador')
+  'Estética administra variantes, fotografías y música sin mutar el borrador')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Elegí cómo contar la celebración') && templateMainMarkup.includes('Origin 01')
