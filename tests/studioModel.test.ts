@@ -283,8 +283,12 @@ assert(distinctHeroId !== distinctGalleryId
 assert(validateStudioAudioFile({ name: 'tema.aac', type: 'audio/aac', size: 1_000 })?.includes('MP3')
   && validateStudioAudioFile({ name: 'tema.mp3', type: 'audio/mpeg', size: studioAudioMaxBytes + 1 })?.includes('20 MB')
   && validateStudioAudioFile({ name: 'tema.m4a', type: 'audio/mp4', size: 1_000 }) === null
-  && validateStudioAudioFile({ name: 'tema.mp3', type: '', size: 1_000 }) === null,
-  'la selección musical acepta solo formatos y tamaño del alcance')
+  && validateStudioAudioFile({ name: 'tema.m4a', type: 'audio/m4a', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.wav', type: 'audio/wave', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.wav', type: 'audio/vnd.wave', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.mp3', type: '', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.m4a', type: 'application/octet-stream', size: 1_000 }) === null,
+  'la selección musical acepta formatos, variantes MIME y tamaño del alcance')
 const readyAudio = createReadyStudioAudio('studio-music', {
   name: 'noche-especial.mp3', type: 'audio/mpeg', size: 2_000,
 }, 'blob:studio-music')

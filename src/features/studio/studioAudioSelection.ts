@@ -3,10 +3,13 @@ import type { StudioAudioMedia } from './studioMedia'
 export const studioAudioMimeTypes = [
   'audio/mpeg',
   'audio/mp4',
+  'audio/m4a',
   'audio/x-m4a',
   'audio/ogg',
   'audio/wav',
+  'audio/wave',
   'audio/x-wav',
+  'audio/vnd.wave',
 ] as const
 
 export const studioAudioMaxBytes = 20 * 1024 * 1024
@@ -20,7 +23,7 @@ export type StudioAudioFileMetadata = {
 export function validateStudioAudioFile(file: StudioAudioFileMetadata): string | null {
   const supportedExtension = /\.(mp3|m4a|ogg|wav)$/i.test(file.name)
   if (!studioAudioMimeTypes.includes(file.type as (typeof studioAudioMimeTypes)[number])
-    && !(file.type === '' && supportedExtension)) {
+    && !supportedExtension) {
     return 'Elegí un audio MP3, M4A, OGG o WAV.'
   }
   if (file.size <= 0) return 'El audio está vacío.'
