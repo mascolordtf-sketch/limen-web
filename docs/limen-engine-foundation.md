@@ -190,3 +190,11 @@ Studio acepta JPG, PNG y WebP de hasta 12 MB. El archivo se valida, decodifica y
 El encuadre y el zoom pertenecen a la asignación —no al archivo— porque una misma imagen puede utilizarse de manera diferente en portada y galería. La derivación crea referencias renderizables específicas solo cuando un uso posee punto de enfoque o zoom; el estado canónico sin ajustes conserva sus identificadores y apariencia. El renderer público solo incorpora el soporte mínimo de `object-position`, escala y origen de transformación, y continúa ajeno a Studio.
 
 No existen carga remota, persistencia, Supabase, biblioteca, recorte destructivo ni eliminación física. La música no cambia y permanece reservada para 2C.5; variantes visuales continúan en 2C.6 y `readyToPublish` permanece en `false`.
+
+## Fase 2C.5 — administración temporal de música
+
+La etapa Estética incorpora el administrador de música sobre el mismo contrato editorial de medios. El slot opcional `music.audio` permite elegir o reemplazar una pista local, probarla con controles nativos, desactivarla y restablecer la referencia canónica. La derivación utiliza exclusivamente la asignación vigente: un slot vacío elimina el audio y su control de la preview, sin recuperar silenciosamente la pista original.
+
+Studio admite MP3, M4A, OGG y WAV de hasta 20 MB. El archivo se valida en la frontera del componente y se representa mediante una object URL temporal registrada por la sesión; el borrador conserva solo identidad, metadatos y fuente de preview, nunca el objeto `File`. No se procesa, recorta ni transcodifica el audio y la invitación canónica permanece inmutable.
+
+La fase no incorpora persistencia, carga remota, biblioteca, catálogo musical, licencias, edición de audio, waveform ni reproducción avanzada. Las variantes visuales continúan reservadas para 2C.6 y `readyToPublish` permanece en `false`.

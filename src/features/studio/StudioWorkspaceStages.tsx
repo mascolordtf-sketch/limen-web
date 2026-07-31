@@ -2,6 +2,7 @@ import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import type { ReactNode } from 'react'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
+import { StudioMusicManager } from './StudioMusicManager'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
@@ -80,6 +81,8 @@ export function StudioAestheticStage({
       initialGalleryCaptions={initialGalleryCaptions}
       onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
       onTemporaryUrl={onTemporaryUrl} />
+    <StudioMusicManager state={media} initialState={initialMedia}
+      onMediaChange={onMediaChange} onTemporaryUrl={onTemporaryUrl} />
   </section>
 }
 

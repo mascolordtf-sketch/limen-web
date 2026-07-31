@@ -68,6 +68,16 @@ import {
   studioPhotoMaxBytes,
   validateStudioPhotoFile,
 } from '../src/features/studio/studioPhotoProcessing'
+import {
+  createReadyStudioAudio,
+  studioAudioMaxBytes,
+  validateStudioAudioFile,
+} from '../src/features/studio/studioAudioSelection'
+import {
+  addStudioAudioItem,
+  assignStudioMusic,
+  removeStudioMusicAssignment,
+} from '../src/features/studio/origin01StudioMusic'
 import { createOrigin01StudioDomains, origin01TriviaFlow } from '../src/features/studio/origin01StudioConfiguration'
 import { selectValidStudioPreview, validateOrigin01StudioDraft } from '../src/features/studio/origin01StudioValidation'
 import { selectStudioIssueSummary, selectStudioItemStatus } from '../src/features/studio/studioItemStatus'
@@ -270,6 +280,38 @@ assert(distinctHeroId !== distinctGalleryId
   && distinctAltPreview.media.find(({ id }) => id === distinctGalleryId)?.alt === 'Valentina durante la celebración'
   && findStudioMediaById(distinctGalleryAlt.items, 'hero') === normalizedHero,
   'cada uso compartido conserva un texto alternativo independiente sin mutar el medio')
+assert(validateStudioAudioFile({ name: 'tema.aac', type: 'audio/aac', size: 1_000 })?.includes('MP3')
+  && validateStudioAudioFile({ name: 'tema.mp3', type: 'audio/mpeg', size: studioAudioMaxBytes + 1 })?.includes('20 MB')
+  && validateStudioAudioFile({ name: 'tema.m4a', type: 'audio/mp4', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.m4a', type: 'audio/m4a', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.wav', type: 'audio/wave', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.wav', type: 'audio/vnd.wave', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.mp3', type: '', size: 1_000 }) === null
+  && validateStudioAudioFile({ name: 'tema.m4a', type: 'application/octet-stream', size: 1_000 }) === null,
+  'la selección musical acepta formatos, variantes MIME y tamaño del alcance')
+const readyAudio = createReadyStudioAudio('studio-music', {
+  name: 'noche-especial.mp3', type: 'audio/mpeg', size: 2_000,
+}, 'blob:studio-music')
+const assignedMusic = assignStudioMusic(addStudioAudioItem(canonicalMediaState, readyAudio), readyAudio.id)
+const assignedMusicPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: assignedMusic })
+assert(getStudioMediaAssignments(assignedMusic.assignments, 'music.audio')[0]?.mediaId === readyAudio.id
+  && assignedMusicPreview.content.music.mediaId === readyAudio.id
+  && assignedMusicPreview.media.find(({ id }) => id === readyAudio.id)?.src === 'blob:studio-music'
+  && getStudioMediaAssignments(canonicalMediaState.assignments, 'music.audio')[0]?.mediaId === 'music',
+  'reemplazar música conserva identidad, inmutabilidad y proyección renderizable')
+const withoutMusic = removeStudioMusicAssignment(assignedMusic)
+const withoutMusicPreview = deriveOrigin01PreviewInvitation(origin01DemoData, { ...initial, media: withoutMusic })
+assert(getStudioMediaAssignments(withoutMusic.assignments, 'music.audio').length === 0
+  && withoutMusicPreview.content.music.mediaId === ''
+  && findStudioMediaById(withoutMusic.items, readyAudio.id) === undefined
+  && !renderToStaticMarkup(createElement(Origin01Invitation, {
+    invitation: withoutMusicPreview, audience: 'protagonist',
+  })).includes('<audio'),
+  'desactivar música vacía el slot sin recuperar la pista canónica y descarta el audio temporal sin uso')
+const restoredMusic = assignStudioMusic(withoutMusic, 'music')
+assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.mediaId === 'music'
+  && findStudioMediaById(restoredMusic.items, 'music')?.origin === 'canonical',
+  'restablecer música recupera la asignación canónica sin duplicar el medio')
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')
@@ -376,8 +418,13 @@ assert(aestheticMarkup.includes('próxima entrega')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
   && aestheticMarkup.includes('Zoom')
   && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
+  && aestheticMarkup.includes('El sonido que acompaña la experiencia')
+  && aestheticMarkup.includes('Música asignada')
+  && aestheticMarkup.includes('Cambiar audio')
+  && aestheticMarkup.includes('Desactivar música')
+  && aestheticMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Estética conserva la dirección visual y suma los siete usos fotográficos actuales')
+  'Estética conserva la dirección visual y administra fotografías y música sin mutar el borrador')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Elegí cómo contar la celebración') && templateMainMarkup.includes('Origin 01')
