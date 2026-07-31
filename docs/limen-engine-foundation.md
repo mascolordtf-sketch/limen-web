@@ -206,3 +206,13 @@ Origin 01 admite tres variantes visuales reales y coherentes: `origin01-wine` (V
 Las variantes modifican el sistema de color completo de Origin 01 y sus atmósferas oscuras principales sin cambiar tipografías, estructura, contenido, escenas, fotografías, música ni comportamiento. El registro de la plantilla continúa siendo la fuente de compatibilidad y la validación estructural rechaza variantes no admitidas. La invitación pública canónica conserva `origin01-wine`.
 
 Esta fase no incorpora selección libre de colores, combinaciones arbitrarias, nuevas plantillas, variantes tipográficas, edición de ornamentos, persistencia, almacenamiento, autenticación ni publicación. `readyToPublish` continúa en `false`; la condición definitiva de publicación permanece reservada para 2C.12 y el almacenamiento y la persistencia continúan diferidos a 2C.13 y 2C.14.
+
+## Fase 2C.7 — Cronograma
+
+Origin 01 incorpora Cronograma como una escena pública opcional situada después de Información del evento y antes de Dress Code. La escena presenta un texto introductorio, un título, una breve presentación y una colección ordenada de uno a ocho momentos. Cada momento conserva una identidad estable y contiene horario, título obligatorio y descripción opcional.
+
+Secciones es la única superficie de activación y mantiene el orden narrativo canónico. Contenido ofrece un editor propio para modificar los textos generales, agregar o quitar momentos, cambiar sus campos y reordenarlos con acciones explícitas. Excluir la escena conserva todas sus ediciones temporales y la reinclusión la devuelve a su posición original. Restablecer Cronograma recupera el contenido canónico sin modificar su activación.
+
+La validación comprueba cardinalidad, formato horario y campos obligatorios. Los errores de una escena activa participan de la completitud de Experiencias y resuelven el control exacto que debe corregirse; el contenido inválido de un Cronograma excluido permanece registrado como contenido inactivo y no invalida la invitación. La derivación proyecta el orden actual al renderer real y omite únicamente las descripciones opcionales vacías.
+
+La implementación no incorpora persistencia, backend, autenticación, publicación, horarios derivados automáticamente del evento ni edición libre del orden global de escenas. Clima y las demás experiencias posteriores continúan fuera de esta fase. `readyToPublish` permanece en `false`.

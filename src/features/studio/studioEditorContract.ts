@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 export const studioEditorIds = [
   'identity', 'identity-projections', 'event-canonical', 'event-operations', 'event-copy',
-  'opening', 'story', 'closing', 'countdown', 'dress-code', 'gallery', 'trivia', 'gifts', 'rsvp',
+  'opening', 'story', 'closing', 'countdown', 'schedule', 'dress-code', 'gallery', 'trivia', 'gifts', 'rsvp',
   'review-status', 'review-errors', 'review-scenes', 'review-checklist', 'review-audiences', 'share',
 ] as const
 
@@ -21,4 +21,3 @@ export function getStudioEditorResolution(editorId: string | undefined) {
 export function resolveStudioActiveEditor(editorId: string | undefined, slots: StudioEditorSlots): ReactNode | null {
   return isStudioEditorId(editorId) ? slots[editorId] : null
 }
-

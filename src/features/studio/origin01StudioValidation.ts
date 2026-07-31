@@ -6,6 +6,7 @@ import { fromDateTimeLocalValue } from './studioDateTime'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
 import type { StudioDomainId } from './studioNavigation'
 import { isTriviaContentValid } from './studioTriviaValidation'
+import { validateOrigin01Schedule } from './origin01StudioSchedule'
 
 export type StudioIssueSeverity =
   | 'structural'
@@ -94,6 +95,8 @@ const studioFieldTargetIds: Readonly<Record<string, string>> = {
   eventDetailsEyebrow: 'studio-event-details-eyebrow', eventDetailsHeading: 'studio-event-details-heading', eventDetailsVenueLabel: 'studio-event-details-venue-label',
   eventDetailsMapActionLabel: 'studio-event-details-map-action', eventDetailsCalendarActionLabel: 'studio-event-details-calendar-action',
   eventDetailsCalendarDescription: 'studio-event-details-calendar-description', galleryEyebrow: 'studio-gallery-eyebrow', galleryHeading: 'studio-gallery-title',
+  scheduleEyebrow: 'studio-schedule-eyebrow', scheduleHeading: 'studio-schedule-heading-field',
+  scheduleIntroduction: 'studio-schedule-introduction',
 }
 
 export function validateOrigin01StudioDraft(
@@ -158,6 +161,7 @@ export function validateOrigin01StudioDraft(
     galleryEyebrow: required(draft.gallery.copy.eyebrow, 'Este texto es obligatorio.'),
     galleryHeading: required(draft.gallery.copy.heading, 'Este texto es obligatorio.'),
     trivia: triviaValid ? null : 'La Trivia tiene contenido obligatorio incompleto.',
+    ...validateOrigin01Schedule(draft.schedule),
   }
 
   const seeds: readonly IssueSeed[] = [
@@ -174,6 +178,21 @@ export function validateOrigin01StudioDraft(
     ...(['closingEyebrow', 'closingTitle', 'closingSharePrompt', 'closingShareActionLabel'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'closing', domainId: 'narrative' as const, sceneId: 'closing' as const })),
     ...(['countdownEyebrow', 'countdownHeading', 'countdownCompletedMessage'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'countdown', domainId: 'experiences' as const, sceneId: 'countdown' as const })),
     ...(['eventDetailsEyebrow', 'eventDetailsHeading', 'eventDetailsVenueLabel', 'eventDetailsMapActionLabel', 'eventDetailsCalendarActionLabel', 'eventDetailsCalendarDescription'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'event-copy', domainId: 'event' as const, sceneId: 'eventDetails' as const })),
+    ...(['scheduleEyebrow', 'scheduleHeading', 'scheduleIntroduction', 'scheduleMoments', 'scheduleMomentIds'] as const)
+      .map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
+        editorId: 'schedule', domainId: 'experiences' as const, sceneId: 'schedule' as const })),
+    ...draft.schedule.moments.flatMap((moment) => (['time', 'title'] as const).map((field) => {
+      const fieldId = `scheduleMoment-${moment.id}-${field}`
+      return {
+        fieldId,
+        fieldTargetId: `studio-schedule-${moment.id}-${field}`,
+        error: fieldErrors[fieldId],
+        message: fieldErrors[fieldId] ?? '',
+        editorId: 'schedule',
+        domainId: 'experiences' as const,
+        sceneId: 'schedule' as const,
+      }
+    })),
     ...(['dressCodeTitle', 'dressCodeDescription', 'dressCodeNote'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'dress-code', domainId: 'experiences' as const, sceneId: 'dressCode' as const })),
     ...(['galleryEyebrow', 'galleryHeading'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'gallery', domainId: 'experiences' as const, sceneId: 'gallery' as const })),
     { fieldId: 'trivia', error: fieldErrors.trivia, message: fieldErrors.trivia ?? '', editorId: 'trivia', domainId: 'experiences', sceneId: 'trivia' },
@@ -222,7 +241,7 @@ export function validateOrigin01StudioDraft(
       id: `${seed.fieldId ?? seed.editorId}-${index}`,
       message: seed.message,
       fieldId: seed.fieldId,
-      fieldTargetId: seed.fieldId ? studioFieldTargetIds[seed.fieldId] : undefined,
+      fieldTargetId: seed.fieldTargetId ?? (seed.fieldId ? studioFieldTargetIds[seed.fieldId] : undefined),
       editorId: seed.editorId,
       domainId: seed.domainId,
       sceneId: seed.sceneId,

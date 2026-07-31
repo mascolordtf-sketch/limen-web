@@ -1,7 +1,7 @@
 import { AppRoutes } from '../src/app/routes'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
-import { Origin01Invitation } from '../src/features/invitations/origin01/Origin01Invitation'
+import { Origin01Invitation, Origin01Schedule } from '../src/features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
@@ -25,6 +25,7 @@ import { createStudioTemplateGalleryState, createStudioTemplateOptions,
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
+import { StudioScheduleEditor } from '../src/features/studio/StudioScheduleEditor'
 import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
 import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
@@ -47,6 +48,14 @@ import {
   updateOrigin01StudioDraftGroup,
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
+import {
+  addOrigin01ScheduleMoment,
+  moveOrigin01ScheduleMoment,
+  removeOrigin01ScheduleMoment,
+  studioScheduleMaxMoments,
+  updateOrigin01ScheduleMoment,
+  validateOrigin01Schedule,
+} from '../src/features/studio/origin01StudioSchedule'
 import {
   findStudioMediaById,
   getStudioMediaAssignments,
@@ -331,18 +340,20 @@ assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.m
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')
-  && studioPublicScenes.length === 10 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
-  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las diez escenas públicas, sin Datos generales')
+  && studioPublicScenes.length === 11 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
+  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las once escenas públicas, sin Datos generales')
 assert(studioPublicScenes.filter(({ required }) => required).map(({ label }) => label).join('|')
   === 'Portada|Información del evento|Confirmación|Cierre'
   && (sectionsMarkup.match(/Siempre incluida/g) ?? []).length === 4,
   'Secciones protege las escenas aprobadas y la obligatoriedad adicional de Cierre definida por Origin 01')
 assert(sectionsMarkup.includes('El umbral') && sectionsMarkup.includes('La celebración')
   && sectionsMarkup.includes('La participación') && sectionsMarkup.includes('La despedida')
-  && sectionsMarkup.includes('10 escenas') && sectionsMarkup.includes('4 esenciales')
-  && sectionsMarkup.includes('6 de 6 opcionales')
+  && sectionsMarkup.includes('11 escenas') && sectionsMarkup.includes('4 esenciales')
+  && sectionsMarkup.includes('7 de 7 opcionales')
   && sectionsMarkup.indexOf('Portada') < sectionsMarkup.indexOf('Cuenta regresiva')
   && sectionsMarkup.indexOf('Cuenta regresiva') < sectionsMarkup.indexOf('Historia')
+  && sectionsMarkup.indexOf('Información del evento') < sectionsMarkup.indexOf('Cronograma')
+  && sectionsMarkup.indexOf('Cronograma') < sectionsMarkup.indexOf('Dress code')
   && sectionsMarkup.indexOf('Confirmación') < sectionsMarkup.indexOf('Cierre'),
   'Secciones organiza el orden canónico en cuatro capítulos narrativos y resume su composición')
 const giftsOff = updateOrigin01StudioModule(origin01DemoData, initial, 'gifts', false)
@@ -352,7 +363,7 @@ assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
   'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
 const giftsOffSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: giftsOff, onSceneChange: () => undefined }))
-assert(giftsOffSectionsMarkup.includes('5 de 6 opcionales')
+assert(giftsOffSectionsMarkup.includes('6 de 7 opcionales')
   && giftsOffSectionsMarkup.includes('No incluida') && giftsOffSectionsMarkup.includes('Fuera del recorrido'),
   'Secciones actualiza el resumen y el estado editorial al excluir una escena opcional')
 const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
@@ -364,9 +375,11 @@ assert(!getVisibleStudioScenes(editedGiftsOff).some(({ id }) => id === 'gifts')
   'excluir y reactivar Regalos restaura su posición sin perder el valor temporal editado')
 const sceneEditors = Object.fromEntries(studioPublicScenes.map(({ id, editorIds }) => [id, editorIds]))
 assert(sceneEditors.story?.join() === 'story' && sceneEditors['event-details']?.join() === 'event-copy'
+  && sceneEditors.schedule?.join() === 'schedule'
   && sceneEditors['dress-code']?.join() === 'dress-code'
-  && new Set([sceneEditors.story?.[0], sceneEditors['event-details']?.[0], sceneEditors['dress-code']?.[0]]).size === 3,
-  'Historia, Información del evento y Dress code resuelven grupos de editores distintos')
+  && new Set([sceneEditors.story?.[0], sceneEditors['event-details']?.[0], sceneEditors.schedule?.[0],
+    sceneEditors['dress-code']?.[0]]).size === 4,
+  'Historia, Información del evento, Cronograma y Dress code resuelven grupos de editores distintos')
 const declaredEditorIds = studioScenes.flatMap(({ editorIds }) => [...editorIds])
 assert(findStudioSceneByEditorId('identity')?.id === 'general'
   && findStudioSceneByEditorId('event-canonical')?.id === 'general'
@@ -528,12 +541,62 @@ const resetPrelude = resetOrigin01StudioScene(editedOpening, initial, 'prelude')
 assert(resetPrelude.opening.preludeBody === initial.opening.preludeBody, 'restablece solamente Preludio')
 assert(resetPrelude.opening.heroPhrase === 'Otra portada', 'restablecer Preludio conserva Portada')
 
+const scheduleWithAddedMoment = addOrigin01ScheduleMoment(initial.schedule)
+const addedScheduleMoment = scheduleWithAddedMoment.moments.at(-1)!
+const scheduleWithEditedMoment = updateOrigin01ScheduleMoment(
+  scheduleWithAddedMoment,
+  addedScheduleMoment.id,
+  (moment) => ({ ...moment, time: '00:30', title: 'Despedida', description: '' }),
+)
+const scheduleWithMovedMoment = moveOrigin01ScheduleMoment(scheduleWithEditedMoment, addedScheduleMoment.id, -1)
+const scheduleWithoutFirstMoment = removeOrigin01ScheduleMoment(
+  scheduleWithMovedMoment,
+  scheduleWithMovedMoment.moments[0]!.id,
+)
+assert(scheduleWithAddedMoment.moments.length === initial.schedule.moments.length + 1
+  && new Set(scheduleWithAddedMoment.moments.map(({ id }) => id)).size === scheduleWithAddedMoment.moments.length
+  && scheduleWithAddedMoment.moments.at(-1)?.time === '00:30',
+  'Cronograma agrega momentos con identidad estable y sugiere el horario siguiente')
+assert(scheduleWithMovedMoment.moments.at(-2)?.id === addedScheduleMoment.id
+  && scheduleWithoutFirstMoment.moments.length === scheduleWithMovedMoment.moments.length - 1,
+  'Cronograma reordena y quita momentos sin alterar las demás identidades')
+let cappedSchedule = initial.schedule
+for (let index = cappedSchedule.moments.length; index < studioScheduleMaxMoments + 2; index += 1) {
+  cappedSchedule = addOrigin01ScheduleMoment(cappedSchedule)
+}
+assert(cappedSchedule.moments.length === studioScheduleMaxMoments,
+  'Cronograma limita la colección temporal a ocho momentos')
+assert(validateOrigin01Schedule(initial.schedule).scheduleHeading === null
+  && validateOrigin01Schedule({ ...initial.schedule, heading: '' }).scheduleHeading !== null
+  && validateOrigin01Schedule({ ...initial.schedule,
+    moments: [initial.schedule.moments[0]!, { ...initial.schedule.moments[1]!,
+      id: initial.schedule.moments[0]!.id }] }).scheduleMomentIds !== null,
+  'Cronograma valida sus textos generales y las identidades de sus momentos')
+
 const rescheduledPreview = deriveOrigin01PreviewInvitation(origin01DemoData, changedEvent)
 assert(rescheduledPreview.event.startsAt.startsWith('2028-04-10'), 'deriva el inicio ISO desde la fuente local')
 assert(rescheduledPreview.content.eventDetails.timeLabel === '20:30 a 02:30', 'deriva el rango horario editorial')
 assert(rescheduledPreview.event.venue === 'Salón del Río', 'proyecta el lugar canónico')
 assert(rescheduledPreview.event.address === 'Costanera 100', 'proyecta el destino de mapa desde la dirección')
 assert(!('dateLabel' in changedEvent.event), 'no duplica proyecciones dentro de la fuente canónica')
+const editedScheduleDraft = updateOrigin01StudioDraftField(initial, 'schedule', scheduleWithEditedMoment)
+const editedSchedulePreview = deriveOrigin01PreviewInvitation(origin01DemoData, editedScheduleDraft)
+assert(editedSchedulePreview.content.schedule.moments.at(-1)?.title === 'Despedida'
+  && editedSchedulePreview.content.schedule.moments.at(-1)?.description === undefined
+  && origin01DemoData.content.schedule.moments.length === 3,
+  'deriva el Cronograma sin mutar el contenido canónico y omite descripciones vacías')
+const schedulePreviewMarkup = renderToStaticMarkup(createElement(Origin01Schedule, {
+  schedule: editedSchedulePreview.content.schedule,
+}))
+assert(schedulePreviewMarkup.includes('origin01-schedule')
+  && schedulePreviewMarkup.indexOf('21:00') < schedulePreviewMarkup.indexOf('22:00')
+  && schedulePreviewMarkup.includes('Despedida'),
+  'el renderer público proyecta los momentos en el orden editorial')
+const scheduleOff = updateOrigin01StudioModule(origin01DemoData, editedScheduleDraft, 'schedule', false)
+assert(!scheduleOff.modules.find(({ moduleId }) => moduleId === 'schedule')?.enabled
+  && !getVisibleStudioScenes(scheduleOff).some(({ id }) => id === 'schedule')
+  && scheduleOff.schedule === editedScheduleDraft.schedule,
+  'desactivar Cronograma lo quita del recorrido sin perder su contenido')
 
 const validBase = updateOrigin01StudioDraftGroup(initial, 'rsvp', (rsvp) => ({
   ...rsvp,
@@ -594,6 +657,25 @@ assert(storyStatus?.relevantErrorCount === 0, 'los errores de contenido inactivo
 assert(inactiveStoryResult.invitationValid, 'el contenido inválido inactivo no bloquea la invitación')
 assert(selectValidStudioPreview(inactiveStoryResult, validPreview) === validPreview, 'el contenido inválido inactivo no bloquea la entrega a preview')
 
+const invalidSchedule = updateOrigin01StudioDraftGroup(validBase, 'schedule', (schedule) => ({
+  ...schedule,
+  moments: schedule.moments.map((moment, index) => index === 0 ? { ...moment, title: '' } : moment),
+}))
+const activeScheduleResult = validateOrigin01StudioDraft(origin01DemoData, invalidSchedule)
+const scheduleIssue = activeScheduleResult.issues.find(({ fieldId }) =>
+  fieldId === `scheduleMoment-${invalidSchedule.schedule.moments[0]!.id}-title`)
+assert(scheduleIssue?.editorId === 'schedule' && scheduleIssue.sceneId === 'schedule'
+  && scheduleIssue.fieldTargetId === `studio-schedule-${invalidSchedule.schedule.moments[0]!.id}-title`
+  && activeScheduleResult.sceneStatuses.find(({ sceneId }) => sceneId === 'schedule')?.relevantErrorCount === 1,
+  'Cronograma vincula el error de cada momento con su control y su escena')
+const inactiveScheduleResult = validateOrigin01StudioDraft(
+  origin01DemoData,
+  updateOrigin01StudioModule(origin01DemoData, invalidSchedule, 'schedule', false),
+)
+assert(inactiveScheduleResult.invitationValid
+  && inactiveScheduleResult.sceneStatuses.find(({ sceneId }) => sceneId === 'schedule')?.relevantErrorCount === 0,
+  'el contenido inválido de Cronograma se conserva pero deja de ser relevante al excluir la escena')
+
 const invalidDate = updateOrigin01StudioDraftGroup(validBase, 'event', (event) => ({ ...event, start: 'fecha inválida' }))
 const invalidDateResult = validateOrigin01StudioDraft(origin01DemoData, invalidDate)
 assert(invalidDateResult.previewBlocked && !invalidDateResult.structurallyValid, 'un error canónico estructural bloquea la derivación actual')
@@ -619,7 +701,7 @@ const domains = createOrigin01StudioDomains(origin01Template)
 assert(domains.map(({ id }) => id).join(',') === 'identity,event,narrative,experiences,review', 'define los cinco dominios en orden')
 const experienceScenes = domains.find(({ id }) => id === 'experiences')?.items.map(({ sceneId }) => sceneId)
 const expectedExperiences = origin01Template.canonicalOrder.filter((sceneId) =>
-  ['countdown', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
+  ['countdown', 'schedule', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
 assert(experienceScenes?.join() === expectedExperiences.join(), 'deriva el orden de experiencias desde la plantilla canónica')
 const narrativeScenes = domains.find(({ id }) => id === 'narrative')?.items.flatMap(({ id, sceneId }) =>
   id === 'opening' ? ['prelude', 'hero'] : sceneId ? [sceneId] : [])
@@ -794,13 +876,20 @@ const dressMarkup = renderToStaticMarkup(createElement(StudioDressCodeEditor, { 
   titleError: dressIssue.message, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null,
   noteValue: '', canonicalNoteValue: '', noteError: null, onTitleChange: noop, onTitleReset: noop,
   onDescriptionChange: noop, onDescriptionReset: noop, onNoteChange: noop, onNoteReset: noop }))
+const scheduleMarkup = renderToStaticMarkup(createElement(StudioScheduleEditor, {
+  value: invalidSchedule.schedule,
+  canonicalValue: initial.schedule,
+  errors: activeScheduleResult.fieldErrors,
+  onChange: noop,
+  onReset: noop,
+}))
 const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
   titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
   canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
   onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
   onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
 for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
-  [dressIssue, dressMarkup], [giftIssue!, giftMarkup]] as const) {
+  [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [giftIssue!, giftMarkup]] as const) {
   assert(Boolean(issue.fieldTargetId) && markup.includes(`id="${issue.fieldTargetId}"`),
     'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
 }
