@@ -45,6 +45,13 @@ export function deriveOrigin01PreviewInvitation(
         scrollHint: draft.opening.heroScrollHint },
       countdown: { ...draft.countdown },
       eventDetails: { ...invitation.content.eventDetails, ...draft.eventDetails, dateLabel, timeLabel },
+      schedule: {
+        ...draft.schedule,
+        moments: draft.schedule.moments.map((moment) => ({
+          ...moment,
+          description: moment.description?.trim() ? moment.description : undefined,
+        })),
+      },
       envelope: { ...invitation.content.envelope, monogram: deriveMonogram(name) },
       story: { ...invitation.content.story, eyebrow: draft.story.eyebrow, message: draft.story.message, signature: name },
       dressCode: { ...invitation.content.dressCode, ...draft.dressCode },

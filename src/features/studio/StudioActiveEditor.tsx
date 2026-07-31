@@ -11,6 +11,7 @@ import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioOpeningEditor } from './StudioOpeningEditor'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
+import { StudioScheduleEditor } from './StudioScheduleEditor'
 import { StudioShareEditor } from './StudioShareEditor'
 import { StudioStoryEditor } from './StudioStoryEditor'
 import { StudioTriviaEditor } from './StudioTriviaEditor'
@@ -96,6 +97,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
     updateGroup('gallery', (current) => ({ ...current, copy: updater(current.copy) }))
   const setGalleryCaptions = (updater: (current: readonly string[]) => readonly string[]) =>
     updateGroup('gallery', (current) => ({ ...current, captions: updater(current.captions) }))
+  const schedule = draft.schedule
+  const setSchedule = (value: typeof schedule) => update('schedule', value)
 
   const canonicalEventStart = initialDraft.event.start
   const canonicalEventEnd = initialDraft.event.end
@@ -131,6 +134,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const canonicalEventDetails = initialDraft.eventDetails
   const canonicalGallery = { ...invitation.content.gallery, ...initialDraft.gallery.copy }
   const canonicalGalleryCaptions = initialDraft.gallery.captions
+  const canonicalSchedule = initialDraft.schedule
 
   const protagonistNameError = errors.protagonistName
   const shareMessageError = errors.shareMessage
@@ -170,6 +174,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
     calendarActionLabel: errors.eventDetailsCalendarActionLabel,
     calendarDescription: errors.eventDetailsCalendarDescription }
   const galleryErrors = { eyebrow: errors.galleryEyebrow, heading: errors.galleryHeading }
+  const scheduleErrors = Object.fromEntries(Object.entries(errors).filter(([key]) =>
+    key.startsWith('schedule'))) as Readonly<Record<string, string | null>>
   const modules = draft.modules
   const validation = configurationValidation
   const resetDisabled = modules.every((module, index) => module.moduleId === initialDraft.modules[index]?.moduleId
@@ -393,6 +399,13 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
                 && eventDetailsCopy.calendarDescription === canonicalEventDetails.calendarDescription,
               onReset: () => resetScene('eventDetails'),
             }}
+          /></div>,
+    'schedule': <div className="limen-studio__panel-grid">          <StudioScheduleEditor
+            value={schedule}
+            canonicalValue={canonicalSchedule}
+            errors={scheduleErrors}
+            onChange={setSchedule}
+            onReset={() => resetScene('schedule')}
           /></div>,
     'dress-code': <div className="limen-studio__panel-grid">          <StudioDressCodeEditor
             titleValue={dressCodeTitle}

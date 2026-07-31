@@ -881,6 +881,7 @@
 .limen-studio__trivia-editor,
 .limen-studio__event-information-editor,
 .limen-studio__gallery-editor,
+.limen-studio__schedule-editor,
 .limen-studio__share-editor,
 .limen-studio__notice {
   border: 1px solid #d9d8d3;
@@ -919,6 +920,161 @@
 .limen-studio__gallery-group h3 { margin: 0 0 1rem; font-size: 1.05rem; }
 .limen-studio__gallery-group .limen-studio__field-group + .limen-studio__field-group {
   margin-top: 1.25rem;
+}
+
+.limen-studio__schedule-editor {
+  min-width: 0;
+}
+
+.limen-studio__schedule-editor > header,
+.limen-studio__schedule-list-heading,
+.limen-studio__schedule-moment > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio__schedule-editor > header h2,
+.limen-studio__schedule-editor > header p,
+.limen-studio__schedule-list-heading h3,
+.limen-studio__schedule-list-heading p {
+  margin: 0;
+}
+
+.limen-studio__schedule-editor > header p,
+.limen-studio__schedule-list-heading p {
+  margin-top: .4rem;
+  color: #55544f;
+  line-height: 1.55;
+}
+
+.limen-studio__schedule-copy {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.limen-studio__schedule-list-heading {
+  align-items: center;
+  margin-top: 2rem;
+  border-top: 1px solid #d9d8d3;
+  padding-top: 1.5rem;
+}
+
+.limen-studio__schedule-add,
+.limen-studio__schedule-order button,
+.limen-studio__schedule-remove {
+  min-height: 2.75rem;
+  border: 1px solid #bdbbb5;
+  border-radius: .7rem;
+  padding: .55rem .8rem;
+  background: #fff;
+  color: #343330;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.limen-studio__schedule-add:disabled,
+.limen-studio__schedule-order button:disabled,
+.limen-studio__schedule-remove:disabled {
+  color: #85837d;
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.limen-studio__schedule-add:focus-visible,
+.limen-studio__schedule-order button:focus-visible,
+.limen-studio__schedule-remove:focus-visible {
+  outline: 3px solid #315f81;
+  outline-offset: 2px;
+}
+
+.limen-studio__schedule-moments {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limen-studio__schedule-moment {
+  min-width: 0;
+  border: 1px solid #d9d8d3;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #fff;
+}
+
+.limen-studio__schedule-moment > header {
+  align-items: center;
+  border-bottom: 1px solid #e2e1dc;
+  padding-bottom: .9rem;
+}
+
+.limen-studio__schedule-moment > header > div:first-child {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: .65rem;
+  min-width: 0;
+}
+
+.limen-studio__schedule-moment > header > div:first-child span {
+  color: #74726d;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: .75rem;
+}
+
+.limen-studio__schedule-moment > header > div:first-child strong {
+  overflow-wrap: anywhere;
+}
+
+.limen-studio__schedule-order {
+  display: flex;
+  gap: .4rem;
+}
+
+.limen-studio__schedule-order button {
+  min-height: 2.4rem;
+  padding: .4rem .65rem;
+  font-size: .8rem;
+}
+
+.limen-studio__schedule-moment-fields {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.limen-studio__schedule-remove {
+  margin-top: 1rem;
+  border-color: transparent;
+  padding-right: 0;
+  padding-left: 0;
+  color: #753e37;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+@media (max-width: 36rem) {
+  .limen-studio__schedule-editor > header,
+  .limen-studio__schedule-list-heading,
+  .limen-studio__schedule-moment > header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .limen-studio__schedule-add {
+    width: 100%;
+  }
+
+  .limen-studio__schedule-order {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .limen-studio__trivia-editor { min-width: 0; }
@@ -1826,6 +1982,7 @@
   .limen-studio__trivia-editor,
   .limen-studio__event-information-editor,
   .limen-studio__gallery-editor,
+  .limen-studio__schedule-editor,
   .limen-studio__share-editor,
   .limen-studio__notice {
     border-radius: 1rem;
@@ -1889,6 +2046,7 @@
   .limen-studio__trivia-editor,
   .limen-studio__event-information-editor,
   .limen-studio__gallery-editor,
+  .limen-studio__schedule-editor,
   .limen-studio__share-editor {
     padding: 1.75rem;
   }
@@ -2890,6 +3048,7 @@
 .limen-studio__contextual-editor-body > .limen-studio__trivia-editor,
 .limen-studio__contextual-editor-body > .limen-studio__event-information-editor,
 .limen-studio__contextual-editor-body > .limen-studio__gallery-editor,
+.limen-studio__contextual-editor-body > .limen-studio__schedule-editor,
 .limen-studio__contextual-editor-body > .limen-studio__share-editor {
   border: 0;
   border-radius: 0;
@@ -4069,6 +4228,14 @@
 
   .limen-studio__trivia-editor > h2 {
     display: none;
+  }
+
+  .limen-studio__schedule-moment-fields {
+    grid-template-columns: 7rem minmax(0, 1fr);
+  }
+
+  .limen-studio__schedule-moment-fields > :last-child {
+    grid-column: 1 / -1;
   }
 
   .limen-studio__trivia-intro {

@@ -259,6 +259,33 @@ function InvitationImageAsset({
   return <div className={`${className} origin01-image-placeholder`} role="img" aria-label={image?.alt ?? 'Imagen editorial'} />
 }
 
+export function Origin01Schedule({ schedule }: {
+  schedule: Origin01InvitationData['content']['schedule']
+}) {
+  return <section className="origin01-section origin01-schedule" aria-labelledby="origin01-schedule-title">
+    <div className="origin01-section-heading">
+      <p className="origin01-kicker">{schedule.eyebrow}</p>
+      <h2 id="origin01-schedule-title">{schedule.heading}</h2>
+    </div>
+    <p className="origin01-schedule__introduction">{schedule.introduction}</p>
+    <ol className="origin01-schedule__moments">
+      {schedule.moments.map((moment, index) => (
+        <li className="origin01-schedule__moment" key={moment.id}>
+          <div className="origin01-schedule__time">
+            <span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <time dateTime={moment.time}>{moment.time}</time>
+          </div>
+          <span className="origin01-schedule__line" aria-hidden="true" />
+          <div className="origin01-schedule__copy">
+            <h3>{moment.title}</h3>
+            {moment.description ? <p>{moment.description}</p> : null}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+}
+
 export function Origin01Invitation({
   invitation,
   audience = 'protagonist',
@@ -325,6 +352,8 @@ export function Origin01Invitation({
       { selector: '.origin01-info > .origin01-section-heading', motion: 'up', level: 'content' },
       { selector: '.origin01-info__surface', motion: 'fade', level: 'content', delay: 'follow' },
       { selector: '.origin01-info > .origin01-actions', motion: 'scale', level: 'action', delay: 'action' },
+      { selector: '.origin01-schedule > .origin01-section-heading, .origin01-schedule__introduction', motion: 'up', level: 'content' },
+      { selector: '.origin01-schedule__moment', motion: 'up', level: 'content', delay: 'follow' },
       { selector: '.origin01-dress__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-dress__content > .origin01-kicker, .origin01-dress__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
       { selector: '.origin01-dress__content > p:not(.origin01-kicker), .origin01-dress__note', motion: 'fade', level: 'content', delay: 'supporting' },
@@ -636,6 +665,10 @@ export function Origin01Invitation({
               </a>
             </div>
           </section>
+
+          {enabledModules.has('schedule') ? (
+          <Origin01Schedule schedule={invitation.content.schedule} />
+          ) : null}
 
           {enabledModules.has('dressCode') ? (
           <section className="origin01-dress" aria-labelledby="origin01-dress-title">

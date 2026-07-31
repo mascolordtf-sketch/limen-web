@@ -6,6 +6,13 @@ export type Origin01ImageContent = {
   readonly caption?: string
 }
 
+export type Origin01ScheduleMoment = {
+  readonly id: string
+  readonly time: string
+  readonly title: string
+  readonly description?: string
+}
+
 export type Origin01TriviaOption = {
   readonly id: string
   readonly label: string
@@ -73,6 +80,12 @@ export type Origin01Content = LimenInvitationContent & {
     readonly mapActionLabel: string
     readonly calendarActionLabel: string
     readonly calendarDescription: string
+  }
+  readonly schedule: {
+    readonly eyebrow: string
+    readonly heading: string
+    readonly introduction: string
+    readonly moments: readonly Origin01ScheduleMoment[]
   }
   readonly dressCode: {
     readonly eyebrow: string

@@ -2,6 +2,7 @@ export const invitationModuleIds = [
   'prelude',
   'hero',
   'eventDetails',
+  'schedule',
   'countdown',
   'location',
   'story',

@@ -794,6 +794,7 @@
 
 .origin01-section-heading h2,
 .origin01-info h2,
+.origin01-schedule h2,
 .origin01-gallery h2,
 .origin01-gift h2,
 .origin01-rsvp h2 {
@@ -802,6 +803,118 @@
   letter-spacing: -.055em;
   line-height: .93;
   text-wrap: balance;
+}
+
+/* Schedule — a calm transition from practical information into the celebration. */
+
+.origin01-schedule {
+  padding-top: 5rem;
+  padding-bottom: 5.5rem;
+  color: var(--origin-paper);
+  background:
+    radial-gradient(circle at 90% 10%, rgba(215, 178, 124, .14), transparent 22rem),
+    linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
+}
+
+.origin01-schedule > * {
+  width: min(100%, 68rem);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.origin01-schedule .origin01-section-heading {
+  margin-bottom: 1.25rem;
+}
+
+.origin01-schedule__introduction {
+  max-width: 38rem;
+  margin-top: 0;
+  margin-bottom: 3.2rem;
+  color: rgba(251, 248, 243, .72);
+  font-size: clamp(1rem, 3.8cqw, 1.35rem);
+  line-height: 1.65;
+}
+
+.origin01-schedule__moments {
+  display: grid;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.origin01-schedule__moment {
+  display: grid;
+  grid-template-columns: 4.8rem 1px minmax(0, 1fr);
+  gap: 1.15rem;
+  min-height: 8rem;
+  padding: 1.35rem 0;
+}
+
+.origin01-schedule__time {
+  display: grid;
+  align-content: start;
+  gap: .55rem;
+}
+
+.origin01-schedule__time span {
+  color: var(--origin-accent);
+  font-size: .58rem;
+  font-weight: 800;
+  letter-spacing: .15em;
+}
+
+.origin01-schedule__time time {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.25rem;
+  font-style: italic;
+}
+
+.origin01-schedule__line {
+  position: relative;
+  width: 1px;
+  height: 100%;
+  background: rgba(251, 248, 243, .2);
+}
+
+.origin01-schedule__line::before {
+  position: absolute;
+  top: .3rem;
+  left: 50%;
+  width: .55rem;
+  height: .55rem;
+  border: 1px solid var(--origin-accent);
+  border-radius: 50%;
+  background: var(--origin-wine);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.origin01-schedule__copy h3 {
+  margin: 0;
+  color: var(--origin-paper);
+  font-size: clamp(1.45rem, 5cqw, 2.15rem);
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+
+.origin01-schedule__copy p {
+  max-width: 35rem;
+  margin: .6rem 0 0;
+  color: rgba(251, 248, 243, .66);
+  line-height: 1.6;
+}
+
+.origin01--theme-origin01-midnight .origin01-schedule {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(177, 202, 224, .13), transparent 22rem),
+    linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
+}
+
+.origin01--theme-origin01-garden .origin01-schedule {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(206, 191, 145, .13), transparent 22rem),
+    linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
 }
 
 .origin01-demo-label {
@@ -1959,6 +2072,17 @@
     padding-top: 4rem;
     padding-bottom: 4rem;
     background: linear-gradient(to bottom, var(--origin-cream), var(--origin-rose-haze) 2.5rem, var(--origin-old-rose) 4rem);
+  }
+
+  .origin01-schedule {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+
+  .origin01-schedule__moment {
+    grid-template-columns: 6rem 1px minmax(0, 1fr);
+    gap: 2rem;
+    min-height: 9rem;
   }
 
   .origin01-gallery {

@@ -27,6 +27,7 @@ export const origin01DemoData = {
     { moduleId: 'countdown', enabled: true },
     { moduleId: 'story', enabled: true },
     { moduleId: 'eventDetails', enabled: true },
+    { moduleId: 'schedule', enabled: true },
     { moduleId: 'dressCode', enabled: true },
     { moduleId: 'gallery', enabled: true },
     { moduleId: 'trivia', enabled: true },
@@ -66,6 +67,16 @@ export const origin01DemoData = {
       eyebrow: 'Cuándo y dónde', heading: 'Guardá este momento.', dateLabel: '20 de marzo de 2027', timeLabel: '21:00',
       venueLabel: 'Lugar', mapActionLabel: 'Ver ubicación', calendarActionLabel: 'Agendar fecha',
       calendarDescription: 'Antes era un sueño. Ahora empieza.\n\nDemostración LIMEN',
+    },
+    schedule: {
+      eyebrow: 'El recorrido de la noche',
+      heading: 'Cada momento tiene su hora.',
+      introduction: 'Una guía breve para que sepas cómo vamos a vivir esta celebración.',
+      moments: [
+        { id: 'reception', time: '21:00', title: 'Recepción', description: 'Nos encontramos para dar comienzo a la noche.' },
+        { id: 'entrance', time: '22:00', title: 'La entrada', description: 'El instante en que todo empieza a sentirse real.' },
+        { id: 'celebration', time: '23:30', title: 'A celebrar', description: 'Música, baile y recuerdos para compartir.' },
+      ],
     },
     dressCode: {
       eyebrow: 'Dress code', title: 'Elegante',
@@ -130,6 +141,7 @@ function assertOrigin01DemoData(invitation: Origin01InvitationData): void {
     ['prelude.title', invitation.content.prelude.title], ['envelope.heading', invitation.content.envelope.heading],
     ['hero.imageMediaId', invitation.content.hero.imageMediaId], ['countdown.heading', invitation.content.countdown.heading],
     ['story.message', invitation.content.story.message], ['eventDetails.dateLabel', invitation.content.eventDetails.dateLabel],
+    ['schedule.heading', invitation.content.schedule.heading], ['schedule.moments', invitation.content.schedule.moments],
     ['dressCode.title', invitation.content.dressCode.title], ['gallery.images', invitation.content.gallery.images],
     ['trivia.questions', invitation.content.trivia.questions], ['gifts.accountValue', invitation.content.gifts.accountValue],
     ['rsvp.message', invitation.content.rsvp.message], ['closing.title', invitation.content.closing.title],

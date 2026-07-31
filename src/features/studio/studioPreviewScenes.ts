@@ -6,6 +6,7 @@ export const studioPreviewSceneSelectors: Readonly<Record<StudioSceneId, string>
   countdown: '.origin01-countdown-panel',
   story: '.origin01-message',
   'event-details': '.origin01-info',
+  schedule: '.origin01-schedule',
   'dress-code': '.origin01-dress',
   gallery: '.origin01-gallery',
   trivia: '.origin01-trivia',
