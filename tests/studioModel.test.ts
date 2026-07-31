@@ -2,6 +2,7 @@ import { AppRoutes } from '../src/app/routes'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
+import { Origin01Community } from '../src/features/invitations/origin01/Origin01Community'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
@@ -30,6 +31,7 @@ import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
 import { StudioScheduleEditor } from '../src/features/studio/StudioScheduleEditor'
 import { StudioWeatherEditor } from '../src/features/studio/StudioWeatherEditor'
+import { StudioCommunityEditor } from '../src/features/studio/StudioCommunityEditor'
 import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
 import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
@@ -344,21 +346,23 @@ assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.m
 const sectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: initial, onSceneChange: () => undefined }))
 assert(sectionsMarkup.includes('Armá el recorrido') && sectionsMarkup.includes('Elegí qué momentos forman parte')
-  && studioPublicScenes.length === 12 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
-  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las doce escenas públicas, sin Datos generales')
+  && studioPublicScenes.length === 13 && studioPublicScenes.every(({ label }) => sectionsMarkup.includes(label))
+  && !sectionsMarkup.includes('Datos generales'), 'Secciones presenta las trece escenas públicas, sin Datos generales')
 assert(studioPublicScenes.filter(({ required }) => required).map(({ label }) => label).join('|')
   === 'Portada|Información del evento|Confirmación|Cierre'
   && (sectionsMarkup.match(/Siempre incluida/g) ?? []).length === 4,
   'Secciones protege las escenas aprobadas y la obligatoriedad adicional de Cierre definida por Origin 01')
 assert(sectionsMarkup.includes('El umbral') && sectionsMarkup.includes('La celebración')
   && sectionsMarkup.includes('La participación') && sectionsMarkup.includes('La despedida')
-  && sectionsMarkup.includes('12 escenas') && sectionsMarkup.includes('4 esenciales')
-  && sectionsMarkup.includes('8 de 8 opcionales')
+  && sectionsMarkup.includes('13 escenas') && sectionsMarkup.includes('4 esenciales')
+  && sectionsMarkup.includes('9 de 9 opcionales')
   && sectionsMarkup.indexOf('Portada') < sectionsMarkup.indexOf('Cuenta regresiva')
   && sectionsMarkup.indexOf('Cuenta regresiva') < sectionsMarkup.indexOf('Historia')
   && sectionsMarkup.indexOf('Información del evento') < sectionsMarkup.indexOf('Cronograma')
   && sectionsMarkup.indexOf('Cronograma') < sectionsMarkup.indexOf('Clima')
   && sectionsMarkup.indexOf('Clima') < sectionsMarkup.indexOf('Dress code')
+  && sectionsMarkup.indexOf('Galería') < sectionsMarkup.indexOf('Comunidad')
+  && sectionsMarkup.indexOf('Comunidad') < sectionsMarkup.indexOf('Trivia')
   && sectionsMarkup.indexOf('Confirmación') < sectionsMarkup.indexOf('Cierre'),
   'Secciones organiza el orden canónico en cuatro capítulos narrativos y resume su composición')
 const giftsOff = updateOrigin01StudioModule(origin01DemoData, initial, 'gifts', false)
@@ -368,7 +372,7 @@ assert(!getVisibleStudioScenes(giftsOff).some(({ id }) => id === 'gifts')
   'Contenido deriva la exclusión y reinclusión de Regalos en su posición canónica')
 const giftsOffSectionsMarkup = renderToStaticMarkup(createElement(StudioSectionsStage,
   { draft: giftsOff, onSceneChange: () => undefined }))
-assert(giftsOffSectionsMarkup.includes('7 de 8 opcionales')
+assert(giftsOffSectionsMarkup.includes('8 de 9 opcionales')
   && giftsOffSectionsMarkup.includes('No incluida') && giftsOffSectionsMarkup.includes('Fuera del recorrido'),
   'Secciones actualiza el resumen y el estado editorial al excluir una escena opcional')
 const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
@@ -661,6 +665,49 @@ assert(deriveOrigin01PreviewInvitation(origin01DemoData, changedWeather).content
   && origin01DemoData.content.weather.location.name === 'Buenos Aires',
   'proyecta una localidad meteorológica confirmada sin mutar el fixture')
 
+const communityMarkup = renderToStaticMarkup(createElement(Origin01Community, { community: initial.community }))
+assert(communityMarkup.includes('@valentina.limen') && communityMarkup.includes('#ValeCruzaElLimen')
+  && communityMarkup.includes('https://photos.google.com/')
+  && communityMarkup.indexOf('Instagram') < communityMarkup.indexOf('Hashtag oficial'),
+  'Comunidad renderiza los tres destinos reales en su composición canónica')
+const editedCommunity = updateOrigin01StudioDraftGroup(initial, 'community', (community) => ({
+  ...community,
+  instagram: { ...community.instagram, handle: '@fiesta.vale' },
+  hashtag: { ...community.hashtag, value: '##NuevaHistoria' },
+}))
+const editedCommunityPreview = deriveOrigin01PreviewInvitation(origin01DemoData, editedCommunity)
+assert(editedCommunityPreview.content.community.instagram.handle === 'fiesta.vale'
+  && editedCommunityPreview.content.community.hashtag.value === '#NuevaHistoria'
+  && origin01DemoData.content.community.instagram.handle === 'valentina.limen',
+  'Comunidad normaliza usuario y hashtag sin mutar el fixture canónico')
+const communityWithoutFeatures = updateOrigin01StudioDraftGroup(initial, 'community', (community) => ({
+  ...community,
+  instagram: { ...community.instagram, enabled: false },
+  hashtag: { ...community.hashtag, enabled: false },
+  album: { ...community.album, enabled: false },
+}))
+const invalidCommunityResult = validateOrigin01StudioDraft(origin01DemoData, communityWithoutFeatures)
+assert(invalidCommunityResult.fieldErrors.communityFeatures !== null
+  && invalidCommunityResult.sceneStatuses.find(({ sceneId }) => sceneId === 'instagram')?.relevantErrorCount === 1,
+  'Comunidad activa exige al menos una función real configurada')
+const inactiveInvalidCommunity = updateOrigin01StudioModule(origin01DemoData, communityWithoutFeatures, 'instagram', false)
+assert(validateOrigin01StudioDraft(origin01DemoData, inactiveInvalidCommunity).sceneStatuses
+  .find(({ sceneId }) => sceneId === 'instagram')?.relevantErrorCount === 0
+  && inactiveInvalidCommunity.community === communityWithoutFeatures.community,
+  'excluir Comunidad conserva sus ediciones y vuelve irrelevantes sus errores')
+const invitationWithoutCommunityConfiguration = {
+  ...origin01DemoData,
+  modules: origin01DemoData.modules.filter(({ moduleId }) => moduleId !== 'instagram'),
+}
+const draftWithoutCommunity = createOrigin01StudioDraft(invitationWithoutCommunityConfiguration)
+const enabledAbsentCommunity = updateOrigin01StudioModule(
+  invitationWithoutCommunityConfiguration, draftWithoutCommunity, 'instagram', true,
+)
+assert(validateInvitationConfiguration(invitationWithoutCommunityConfiguration, findInvitationTemplate).valid
+  && enabledAbsentCommunity.modules.filter(({ moduleId }) => moduleId === 'instagram').length === 1
+  && getVisibleStudioScenes(enabledAbsentCommunity).some(({ id }) => id === 'community'),
+  'activar Comunidad agrega una configuración opcional ausente sin duplicarla')
+
 const validBase = updateOrigin01StudioDraftGroup(initial, 'rsvp', (rsvp) => ({
   ...rsvp,
   recipientPhone: '+54 11 5555 5555',
@@ -778,7 +825,7 @@ const domains = createOrigin01StudioDomains(origin01Template)
 assert(domains.map(({ id }) => id).join(',') === 'identity,event,narrative,experiences,review', 'define los cinco dominios en orden')
 const experienceScenes = domains.find(({ id }) => id === 'experiences')?.items.map(({ sceneId }) => sceneId)
 const expectedExperiences = origin01Template.canonicalOrder.filter((sceneId) =>
-  ['countdown', 'schedule', 'weather', 'dressCode', 'gallery', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
+  ['countdown', 'schedule', 'weather', 'dressCode', 'gallery', 'instagram', 'trivia', 'gifts', 'rsvp'].includes(sceneId))
 assert(experienceScenes?.join() === expectedExperiences.join(), 'deriva el orden de experiencias desde la plantilla canónica')
 const narrativeScenes = domains.find(({ id }) => id === 'narrative')?.items.flatMap(({ id, sceneId }) =>
   id === 'opening' ? ['prelude', 'hero'] : sceneId ? [sceneId] : [])
@@ -967,6 +1014,14 @@ const weatherMarkup = renderToStaticMarkup(createElement(StudioWeatherEditor, {
   onChange: noop,
   onReset: noop,
 }))
+const communityIssue = invalidCommunityResult.issues.find(({ fieldId }) => fieldId === 'communityFeatures')!
+const communityEditorMarkup = renderToStaticMarkup(createElement(StudioCommunityEditor, {
+  value: communityWithoutFeatures.community,
+  canonicalValue: initial.community,
+  errors: invalidCommunityResult.fieldErrors,
+  onChange: noop,
+  onReset: noop,
+}))
 const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
   titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
   canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
@@ -974,6 +1029,7 @@ const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode:
   onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
 for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
   [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [weatherIssue!, weatherMarkup],
+  [communityIssue, communityEditorMarkup],
   [giftIssue!, giftMarkup]] as const) {
   assert(Boolean(issue.fieldTargetId) && markup.includes(`id="${issue.fieldTargetId}"`),
     'fieldTargetId coincide con el control productivo de identidad, evento, narrativa, experiencia u operación')
@@ -1022,6 +1078,7 @@ assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length
   'la preview productiva expone un heading único, una audiencia y un viewport dentro de un teléfono')
 assert(getStudioPreviewMode('trivia') === 'contextual' && getStudioPreviewMode() === 'full'
   && studioPreviewSceneSelectors.trivia === '.origin01-trivia'
+  && studioPreviewSceneSelectors.community === '.origin01-community'
   && Object.keys(studioPreviewSceneSelectors).length === studioScenes.length,
   'Contenido abre una escena contextual y Revisión conserva el recorrido completo')
 const previewElement = createElement(StudioPreview, { invitation: validPreview, audience: 'protagonist',

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, use
 import type { InvitationAudience, InvitationMediaReference } from '../engine/invitationTypes'
 import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
 import { Origin01Trivia } from './Origin01Trivia'
+import { Origin01Community } from './Origin01Community'
 import type { Origin01InvitationData } from './origin01ContentTypes'
 import { fetchOrigin01WeatherForecast, formatOrigin01WeatherLocation,
   getOrigin01WeatherAvailability } from './origin01Weather'
@@ -460,6 +461,8 @@ export function Origin01Invitation({
       { selector: '.origin01-gallery__item--1', motion: 'depth', level: 'protagonist', delay: 'follow' },
       { selector: '.origin01-gallery__item--2', motion: 'left', level: 'protagonist', delay: 'gallery-second' },
       { selector: '.origin01-gallery__item--3', motion: 'right', level: 'protagonist', delay: 'gallery-third' },
+      { selector: '.origin01-community > .origin01-section-heading, .origin01-community__introduction', motion: 'up', level: 'content' },
+      { selector: '.origin01-community__card', motion: 'up', level: 'action', delay: 'follow' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-gift__content > .origin01-kicker, .origin01-gift__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
       { selector: '.origin01-gift__content > p:not(.origin01-kicker), .origin01-gift__account, .origin01-gift__content > small', motion: 'fade', level: 'content', delay: 'supporting' },
@@ -813,6 +816,10 @@ export function Origin01Invitation({
               })}
             </div>
           </section>
+          ) : null}
+
+          {enabledModules.has('instagram') ? (
+          <Origin01Community community={invitation.content.community} />
           ) : null}
 
           {enabledModules.has('trivia') ? (

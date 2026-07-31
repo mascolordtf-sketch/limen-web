@@ -2,7 +2,7 @@ import type { InvitationModuleId } from '../invitations/engine/moduleTypes'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
 
 export type StudioSceneId = 'general' | 'cover' | 'countdown' | 'story' | 'event-details' | 'dress-code'
-  | 'schedule' | 'weather' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'
+  | 'schedule' | 'weather' | 'gallery' | 'community' | 'trivia' | 'gifts' | 'rsvp' | 'closing'
 
 export type StudioPublicScene = {
   id: Exclude<StudioSceneId, 'general'>
@@ -28,6 +28,7 @@ export const studioPublicScenes: readonly StudioPublicScene[] = [
   { id: 'weather', label: 'Clima', description: 'Pronóstico real para la fecha y la localidad', moduleIds: ['weather'], editorIds: ['weather'], required: false },
   { id: 'dress-code', label: 'Dress code', description: 'Estilo sugerido para la celebración', moduleIds: ['dressCode'], editorIds: ['dress-code'], required: false },
   { id: 'gallery', label: 'Galería', description: 'Colección de recuerdos', moduleIds: ['gallery'], editorIds: ['gallery'], required: false },
+  { id: 'community', label: 'Comunidad', description: 'Instagram, hashtag y álbum compartido', moduleIds: ['instagram'], editorIds: ['community'], required: false },
   { id: 'trivia', label: 'Trivia', description: 'Juego para invitados', moduleIds: ['trivia'], editorIds: ['trivia'], required: false },
   { id: 'gifts', label: 'Regalos', description: 'Datos para obsequios', moduleIds: ['gifts'], editorIds: ['gifts'], required: false },
   { id: 'rsvp', label: 'Confirmación', description: 'Respuesta y contacto de los invitados', moduleIds: ['rsvp'], editorIds: ['rsvp'], required: true },

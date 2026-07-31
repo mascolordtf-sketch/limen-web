@@ -7,17 +7,17 @@
 - Una **escena** es la parte visible y narrativa de la experiencia. Un **módulo** es su identificador técnico estable para configuración y validación.
 - Los módulos **obligatorios** deben estar presentes y activos. Los **opcionales** pueden activarse o desactivarse, pero ninguna invitación puede cambiar arbitrariamente el orden de la plantilla.
 
-El catálogo inicial es: `prelude`, `hero`, `eventDetails`, `countdown`, `location`, `story`, `gallery`, `trivia`, `dressCode`, `gifts`, `instagram`, `rsvp` y `closing`.
+El catálogo actual es: `prelude`, `hero`, `eventDetails`, `schedule`, `weather`, `countdown`, `location`, `story`, `gallery`, `trivia`, `dressCode`, `gifts`, `instagram`, `rsvp` y `closing`.
 
 ## Origin 01
 
-Origin 01 admite, en orden canónico: `prelude`, `hero`, `countdown`, `story`, `eventDetails`, `dressCode`, `gallery`, `trivia`, `gifts`, `rsvp`, `closing`.
+Origin 01 admite, en orden canónico: `prelude`, `hero`, `countdown`, `story`, `eventDetails`, `schedule`, `weather`, `dressCode`, `gallery`, `instagram`, `trivia`, `gifts`, `rsvp`, `closing`.
 
-Son obligatorios `prelude`, `hero`, `eventDetails` y `closing`. Los demás módulos admitidos, incluida `trivia`, son opcionales. `trivia` es una escena real y ocupa su posición actual entre `gallery` y `gifts`.
+Son obligatorios `prelude`, `hero`, `eventDetails` y `closing`. Los demás módulos admitidos son opcionales. `instagram` identifica técnicamente la escena pública Comunidad y ocupa su posición entre `gallery` y `trivia`.
 
-La escena actual “Cuándo y dónde” reúne fecha, hora, lugar, dirección y acciones relacionadas dentro de una sola sección y, por lo tanto, su límite de activación veraz es `eventDetails`. `location` permanece en el catálogo global para una posible escena independiente futura, pero Origin 01 todavía no la admite como módulo separado. `instagram` tampoco está admitido porque no existe una escena real correspondiente.
+La escena actual “Cuándo y dónde” reúne fecha, hora, lugar, dirección y acciones relacionadas dentro de una sola sección y, por lo tanto, su límite de activación veraz es `eventDetails`. `location` permanece en el catálogo global para una posible escena independiente futura, pero Origin 01 todavía no la admite como módulo separado.
 
-La única variante implementada es `origin01-wine`, que también es la variante predeterminada.
+Origin 01 admite `origin01-wine`, `origin01-midnight` y `origin01-garden`; `origin01-wine` continúa siendo la variante predeterminada.
 
 ## Registro y validación
 
@@ -226,3 +226,13 @@ Secciones es la única superficie de activación. Contenido permite editar el te
 La invitación consulta el pronóstico únicamente cuando la fecha se encuentra dentro del horizonte de dieciséis días informado por el proveedor. Antes de ese punto comunica la fecha desde la cual podrá consultarse; para eventos pasados deja de presentar el pronóstico como información actual; durante la consulta muestra un estado de carga; y ante una falla declara indisponibilidad temporal. Nunca utiliza valores manuales, promedios estacionales o un fixture como sustituto de datos actuales. Cuando existe un pronóstico válido presenta condición, mínima, máxima, rango de sensación térmica, probabilidad máxima de precipitación, viento máximo, momento de actualización y atribución visible a Open-Meteo.
 
 La integración está encapsulada en una capa propia que normaliza disponibilidad, códigos meteorológicos, respuestas diarias y resultados de geocodificación. En esta fase temporal el navegador consulta los endpoints públicos directamente. Un proxy de LIMEN con caché, control de cuota y credenciales comerciales queda reservado para la infraestructura productiva, junto con persistencia y almacenamiento. No se incorporan backend, autenticación ni publicación y `readyToPublish` permanece en `false`.
+
+## Fase 2C.9 — Comunidad del evento
+
+Origin 01 incorpora Comunidad como una escena pública opcional situada después de Galería y antes de Trivia. Su identificador técnico estable es `instagram`, pero la escena reúne tres funciones relacionadas: enlace al perfil oficial de Instagram, hashtag listo para copiar y acceso a un álbum compartido externo. Cada función puede activarse de forma independiente y, si la escena está incluida, al menos una debe permanecer configurada.
+
+Secciones es la única superficie que incorpora o excluye Comunidad del recorrido. Contenido permite editar el encabezado, el título, la presentación, el usuario y la acción de Instagram, el hashtag y sus mensajes de copia, y la invitación, enlace HTTPS y acción del álbum. Excluir la escena conserva las ediciones temporales; si una invitación válida omite por completo la configuración opcional `instagram`, activarla agrega una única entrada sin normalizar ni mutar el fixture canónico.
+
+La invitación deriva el enlace de Instagram desde el usuario confirmado, copia el hashtag literal y abre el álbum en un destino externo real. La validación condiciona los campos de cada función a su activación, rechaza usuarios o hashtags mal formados y exige HTTPS para el álbum. Los errores de Comunidad solo son relevantes mientras la escena está activa y navegan al control exacto del editor.
+
+Esta fase no consulta ni incrusta un feed de Instagram, no autentica con Meta, no almacena ni modera fotografías y no ofrece carga de archivos dentro de LIMEN. El futuro álbum propio requerirá almacenamiento, permisos y moderación. Tampoco se incorporan persistencia, backend, iconografía definitiva ni publicación; `readyToPublish` permanece en `false`.

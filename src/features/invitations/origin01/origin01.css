@@ -2473,6 +2473,99 @@
   stroke-width: 1.65;
 }
 
+/* Origin 01 community — real external destinations, kept in natural document flow. */
+.origin01-community {
+  position: relative;
+  padding-block: clamp(4.5rem, 14cqw, 7rem);
+  background: color-mix(in srgb, var(--origin-photo-surface) 88%, var(--origin-ivory));
+}
+
+.origin01-community__introduction {
+  max-width: 36rem;
+  margin: 1.2rem auto 2.4rem;
+  color: var(--origin-text-muted);
+  line-height: 1.7;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.origin01-community__actions {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 42rem);
+  margin-inline: auto;
+}
+
+.origin01-community__card {
+  display: flex;
+  min-height: 12rem;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(1.35rem, 5cqw, 2rem);
+  border: 1px solid var(--origin-border);
+  border-radius: var(--origin-radius-surface);
+  background: color-mix(in srgb, var(--origin-ivory) 94%, transparent);
+  box-shadow: var(--origin-shadow-soft);
+}
+
+.origin01-community__card > p {
+  margin: 0 0 .7rem;
+  color: var(--origin-wine-soft);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.origin01-community__card > strong {
+  color: var(--origin-wine-deep);
+  font-family: var(--origin-display);
+  font-size: clamp(1.55rem, 7cqw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.12;
+  overflow-wrap: anywhere;
+}
+
+.origin01-community__card > span:not([aria-hidden]) {
+  margin-top: .75rem;
+  color: var(--origin-text-muted);
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+.origin01-community__card > a,
+.origin01-community__card > button {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: auto;
+  padding: .75rem 1rem;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  color: var(--origin-wine-deep);
+  background: transparent;
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.origin01--theme-origin01-midnight .origin01-community {
+  background: color-mix(in srgb, var(--origin-wine-deep) 8%, var(--origin-photo-surface));
+}
+
+.origin01--theme-origin01-garden .origin01-community__card {
+  background: color-mix(in srgb, var(--origin-ivory) 90%, var(--origin-old-rose));
+}
+
+@container origin01 (min-width: 42rem) {
+  .origin01-community__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .origin01-community__card--album { grid-column: 1 / -1; min-height: 10.5rem; }
+}
+
 /* Origin 01 trivia — a quiet game scene, kept in natural document flow. */
 .origin01-trivia {
   position: relative;

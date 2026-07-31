@@ -25,7 +25,7 @@ const narrativeChapters = [
     eyebrow: 'La participación',
     title: 'Invitar a ser parte',
     description: 'Recuerdos, juego y gestos compartidos con los invitados.',
-    sceneIds: ['gallery', 'trivia', 'gifts'],
+    sceneIds: ['gallery', 'community', 'trivia', 'gifts'],
   },
   {
     id: 'farewell',
