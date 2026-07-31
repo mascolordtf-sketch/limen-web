@@ -59,6 +59,12 @@ export function deriveOrigin01PreviewInvitation(
       gallery: { ...invitation.content.gallery, ...draft.gallery.copy,
         images: invitation.content.gallery.images.map((image, index) => ({ ...image,
           caption: draft.gallery.captions[index]?.trim() ? draft.gallery.captions[index] : undefined })) },
+      community: {
+        ...draft.community,
+        instagram: { ...draft.community.instagram, handle: draft.community.instagram.handle.trim().replace(/^@/, '') },
+        hashtag: { ...draft.community.hashtag, value: `#${draft.community.hashtag.value.trim().replace(/^#+/, '')}` },
+        album: { ...draft.community.album, url: draft.community.album.url.trim() },
+      },
       trivia: { ...draft.trivia, protagonistName: name, accessibleTitle: `Trivia sobre ${name}`,
         title: `¿Cuánto conocés de verdad a ${name}?`, revealSignature: name },
       gifts: { ...invitation.content.gifts, ...draft.gifts },

@@ -102,6 +102,14 @@ export type Origin01Content = LimenInvitationContent & {
     readonly imageMediaId: string
   }
   readonly gallery: { readonly eyebrow: string; readonly heading: string; readonly images: readonly Origin01ImageContent[] }
+  readonly community: {
+    readonly eyebrow: string
+    readonly heading: string
+    readonly introduction: string
+    readonly instagram: { readonly enabled: boolean; readonly handle: string; readonly actionLabel: string }
+    readonly hashtag: { readonly enabled: boolean; readonly value: string; readonly actionLabel: string; readonly copiedLabel: string }
+    readonly album: { readonly enabled: boolean; readonly url: string; readonly invitation: string; readonly actionLabel: string }
+  }
   readonly trivia: Origin01TriviaContent
   readonly gifts: {
     readonly eyebrow: string

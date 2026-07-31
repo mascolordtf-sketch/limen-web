@@ -54,6 +54,7 @@ export type Origin01StudioDraft = {
     readonly copy: Pick<Origin01InvitationData['content']['gallery'], 'eyebrow' | 'heading'>
     readonly captions: readonly string[]
   }
+  readonly community: Origin01InvitationData['content']['community']
   readonly trivia: Origin01TriviaEditorialDraft
   readonly gifts: Pick<Origin01InvitationData['content']['gifts'], 'title' | 'description' | 'demoNote' | 'accountValue'>
   readonly rsvp: {
@@ -138,6 +139,12 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
       copy: { eyebrow: invitation.content.gallery.eyebrow, heading: invitation.content.gallery.heading },
       captions: invitation.content.gallery.images.map(({ caption }) => caption ?? ''),
     },
+    community: {
+      ...invitation.content.community,
+      instagram: { ...invitation.content.community.instagram },
+      hashtag: { ...invitation.content.community.hashtag },
+      album: { ...invitation.content.community.album },
+    },
     trivia: createTriviaEditorialDraft(invitation.content.trivia),
     gifts: {
       title: invitation.content.gifts.title,
@@ -176,6 +183,7 @@ type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' 
 export type Origin01EditableSceneId =
   | 'prelude' | 'hero' | 'countdown' | 'story' | 'eventDetails' | 'dressCode'
   | 'schedule' | 'weather' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'
+  | 'community'
 
 export function resetOrigin01StudioValue<K extends keyof Origin01StudioDraft>(
   draft: Origin01StudioDraft,

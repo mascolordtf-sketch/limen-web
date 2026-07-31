@@ -1,6 +1,7 @@
 import type { InvitationTemplateDefinition } from '../invitations/engine/templateTypes'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioClosingEditor } from './StudioClosingEditor'
+import { StudioCommunityEditor } from './StudioCommunityEditor'
 import { StudioContentEditor } from './StudioContentEditor'
 import { StudioDressCodeEditor } from './StudioDressCodeEditor'
 import { StudioEventInformationEditor } from './StudioEventInformationEditor'
@@ -102,6 +103,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const setSchedule = (value: typeof schedule) => update('schedule', value)
   const weather = draft.weather
   const setWeather = (value: typeof weather) => update('weather', value)
+  const community = draft.community
+  const setCommunity = (value: typeof community) => update('community', value)
 
   const canonicalEventStart = initialDraft.event.start
   const canonicalEventEnd = initialDraft.event.end
@@ -139,6 +142,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const canonicalGalleryCaptions = initialDraft.gallery.captions
   const canonicalSchedule = initialDraft.schedule
   const canonicalWeather = initialDraft.weather
+  const canonicalCommunity = initialDraft.community
 
   const protagonistNameError = errors.protagonistName
   const shareMessageError = errors.shareMessage
@@ -182,6 +186,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
     key.startsWith('schedule'))) as Readonly<Record<string, string | null>>
   const weatherErrors = Object.fromEntries(Object.entries(errors).filter(([key]) =>
     key.startsWith('weather'))) as Readonly<Record<string, string | null>>
+  const communityErrors = Object.fromEntries(Object.entries(errors).filter(([key]) =>
+    key.startsWith('community'))) as Readonly<Record<string, string | null>>
   const modules = draft.modules
   const validation = configurationValidation
   const resetDisabled = modules.every((module, index) => module.moduleId === initialDraft.modules[index]?.moduleId
@@ -453,6 +459,13 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             ))}
             onCopyReset={() => resetField('gallery', 'copy')}
             onCaptionsReset={() => resetField('gallery', 'captions')}
+          /></div>,
+    'community': <div className="limen-studio__panel-grid">          <StudioCommunityEditor
+            value={community}
+            canonicalValue={canonicalCommunity}
+            errors={communityErrors}
+            onChange={setCommunity}
+            onReset={() => resetScene('community')}
           /></div>,
     'trivia': <div className="limen-studio__panel-grid">          <StudioTriviaEditor value={trivia} canonicalValue={canonicalTrivia} onChange={setTrivia} /></div>,
     'gifts': <div className="limen-studio__panel-grid">          <StudioGiftsEditor mode="editorial"

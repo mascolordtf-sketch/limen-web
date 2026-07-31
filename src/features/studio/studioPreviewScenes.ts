@@ -10,6 +10,7 @@ export const studioPreviewSceneSelectors: Readonly<Record<StudioSceneId, string>
   weather: '.origin01-weather',
   'dress-code': '.origin01-dress',
   gallery: '.origin01-gallery',
+  community: '.origin01-community',
   trivia: '.origin01-trivia',
   gifts: '.origin01-gift',
   rsvp: '.origin01-rsvp',

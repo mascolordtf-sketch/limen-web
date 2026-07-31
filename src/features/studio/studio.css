@@ -5290,3 +5290,46 @@
   .limen-studio__template-card,
   .limen-studio__template-demo { transition: none; }
 }
+.limen-studio__community-options {
+  display: grid;
+  gap: .75rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+}
+
+.limen-studio__community-options legend {
+  padding-inline: .35rem;
+  font-weight: 750;
+}
+
+.limen-studio__community-feature {
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio__community-feature span {
+  display: grid;
+  gap: .2rem;
+}
+
+.limen-studio__community-feature small { color: var(--studio-muted); }
+
+.limen-studio__community-feature input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+}
+
+.limen-studio__community-group {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--studio-line);
+}
+
+.limen-studio__community-group h3 { margin: 0; }

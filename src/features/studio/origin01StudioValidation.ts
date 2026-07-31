@@ -7,6 +7,7 @@ import type { Origin01StudioDraft } from './origin01StudioDraft'
 import type { StudioDomainId } from './studioNavigation'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { validateOrigin01Schedule } from './origin01StudioSchedule'
+import { validateOrigin01Community } from './studioCommunityValidation'
 
 export type StudioIssueSeverity =
   | 'structural'
@@ -99,6 +100,12 @@ const studioFieldTargetIds: Readonly<Record<string, string>> = {
   scheduleIntroduction: 'studio-schedule-introduction',
   weatherEyebrow: 'studio-weather-eyebrow', weatherHeading: 'studio-weather-heading',
   weatherIntroduction: 'studio-weather-introduction', weatherLocation: 'studio-weather-location-title',
+  communityEyebrow: 'studio-community-eyebrow', communityHeading: 'studio-community-heading',
+  communityIntroduction: 'studio-community-introduction', communityFeatures: 'studio-community-features',
+  communityInstagramHandle: 'studio-community-instagram-handle', communityInstagramActionLabel: 'studio-community-instagram-action',
+  communityHashtag: 'studio-community-hashtag', communityHashtagActionLabel: 'studio-community-hashtag-action',
+  communityHashtagCopiedLabel: 'studio-community-hashtag-copied', communityAlbumUrl: 'studio-community-album-url',
+  communityAlbumInvitation: 'studio-community-album-invitation', communityAlbumActionLabel: 'studio-community-album-action',
 }
 
 export function validateOrigin01StudioDraft(
@@ -175,6 +182,7 @@ export function validateOrigin01StudioDraft(
       && Number.isFinite(draft.weather.location.longitude)
       && draft.weather.location.longitude >= -180 && draft.weather.location.longitude <= 180
       ? null : 'Confirmá una localidad meteorológica válida.',
+    ...validateOrigin01Community(draft.community),
   }
 
   const seeds: readonly IssueSeed[] = [
@@ -211,6 +219,13 @@ export function validateOrigin01StudioDraft(
         editorId: 'weather', domainId: 'experiences' as const, sceneId: 'weather' as const })),
     ...(['dressCodeTitle', 'dressCodeDescription', 'dressCodeNote'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'dress-code', domainId: 'experiences' as const, sceneId: 'dressCode' as const })),
     ...(['galleryEyebrow', 'galleryHeading'] as const).map((fieldId) => ({ fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '', editorId: 'gallery', domainId: 'experiences' as const, sceneId: 'gallery' as const })),
+    ...(['communityEyebrow', 'communityHeading', 'communityIntroduction', 'communityFeatures',
+      'communityInstagramHandle', 'communityInstagramActionLabel', 'communityHashtag',
+      'communityHashtagActionLabel', 'communityHashtagCopiedLabel', 'communityAlbumUrl',
+      'communityAlbumInvitation', 'communityAlbumActionLabel'] as const).map((fieldId) => ({
+      fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
+      editorId: 'community', domainId: 'experiences' as const, sceneId: 'instagram' as const,
+    })),
     { fieldId: 'trivia', error: fieldErrors.trivia, message: fieldErrors.trivia ?? '', editorId: 'trivia', domainId: 'experiences', sceneId: 'trivia' },
     ...(['giftsTitle', 'giftsDescription', 'giftsNote', 'giftsAccount'] as const).map((fieldId) => ({
       fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
