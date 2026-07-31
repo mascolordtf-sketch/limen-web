@@ -243,6 +243,13 @@ export function updateOrigin01StudioModule(
   enabled: boolean,
 ): Origin01StudioDraft {
   const template = findInvitationTemplate(invitation.templateId)
-  if (!template || template.requiredModules.includes(moduleId)) return draft
+  if (!template || !template.optionalModules.includes(moduleId)) return draft
+
+  const configured = draft.modules.some((module) => module.moduleId === moduleId)
+  if (!configured) {
+    if (!enabled) return draft
+    return { ...draft, modules: [...draft.modules, { moduleId, enabled: true }] }
+  }
+
   return { ...draft, modules: updateInvitationModuleConfiguration(draft.modules, { [moduleId]: enabled }) }
 }

@@ -6,6 +6,8 @@ import { origin01DemoData } from '../src/features/invitations/origin01/origin01D
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '../src/features/invitations/origin01/origin01Weather'
+import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
+import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { getStudioPreviewMode, studioPreviewSceneSelectors } from '../src/features/studio/studioPreviewScenes'
@@ -600,6 +602,29 @@ assert(!scheduleOff.modules.find(({ moduleId }) => moduleId === 'schedule')?.ena
   && !getVisibleStudioScenes(scheduleOff).some(({ id }) => id === 'schedule')
   && scheduleOff.schedule === editedScheduleDraft.schedule,
   'desactivar Cronograma lo quita del recorrido sin perder su contenido')
+const invitationWithoutSchedule = {
+  ...origin01DemoData,
+  modules: origin01DemoData.modules.filter(({ moduleId }) => moduleId !== 'schedule'),
+}
+const draftWithoutSchedule = createOrigin01StudioDraft(invitationWithoutSchedule)
+const scheduleDisabledFromAbsentConfiguration = updateOrigin01StudioModule(
+  invitationWithoutSchedule,
+  draftWithoutSchedule,
+  'schedule',
+  false,
+)
+const scheduleEnabledFromAbsentConfiguration = updateOrigin01StudioModule(
+  invitationWithoutSchedule,
+  draftWithoutSchedule,
+  'schedule',
+  true,
+)
+assert(validateInvitationConfiguration(invitationWithoutSchedule, findInvitationTemplate).valid
+  && scheduleDisabledFromAbsentConfiguration === draftWithoutSchedule
+  && scheduleEnabledFromAbsentConfiguration.modules.filter(({ moduleId }) => moduleId === 'schedule').length === 1
+  && scheduleEnabledFromAbsentConfiguration.modules.find(({ moduleId }) => moduleId === 'schedule')?.enabled === true
+  && getVisibleStudioScenes(scheduleEnabledFromAbsentConfiguration).some(({ id }) => id === 'schedule'),
+  'activar Cronograma agrega su configuración cuando una invitación válida omite el módulo opcional')
 
 const weatherFuture = getOrigin01WeatherAvailability(
   '2027-03-20T21:00:00-03:00', 'America/Argentina/Buenos_Aires', new Date('2027-03-04T15:00:00Z'),
