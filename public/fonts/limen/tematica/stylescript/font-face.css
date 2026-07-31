@@ -1,0 +1,8 @@
+/* Style Script */
+@font-face {
+  font-family: 'Style Script';
+  src: url('./StyleScript-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

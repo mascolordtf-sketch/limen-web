@@ -1,0 +1,4661 @@
+[
+  {
+    "requested_name": "Allison",
+    "official_name": "Allison",
+    "slug": "allison",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-07-02",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Allison-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Allison-Regular.woff2",
+        "bytes": 46888,
+        "sha256": "4f71ddfaa135f59a92e1d2f1be49bd947f8c678ff66ac853b1ac310533f81791",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/allison"
+  },
+  {
+    "requested_name": "Bilbo Swash Caps",
+    "official_name": "Bilbo Swash Caps",
+    "slug": "bilboswashcaps",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "TypeSETit",
+    "date_added": "2011-12-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BilboSwashCaps-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BilboSwashCaps-Regular.woff2",
+        "bytes": 21688,
+        "sha256": "7705be515cf5ba4c1476d25be00eb9d2cff81ef61fb1267a85bf46745f906ab6",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bilboswashcaps"
+  },
+  {
+    "requested_name": "Birthstone",
+    "official_name": "Birthstone",
+    "slug": "birthstone",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-08-06",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Birthstone-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Birthstone-Regular.woff2",
+        "bytes": 118040,
+        "sha256": "11255310bf94e37cc9f2da977a265522c689df9f5a4fb84b8213973319da501e",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/birthstone"
+  },
+  {
+    "requested_name": "Delius Swash Caps",
+    "official_name": "Delius Swash Caps",
+    "slug": "deliusswashcaps",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Natalia Raices",
+    "date_added": "2011-08-03",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "DeliusSwashCaps-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "DeliusSwashCaps-Regular.woff2",
+        "bytes": 20240,
+        "sha256": "3a985982f5be6f0b346c2824bd4e7accdfbc300a049aaa97dd6562cc5fae7d65",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/deliusswashcaps"
+  },
+  {
+    "requested_name": "Italianno",
+    "official_name": "Italianno",
+    "slug": "italianno",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Italianno-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Italianno-Regular.woff2",
+        "bytes": 67008,
+        "sha256": "cf5812f42619a8f29220fcdfdae7baacb112ba5bf24e053012b14d7bd4c9f327",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/italianno"
+  },
+  {
+    "requested_name": "Monsieur La Doulaise",
+    "official_name": "Monsieur La Doulaise",
+    "slug": "monsieurladoulaise",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Sudtipos",
+    "date_added": "2011-11-30",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "MonsieurLaDoulaise-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "MonsieurLaDoulaise-Regular.woff2",
+        "bytes": 18760,
+        "sha256": "619703021c02ea5620e66f1a8724a219e72daa81d5c726157b97901f5e6461d0",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/monsieurladoulaise"
+  },
+  {
+    "requested_name": "Montez",
+    "official_name": "Montez",
+    "slug": "montez",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Astigmatic",
+    "date_added": "2011-08-17",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Montez-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Montez-Regular.woff2",
+        "bytes": 26124,
+        "sha256": "efcac886c8e742f0484dd763b53626efcd1be6c6ae09f435caf0411022a77ea8",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/montez"
+  },
+  {
+    "requested_name": "Parisienne",
+    "official_name": "Parisienne",
+    "slug": "parisienne",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Astigmatic",
+    "date_added": "2012-01-25",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Parisienne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Parisienne-Regular.woff2",
+        "bytes": 26140,
+        "sha256": "eb24855bf956efe680f8e6e43e073dc539cac7975594382377061cc7e58575d1",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/parisienne"
+  },
+  {
+    "requested_name": "Petit Formal Script",
+    "official_name": "Petit Formal Script",
+    "slug": "petitformalscript",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2012-09-07",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "PetitFormalScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PetitFormalScript-Regular.woff2",
+        "bytes": 41436,
+        "sha256": "61b1c056b1a410c999eda4e8af3d782924296d1ba7b2bf6c8904f472b0eda2ed",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/petitformalscript"
+  },
+  {
+    "requested_name": "Playball",
+    "official_name": "Playball",
+    "slug": "playball",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Playball-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Playball-Regular.woff2",
+        "bytes": 56948,
+        "sha256": "ad316f5dd39fe4a74e3a4cfc4f4ad503b3b33f11a84fe740712ebc7415406e0b",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/playball"
+  },
+  {
+    "requested_name": "Qwitcher Grypen",
+    "official_name": "Qwitcher Grypen",
+    "slug": "qwitchergrypen",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-11-26",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "QwitcherGrypen-Bold.ttf",
+      "QwitcherGrypen-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "QwitcherGrypen-Bold.woff2",
+        "bytes": 57204,
+        "sha256": "b6612a6d4e875fbb1b43bed48b1ad20cb541240216b29a63189c42add22f8589",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "QwitcherGrypen-Regular.woff2",
+        "bytes": 53136,
+        "sha256": "951144fdde09be61711c8d4e7d4d04fb0d38f12b42d33dd460e9309d5d401b26",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/qwitchergrypen"
+  },
+  {
+    "requested_name": "Rouge Script",
+    "official_name": "Rouge Script",
+    "slug": "rougescript",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Sabrina Mariela Lopez",
+    "date_added": "2012-01-11",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "RougeScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "RougeScript-Regular.woff2",
+        "bytes": 16604,
+        "sha256": "1b96d3da04919dccedf8c9785135559e2d9cfebc51f534dd5505d5069eb6c26d",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/rougescript"
+  },
+  {
+    "requested_name": "Sarina",
+    "official_name": "Sarina",
+    "slug": "sarina",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "James Grieshaber",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Sarina-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Sarina-Regular.woff2",
+        "bytes": 26212,
+        "sha256": "8b03e2789ef6987cc21f8021ce5200798d1fc8226bfceb21a9eed9dd714c6ac8",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/sarina"
+  },
+  {
+    "requested_name": "Sofia",
+    "official_name": "Sofia",
+    "slug": "sofia",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "LatinoType",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Sofia-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Sofia-Regular.woff2",
+        "bytes": 11704,
+        "sha256": "241a3e49863bdfd89917a01a3c589f04631d8eacafa519fa004b8e003130e094",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/sofia"
+  },
+  {
+    "requested_name": "Tangerine",
+    "official_name": "Tangerine",
+    "slug": "tangerine",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Toshi Omagari",
+    "date_added": "2010-06-08",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Tangerine-Bold.ttf",
+      "Tangerine-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Tangerine-Bold.woff2",
+        "bytes": 25624,
+        "sha256": "f453f2932fa62c825ee27af1adf5fc348d2835cf9d84b476a3cac3afec8caed9",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Tangerine-Regular.woff2",
+        "bytes": 24132,
+        "sha256": "1c014e1f3b9b5531db145d43a5d6b61b3144853c6ce33aea9c46eb347c6f1498",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/tangerine"
+  },
+  {
+    "requested_name": "Zeyada",
+    "official_name": "Zeyada",
+    "slug": "zeyada",
+    "tier": "experimental",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-06-08",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Zeyada.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Zeyada.woff2",
+        "bytes": 22904,
+        "sha256": "73cd6a5092a34d4dfb02ed5a91a77c8a16d70d84b1628c779d51be54e0703622",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/zeyada"
+  },
+  {
+    "requested_name": "Autour One",
+    "official_name": "Autour One",
+    "slug": "autourone",
+    "tier": "experimental",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Sorkin Type",
+    "date_added": "2012-05-15",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "AutourOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "AutourOne-Regular.woff2",
+        "bytes": 39452,
+        "sha256": "a56563b451a0d6a44f5b4b46e1a880e4c21d66fafbe101d108e30d3d881d28de",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/autourone"
+  },
+  {
+    "requested_name": "Bigshot One",
+    "official_name": "Bigshot One",
+    "slug": "bigshotone",
+    "tier": "experimental",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Gesine Todt",
+    "date_added": "2011-05-04",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BigshotOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BigshotOne-Regular.woff2",
+        "bytes": 13956,
+        "sha256": "5b018cece38302bc916c12e8b203a21c87d06ebd8e57b582676270136996497e",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bigshotone"
+  },
+  {
+    "requested_name": "Mouse Memoirs",
+    "official_name": "Mouse Memoirs",
+    "slug": "mousememoirs",
+    "tier": "experimental",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Astigmatic",
+    "date_added": "2012-11-02",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "MouseMemoirs-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "MouseMemoirs-Regular.woff2",
+        "bytes": 23628,
+        "sha256": "e38b11ed410e1332031fccd67e59e3f4199a3fa5082471fafd6e0fbbd6009f85",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/mousememoirs"
+  },
+  {
+    "requested_name": "Nova Round",
+    "official_name": "Nova Round",
+    "slug": "novaround",
+    "tier": "experimental",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Wojciech Kalinowski",
+    "date_added": "2011-03-23",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "NovaRound.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "NovaRound.woff2",
+        "bytes": 25632,
+        "sha256": "1714b34126434b2dfefb09722b1332bf4ae92d0320522d37c45b60f62b8569eb",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/novaround"
+  },
+  {
+    "requested_name": "Mansalva",
+    "official_name": "Mansalva",
+    "slug": "mansalva",
+    "tier": "experimental",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Carolina Short",
+    "date_added": "2019-08-29",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Mansalva-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Mansalva-Regular.woff2",
+        "bytes": 104708,
+        "sha256": "d6b23fbcbcb3f1968f048333fb53527ad9dbdb36cb7cafebb7e9713ae5fba9e0",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/mansalva"
+  },
+  {
+    "requested_name": "Redressed",
+    "official_name": "Redressed",
+    "slug": "redressed",
+    "tier": "experimental",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Astigmatic",
+    "date_added": "2011-06-21",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Redressed-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Redressed-Regular.woff2",
+        "bytes": 26276,
+        "sha256": "0e518cc7e2af7199e9eed22460c37e234257f3a204bc6adfea15b28c5ad46dfb",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/redressed"
+  },
+  {
+    "requested_name": "Crafty Girls",
+    "official_name": "Crafty Girls",
+    "slug": "craftygirls",
+    "tier": "experimental",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Tart Workshop",
+    "date_added": "2011-01-06",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "CraftyGirls-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "CraftyGirls-Regular.woff2",
+        "bytes": 37388,
+        "sha256": "c186a7a82358fe3c7367deb02684487f8e884fac04966ee80ecd91e17c124f80",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/craftygirls"
+  },
+  {
+    "requested_name": "Edu TAS Beginner",
+    "official_name": "Edu TAS Beginner",
+    "slug": "edutasbeginner",
+    "tier": "experimental",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Tina Anderson, Corey Anderson",
+    "date_added": "2022-06-10",
+    "latin_ext": false,
+    "spanish_verified": false,
+    "spanish_missing": "ÁÉÍÑÓÚÜáéíñóúü",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "EduTASBeginner[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "EduTASBeginner-wght-.woff2",
+        "bytes": 16704,
+        "sha256": "0fba77b802ca92520f1bd2371a77f38342b111382b9d8b6bedb34a7290400e0b",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/edutasbeginner"
+  },
+  {
+    "requested_name": "Just Another Hand",
+    "official_name": "Just Another Hand",
+    "slug": "justanotherhand",
+    "tier": "experimental",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Astigmatic",
+    "date_added": "2010-12-20",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "JustAnotherHand-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "JustAnotherHand-Regular.woff2",
+        "bytes": 44816,
+        "sha256": "e707c6916bc09b842dc22a471f5f86e92f19011657e7be2e48a4c2f4c40b1cce",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/justanotherhand"
+  },
+  {
+    "requested_name": "Over The Rainbow",
+    "official_name": "Over the Rainbow",
+    "slug": "overtherainbow",
+    "tier": "experimental",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-04-27",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "OvertheRainbow.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "OvertheRainbow.woff2",
+        "bytes": 22268,
+        "sha256": "c4a3937e82ad21457ba0b6a7ea720480811f5c33d5244a0c44300a03ef0da980",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/overtherainbow"
+  },
+  {
+    "requested_name": "Basic",
+    "official_name": "Basic",
+    "slug": "basic",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Magnus Gaarde",
+    "date_added": "2011-12-15",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Basic-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Basic-Regular.woff2",
+        "bytes": 23844,
+        "sha256": "4096227b4e436b52282c162ac9e768cc4dcc3726542dffc6df2990bb86c19fb2",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/basic"
+  },
+  {
+    "requested_name": "Belanosima",
+    "official_name": "Belanosima",
+    "slug": "belanosima",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "The DocRepair Project, Santiago Orozco",
+    "date_added": "2023-06-14",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Belanosima-Bold.ttf",
+      "Belanosima-Regular.ttf",
+      "Belanosima-SemiBold.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Belanosima-Bold.woff2",
+        "bytes": 20232,
+        "sha256": "e07800406adff96e6f5eeb0fc43fd3b282d80cc861804130b0ef324782c3d6d9",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Belanosima-Regular.woff2",
+        "bytes": 18588,
+        "sha256": "b8c9025a6176fcbd6cda0484513e66f58844689bba2abc7bfafa15a769e9a54e",
+        "style": "normal",
+        "weight": "400"
+      },
+      {
+        "filename": "Belanosima-SemiBold.woff2",
+        "bytes": 18936,
+        "sha256": "9122c8008953ffd18e17e3590da9158887d17968120e81c42e02edfbac42ddd7",
+        "style": "normal",
+        "weight": "600"
+      }
+    ],
+    "source_path": "ofl/belanosima"
+  },
+  {
+    "requested_name": "Lato",
+    "official_name": "Lato",
+    "slug": "lato",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Łukasz Dziedzic",
+    "date_added": "2010-12-15",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Lato-Black.ttf",
+      "Lato-BlackItalic.ttf",
+      "Lato-Bold.ttf",
+      "Lato-BoldItalic.ttf",
+      "Lato-ExtraBold.ttf",
+      "Lato-ExtraBoldItalic.ttf",
+      "Lato-ExtraLight.ttf",
+      "Lato-ExtraLightItalic.ttf",
+      "Lato-Italic.ttf",
+      "Lato-Light.ttf",
+      "Lato-LightItalic.ttf",
+      "Lato-Medium.ttf",
+      "Lato-MediumItalic.ttf",
+      "Lato-Regular.ttf",
+      "Lato-SemiBold.ttf",
+      "Lato-SemiBoldItalic.ttf",
+      "Lato-Thin.ttf",
+      "Lato-ThinItalic.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Lato-Black.woff2",
+        "bytes": 85216,
+        "sha256": "e6d8c573bd91b7763d6f4c44f7d5553975066c20a23f23b6d0b7724dedb413d4",
+        "style": "normal",
+        "weight": "900"
+      },
+      {
+        "filename": "Lato-BlackItalic.woff2",
+        "bytes": 89788,
+        "sha256": "4f0e6f409f7f5c5a3d83b151fb87e7516cb1821afe63f908239e49667304f60d",
+        "style": "italic",
+        "weight": "900"
+      },
+      {
+        "filename": "Lato-Bold.woff2",
+        "bytes": 84700,
+        "sha256": "4ada68fcb960201bdda25b3e7f0cc3fce016a42eabbbe9ffa1a1649f97ce4562",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Lato-BoldItalic.woff2",
+        "bytes": 89824,
+        "sha256": "cb14e1e468ecc5feeecf673f7af13506d7d999593ca4e27f56aa3e6d01a68459",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "Lato-ExtraBold.woff2",
+        "bytes": 80668,
+        "sha256": "564fe5a4b5ba8dfaac87cae44787095a297753947047b985bdd5e2540017f135",
+        "style": "normal",
+        "weight": "800"
+      },
+      {
+        "filename": "Lato-ExtraBoldItalic.woff2",
+        "bytes": 87380,
+        "sha256": "f459dd74b36dea549fd07fb6c55e8d6574e8ec3ab7c92598b73f78958766a73d",
+        "style": "italic",
+        "weight": "800"
+      },
+      {
+        "filename": "Lato-ExtraLight.woff2",
+        "bytes": 82016,
+        "sha256": "e64ad97955bd40809b6a65ea5e81cf829d481ac15e0430cb60f8ca477799198e",
+        "style": "normal",
+        "weight": "275"
+      },
+      {
+        "filename": "Lato-ExtraLightItalic.woff2",
+        "bytes": 84800,
+        "sha256": "f7c1aa65c1f8fab1a09776835312b8a1215e8d87b5f26f0dbe88459dc530c7ef",
+        "style": "italic",
+        "weight": "275"
+      },
+      {
+        "filename": "Lato-Italic.woff2",
+        "bytes": 91880,
+        "sha256": "0bffb39d0f928a290b47e17dc27d739f5c49f6ed8ffbc232b74dc564b4824bce",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "Lato-Light.woff2",
+        "bytes": 85824,
+        "sha256": "4114716848992394320ab01d07b7952a85f93bea08c383c048bdd06642c19717",
+        "style": "normal",
+        "weight": "300"
+      },
+      {
+        "filename": "Lato-LightItalic.woff2",
+        "bytes": 87408,
+        "sha256": "b579a311a53b6a67d002055b6fa9333d2f2b60233ef2daa72a54ee67b434518b",
+        "style": "italic",
+        "weight": "300"
+      },
+      {
+        "filename": "Lato-Medium.woff2",
+        "bytes": 83208,
+        "sha256": "0c074eaeda83fa4a8353a7218e196fba16fa2e521f17daa05d1fe8c8092f8647",
+        "style": "normal",
+        "weight": "500"
+      },
+      {
+        "filename": "Lato-MediumItalic.woff2",
+        "bytes": 87872,
+        "sha256": "f6d25fb54bb9f20fe4870f624a7098edc8cdecd36fd1417125256cb080d70f8a",
+        "style": "italic",
+        "weight": "500"
+      },
+      {
+        "filename": "Lato-Regular.woff2",
+        "bytes": 86616,
+        "sha256": "c0a5556c386759f0a05a22be27f34cbdfd6c65d41a3ce236937ab2b61fbac0cb",
+        "style": "normal",
+        "weight": "400"
+      },
+      {
+        "filename": "Lato-SemiBold.woff2",
+        "bytes": 87616,
+        "sha256": "28ea547bb31ea63132dd0f12c8c3ac56ab23647cbebb858c3ed2074aecd03f7b",
+        "style": "normal",
+        "weight": "600"
+      },
+      {
+        "filename": "Lato-SemiBoldItalic.woff2",
+        "bytes": 90464,
+        "sha256": "520e28322a53cb3549d408c107b2c679317dc945db72199b2f86ed08664d0490",
+        "style": "italic",
+        "weight": "600"
+      },
+      {
+        "filename": "Lato-Thin.woff2",
+        "bytes": 72716,
+        "sha256": "982b2aa5a29ecb45a945579553bc5db8333a3699cdd8b83a4b8414d6427680a5",
+        "style": "normal",
+        "weight": "250"
+      },
+      {
+        "filename": "Lato-ThinItalic.woff2",
+        "bytes": 76868,
+        "sha256": "756a8cd12a00dcd394d17724e632e5b62f16221d0f478c236eb8cd43b0abe192",
+        "style": "italic",
+        "weight": "250"
+      }
+    ],
+    "source_path": "ofl/lato"
+  },
+  {
+    "requested_name": "Nobile",
+    "official_name": "Nobile",
+    "slug": "nobile",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Vernon Adams",
+    "date_added": "2010-05-10",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Nobile-Bold.ttf",
+      "Nobile-BoldItalic.ttf",
+      "Nobile-Italic.ttf",
+      "Nobile-Medium.ttf",
+      "Nobile-MediumItalic.ttf",
+      "Nobile-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Nobile-Bold.woff2",
+        "bytes": 22212,
+        "sha256": "d64f6eeefa7de4bdb135cf4efb4500f7111f7360c6bef6286ceb3054bc236283",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Nobile-BoldItalic.woff2",
+        "bytes": 28448,
+        "sha256": "5e2608d7aacd96cc2d4fa45e3c97b606af21555327efe2b61c868bae4dfe6f32",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "Nobile-Italic.woff2",
+        "bytes": 28484,
+        "sha256": "5eb1ec6db7f25fd3aed0dddae47ce906833b32bbc5743e8a0a918adc0fe71af6",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "Nobile-Medium.woff2",
+        "bytes": 24416,
+        "sha256": "590aab424a3fd5799f97ec3a0a70704bc86834fc459e4e1811aa360a886330bf",
+        "style": "normal",
+        "weight": "500"
+      },
+      {
+        "filename": "Nobile-MediumItalic.woff2",
+        "bytes": 28924,
+        "sha256": "b2f2ed5cfbd31087300a9d781424639d27a374e28adfbcc42f8441ec4c375526",
+        "style": "italic",
+        "weight": "500"
+      },
+      {
+        "filename": "Nobile-Regular.woff2",
+        "bytes": 23296,
+        "sha256": "4796098f1b7231c382ce082157b28ca537b5f9b214b437a931fb3494b573d6d6",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/nobile"
+  },
+  {
+    "requested_name": "Open Sans",
+    "official_name": "Open Sans",
+    "slug": "opensans",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Steve Matteson",
+    "date_added": "2011-02-02",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "OpenSans-Italic[wdth,wght].ttf",
+      "OpenSans[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "OpenSans-Italic-wdth-wght-.woff2",
+        "bytes": 134740,
+        "sha256": "2a51e24f16e76605cbf62b78a32102b3794fa69da1ef4367fbb2e86388d06ca3",
+        "style": "italic",
+        "weight": "300 800"
+      },
+      {
+        "filename": "OpenSans-wdth-wght-.woff2",
+        "bytes": 120080,
+        "sha256": "a451c9ed7acacd90f9ab7a61526beb50bfd684113b5a71dce2bdd2ae4ade352a",
+        "style": "normal",
+        "weight": "300 800"
+      }
+    ],
+    "source_path": "ofl/opensans"
+  },
+  {
+    "requested_name": "Roboto",
+    "official_name": "Roboto",
+    "slug": "roboto",
+    "tier": "experimental",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Christian Robertson, ParaType, Font Bureau",
+    "date_added": "2013-01-09",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "Roboto-Italic[wdth,wght].ttf",
+      "Roboto[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Roboto-Italic-wdth-wght-.woff2",
+        "bytes": 123184,
+        "sha256": "23e5c86617413bd1b48c6afbef083d35c454c5fec7f006e2cfe7a6433deb57b4",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Roboto-wdth-wght-.woff2",
+        "bytes": 107364,
+        "sha256": "6e1503514902f4b662944287897d9cc592759f12b65972399bf34d814f962e18",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/roboto"
+  },
+  {
+    "requested_name": "Amaranth",
+    "official_name": "Amaranth",
+    "slug": "amaranth",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Gesine Todt",
+    "date_added": "2011-05-04",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Amaranth-Bold.ttf",
+      "Amaranth-BoldItalic.ttf",
+      "Amaranth-Italic.ttf",
+      "Amaranth-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Amaranth-Bold.woff2",
+        "bytes": 22888,
+        "sha256": "786ee3f60e205b56f0ae5b43a40dd053ee5794db5583705bb90c435efd881c53",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Amaranth-BoldItalic.woff2",
+        "bytes": 27652,
+        "sha256": "e5d2e278bf5382273eaf35125e70b01f5b8e609050d5eaa2584f8b944d236de4",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "Amaranth-Italic.woff2",
+        "bytes": 30380,
+        "sha256": "a975bd80d083334344d39d9d76f77bba7398cfbe9d7f2cd25ec45641aa75b0c5",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "Amaranth-Regular.woff2",
+        "bytes": 25920,
+        "sha256": "a80b146e516637b9fce132ff63f8ed32ff9b46f1a56d5b6e1e25d9f3d4641524",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/amaranth"
+  },
+  {
+    "requested_name": "Cambo",
+    "official_name": "Cambo",
+    "slug": "cambo",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "HT Fonts, Carolina Giovagnoli, Andres Torresi",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Cambo-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Cambo-Regular.woff2",
+        "bytes": 10148,
+        "sha256": "90224cbc0c69ed802b953da30b8383e8f4bacd7c9efca5527b097802705a9086",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/cambo"
+  },
+  {
+    "requested_name": "Domine",
+    "official_name": "Domine",
+    "slug": "domine",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2012-11-30",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Domine[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Domine-wght-.woff2",
+        "bytes": 38436,
+        "sha256": "61692a9ee0367fbc5e2ebbcf0748cd706a493afd46ff2d6daa53e5d5a2d77d12",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/domine"
+  },
+  {
+    "requested_name": "Headland One",
+    "official_name": "Headland One",
+    "slug": "headlandone",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Gary Lonergan",
+    "date_added": "2012-05-09",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "HeadlandOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "HeadlandOne-Regular.woff2",
+        "bytes": 35540,
+        "sha256": "bd154eda11bc77ab7c989a2d17616275c57d44640677f42e2b1ace477f5b3dc5",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/headlandone"
+  },
+  {
+    "requested_name": "Merriweather",
+    "official_name": "Merriweather",
+    "slug": "merriweather",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Sorkin Type",
+    "date_added": "2011-05-11",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "opsz",
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "Merriweather-Italic[opsz,wdth,wght].ttf",
+      "Merriweather[opsz,wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Merriweather-Italic-opsz-wdth-wght-.woff2",
+        "bytes": 1314640,
+        "sha256": "216dcafcc1c958096c68590ad3ffa3cb83f5f4b970359ff2f90d87a821fe4915",
+        "style": "italic",
+        "weight": "300 900"
+      },
+      {
+        "filename": "Merriweather-opsz-wdth-wght-.woff2",
+        "bytes": 1326568,
+        "sha256": "306981b573a8292e8406faf3cedaf7ae064c2cc646c17f5f91dd1bee5c2e0a20",
+        "style": "normal",
+        "weight": "300 900"
+      }
+    ],
+    "source_path": "ofl/merriweather"
+  },
+  {
+    "requested_name": "Overlock",
+    "official_name": "Overlock",
+    "slug": "overlock",
+    "tier": "experimental",
+    "limen_category": "texto-clasico",
+    "allowed_roles": "titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Dario Manuel Muhafara",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Overlock-Black.ttf",
+      "Overlock-BlackItalic.ttf",
+      "Overlock-Bold.ttf",
+      "Overlock-BoldItalic.ttf",
+      "Overlock-Italic.ttf",
+      "Overlock-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Overlock-Black.woff2",
+        "bytes": 12136,
+        "sha256": "43484dfb69fa1ed95a241fbcac407a1d9f13c33482cefd48a4a2230b33ff6866",
+        "style": "normal",
+        "weight": "900"
+      },
+      {
+        "filename": "Overlock-BlackItalic.woff2",
+        "bytes": 12480,
+        "sha256": "31a55a63001f4145ea4adbf02a2daaeb87bfb0181896d5aa8f75c49a5c86cbc3",
+        "style": "italic",
+        "weight": "900"
+      },
+      {
+        "filename": "Overlock-Bold.woff2",
+        "bytes": 12152,
+        "sha256": "414f684dd2b9adf298b3cf5b50db30a944e05b450038785fb704580d4f2f8534",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Overlock-BoldItalic.woff2",
+        "bytes": 12860,
+        "sha256": "12d6442c07bfb74b57b18ee773f65b6799d0b05e5963707a74190aac2592622b",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "Overlock-Italic.woff2",
+        "bytes": 12292,
+        "sha256": "4440d852a0cb09d5d35d5c4a59cf136c8673344e28c7a3846aaa3c563b84dde6",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "Overlock-Regular.woff2",
+        "bytes": 11620,
+        "sha256": "7f52f90ae7a529f63b400ee9bd26bc61ff86d19f1c0bb245b7bcf79c21869c39",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/overlock"
+  },
+  {
+    "requested_name": "Risque",
+    "official_name": "Risque",
+    "slug": "risque",
+    "tier": "experimental",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Astigmatic",
+    "date_added": "2012-11-11",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Risque-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Risque-Regular.woff2",
+        "bytes": 24076,
+        "sha256": "16f7b653ad446da952ed19499420876590e70e603ac1a038a7594b400af39372",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/risque"
+  },
+  {
+    "requested_name": "Alex Brush",
+    "official_name": "Alex Brush",
+    "slug": "alexbrush",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2011-12-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "AlexBrush-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "AlexBrush-Regular.woff2",
+        "bytes": 40800,
+        "sha256": "f7de2c04d5eb7f78a7885ec42f5a6808fc7d78c6f27ecb6b5e8a6799bf3b3901",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/alexbrush"
+  },
+  {
+    "requested_name": "Allura",
+    "official_name": "Allura",
+    "slug": "allura",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2012-02-08",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Allura-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Allura-Regular.woff2",
+        "bytes": 74524,
+        "sha256": "cc6d1e0b1af1c284f28bdc3189956ec62cc0b67a13ae7174fe4adde889bfe87d",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/allura"
+  },
+  {
+    "requested_name": "Bonheur Royale",
+    "official_name": "Bonheur Royale",
+    "slug": "bonheurroyale",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": true,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-08-06",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BonheurRoyale-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BonheurRoyale-Regular.woff2",
+        "bytes": 42932,
+        "sha256": "f6fd8d08ba4bd3f4c408484be2cebd018a14916e6d305f8973cedd094119211e",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bonheurroyale"
+  },
+  {
+    "requested_name": "Carattere",
+    "official_name": "Carattere",
+    "slug": "carattere",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": true,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-08-26",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Carattere-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Carattere-Regular.woff2",
+        "bytes": 38260,
+        "sha256": "49652d602514809bf9def3890b1aa026afd399e5d5daa8a33aa53a0f7cc212cd",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/carattere"
+  },
+  {
+    "requested_name": "Euphoria Script",
+    "official_name": "Euphoria Script",
+    "slug": "euphoriascript",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Sabrina Mariela Lopez",
+    "date_added": "2012-02-08",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "EuphoriaScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "EuphoriaScript-Regular.woff2",
+        "bytes": 16240,
+        "sha256": "367d0761e0c37d444655c664ce5c1f5c3d169064a3b9337208c630e1caa28c7d",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/euphoriascript"
+  },
+  {
+    "requested_name": "Mea Culpa",
+    "official_name": "Mea Culpa",
+    "slug": "meaculpa",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-12-02",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "MeaCulpa-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "MeaCulpa-Regular.woff2",
+        "bytes": 51520,
+        "sha256": "20e93fbb24dd0f20a731db81c59ba0548efddeff363476661cfb9fe031e45efb",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/meaculpa"
+  },
+  {
+    "requested_name": "Pinyon Script",
+    "official_name": "Pinyon Script",
+    "slug": "pinyonscript",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Nicole Fally",
+    "date_added": "2011-10-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "PinyonScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PinyonScript-Regular.woff2",
+        "bytes": 50972,
+        "sha256": "4699b0e99ee449e0fb915313b8583feb73582404a3806af1cdda52119daab203",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/pinyonscript"
+  },
+  {
+    "requested_name": "Sacramento",
+    "official_name": "Sacramento",
+    "slug": "sacramento",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Astigmatic",
+    "date_added": "2012-11-01",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Sacramento-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Sacramento-Regular.woff2",
+        "bytes": 27772,
+        "sha256": "64a04e5aaf454ae5b46b567f0453fb7a289c45ac459ce9fe71899d06d2356856",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/sacramento"
+  },
+  {
+    "requested_name": "WindSong",
+    "official_name": "WindSong",
+    "slug": "windsong",
+    "tier": "principal",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-05-28",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "WindSong-Medium.ttf",
+      "WindSong-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "WindSong-Medium.woff2",
+        "bytes": 111544,
+        "sha256": "5451dad455733b5c112d4afee430b2330c1fb825147ae552def4d606acd00d39",
+        "style": "normal",
+        "weight": "500"
+      },
+      {
+        "filename": "WindSong-Regular.woff2",
+        "bytes": 99136,
+        "sha256": "ce0045aa1939fff50d4ec8ba48d940d2050b17df30314f488c577a4e5065a140",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/windsong"
+  },
+  {
+    "requested_name": "Abril Fatface",
+    "official_name": "Abril Fatface",
+    "slug": "abrilfatface",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "TypeTogether",
+    "date_added": "2011-08-31",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "AbrilFatface-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "AbrilFatface-Regular.woff2",
+        "bytes": 18456,
+        "sha256": "a5958b2436c1414d671974a45cbc2048174ad47f05275a2f6398f931454a80bd",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/abrilfatface"
+  },
+  {
+    "requested_name": "Bodoni Moda",
+    "official_name": "Bodoni Moda",
+    "slug": "bodonimoda",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Owen Earl",
+    "date_added": "2020-11-25",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "opsz",
+      "wght"
+    ],
+    "master_files": [
+      "BodoniModa-Italic[opsz,wght].ttf",
+      "BodoniModa[opsz,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BodoniModa-Italic-opsz-wght-.woff2",
+        "bytes": 77936,
+        "sha256": "5f05eb6df4738ada67674c4a159613b9d3bcf28a412a69236efb40401fe4561c",
+        "style": "italic",
+        "weight": "400 900"
+      },
+      {
+        "filename": "BodoniModa-opsz-wght-.woff2",
+        "bytes": 66448,
+        "sha256": "f14329de967467732f878d3687a4e63d7ed82195f0c7a953db4ee54a3689879d",
+        "style": "normal",
+        "weight": "400 900"
+      }
+    ],
+    "source_path": "ofl/bodonimoda"
+  },
+  {
+    "requested_name": "Bona Nova",
+    "official_name": "Bona Nova",
+    "slug": "bonanova",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Capitalics, Mateusz Machalski, Andrzej Heidrich",
+    "date_added": "2021-04-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BonaNova-Bold.ttf",
+      "BonaNova-Italic.ttf",
+      "BonaNova-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BonaNova-Bold.woff2",
+        "bytes": 57016,
+        "sha256": "d4397a20649438504aade58f4b8fb5bbc3b37ad3d3d13008ebfae796e1a62fd1",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "BonaNova-Italic.woff2",
+        "bytes": 66068,
+        "sha256": "f62f75c67a63ca24db745bd20c92ca3d84b7d816ea67643d4084854546ce032a",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "BonaNova-Regular.woff2",
+        "bytes": 57608,
+        "sha256": "95c1ee93a5d1689e495b0b070df23484a9d6a8e0e4266dea6b8ccf2d0d01e14e",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bonanova"
+  },
+  {
+    "requested_name": "Cinzel",
+    "official_name": "Cinzel",
+    "slug": "cinzel",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Natanael Gama",
+    "date_added": "2012-10-24",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Cinzel[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Cinzel-wght-.woff2",
+        "bytes": 43860,
+        "sha256": "c5b39a42a911072a6f8dfd4a8aa493436a4c3d7cf80feabbb4358c200652b788",
+        "style": "normal",
+        "weight": "400 900"
+      }
+    ],
+    "source_path": "ofl/cinzel"
+  },
+  {
+    "requested_name": "Cormorant Garamond",
+    "official_name": "Cormorant Garamond",
+    "slug": "cormorantgaramond",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Christian Thalmann",
+    "date_added": "2017-01-18",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "CormorantGaramond-Italic[wght].ttf",
+      "CormorantGaramond[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "CormorantGaramond-Italic-wght-.woff2",
+        "bytes": 74696,
+        "sha256": "e9deb36cfb5676c8ea4c2cdca0c17648e2e20791561aa0eed6ade424af7f2569",
+        "style": "italic",
+        "weight": "300 700"
+      },
+      {
+        "filename": "CormorantGaramond-wght-.woff2",
+        "bytes": 108148,
+        "sha256": "050c9fa037804ebae666df708304d8f0dbd92c89f72123cb353b64ae7bfdfdef",
+        "style": "normal",
+        "weight": "300 700"
+      }
+    ],
+    "source_path": "ofl/cormorantgaramond"
+  },
+  {
+    "requested_name": "DM Serif Display",
+    "official_name": "DM Serif Display",
+    "slug": "dmserifdisplay",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Colophon Foundry",
+    "date_added": "2019-06-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "DMSerifDisplay-Italic.ttf",
+      "DMSerifDisplay-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "DMSerifDisplay-Italic.woff2",
+        "bytes": 28200,
+        "sha256": "f8d0ac8f2e78d975eb1f1de153f49689df5c9acea7b714a204bce687010d6e30",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "DMSerifDisplay-Regular.woff2",
+        "bytes": 28204,
+        "sha256": "0a818eedc4920d96a3b317bd3afe19201f262948b2d94fc32f87399ebcc09f8b",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/dmserifdisplay"
+  },
+  {
+    "requested_name": "Fraunces",
+    "official_name": "Fraunces",
+    "slug": "fraunces",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Undercase Type, Phaedra Charles, Flavia Zimbardi",
+    "date_added": "2020-10-29",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "SOFT",
+      "WONK",
+      "opsz",
+      "wght"
+    ],
+    "master_files": [
+      "Fraunces-Italic[SOFT,WONK,opsz,wght].ttf",
+      "Fraunces[SOFT,WONK,opsz,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Fraunces-Italic-SOFT-WONK-opsz-wght-.woff2",
+        "bytes": 205532,
+        "sha256": "59aebefb607303dff1bc5ab042f4fb4de6860b0afea2cc8efef402a932c7b28d",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Fraunces-SOFT-WONK-opsz-wght-.woff2",
+        "bytes": 170980,
+        "sha256": "8be4943f437a250c67bf659b2414501177f7efec8d02e70e9d454ef9397414cd",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/fraunces"
+  },
+  {
+    "requested_name": "Gilda Display",
+    "official_name": "Gilda Display",
+    "slug": "gildadisplay",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": true,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Eduardo Tunni",
+    "date_added": "2012-10-31",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "GildaDisplay-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "GildaDisplay-Regular.woff2",
+        "bytes": 23784,
+        "sha256": "91280b8b4257aee9046347ca0971a2f23be318184d7bb754a0fb4e1edb0d1e23",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/gildadisplay"
+  },
+  {
+    "requested_name": "Libre Caslon Display",
+    "official_name": "Libre Caslon Display",
+    "slug": "librecaslondisplay",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": true,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2017-11-30",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "LibreCaslonDisplay-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LibreCaslonDisplay-Regular.woff2",
+        "bytes": 33164,
+        "sha256": "de44998e3baa0c477ce7219adf5293a3deee7529de385c6c0a53f5c17527f625",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/librecaslondisplay"
+  },
+  {
+    "requested_name": "Lora",
+    "official_name": "Lora",
+    "slug": "lora",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Cyreal",
+    "date_added": "2011-07-06",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Lora-Italic[wght].ttf",
+      "Lora[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Lora-Italic-wght-.woff2",
+        "bytes": 50108,
+        "sha256": "9a2bb575ad58d888806824de7983887dc1707418394f8a3bc0df0d6e25e6876f",
+        "style": "italic",
+        "weight": "400 700"
+      },
+      {
+        "filename": "Lora-wght-.woff2",
+        "bytes": 47100,
+        "sha256": "075264413671c788e3d3342dcdf7b8ab0bd5c4ecb34c48d6ef0aadca7cc9c116",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/lora"
+  },
+  {
+    "requested_name": "Ovo",
+    "official_name": "Ovo",
+    "slug": "ovo",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Nicole Fally",
+    "date_added": "2011-07-20",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Ovo-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Ovo-Regular.woff2",
+        "bytes": 16648,
+        "sha256": "9bcf68d5c4d71e4d36427865128792b8da9981eb11a30e0fa36ce334886d777d",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/ovo"
+  },
+  {
+    "requested_name": "Playfair Display",
+    "official_name": "Playfair Display",
+    "slug": "playfairdisplay",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Claus Eggers Sørensen",
+    "date_added": "2011-11-16",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "PlayfairDisplay-Italic[wght].ttf",
+      "PlayfairDisplay[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PlayfairDisplay-Italic-wght-.woff2",
+        "bytes": 66128,
+        "sha256": "bb4d1b7bd592b453f88467fa5304542da360bc63a73aa278af27b2c8c22985bc",
+        "style": "italic",
+        "weight": "400 900"
+      },
+      {
+        "filename": "PlayfairDisplay-wght-.woff2",
+        "bytes": 69084,
+        "sha256": "e9586d4571639f7d3d5bff3c251b21bdb0c7c7f7e68b8bded88814d9f126d1b7",
+        "style": "normal",
+        "weight": "400 900"
+      }
+    ],
+    "source_path": "ofl/playfairdisplay"
+  },
+  {
+    "requested_name": "Prata",
+    "official_name": "Prata",
+    "slug": "prata",
+    "tier": "principal",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": false,
+    "google_category": "SERIF",
+    "license": "OFL",
+    "designer": "Cyreal",
+    "date_added": "2011-09-07",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Prata-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Prata-Regular.woff2",
+        "bytes": 20448,
+        "sha256": "cefc908652c48cae98e6f714b515cafa98be006a443d4fd877f5a2204475a309",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/prata"
+  },
+  {
+    "requested_name": "Calistoga",
+    "official_name": "Calistoga",
+    "slug": "calistoga",
+    "tier": "principal",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Yvonne Schüttler, Sorkin Type, Eben Sorkin",
+    "date_added": "2019-11-04",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Calistoga-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Calistoga-Regular.woff2",
+        "bytes": 78960,
+        "sha256": "70e35ef666a18c497ec7baba04183fba286a6494b592a6d3abda3eeefde184c7",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/calistoga"
+  },
+  {
+    "requested_name": "Bad Script",
+    "official_name": "Bad Script",
+    "slug": "badscript",
+    "tier": "principal",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Gaslight",
+    "date_added": "2011-12-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BadScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BadScript-Regular.woff2",
+        "bytes": 42332,
+        "sha256": "c11eb99896df151f21b7db739c03606b4cc570a70650a3317d0938e48b652a94",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/badscript"
+  },
+  {
+    "requested_name": "Beth Ellen",
+    "official_name": "Beth Ellen",
+    "slug": "bethellen",
+    "tier": "principal",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Rob Jelinski, Alyson Fraser Diaz",
+    "date_added": "2019-05-10",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BethEllen-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BethEllen-Regular.woff2",
+        "bytes": 62772,
+        "sha256": "0296ef7bc3ff3f78973f47183ffd4eb0d75396895adc85d30a8020dedc590f2a",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bethellen"
+  },
+  {
+    "requested_name": "Caveat",
+    "official_name": "Caveat",
+    "slug": "caveat",
+    "tier": "principal",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2015-09-23",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Caveat[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Caveat-wght-.woff2",
+        "bytes": 83164,
+        "sha256": "77aba3bdb17a2297d07d015382af6ce3cf8de9adfd53f6e2e09f2c3e9cf7ea9f",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/caveat"
+  },
+  {
+    "requested_name": "Kalam",
+    "official_name": "Kalam",
+    "slug": "kalam",
+    "tier": "principal",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Indian Type Foundry",
+    "date_added": "2014-10-17",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Kalam-Bold.ttf",
+      "Kalam-Light.ttf",
+      "Kalam-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Kalam-Bold.woff2",
+        "bytes": 28000,
+        "sha256": "f6479911b3b9cccd08a4909a49d67d2e119f976fca296080f7951b3db0003801",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Kalam-Light.woff2",
+        "bytes": 26848,
+        "sha256": "dc253dc64ce519da79240f67d85104f0dbdc67b8df736612acbf7bc8191d26bc",
+        "style": "normal",
+        "weight": "300"
+      },
+      {
+        "filename": "Kalam-Regular.woff2",
+        "bytes": 28464,
+        "sha256": "c8badfda492cfa176043cd154543c73132184c617b867ffeebf7d9c32a6f7269",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/kalam"
+  },
+  {
+    "requested_name": "Instrument Sans",
+    "official_name": "Instrument Sans",
+    "slug": "instrumentsans",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Rodrigo Fuenzalida, Jordan Egstad",
+    "date_added": "2023-04-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "InstrumentSans-Italic[wdth,wght].ttf",
+      "InstrumentSans[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "InstrumentSans-Italic-wdth-wght-.woff2",
+        "bytes": 88956,
+        "sha256": "068d93183bd4f3b47ad65428e53589f20fe97446440c881b23091ca41648b759",
+        "style": "italic",
+        "weight": "400 700"
+      },
+      {
+        "filename": "InstrumentSans-wdth-wght-.woff2",
+        "bytes": 83804,
+        "sha256": "438108cae7ae569b2f67420093d912f5ff4b383ff8037fe27a18ee72e87094e2",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/instrumentsans"
+  },
+  {
+    "requested_name": "Inter",
+    "official_name": "Inter",
+    "slug": "inter",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Rasmus Andersson",
+    "date_added": "2020-01-24",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "opsz",
+      "wght"
+    ],
+    "master_files": [
+      "Inter-Italic[opsz,wght].ttf",
+      "Inter[opsz,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Inter-Italic-opsz-wght-.woff2",
+        "bytes": 180960,
+        "sha256": "2eb47731acdbb7b40324d6962ac6b31aa3515b4984c3999b3b919a3ae849a8f1",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Inter-opsz-wght-.woff2",
+        "bytes": 167180,
+        "sha256": "1481e9fec95a86eb820af114612f566876adf5663137c851fcd580e45276691f",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/inter"
+  },
+  {
+    "requested_name": "Josefin Sans",
+    "official_name": "Josefin Sans",
+    "slug": "josefinsans",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": true,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Santiago Orozco",
+    "date_added": "2010-11-17",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "JosefinSans-Italic[wght].ttf",
+      "JosefinSans[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "JosefinSans-Italic-wght-.woff2",
+        "bytes": 41628,
+        "sha256": "897338be0b88dd3ea5bd3bc9e4076ded859959f009430c2f09f1f1075ca13e32",
+        "style": "italic",
+        "weight": "100 700"
+      },
+      {
+        "filename": "JosefinSans-wght-.woff2",
+        "bytes": 39036,
+        "sha256": "75bb3fbfa68838eed2adc5fe60f22fe2a9068eaaa41a762d9c35149fb81d25c9",
+        "style": "normal",
+        "weight": "100 700"
+      }
+    ],
+    "source_path": "ofl/josefinsans"
+  },
+  {
+    "requested_name": "Jost",
+    "official_name": "Jost",
+    "slug": "jost",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Owen Earl",
+    "date_added": "2020-02-11",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Jost-Italic[wght].ttf",
+      "Jost[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Jost-Italic-wght-.woff2",
+        "bytes": 44080,
+        "sha256": "41094c3fbd80fbf8526d557cc0c0f8c126123c80439ea2273c2850a795d91a78",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Jost-wght-.woff2",
+        "bytes": 37340,
+        "sha256": "fa9fac268f45ccc67eefd380323ee8e1f04fee426e469bb55d6d26864277275f",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/jost"
+  },
+  {
+    "requested_name": "League Spartan",
+    "official_name": "League Spartan",
+    "slug": "leaguespartan",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": true,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Matt Bailey, Tyler Finck",
+    "date_added": "2021-12-17",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "LeagueSpartan[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LeagueSpartan-wght-.woff2",
+        "bytes": 32852,
+        "sha256": "aa5921e436dd5a1a411c51ba142dd9692fd6941dd2922879b75eb8859a57e512",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/leaguespartan"
+  },
+  {
+    "requested_name": "Manrope",
+    "official_name": "Manrope",
+    "slug": "manrope",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": true,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Mikhail Sharanda",
+    "date_added": "2019-10-03",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Manrope[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Manrope-wght-.woff2",
+        "bytes": 35604,
+        "sha256": "b34397fef8fec311286db6406d4c2b5d7065153ea81a185cf09778bbc9560e92",
+        "style": "normal",
+        "weight": "200 800"
+      }
+    ],
+    "source_path": "ofl/manrope"
+  },
+  {
+    "requested_name": "Montserrat",
+    "official_name": "Montserrat",
+    "slug": "montserrat",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Julieta Ulanovsky, Sol Matas, Juan Pablo del Peral, Jacques Le Bailly",
+    "date_added": "2011-12-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Montserrat-Italic[wght].ttf",
+      "Montserrat[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Montserrat-Italic-wght-.woff2",
+        "bytes": 129320,
+        "sha256": "f69b6132a71def6532529e774f78128d90a300e02c5ecbf01b302e930ab1a983",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Montserrat-wght-.woff2",
+        "bytes": 118300,
+        "sha256": "6268f80df6bedcfe3b9a5d5e7bfbc943f00aeba66263b1404e7cf306c8a9f1e1",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/montserrat"
+  },
+  {
+    "requested_name": "Nunito",
+    "official_name": "Nunito",
+    "slug": "nunito",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Vernon Adams, Cyreal, Jacques Le Bailly",
+    "date_added": "2012-08-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Nunito-Italic[wght].ttf",
+      "Nunito[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Nunito-Italic-wght-.woff2",
+        "bytes": 61220,
+        "sha256": "992a6e7d5c528c9887b81fc0226a41e632dd1bd53e30bc3a6367e5ea7298cad8",
+        "style": "italic",
+        "weight": "200 1000"
+      },
+      {
+        "filename": "Nunito-wght-.woff2",
+        "bytes": 56956,
+        "sha256": "d902c73189f3469842a0accbb99e7f2af4f77b185d1f64b7d65be838313da035",
+        "style": "normal",
+        "weight": "200 1000"
+      }
+    ],
+    "source_path": "ofl/nunito"
+  },
+  {
+    "requested_name": "Poppins",
+    "official_name": "Poppins",
+    "slug": "poppins",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Indian Type Foundry, Jonny Pinhorn, Ninad Kale",
+    "date_added": "2015-06-03",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Poppins-Black.ttf",
+      "Poppins-BlackItalic.ttf",
+      "Poppins-Bold.ttf",
+      "Poppins-BoldItalic.ttf",
+      "Poppins-ExtraBold.ttf",
+      "Poppins-ExtraBoldItalic.ttf",
+      "Poppins-ExtraLight.ttf",
+      "Poppins-ExtraLightItalic.ttf",
+      "Poppins-Italic.ttf",
+      "Poppins-Light.ttf",
+      "Poppins-LightItalic.ttf",
+      "Poppins-Medium.ttf",
+      "Poppins-MediumItalic.ttf",
+      "Poppins-Regular.ttf",
+      "Poppins-SemiBold.ttf",
+      "Poppins-SemiBoldItalic.ttf",
+      "Poppins-Thin.ttf",
+      "Poppins-ThinItalic.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Poppins-Black.woff2",
+        "bytes": 11280,
+        "sha256": "5d84fd23bf0c61c45ad408f22440a75d77a29cccf01886e8e6eed5992a033907",
+        "style": "normal",
+        "weight": "900"
+      },
+      {
+        "filename": "Poppins-BlackItalic.woff2",
+        "bytes": 12308,
+        "sha256": "1591ea86fe860a9e66ed28c14e1876fb9dd7cd99f4d619afc017401ba3298424",
+        "style": "italic",
+        "weight": "900"
+      },
+      {
+        "filename": "Poppins-Bold.woff2",
+        "bytes": 11556,
+        "sha256": "ef8b2952895c10cf3e1acdd0e9f385b4e10c4de03693223c70a5647a51f98b55",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Poppins-BoldItalic.woff2",
+        "bytes": 12600,
+        "sha256": "11ad55a0343842b4862e4f3dc604f5d3351a0bacd5572bc0c37eb53760dcc841",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "Poppins-ExtraBold.woff2",
+        "bytes": 11680,
+        "sha256": "d1a66595aaeedfbd47ecdd0383f4b0f838c7a87a03d150a4c0f1e63ae350380d",
+        "style": "normal",
+        "weight": "800"
+      },
+      {
+        "filename": "Poppins-ExtraBoldItalic.woff2",
+        "bytes": 12680,
+        "sha256": "5d9c36e6d55c749c000071a72da0676d8a0bb9444bc1fe62514e55c29745346e",
+        "style": "italic",
+        "weight": "800"
+      },
+      {
+        "filename": "Poppins-ExtraLight.woff2",
+        "bytes": 11668,
+        "sha256": "86f52c7accc1836f7b14604734482f7590673c20724e52e4c38f24162412eaaa",
+        "style": "normal",
+        "weight": "275"
+      },
+      {
+        "filename": "Poppins-ExtraLightItalic.woff2",
+        "bytes": 12684,
+        "sha256": "fd0da8c2b7b9b9021bf318bbc6102970af9dbf2d03ae8e7920fcf5974c57bce4",
+        "style": "italic",
+        "weight": "275"
+      },
+      {
+        "filename": "Poppins-Italic.woff2",
+        "bytes": 12668,
+        "sha256": "b8a50cf00b75390f788769230a931925ea5e97fa09936472a83c7849561a1bd7",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "Poppins-Light.woff2",
+        "bytes": 11632,
+        "sha256": "e15295f011344087cecee97776630d787e5ebd66f7eb4aa267d49857dc0bd11d",
+        "style": "normal",
+        "weight": "300"
+      },
+      {
+        "filename": "Poppins-LightItalic.woff2",
+        "bytes": 12720,
+        "sha256": "e65009929e8eb2b4dd0dae6de75d5bba0fd3eec4e268b55a388baba9839f7e82",
+        "style": "italic",
+        "weight": "300"
+      },
+      {
+        "filename": "Poppins-Medium.woff2",
+        "bytes": 11484,
+        "sha256": "76e95d62469f731f95eb213eaf8a270c12967b7188b60fc8b92fa862bc3eb85b",
+        "style": "normal",
+        "weight": "500"
+      },
+      {
+        "filename": "Poppins-MediumItalic.woff2",
+        "bytes": 12404,
+        "sha256": "514e9cb9b73bc192f9ff6270c681796e54d0259af0ace239d2b98907cb34049d",
+        "style": "italic",
+        "weight": "500"
+      },
+      {
+        "filename": "Poppins-Regular.woff2",
+        "bytes": 11744,
+        "sha256": "1541495623febf3a0e8474935e5e6ea303c3a46277ef8d082e6f1a9ec0c34f51",
+        "style": "normal",
+        "weight": "400"
+      },
+      {
+        "filename": "Poppins-SemiBold.woff2",
+        "bytes": 11848,
+        "sha256": "baba9d7e5b56debb1c4b3c4769e5cd56c2805e68bf3105af1cd7e9ff8b6b6832",
+        "style": "normal",
+        "weight": "600"
+      },
+      {
+        "filename": "Poppins-SemiBoldItalic.woff2",
+        "bytes": 12780,
+        "sha256": "8de7f7bce7a05cc92d547d8c09654bbfd3091c8e2cb1a83096ec479c7eee1556",
+        "style": "italic",
+        "weight": "600"
+      },
+      {
+        "filename": "Poppins-Thin.woff2",
+        "bytes": 11088,
+        "sha256": "80b1a89ca342158d5153e04225d2e6b76c08da2f7516e10c4b25b5ae9ef6135a",
+        "style": "normal",
+        "weight": "250"
+      },
+      {
+        "filename": "Poppins-ThinItalic.woff2",
+        "bytes": 12244,
+        "sha256": "dbd4f899169d266d903418643a9551db57f72108f21f2078c533a78bd4c5b9e3",
+        "style": "italic",
+        "weight": "250"
+      }
+    ],
+    "source_path": "ofl/poppins"
+  },
+  {
+    "requested_name": "Questrial",
+    "official_name": "Questrial",
+    "slug": "questrial",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Joe Prince, Laura Meseguer",
+    "date_added": "2011-08-10",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Questrial-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Questrial-Regular.woff2",
+        "bytes": 48796,
+        "sha256": "114a56d5c6a307181d80b67334b93694d99aad183a1ab51e42878cdb7656f4d5",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/questrial"
+  },
+  {
+    "requested_name": "Quicksand",
+    "official_name": "Quicksand",
+    "slug": "quicksand",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Andrew Paglinawan",
+    "date_added": "2011-10-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Quicksand[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Quicksand-wght-.woff2",
+        "bytes": 39872,
+        "sha256": "2d378317ea01f0ad5be8278f611cab9313f646fc4071072314e22762751fec8d",
+        "style": "normal",
+        "weight": "300 700"
+      }
+    ],
+    "source_path": "ofl/quicksand"
+  },
+  {
+    "requested_name": "Raleway",
+    "official_name": "Raleway",
+    "slug": "raleway",
+    "tier": "principal",
+    "limen_category": "moderna-funcional",
+    "allowed_roles": "titulo|narrativa|funcional",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida",
+    "date_added": "2012-09-07",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "Raleway-Italic[wght].ttf",
+      "Raleway[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Raleway-Italic-wght-.woff2",
+        "bytes": 86672,
+        "sha256": "4c4e9d2c0ecd17d1104b11f24e85881e640995513d01d7c6c03333d6bf0373c3",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "Raleway-wght-.woff2",
+        "bytes": 81456,
+        "sha256": "6123067cf7cef9c99692873dda3c65cf6360a1d39d4f48e922999cb5dfbdb3ac",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/raleway"
+  },
+  {
+    "requested_name": "Bebas Neue",
+    "official_name": "Bebas Neue",
+    "slug": "bebasneue",
+    "tier": "principal",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Ryoichi Tsunekawa",
+    "date_added": "2019-10-16",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": true,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BebasNeue-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BebasNeue-Regular.woff2",
+        "bytes": 16952,
+        "sha256": "70afb378337ae2bbee5f037d674b456918c2b124c4801b85ed6ae891fde51654",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bebasneue"
+  },
+  {
+    "requested_name": "Dancing Script",
+    "official_name": "Dancing Script",
+    "slug": "dancingscript",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2011-05-18",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "DancingScript[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "DancingScript-wght-.woff2",
+        "bytes": 53436,
+        "sha256": "0eefeb05d1365772b0ce08ee36779cf43135efdc2c11b68b359ef5aac8dc9e86",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/dancingscript"
+  },
+  {
+    "requested_name": "Great Vibes",
+    "official_name": "Great Vibes",
+    "slug": "greatvibes",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2012-03-29",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "GreatVibes-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "GreatVibes-Regular.woff2",
+        "bytes": 91068,
+        "sha256": "b13f34ba8d01aab9db83007c8ef6d0bee80cd05eea9d17503efa4030f04ec00c",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/greatvibes"
+  },
+  {
+    "requested_name": "Lobster",
+    "official_name": "Lobster",
+    "slug": "lobster",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2010-05-17",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Lobster-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Lobster-Regular.woff2",
+        "bytes": 59056,
+        "sha256": "5d8b64662e02e68b45ab56f616b199d6976707988b7a84c05a43bd33bbe26dae",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/lobster"
+  },
+  {
+    "requested_name": "Lobster Two",
+    "official_name": "Lobster Two",
+    "slug": "lobstertwo",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2011-06-21",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "LobsterTwo-Bold.ttf",
+      "LobsterTwo-BoldItalic.ttf",
+      "LobsterTwo-Italic.ttf",
+      "LobsterTwo-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LobsterTwo-Bold.woff2",
+        "bytes": 51692,
+        "sha256": "b85538fa82029e73f5e77e3b054a09b82dfea4e55b4ea0bfeabc7d43011bbc26",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "LobsterTwo-BoldItalic.woff2",
+        "bytes": 49720,
+        "sha256": "99ffce061304d569fc30fded13ab32436a7553f0cb99e1f1b980aa0688e235d8",
+        "style": "italic",
+        "weight": "700"
+      },
+      {
+        "filename": "LobsterTwo-Italic.woff2",
+        "bytes": 49312,
+        "sha256": "5f90de6416acb1dcdbf24677e95b402cc75e9457ff832aff6e9b3d2f2c4c7919",
+        "style": "italic",
+        "weight": "400"
+      },
+      {
+        "filename": "LobsterTwo-Regular.woff2",
+        "bytes": 51244,
+        "sha256": "6d3b7ea234fa1cb9894f1a5a04a620e5c24678e914946a87cf088a6530753bfd",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/lobstertwo"
+  },
+  {
+    "requested_name": "Norican",
+    "official_name": "Norican",
+    "slug": "norican",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Vernon Adams",
+    "date_added": "2012-02-08",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Norican-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Norican-Regular.woff2",
+        "bytes": 37556,
+        "sha256": "b7fdbb2797faa11946b1b4e127de72913ae3bd910dade420015bc7daaa49ac35",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/norican"
+  },
+  {
+    "requested_name": "Oleo Script Swash Caps",
+    "official_name": "Oleo Script Swash Caps",
+    "slug": "oleoscriptswashcaps",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "soytutype fonts",
+    "date_added": "2012-11-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "OleoScriptSwashCaps-Bold.ttf",
+      "OleoScriptSwashCaps-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "OleoScriptSwashCaps-Bold.woff2",
+        "bytes": 15944,
+        "sha256": "5460d44a9d7670cf00f92389ebdbb92ab31c1059344c7ac66a6c773fe928ad6f",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "OleoScriptSwashCaps-Regular.woff2",
+        "bytes": 15676,
+        "sha256": "f7548a5197b80461265036dddf281d9e7ad8cd45a2b08a6ae5c411b21d581306",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/oleoscriptswashcaps"
+  },
+  {
+    "requested_name": "Pacifico",
+    "official_name": "Pacifico",
+    "slug": "pacifico",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Vernon Adams, Jacques Le Bailly, Botjo Nikoltchev, Ani Petrova",
+    "date_added": "2011-03-09",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Pacifico-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Pacifico-Regular.woff2",
+        "bytes": 56240,
+        "sha256": "9ed50c19748c1aeae0450663002cbb84880a19704a9f8b645bced38ddaf87e19",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/pacifico"
+  },
+  {
+    "requested_name": "Satisfy",
+    "official_name": "Satisfy",
+    "slug": "satisfy",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Sideshow",
+    "date_added": "2011-10-12",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Satisfy-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Satisfy-Regular.woff2",
+        "bytes": 22916,
+        "sha256": "dca7a1d92f79a448c6f2e927d9f729e67d29466ca952c730d9ded8eb4422dfb0",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/satisfy"
+  },
+  {
+    "requested_name": "Style Script",
+    "official_name": "Style Script",
+    "slug": "stylescript",
+    "tier": "tematica",
+    "limen_category": "caligrafica-romantica",
+    "allowed_roles": "protagonista|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Robert Leuschke",
+    "date_added": "2021-05-14",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "StyleScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "StyleScript-Regular.woff2",
+        "bytes": 123916,
+        "sha256": "b04830f1ac0b590dd9cd392ddf477f7ba5cad48bd55543c43bb83743838b9024",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/stylescript"
+  },
+  {
+    "requested_name": "Cinzel Decorative",
+    "official_name": "Cinzel Decorative",
+    "slug": "cinzeldecorative",
+    "tier": "tematica",
+    "limen_category": "editorial-elegante",
+    "allowed_roles": "protagonista|titulo|narrativa",
+    "recommended_addition": true,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Natanael Gama",
+    "date_added": "2012-10-05",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "CinzelDecorative-Black.ttf",
+      "CinzelDecorative-Bold.ttf",
+      "CinzelDecorative-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "CinzelDecorative-Black.woff2",
+        "bytes": 19004,
+        "sha256": "6d197cb57c5f924a84579a67f69edd719ca5eb0c303c40247cb629775d1d5e4c",
+        "style": "normal",
+        "weight": "900"
+      },
+      {
+        "filename": "CinzelDecorative-Bold.woff2",
+        "bytes": 20488,
+        "sha256": "9743d1a66222b3293c6e1fdeec48eec2665fd2a82257f5983876de4481183bf0",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "CinzelDecorative-Regular.woff2",
+        "bytes": 18908,
+        "sha256": "21a68d54461d44db0b468971e0d6ebb563230c4102f28d652beb046a1d5117d3",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/cinzeldecorative"
+  },
+  {
+    "requested_name": "Bangers",
+    "official_name": "Bangers",
+    "slug": "bangers",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Vernon Adams",
+    "date_added": "2011-02-09",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Bangers-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Bangers-Regular.woff2",
+        "bytes": 29712,
+        "sha256": "a57e000fe88f526b4906960f5edb66cc01e587edf9c134aa6e35169e2ca4a56f",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bangers"
+  },
+  {
+    "requested_name": "Boogaloo",
+    "official_name": "Boogaloo",
+    "slug": "boogaloo",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "John Vargas Beltrán",
+    "date_added": "2011-12-19",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Boogaloo-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Boogaloo-Regular.woff2",
+        "bytes": 11324,
+        "sha256": "d2b82d7d0dab354e9650c4a278730c6f55c5cb6bad3db696ca7af37e18efbc70",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/boogaloo"
+  },
+  {
+    "requested_name": "Bubblegum Sans",
+    "official_name": "Bubblegum Sans",
+    "slug": "bubblegumsans",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Sudtipos",
+    "date_added": "2011-11-23",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "BubblegumSans-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BubblegumSans-Regular.woff2",
+        "bytes": 14336,
+        "sha256": "452d41bea92350eaba629e0f0ca34cb034fbcbefed0b6b18173f39a15d6eebf6",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/bubblegumsans"
+  },
+  {
+    "requested_name": "Chicle",
+    "official_name": "Chicle",
+    "slug": "chicle",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Sudtipos",
+    "date_added": "2011-11-30",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Chicle-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Chicle-Regular.woff2",
+        "bytes": 14932,
+        "sha256": "ab01d2de94bb61c2fd0df337442d18819b67cff00e091995e2f9494281170248",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/chicle"
+  },
+  {
+    "requested_name": "DynaPuff",
+    "official_name": "DynaPuff",
+    "slug": "dynapuff",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Toshi Omagari, Jennifer Daniel",
+    "date_added": "2022-05-19",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "DynaPuff[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "DynaPuff-wdth-wght-.woff2",
+        "bytes": 70688,
+        "sha256": "ac7f6f8587cbcf2d8f4f4a6b33eace21f10fcdb01dc8c105bc0e5197c13a9344",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/dynapuff"
+  },
+  {
+    "requested_name": "Finger Paint",
+    "official_name": "Finger Paint",
+    "slug": "fingerpaint",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Carrois Apostrophe",
+    "date_added": "2012-09-30",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "FingerPaint-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "FingerPaint-Regular.woff2",
+        "bytes": 55576,
+        "sha256": "e5353e0c15839820d18e1c10d49b50c79a5c3093832dd7baea2243c90ccde558",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/fingerpaint"
+  },
+  {
+    "requested_name": "Playpen Sans",
+    "official_name": "Playpen Sans",
+    "slug": "playpensans",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "TypeTogether, Laura Meseguer, Veronika Burian, José Scaglione, Kostas Bartsokas, Vera Evstafieva, Tom Grace, Yorlmar Campos",
+    "date_added": "2023-09-07",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "PlaypenSans[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PlaypenSans-wght-.woff2",
+        "bytes": 291620,
+        "sha256": "abc27212222727e4acdd3eaad3150bd54708a69cfb53aa42ce64237624450e9f",
+        "style": "normal",
+        "weight": "100 800"
+      }
+    ],
+    "source_path": "ofl/playpensans"
+  },
+  {
+    "requested_name": "Sour Gummy",
+    "official_name": "Sour Gummy",
+    "slug": "sourgummy",
+    "tier": "tematica",
+    "limen_category": "fiesta-juvenil",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Stefie Justprince",
+    "date_added": "2024-09-11",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "SourGummy-Italic[wdth,wght].ttf",
+      "SourGummy[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "SourGummy-Italic-wdth-wght-.woff2",
+        "bytes": 59784,
+        "sha256": "95df04a472c16eefd172f599e04002774d2d7b27c466d68d0341eb3d74319ff3",
+        "style": "italic",
+        "weight": "100 900"
+      },
+      {
+        "filename": "SourGummy-wdth-wght-.woff2",
+        "bytes": 54060,
+        "sha256": "464f835efd55259b7eccd905edc3935eed42589128f2558d2b15bb57f4a52aa7",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/sourgummy"
+  },
+  {
+    "requested_name": "Courgette",
+    "official_name": "Courgette",
+    "slug": "courgette",
+    "tier": "tematica",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Karolina Lach",
+    "date_added": "2012-07-10",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Courgette-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Courgette-Regular.woff2",
+        "bytes": 33452,
+        "sha256": "2e7b0ad7582c681b8b7245e0a2d920bac4afdba66ca6083813f182f4df50b96f",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/courgette"
+  },
+  {
+    "requested_name": "Kaushan Script",
+    "official_name": "Kaushan Script",
+    "slug": "kaushanscript",
+    "tier": "tematica",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Impallari Type",
+    "date_added": "2012-01-25",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "KaushanScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "KaushanScript-Regular.woff2",
+        "bytes": 47896,
+        "sha256": "9d6d204a3caba2975fd347e6f18a2062ddfd5d8f53a6b7c5615a11a7704d693e",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/kaushanscript"
+  },
+  {
+    "requested_name": "Macondo",
+    "official_name": "Macondo",
+    "slug": "macondo",
+    "tier": "tematica",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "John Vargas Beltrán",
+    "date_added": "2012-01-18",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Macondo-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Macondo-Regular.woff2",
+        "bytes": 12424,
+        "sha256": "61007f969242c965fe4d4e8b291e4d302e5d596426b327d0d7d45de1da78425f",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/macondo"
+  },
+  {
+    "requested_name": "Macondo Swash Caps",
+    "official_name": "Macondo Swash Caps",
+    "slug": "macondoswashcaps",
+    "tier": "tematica",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "John Vargas Beltrán",
+    "date_added": "2012-01-18",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "MacondoSwashCaps-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "MacondoSwashCaps-Regular.woff2",
+        "bytes": 12884,
+        "sha256": "8b6cee315595c0eec3c0216378422ec5b812217090c6a62ddde0d01c060775c8",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/macondoswashcaps"
+  },
+  {
+    "requested_name": "Marck Script",
+    "official_name": "Marck Script",
+    "slug": "marckscript",
+    "tier": "tematica",
+    "limen_category": "garden-artesanal",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Denis Masharov",
+    "date_added": "2011-10-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "MarckScript-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "MarckScript-Regular.woff2",
+        "bytes": 18840,
+        "sha256": "3cb4135435874f498b125ff635b0899b300b86db002f9a24eefbab156c139b0c",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/marckscript"
+  },
+  {
+    "requested_name": "Amatic SC",
+    "official_name": "Amatic SC",
+    "slug": "amaticsc",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Vernon Adams, Ben Nathan, Thomas Jockin",
+    "date_added": "2011-10-12",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "AmaticSC-Bold.ttf",
+      "AmaticSC-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "AmaticSC-Bold.woff2",
+        "bytes": 34436,
+        "sha256": "35d6bef0b862521c79ea5f45a43ce4c6170520c679c6d5d6a6c5699853339801",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "AmaticSC-Regular.woff2",
+        "bytes": 35544,
+        "sha256": "d5f60b5d7b182a3f7687499334b09b16a477917f4c5a76a3214e09b9b0bca079",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/amaticsc"
+  },
+  {
+    "requested_name": "Architects Daughter",
+    "official_name": "Architects Daughter",
+    "slug": "architectsdaughter",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-03-09",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "ArchitectsDaughter-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "ArchitectsDaughter-Regular.woff2",
+        "bytes": 15280,
+        "sha256": "589e462591165e63760fd25eccd4a0442f13e1d00549a3331a770b613b9ef26b",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/architectsdaughter"
+  },
+  {
+    "requested_name": "Gloria Hallelujah",
+    "official_name": "Gloria Hallelujah",
+    "slug": "gloriahallelujah",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-07-27",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "GloriaHallelujah.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "GloriaHallelujah.woff2",
+        "bytes": 22236,
+        "sha256": "8c124c56043df2f1dc70a222718dbbee2edbcddfe32f16903d50d4df3fdd368a",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/gloriahallelujah"
+  },
+  {
+    "requested_name": "Handlee",
+    "official_name": "Handlee",
+    "slug": "handlee",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Joe Prince",
+    "date_added": "2011-12-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Handlee-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Handlee-Regular.woff2",
+        "bytes": 15916,
+        "sha256": "e28349307dd687bf738ec2eb633e3eb445048b977b1d712db19b6d69a05f58c0",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/handlee"
+  },
+  {
+    "requested_name": "La Belle Aurore",
+    "official_name": "La Belle Aurore",
+    "slug": "labelleaurore",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-06-08",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "LaBelleAurore.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LaBelleAurore.woff2",
+        "bytes": 21400,
+        "sha256": "cd1cd6b860b96eaf777f4d1d12a6d5a0fcc4a722faccb41a68a947d494c2ac85",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/labelleaurore"
+  },
+  {
+    "requested_name": "Playwrite Cuba",
+    "official_name": "Playwrite CU",
+    "slug": "playwritecu",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "TypeTogether, Veronika Burian, José Scaglione",
+    "date_added": "2024-05-16",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "PlaywriteCU[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PlaywriteCU-wght-.woff2",
+        "bytes": 117884,
+        "sha256": "ab3e364c1169beb05b545056cd2048c49a6e1911dbb9e8b86ca4457000b8ba54",
+        "style": "normal",
+        "weight": "100 400"
+      }
+    ],
+    "source_path": "ofl/playwritecu"
+  },
+  {
+    "requested_name": "Playwrite India",
+    "official_name": "Playwrite IN",
+    "slug": "playwritein",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "TypeTogether, Veronika Burian, José Scaglione",
+    "date_added": "2024-05-16",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wght"
+    ],
+    "master_files": [
+      "PlaywriteIN[wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PlaywriteIN-wght-.woff2",
+        "bytes": 118304,
+        "sha256": "37a2f881d4ff8bc6a9d47e462270c20fb0b6c6a8ba3b1a1848d90fd09002dc09",
+        "style": "normal",
+        "weight": "100 400"
+      }
+    ],
+    "source_path": "ofl/playwritein"
+  },
+  {
+    "requested_name": "Shadows Into Light",
+    "official_name": "Shadows Into Light",
+    "slug": "shadowsintolight",
+    "tier": "tematica",
+    "limen_category": "manuscrita-natural",
+    "allowed_roles": "protagonista|titulo|acento",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "OFL",
+    "designer": "Kimberly Geswein",
+    "date_added": "2011-06-08",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "ShadowsIntoLight.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "ShadowsIntoLight.woff2",
+        "bytes": 19404,
+        "sha256": "7b86aac787f0f625d7bddd9b1fb3feeb6d2809c9a75f8ed1e1c0739d7b8c5c31",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/shadowsintolight"
+  },
+  {
+    "requested_name": "Atomic Age",
+    "official_name": "Atomic Age",
+    "slug": "atomicage",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "James Grieshaber",
+    "date_added": "2011-10-26",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "AtomicAge-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "AtomicAge-Regular.woff2",
+        "bytes": 21716,
+        "sha256": "bc22b5cb83bc0bdce0f99153bcc8cf4358f167382bd2d5eb1341c3569540c8e9",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/atomicage"
+  },
+  {
+    "requested_name": "Bitcount Ink",
+    "official_name": "Bitcount Ink",
+    "slug": "bitcountink",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Petr van Blokland",
+    "date_added": "2025-01-10",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "CRSV",
+      "ELSH",
+      "ELXP",
+      "SZP1",
+      "SZP2",
+      "XPN1",
+      "XPN2",
+      "YPN1",
+      "YPN2",
+      "slnt",
+      "wght"
+    ],
+    "master_files": [
+      "BitcountInk[CRSV,ELSH,ELXP,SZP1,SZP2,XPN1,XPN2,YPN1,YPN2,slnt,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "BitcountInk-CRSV-ELSH-ELXP-SZP1-SZP2-XPN1-XPN2-YPN1-YPN2-slnt-wght-.woff2",
+        "bytes": 45800,
+        "sha256": "297ebe0a7630862a20c1fef35c0a5cc86f67b82d71ed5522aac40f27dfbfdc25",
+        "style": "normal",
+        "weight": "100 900"
+      }
+    ],
+    "source_path": "ofl/bitcountink"
+  },
+  {
+    "requested_name": "Contrail One",
+    "official_name": "Contrail One",
+    "slug": "contrailone",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Riccardo De Franceschi",
+    "date_added": "2011-10-26",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "ContrailOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "ContrailOne-Regular.woff2",
+        "bytes": 11120,
+        "sha256": "3d2c7a2db630390b4495dd3a83de6279f77949c933457c073c5cdf0ed7fb65d3",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/contrailone"
+  },
+  {
+    "requested_name": "Francois One",
+    "official_name": "Francois One",
+    "slug": "francoisone",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Vernon Adams",
+    "date_added": "2011-05-04",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "FrancoisOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "FrancoisOne-Regular.woff2",
+        "bytes": 25064,
+        "sha256": "afb0ec576101e7420e091c89c58f5c463d667dfd510eac9698b06dc4911709dd",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/francoisone"
+  },
+  {
+    "requested_name": "Germania One",
+    "official_name": "Germania One",
+    "slug": "germaniaone",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "John Vargas Beltrán",
+    "date_added": "2012-01-18",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "GermaniaOne-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "GermaniaOne-Regular.woff2",
+        "bytes": 10236,
+        "sha256": "84789a1544499337430339e5d5d85499edf15fb5c40afc9de99adf078f5745f9",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/germaniaone"
+  },
+  {
+    "requested_name": "Londrina Outlet",
+    "official_name": "Londrina Outline",
+    "slug": "londrinaoutline",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Marcelo Magalhães",
+    "date_added": "2012-03-14",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "LondrinaOutline-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LondrinaOutline-Regular.woff2",
+        "bytes": 65516,
+        "sha256": "5f710890bfd17ffae081e7521d7fa022b6bddad7cc6767e87ada382b184d27c3",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/londrinaoutline"
+  },
+  {
+    "requested_name": "Londrina Solid",
+    "official_name": "Londrina Solid",
+    "slug": "londrinasolid",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Marcelo Magalhães",
+    "date_added": "2012-03-14",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "LondrinaSolid-Black.ttf",
+      "LondrinaSolid-Light.ttf",
+      "LondrinaSolid-Regular.ttf",
+      "LondrinaSolid-Thin.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "LondrinaSolid-Black.woff2",
+        "bytes": 33184,
+        "sha256": "665e5ae5bca24dd3151fd47b50008852cbf457776315adbe5270c3b9959c5aca",
+        "style": "normal",
+        "weight": "900"
+      },
+      {
+        "filename": "LondrinaSolid-Light.woff2",
+        "bytes": 33052,
+        "sha256": "183e4f72c50115f504a8378fc2ae271f7da4f30d5024610e36a083bb432387b8",
+        "style": "normal",
+        "weight": "300"
+      },
+      {
+        "filename": "LondrinaSolid-Regular.woff2",
+        "bytes": 31484,
+        "sha256": "fe4e0ecd071a5be7b0ca28bea2d5d9ef683e751c3c9a2ee7060c74e8cf97c238",
+        "style": "normal",
+        "weight": "400"
+      },
+      {
+        "filename": "LondrinaSolid-Thin.woff2",
+        "bytes": 28016,
+        "sha256": "a54666fbf7c394f975d2d694ed677c96f6e07b81d92db9bee968e6967c5b88e7",
+        "style": "normal",
+        "weight": "250"
+      }
+    ],
+    "source_path": "ofl/londrinasolid"
+  },
+  {
+    "requested_name": "Permanent Marker",
+    "official_name": "Permanent Marker",
+    "slug": "permanentmarker",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "HANDWRITING",
+    "license": "APACHE2",
+    "designer": "Font Diner",
+    "date_added": "2011-01-06",
+    "latin_ext": false,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "PermanentMarker-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "PermanentMarker-Regular.woff2",
+        "bytes": 29740,
+        "sha256": "12dd94f08d94bceb54aece180d84dff3938cdce8e6014035873e47120e4db36b",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "apache/permanentmarker"
+  },
+  {
+    "requested_name": "Protest Revolution",
+    "official_name": "Protest Revolution",
+    "slug": "protestrevolution",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Octavio Pardo",
+    "date_added": "2023-12-13",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "ProtestRevolution-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "ProtestRevolution-Regular.woff2",
+        "bytes": 226600,
+        "sha256": "3d65773b84db01e4e04badfcf169eaf61d3cf99459cdc1344419a60b3cb5c839",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/protestrevolution"
+  },
+  {
+    "requested_name": "Skranji",
+    "official_name": "Skranji",
+    "slug": "skranji",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Neapolitan",
+    "date_added": "2012-08-21",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "Skranji-Bold.ttf",
+      "Skranji-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "Skranji-Bold.woff2",
+        "bytes": 69564,
+        "sha256": "03a7c2d2cec057686dec422d00aeaf40c15b7248bf1bfa5fc7e5f8a86ef5eecf",
+        "style": "normal",
+        "weight": "700"
+      },
+      {
+        "filename": "Skranji-Regular.woff2",
+        "bytes": 69172,
+        "sha256": "fb667802c74ef2f5001a3609f931293515a3e40b7ff9b8524de0e2f4e3887f3b",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/skranji"
+  },
+  {
+    "requested_name": "Special Gothic",
+    "official_name": "Special Gothic",
+    "slug": "specialgothic",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "SANS_SERIF",
+    "license": "OFL",
+    "designer": "Alistair McCready",
+    "date_added": "2025-03-06",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": true,
+    "axes": [
+      "wdth",
+      "wght"
+    ],
+    "master_files": [
+      "SpecialGothic[wdth,wght].ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "SpecialGothic-wdth-wght-.woff2",
+        "bytes": 99204,
+        "sha256": "c44e1164a98762c78eb4de07853cd934277e9b24313578861be6eb89f4a4d2d3",
+        "style": "normal",
+        "weight": "400 700"
+      }
+    ],
+    "source_path": "ofl/specialgothic"
+  },
+  {
+    "requested_name": "Vina Sans",
+    "official_name": "Vina Sans",
+    "slug": "vinasans",
+    "tier": "tematica",
+    "limen_category": "urbana-impacto",
+    "allowed_roles": "protagonista|titulo",
+    "recommended_addition": false,
+    "google_category": "DISPLAY",
+    "license": "OFL",
+    "designer": "Nguyen Type",
+    "date_added": "2023-03-16",
+    "latin_ext": true,
+    "spanish_verified": true,
+    "spanish_missing": "",
+    "studio_enabled_initial": false,
+    "variable": false,
+    "axes": [],
+    "master_files": [
+      "VinaSans-Regular.ttf"
+    ],
+    "web_assets": [
+      {
+        "filename": "VinaSans-Regular.woff2",
+        "bytes": 25588,
+        "sha256": "9b527d8f8f3c0665d741ff9b7c188eaa9614bf3a12c0bcc792c25c956c8425d4",
+        "style": "normal",
+        "weight": "400"
+      }
+    ],
+    "source_path": "ofl/vinasans"
+  }
+]

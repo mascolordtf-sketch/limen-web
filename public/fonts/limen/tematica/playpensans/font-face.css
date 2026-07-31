@@ -1,0 +1,8 @@
+/* Playpen Sans */
+@font-face {
+  font-family: 'Playpen Sans';
+  src: url('./PlaypenSans-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+}

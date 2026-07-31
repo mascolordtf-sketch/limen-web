@@ -1,0 +1,8 @@
+/* Playwrite IN */
+@font-face {
+  font-family: 'Playwrite IN';
+  src: url('./PlaywriteIN-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 400;
+  font-display: swap;
+}

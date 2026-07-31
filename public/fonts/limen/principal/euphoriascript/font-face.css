@@ -1,0 +1,8 @@
+/* Euphoria Script */
+@font-face {
+  font-family: 'Euphoria Script';
+  src: url('./EuphoriaScript-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

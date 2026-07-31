@@ -1,0 +1,3 @@
+Repositorio: https://github.com/google/fonts
+Commit: 2796410152d4f9524b68ed46e69c1b60f8e0f7c3
+Los archivos se redistribuyen conforme a la licencia incluida en cada familia.

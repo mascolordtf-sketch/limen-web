@@ -1,0 +1,8 @@
+/* Bonheur Royale */
+@font-face {
+  font-family: 'Bonheur Royale';
+  src: url('./BonheurRoyale-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

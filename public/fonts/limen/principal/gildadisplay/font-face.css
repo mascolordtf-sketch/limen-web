@@ -1,0 +1,8 @@
+/* Gilda Display */
+@font-face {
+  font-family: 'Gilda Display';
+  src: url('./GildaDisplay-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

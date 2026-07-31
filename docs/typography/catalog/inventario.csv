@@ -1,0 +1,123 @@
+﻿requested_name,official_name,tier,limen_category,allowed_roles,recommended_addition,google_category,license,designer,latin_ext,spanish_verified,spanish_missing,studio_enabled_initial,variable,axes,source_path
+Allison,Allison,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/allison
+Bilbo Swash Caps,Bilbo Swash Caps,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,TypeSETit,True,True,,False,False,,ofl/bilboswashcaps
+Birthstone,Birthstone,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/birthstone
+Delius Swash Caps,Delius Swash Caps,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Natalia Raices,False,True,,False,False,,ofl/deliusswashcaps
+Italianno,Italianno,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/italianno
+Monsieur La Doulaise,Monsieur La Doulaise,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Sudtipos,True,True,,False,False,,ofl/monsieurladoulaise
+Montez,Montez,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,APACHE2,Astigmatic,False,True,,False,False,,apache/montez
+Parisienne,Parisienne,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Astigmatic,True,True,,False,False,,ofl/parisienne
+Petit Formal Script,Petit Formal Script,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Impallari Type,True,True,,False,False,,ofl/petitformalscript
+Playball,Playball,experimental,caligrafica-romantica,protagonista|acento,False,DISPLAY,OFL,Robert Leuschke,True,True,,False,False,,ofl/playball
+Qwitcher Grypen,Qwitcher Grypen,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/qwitchergrypen
+Rouge Script,Rouge Script,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Sabrina Mariela Lopez,True,True,,False,False,,ofl/rougescript
+Sarina,Sarina,experimental,caligrafica-romantica,protagonista|acento,False,DISPLAY,OFL,James Grieshaber,True,True,,False,False,,ofl/sarina
+Sofia,Sofia,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,LatinoType,True,True,,False,False,,ofl/sofia
+Tangerine,Tangerine,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Toshi Omagari,False,True,,False,False,,ofl/tangerine
+Zeyada,Zeyada,experimental,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/zeyada
+Autour One,Autour One,experimental,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Sorkin Type,True,True,,False,False,,ofl/autourone
+Bigshot One,Bigshot One,experimental,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Gesine Todt,False,True,,False,False,,ofl/bigshotone
+Mouse Memoirs,Mouse Memoirs,experimental,fiesta-juvenil,protagonista|titulo,False,SANS_SERIF,OFL,Astigmatic,True,True,,False,False,,ofl/mousememoirs
+Nova Round,Nova Round,experimental,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Wojciech Kalinowski,True,True,,False,False,,ofl/novaround
+Mansalva,Mansalva,experimental,garden-artesanal,protagonista|titulo|acento,False,HANDWRITING,OFL,Carolina Short,True,True,,False,False,,ofl/mansalva
+Redressed,Redressed,experimental,garden-artesanal,protagonista|titulo|acento,False,HANDWRITING,APACHE2,Astigmatic,False,True,,False,False,,apache/redressed
+Crafty Girls,Crafty Girls,experimental,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,APACHE2,Tart Workshop,False,True,,False,False,,apache/craftygirls
+Edu TAS Beginner,Edu TAS Beginner,experimental,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,"Tina Anderson, Corey Anderson",False,False,ÁÉÍÑÓÚÜáéíñóúü,False,True,wght,ofl/edutasbeginner
+Just Another Hand,Just Another Hand,experimental,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,APACHE2,Astigmatic,False,True,,False,False,,apache/justanotherhand
+Over The Rainbow,Over the Rainbow,experimental,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/overtherainbow
+Basic,Basic,experimental,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Magnus Gaarde,True,True,,False,False,,ofl/basic
+Belanosima,Belanosima,experimental,moderna-funcional,titulo|narrativa|funcional,False,DISPLAY,OFL,"The DocRepair Project, Santiago Orozco",True,True,,False,False,,ofl/belanosima
+Lato,Lato,experimental,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Łukasz Dziedzic,True,True,,False,False,,ofl/lato
+Nobile,Nobile,experimental,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Vernon Adams,True,True,,False,False,,ofl/nobile
+Open Sans,Open Sans,experimental,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Steve Matteson,True,True,,False,True,wdth|wght,ofl/opensans
+Roboto,Roboto,experimental,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Christian Robertson, ParaType, Font Bureau",True,True,,False,True,wdth|wght,ofl/roboto
+Amaranth,Amaranth,experimental,texto-clasico,titulo|narrativa,False,SANS_SERIF,OFL,Gesine Todt,False,True,,False,False,,ofl/amaranth
+Cambo,Cambo,experimental,texto-clasico,titulo|narrativa,False,SERIF,OFL,"HT Fonts, Carolina Giovagnoli, Andres Torresi",True,True,,False,False,,ofl/cambo
+Domine,Domine,experimental,texto-clasico,titulo|narrativa,False,SERIF,OFL,Impallari Type,True,True,,False,True,wght,ofl/domine
+Headland One,Headland One,experimental,texto-clasico,titulo|narrativa,False,SERIF,OFL,Gary Lonergan,True,True,,False,False,,ofl/headlandone
+Merriweather,Merriweather,experimental,texto-clasico,titulo|narrativa,False,SERIF,OFL,Sorkin Type,True,True,,False,True,opsz|wdth|wght,ofl/merriweather
+Overlock,Overlock,experimental,texto-clasico,titulo|narrativa,False,DISPLAY,OFL,Dario Manuel Muhafara,True,True,,False,False,,ofl/overlock
+Risque,Risque,experimental,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Astigmatic,True,True,,False,False,,ofl/risque
+Alex Brush,Alex Brush,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/alexbrush
+Allura,Allura,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/allura
+Bonheur Royale,Bonheur Royale,principal,caligrafica-romantica,protagonista|acento,True,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/bonheurroyale
+Carattere,Carattere,principal,caligrafica-romantica,protagonista|acento,True,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/carattere
+Euphoria Script,Euphoria Script,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Sabrina Mariela Lopez,True,True,,True,False,,ofl/euphoriascript
+Mea Culpa,Mea Culpa,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/meaculpa
+Pinyon Script,Pinyon Script,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Nicole Fally,True,True,,True,False,,ofl/pinyonscript
+Sacramento,Sacramento,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Astigmatic,True,True,,True,False,,ofl/sacramento
+WindSong,WindSong,principal,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,True,False,,ofl/windsong
+Abril Fatface,Abril Fatface,principal,editorial-elegante,protagonista|titulo|narrativa,False,DISPLAY,OFL,TypeTogether,True,True,,True,False,,ofl/abrilfatface
+Bodoni Moda,Bodoni Moda,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Owen Earl,True,True,,True,True,opsz|wght,ofl/bodonimoda
+Bona Nova,Bona Nova,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,"Capitalics, Mateusz Machalski, Andrzej Heidrich",True,True,,True,False,,ofl/bonanova
+Cinzel,Cinzel,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Natanael Gama,True,True,,True,True,wght,ofl/cinzel
+Cormorant Garamond,Cormorant Garamond,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Christian Thalmann,True,True,,True,True,wght,ofl/cormorantgaramond
+DM Serif Display,DM Serif Display,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Colophon Foundry,True,True,,True,False,,ofl/dmserifdisplay
+Fraunces,Fraunces,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,"Undercase Type, Phaedra Charles, Flavia Zimbardi",True,True,,True,True,SOFT|WONK|opsz|wght,ofl/fraunces
+Gilda Display,Gilda Display,principal,editorial-elegante,protagonista|titulo|narrativa,True,SERIF,OFL,Eduardo Tunni,True,True,,True,False,,ofl/gildadisplay
+Libre Caslon Display,Libre Caslon Display,principal,editorial-elegante,protagonista|titulo|narrativa,True,SERIF,OFL,Impallari Type,True,True,,True,False,,ofl/librecaslondisplay
+Lora,Lora,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Cyreal,True,True,,True,True,wght,ofl/lora
+Ovo,Ovo,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Nicole Fally,False,True,,True,False,,ofl/ovo
+Playfair Display,Playfair Display,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Claus Eggers Sørensen,True,True,,True,True,wght,ofl/playfairdisplay
+Prata,Prata,principal,editorial-elegante,protagonista|titulo|narrativa,False,SERIF,OFL,Cyreal,False,True,,True,False,,ofl/prata
+Calistoga,Calistoga,principal,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,"Yvonne Schüttler, Sorkin Type, Eben Sorkin",True,True,,True,False,,ofl/calistoga
+Bad Script,Bad Script,principal,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Gaslight,True,True,,True,False,,ofl/badscript
+Beth Ellen,Beth Ellen,principal,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,"Rob Jelinski, Alyson Fraser Diaz",False,True,,True,False,,ofl/bethellen
+Caveat,Caveat,principal,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Impallari Type,True,True,,True,True,wght,ofl/caveat
+Kalam,Kalam,principal,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Indian Type Foundry,True,True,,True,False,,ofl/kalam
+Instrument Sans,Instrument Sans,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Rodrigo Fuenzalida, Jordan Egstad",True,True,,True,True,wdth|wght,ofl/instrumentsans
+Inter,Inter,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Rasmus Andersson,True,True,,True,True,opsz|wght,ofl/inter
+Josefin Sans,Josefin Sans,principal,moderna-funcional,titulo|narrativa|funcional,True,SANS_SERIF,OFL,Santiago Orozco,True,True,,True,True,wght,ofl/josefinsans
+Jost,Jost,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Owen Earl,True,True,,True,True,wght,ofl/jost
+League Spartan,League Spartan,principal,moderna-funcional,titulo|narrativa|funcional,True,SANS_SERIF,OFL,"Matt Bailey, Tyler Finck",True,True,,True,True,wght,ofl/leaguespartan
+Manrope,Manrope,principal,moderna-funcional,titulo|narrativa|funcional,True,SANS_SERIF,OFL,Mikhail Sharanda,True,True,,True,True,wght,ofl/manrope
+Montserrat,Montserrat,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Julieta Ulanovsky, Sol Matas, Juan Pablo del Peral, Jacques Le Bailly",True,True,,True,True,wght,ofl/montserrat
+Nunito,Nunito,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Vernon Adams, Cyreal, Jacques Le Bailly",True,True,,True,True,wght,ofl/nunito
+Poppins,Poppins,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Indian Type Foundry, Jonny Pinhorn, Ninad Kale",True,True,,True,False,,ofl/poppins
+Questrial,Questrial,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Joe Prince, Laura Meseguer",True,True,,True,False,,ofl/questrial
+Quicksand,Quicksand,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,Andrew Paglinawan,True,True,,True,True,wght,ofl/quicksand
+Raleway,Raleway,principal,moderna-funcional,titulo|narrativa|funcional,False,SANS_SERIF,OFL,"Matt McInerney, Pablo Impallari, Rodrigo Fuenzalida",True,True,,True,True,wght,ofl/raleway
+Bebas Neue,Bebas Neue,principal,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Ryoichi Tsunekawa,True,True,,True,False,,ofl/bebasneue
+Dancing Script,Dancing Script,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Impallari Type,True,True,,False,True,wght,ofl/dancingscript
+Great Vibes,Great Vibes,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/greatvibes
+Lobster,Lobster,tematica,caligrafica-romantica,protagonista|acento,False,DISPLAY,OFL,Impallari Type,True,True,,False,False,,ofl/lobster
+Lobster Two,Lobster Two,tematica,caligrafica-romantica,protagonista|acento,False,DISPLAY,OFL,Impallari Type,False,True,,False,False,,ofl/lobstertwo
+Norican,Norican,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Vernon Adams,True,True,,False,False,,ofl/norican
+Oleo Script Swash Caps,Oleo Script Swash Caps,tematica,caligrafica-romantica,protagonista|acento,False,DISPLAY,OFL,soytutype fonts,True,True,,False,False,,ofl/oleoscriptswashcaps
+Pacifico,Pacifico,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,"Vernon Adams, Jacques Le Bailly, Botjo Nikoltchev, Ani Petrova",True,True,,False,False,,ofl/pacifico
+Satisfy,Satisfy,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,APACHE2,Sideshow,False,True,,False,False,,apache/satisfy
+Style Script,Style Script,tematica,caligrafica-romantica,protagonista|acento,False,HANDWRITING,OFL,Robert Leuschke,True,True,,False,False,,ofl/stylescript
+Cinzel Decorative,Cinzel Decorative,tematica,editorial-elegante,protagonista|titulo|narrativa,True,DISPLAY,OFL,Natanael Gama,False,True,,False,False,,ofl/cinzeldecorative
+Bangers,Bangers,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Vernon Adams,True,True,,False,False,,ofl/bangers
+Boogaloo,Boogaloo,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,John Vargas Beltrán,False,True,,False,False,,ofl/boogaloo
+Bubblegum Sans,Bubblegum Sans,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Sudtipos,True,True,,False,False,,ofl/bubblegumsans
+Chicle,Chicle,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Sudtipos,True,True,,False,False,,ofl/chicle
+DynaPuff,DynaPuff,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,"Toshi Omagari, Jennifer Daniel",True,True,,False,True,wdth|wght,ofl/dynapuff
+Finger Paint,Finger Paint,tematica,fiesta-juvenil,protagonista|titulo,False,DISPLAY,OFL,Carrois Apostrophe,False,True,,False,False,,ofl/fingerpaint
+Playpen Sans,Playpen Sans,tematica,fiesta-juvenil,protagonista|titulo,False,HANDWRITING,OFL,"TypeTogether, Laura Meseguer, Veronika Burian, José Scaglione, Kostas Bartsokas, Vera Evstafieva, Tom Grace, Yorlmar Campos",True,True,,False,True,wght,ofl/playpensans
+Sour Gummy,Sour Gummy,tematica,fiesta-juvenil,protagonista|titulo,False,SANS_SERIF,OFL,Stefie Justprince,True,True,,False,True,wdth|wght,ofl/sourgummy
+Courgette,Courgette,tematica,garden-artesanal,protagonista|titulo|acento,False,HANDWRITING,OFL,Karolina Lach,True,True,,False,False,,ofl/courgette
+Kaushan Script,Kaushan Script,tematica,garden-artesanal,protagonista|titulo|acento,False,HANDWRITING,OFL,Impallari Type,True,True,,False,False,,ofl/kaushanscript
+Macondo,Macondo,tematica,garden-artesanal,protagonista|titulo|acento,False,DISPLAY,OFL,John Vargas Beltrán,True,True,,False,False,,ofl/macondo
+Macondo Swash Caps,Macondo Swash Caps,tematica,garden-artesanal,protagonista|titulo|acento,False,DISPLAY,OFL,John Vargas Beltrán,True,True,,False,False,,ofl/macondoswashcaps
+Marck Script,Marck Script,tematica,garden-artesanal,protagonista|titulo|acento,False,HANDWRITING,OFL,Denis Masharov,True,True,,False,False,,ofl/marckscript
+Amatic SC,Amatic SC,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,"Vernon Adams, Ben Nathan, Thomas Jockin",True,True,,False,False,,ofl/amaticsc
+Architects Daughter,Architects Daughter,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/architectsdaughter
+Gloria Hallelujah,Gloria Hallelujah,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/gloriahallelujah
+Handlee,Handlee,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Joe Prince,True,True,,False,False,,ofl/handlee
+La Belle Aurore,La Belle Aurore,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/labelleaurore
+Playwrite Cuba,Playwrite CU,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,"TypeTogether, Veronika Burian, José Scaglione",False,True,,False,True,wght,ofl/playwritecu
+Playwrite India,Playwrite IN,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,"TypeTogether, Veronika Burian, José Scaglione",False,True,,False,True,wght,ofl/playwritein
+Shadows Into Light,Shadows Into Light,tematica,manuscrita-natural,protagonista|titulo|acento,False,HANDWRITING,OFL,Kimberly Geswein,False,True,,False,False,,ofl/shadowsintolight
+Atomic Age,Atomic Age,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,James Grieshaber,False,True,,False,False,,ofl/atomicage
+Bitcount Ink,Bitcount Ink,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Petr van Blokland,True,True,,False,True,CRSV|ELSH|ELXP|SZP1|SZP2|XPN1|XPN2|YPN1|YPN2|slnt|wght,ofl/bitcountink
+Contrail One,Contrail One,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Riccardo De Franceschi,False,True,,False,False,,ofl/contrailone
+Francois One,Francois One,tematica,urbana-impacto,protagonista|titulo,False,SANS_SERIF,OFL,Vernon Adams,True,True,,False,False,,ofl/francoisone
+Germania One,Germania One,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,John Vargas Beltrán,True,True,,False,False,,ofl/germaniaone
+Londrina Outlet,Londrina Outline,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Marcelo Magalhães,False,True,,False,False,,ofl/londrinaoutline
+Londrina Solid,Londrina Solid,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Marcelo Magalhães,False,True,,False,False,,ofl/londrinasolid
+Permanent Marker,Permanent Marker,tematica,urbana-impacto,protagonista|titulo,False,HANDWRITING,APACHE2,Font Diner,False,True,,False,False,,apache/permanentmarker
+Protest Revolution,Protest Revolution,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Octavio Pardo,True,True,,False,False,,ofl/protestrevolution
+Skranji,Skranji,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Neapolitan,True,True,,False,False,,ofl/skranji
+Special Gothic,Special Gothic,tematica,urbana-impacto,protagonista|titulo,False,SANS_SERIF,OFL,Alistair McCready,True,True,,False,True,wdth|wght,ofl/specialgothic
+Vina Sans,Vina Sans,tematica,urbana-impacto,protagonista|titulo,False,DISPLAY,OFL,Nguyen Type,True,True,,False,False,,ofl/vinasans

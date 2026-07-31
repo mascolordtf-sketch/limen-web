@@ -1,0 +1,16 @@
+/* Instrument Sans */
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-Italic-wdth-wght-.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-wdth-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}

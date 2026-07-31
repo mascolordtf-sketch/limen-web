@@ -1,0 +1,8 @@
+/* Mea Culpa */
+@font-face {
+  font-family: 'Mea Culpa';
+  src: url('./MeaCulpa-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

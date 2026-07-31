@@ -1,0 +1,24 @@
+/* Bona Nova */
+@font-face {
+  font-family: 'Bona Nova';
+  src: url('./BonaNova-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bona Nova';
+  src: url('./BonaNova-Italic.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bona Nova';
+  src: url('./BonaNova-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

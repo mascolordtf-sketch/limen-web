@@ -1,0 +1,16 @@
+/* Amatic SC */
+@font-face {
+  font-family: 'Amatic SC';
+  src: url('./AmaticSC-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Amatic SC';
+  src: url('./AmaticSC-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

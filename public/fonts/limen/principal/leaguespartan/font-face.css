@@ -1,0 +1,8 @@
+/* League Spartan */
+@font-face {
+  font-family: 'League Spartan';
+  src: url('./LeagueSpartan-wght-.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
