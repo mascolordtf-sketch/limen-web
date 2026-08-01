@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
 import { Origin01Community } from '../src/features/invitations/origin01/Origin01Community'
+import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
@@ -283,6 +284,10 @@ assert(gardenTypography?.coverName.family === 'WindSong'
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
   'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
+assert(calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 300, fontSize: 90 }) === undefined
+  && calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 420, fontSize: 90 }) === 72
+  && calculateCoverNameFittedSize({ availableWidth: 0, renderedWidth: 420, fontSize: 90 }) === undefined,
+  'el nombre conserva su escala cuando entra y se reduce proporcionalmente antes de desbordar')
 assert(validateStudioPhotoFile({ name: 'foto.gif', type: 'image/gif', size: 1_000 })?.includes('JPG')
   && validateStudioPhotoFile({ name: 'foto.jpg', type: 'image/jpeg', size: studioPhotoMaxBytes + 1 })?.includes('12 MB')
   && validateStudioPhotoFile({ name: 'foto.webp', type: 'image/webp', size: 1_000 }) === null,
