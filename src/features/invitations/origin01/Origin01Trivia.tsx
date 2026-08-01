@@ -88,7 +88,8 @@ export function Origin01Trivia({ config }: { config: Origin01TriviaContent }) {
   const tier = config.resultTiers.find((item) => correctCount >= item.minScore) ?? config.resultTiers.at(-1)!
   return (
     <div className="origin01-trivia__result">
-      <Origin01Lottie animationData={confettiAnimation} className="origin01-trivia__confetti" playKey={playthrough} hideForReducedMotion />
+      <Origin01Lottie animationData={confettiAnimation} className="origin01-trivia__confetti" playKey={playthrough}
+        hideForReducedMotion preserveAspectRatio="xMidYMin slice" />
       <p className="origin01-trivia__score"><strong>{correctCount}</strong><span>{config.scoreTotalLabel}</span></p>
       <h3 className="origin01-trivia__tier" aria-live="polite">{tier.title}</h3>
       <p className="origin01-trivia__result-message">{tier.message}</p>
