@@ -254,3 +254,11 @@ La fase conserva el carácter temporal del laboratorio: no aprueba una combinaci
 Como resguardo de composición, el nombre de portada conserva el tamaño definido por Origin 01 mientras entra en el ancho disponible y se reduce automáticamente solo cuando sus métricas tipográficas reales producirían un corte horizontal. El ajuste se recalcula al completar la carga de fuentes y ante cambios de viewport; no modifica los demás roles tipográficos.
 
 Studio deberá incorporar en una fase posterior un control creativo independiente para la escala del nombre de portada, con valores diferenciables para celular y escritorio. Ese futuro control complementará el ajuste automático de seguridad, pero no forma parte de esta evaluación temporal ni introduce persistencia en la Fase 1.1.
+
+## Fase 1.2 — matriz visual reproducible
+
+La revisión perceptual de Origin 01 queda formalizada en una matriz de 224 casos. La cobertura base cruza los catorce módulos del orden canónico con las audiencias protagonista e invitado, las tres variantes visuales admitidas y los viewports móvil y escritorio. Una cobertura complementaria somete cada escena a contenido válido corto y largo en ambos viewports, manteniendo la audiencia protagonista y la variante canónica para aislar el efecto editorial.
+
+El generador versionado comprueba que sus ejes coincidan con `canonicalOrder` y con el registro real de variantes antes de aceptar el CSV canónico. La matriz define criterios comunes para desbordes, superposiciones, recortes, jerarquía, acciones, recursos y continuidad entre escenas; un caso pendiente nunca equivale a aprobado.
+
+Esta fase no modifica el renderer, las escenas, el contenido, las variantes ni Studio. Los defectos perceptuales encontrados deben registrarse con evidencia y trasladarse a la Fase 1.3, responsable de composición. La matriz y el procedimiento de ejecución se documentan en [`origin01-visual-matrix.md`](origin01-visual-matrix.md).
