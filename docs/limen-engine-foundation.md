@@ -242,3 +242,11 @@ Secciones es la única superficie que incorpora o excluye Comunidad del recorrid
 La invitación deriva el enlace de Instagram desde el usuario confirmado, copia el hashtag literal y abre el álbum en un destino externo real. La validación condiciona los campos de cada función a su activación, rechaza usuarios o hashtags mal formados y exige HTTPS para el álbum. Los errores de Comunidad solo son relevantes mientras la escena está activa y navegan al control exacto del editor.
 
 Esta fase no consulta ni incrusta un feed de Instagram, no autentica con Meta, no almacena ni modera fotografías y no ofrece carga de archivos dentro de LIMEN. El futuro álbum propio requerirá almacenamiento, permisos y moderación. Tampoco se incorporan persistencia, backend, iconografía definitiva ni publicación; `readyToPublish` permanece en `false`.
+
+## Fase 1.1 — preparación confiable de la evaluación tipográfica
+
+Origin 01 distingue el nombre principal de portada mediante el rol tipográfico explícito `coverName`. La combinación temporal proyecta ese rol únicamente sobre el nombre de la escena de portada, mientras las voces editoriales, funcionales y los acentos caligráficos propios de la plantilla conservan responsabilidades independientes.
+
+El laboratorio de Studio carga las hojas de estilo requeridas por las doce combinaciones, solicita cada familia real mediante la Font Loading API y espera efectivamente a `document.fonts.ready` antes de habilitar la comparación o el acceso a la invitación completa. Durante la preparación no expone tarjetas renderizadas con fuentes de reemplazo; ante una falla mantiene bloqueada la evaluación, informa el problema y permite reintentar la carga.
+
+La fase conserva el carácter temporal del laboratorio: no aprueba una combinación definitiva, no modifica el borrador canónico, no persiste la selección y no altera la invitación pública sin el parámetro interno de evaluación.

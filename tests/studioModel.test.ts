@@ -248,8 +248,8 @@ const typographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, 
   audience: 'protagonist',
   typography: gardenTypography,
 }))
-assert(gardenTypography?.protagonist.family === 'WindSong'
-  && typographyMarkup.includes('--origin-script:&#x27;WindSong&#x27;, cursive')
+assert(gardenTypography?.coverName.family === 'WindSong'
+  && typographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive')
   && typographyMarkup.includes('--origin-display:&#x27;Fraunces&#x27;, serif')
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
@@ -482,6 +482,9 @@ assert(aestheticMarkup.includes('Elegí la atmósfera de Origin 01')
   && aestheticMarkup.includes('Compará las doce voces de Origin 01')
   && origin01TypographyCombinations.every(({ name }) => aestheticMarkup.includes(name))
   && aestheticMarkup.includes('/demo/LMN-015-001?tipografia=noche-plateada&amp;inicio=invitacion')
+  && aestheticMarkup.includes('aria-busy="true"')
+  && aestheticMarkup.includes('Cargando las tipografías reales para comparar')
+  && aestheticMarkup.includes('Nombre de portada · Cormorant Garamond')
   && aestheticMarkup.includes('Evaluación · sin persistencia')
   && aestheticMarkup.includes('Sistema visual curado')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')

@@ -284,6 +284,44 @@
   text-transform: uppercase;
 }
 
+.limen-studio__typography-status {
+  display: grid;
+  min-height: 8rem;
+  place-items: center;
+  gap: .75rem;
+  margin: 0;
+  border: 1px dashed var(--studio-line-strong);
+  border-radius: .9rem;
+  padding: 1.25rem;
+  color: var(--studio-muted);
+  font-size: .78rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.limen-studio__typography-status p {
+  max-width: 36rem;
+  margin: 0;
+}
+
+.limen-studio__typography-status button {
+  min-height: 2.75rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .7rem;
+  padding: .65rem .9rem;
+  color: var(--studio-ink);
+  background: var(--studio-paper);
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.limen-studio__typography-evaluation:not(.is-ready) .limen-studio__typography-grid,
+.limen-studio__typography-evaluation:not(.is-ready) > footer,
+.limen-studio__typography-evaluation:not(.is-ready) .limen-studio__typography-note {
+  display: none;
+}
+
 .limen-studio__typography-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -353,7 +391,7 @@
   min-height: 2.7rem;
   overflow-wrap: anywhere;
   color: var(--studio-ink);
-  font-family: var(--studio-type-protagonist);
+  font-family: var(--studio-type-cover-name);
   font-size: clamp(1.9rem, 3vw, 2.55rem);
   font-weight: 400;
   line-height: 1.05;
@@ -426,7 +464,7 @@
 }
 
 .limen-studio__typography-evaluation footer i {
-  font-family: var(--studio-type-protagonist);
+  font-family: var(--studio-type-cover-name);
   font-size: 1rem;
   font-style: normal;
 }
