@@ -5,6 +5,7 @@ import type { InvitationAudience, InvitationMediaReference } from '../engine/inv
 import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
 import { Origin01Trivia } from './Origin01Trivia'
 import { Origin01Community } from './Origin01Community'
+import { calculateCoverNameFittedSize } from './origin01CoverNameFit'
 import type { Origin01InvitationData } from './origin01ContentTypes'
 import { Origin01TypographyAssets } from './Origin01TypographyAssets'
 import type { Origin01TypographyCombination } from './origin01Typography'
@@ -415,6 +416,8 @@ export function Origin01Invitation({
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const envelopeRef = useRef<HTMLButtonElement | null>(null)
   const experienceRef = useRef<HTMLDivElement | null>(null)
+  const coverNameRef = useRef<HTMLHeadingElement | null>(null)
+  const coverNameTextRef = useRef<HTMLSpanElement | null>(null)
   const copyResetRef = useRef<number | null>(null)
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
@@ -426,6 +429,67 @@ export function Origin01Invitation({
   const coverImage = mediaById.get(invitation.content.hero.imageMediaId)
   const closingImage = mediaById.get(invitation.content.closing.imageMediaId) ?? coverImage
   const invitationIsVisible = phase === 'invitation'
+
+  useLayoutEffect(() => {
+    if (!invitationIsVisible) return
+
+    const heading = coverNameRef.current
+    const text = coverNameTextRef.current
+    const container = heading?.parentElement
+    if (!heading || !text || !container) return
+
+    let frameId: number | undefined
+    let disposed = false
+    let observedWidth = container.getBoundingClientRect().width
+
+    const fit = () => {
+      heading.style.removeProperty('--origin-cover-name-fitted-size')
+
+      const containerStyle = window.getComputedStyle(container)
+      const horizontalPadding = Number.parseFloat(containerStyle.paddingLeft)
+        + Number.parseFloat(containerStyle.paddingRight)
+      const availableWidth = container.clientWidth - horizontalPadding
+      const renderedWidth = text.getBoundingClientRect().width
+      const fontSize = Number.parseFloat(window.getComputedStyle(heading).fontSize)
+      const fittedSize = calculateCoverNameFittedSize({ availableWidth, renderedWidth, fontSize })
+
+      if (fittedSize !== undefined) {
+        heading.style.setProperty('--origin-cover-name-fitted-size', `${fittedSize}px`)
+      }
+    }
+
+    const scheduleFit = () => {
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId)
+      frameId = window.requestAnimationFrame(() => {
+        frameId = undefined
+        if (!disposed) fit()
+      })
+    }
+
+    fit()
+
+    const resizeObserver = typeof ResizeObserver === 'undefined'
+      ? undefined
+      : new ResizeObserver(([entry]) => {
+        if (!entry || Math.abs(entry.contentRect.width - observedWidth) < .5) return
+        observedWidth = entry.contentRect.width
+        scheduleFit()
+      })
+    resizeObserver?.observe(container)
+    window.addEventListener('resize', scheduleFit)
+
+    const fonts = document.fonts
+    void fonts?.ready.then(scheduleFit)
+    fonts?.addEventListener('loadingdone', scheduleFit)
+
+    return () => {
+      disposed = true
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId)
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', scheduleFit)
+      fonts?.removeEventListener('loadingdone', scheduleFit)
+    }
+  }, [invitation.event.name, invitationIsVisible, typography?.id])
 
   useEffect(() => {
     if (phase !== 'opening') return
@@ -600,8 +664,7 @@ export function Origin01Invitation({
   }
 
   const typographyStyle = typography ? {
-    '--origin-script': `'${typography.protagonist.family}', cursive`,
-    '--origin-accent-font': `'${typography.protagonist.family}', cursive`,
+    '--origin-cover-name': `'${typography.coverName.family}', cursive`,
     '--origin-display': `'${typography.editorial.family}', serif`,
     '--origin-reading': `'${typography.functional.family}', sans-serif`,
   } as CSSProperties : undefined
@@ -719,7 +782,9 @@ export function Origin01Invitation({
             </div>
             <div className="origin01-hero__content">
               <p className="origin01-kicker">{invitation.event.celebrationLabel}</p>
-              <h1 id="origin01-hero-title">{invitation.event.name}</h1>
+              <h1 id="origin01-hero-title" ref={coverNameRef}>
+                <span ref={coverNameTextRef}>{invitation.event.name}</span>
+              </h1>
               <p className="origin01-hero__date">{invitation.content.hero.dateLabel}</p>
               <p className="origin01-hero__phrase">{invitation.content.hero.phrase}</p>
             </div>

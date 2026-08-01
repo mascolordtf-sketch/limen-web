@@ -86,9 +86,14 @@ aprobación visual.
 ## Laboratorio de evaluación
 
 Studio incorpora una comparación temporal de las doce combinaciones dentro de la etapa `Estética`.
-Cada tarjeta muestra los roles protagonista, editorial y funcional con texto real en español. La
+Cada tarjeta muestra los roles nombre de portada, editorial y funcional con texto real en español. La
 combinación elegida puede abrirse sobre la invitación completa mediante los parámetros internos
 `tipografia` e `inicio=invitacion` de la ruta de demostración.
+
+El nombre de la portada usa un rol explícito y no hereda la familia de los títulos editoriales. El
+laboratorio mantiene sus tarjetas y la acción de prueba bloqueadas hasta que las hojas de estilo y
+`document.fonts.ready` confirman que las familias reales están disponibles. Si una carga falla, no
+expone fuentes de reemplazo y ofrece un reintento.
 
 Este laboratorio no forma parte del modelo persistente, no modifica el borrador canónico y no
 define todavía la tipografía aprobada de Origin 01. Su finalidad es comparar la misma composición

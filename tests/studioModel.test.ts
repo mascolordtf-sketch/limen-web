@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
 import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
 import { Origin01Community } from '../src/features/invitations/origin01/Origin01Community'
+import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
@@ -12,6 +13,9 @@ import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '..
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
+import { StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
+import { canReuseEvaluationStylesheets,
+  isTypographyEvaluationBusy } from '../src/features/studio/typographyEvaluationReadiness'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { getStudioPreviewMode, studioPreviewSceneSelectors } from '../src/features/studio/studioPreviewScenes'
 import { StudioPreviewPane } from '../src/features/studio/StudioPreviewPane'
@@ -242,18 +246,48 @@ assert(origin01TypographyCombinations.length === 12
     && getOrigin01TypographyStylesheets(combination).length <= 3
     && getOrigin01TypographyStylesheets(combination).every((path) => path.endsWith('/font-face.css'))),
   'el laboratorio registra doce combinaciones únicas y limita cada prueba a sus fuentes reales')
+assert(isTypographyEvaluationBusy('loading') && !isTypographyEvaluationBusy('ready')
+  && !isTypographyEvaluationBusy('error'),
+  'el laboratorio informa aria-busy únicamente mientras prepara las fuentes')
+const typographyLoadingMarkup = renderToStaticMarkup(createElement(StudioTypographyEvaluationStatus,
+  { readiness: 'loading', onRetry: () => undefined }))
+const typographyErrorMarkup = renderToStaticMarkup(createElement(StudioTypographyEvaluationStatus,
+  { readiness: 'error', onRetry: () => undefined }))
+const typographyReadyMarkup = renderToStaticMarkup(createElement(StudioTypographyEvaluationStatus,
+  { readiness: 'ready', onRetry: () => undefined }))
+assert(typographyLoadingMarkup.includes('role="status"')
+  && typographyErrorMarkup.includes('role="alert"')
+  && typographyErrorMarkup.includes('Reintentar carga')
+  && typographyReadyMarkup === '',
+  'los estados loading, error y ready exponen mensajes y reintento accesibles cuando corresponde')
+const verifiedStylesheets = origin01TypographyCombinations.flatMap(getOrigin01TypographyStylesheets)
+  .filter((path, index, paths) => paths.indexOf(path) === index)
+  .map(() => ({ dataset: { limenFontState: 'verified' } }))
+assert(canReuseEvaluationStylesheets(verifiedStylesheets, verifiedStylesheets.length)
+  && !canReuseEvaluationStylesheets(
+    verifiedStylesheets.map((stylesheet, index) => index === 0
+      ? { dataset: { limenFontState: 'loaded' } }
+      : stylesheet),
+    verifiedStylesheets.length,
+  )
+  && !canReuseEvaluationStylesheets(verifiedStylesheets.slice(1), verifiedStylesheets.length),
+  'solo reutiliza el conjunto completo de hojas cuya carga tipográfica terminó verificada')
 const gardenTypography = findOrigin01TypographyCombination('garden-antigua')
 const typographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
   invitation: origin01DemoData,
   audience: 'protagonist',
   typography: gardenTypography,
 }))
-assert(gardenTypography?.protagonist.family === 'WindSong'
-  && typographyMarkup.includes('--origin-script:&#x27;WindSong&#x27;, cursive')
+assert(gardenTypography?.coverName.family === 'WindSong'
+  && typographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive')
   && typographyMarkup.includes('--origin-display:&#x27;Fraunces&#x27;, serif')
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
   'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
+assert(calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 300, fontSize: 90 }) === undefined
+  && calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 420, fontSize: 90 }) === 72
+  && calculateCoverNameFittedSize({ availableWidth: 0, renderedWidth: 420, fontSize: 90 }) === undefined,
+  'el nombre conserva su escala cuando entra y se reduce proporcionalmente antes de desbordar')
 assert(validateStudioPhotoFile({ name: 'foto.gif', type: 'image/gif', size: 1_000 })?.includes('JPG')
   && validateStudioPhotoFile({ name: 'foto.jpg', type: 'image/jpeg', size: studioPhotoMaxBytes + 1 })?.includes('12 MB')
   && validateStudioPhotoFile({ name: 'foto.webp', type: 'image/webp', size: 1_000 }) === null,
@@ -482,6 +516,9 @@ assert(aestheticMarkup.includes('Elegí la atmósfera de Origin 01')
   && aestheticMarkup.includes('Compará las doce voces de Origin 01')
   && origin01TypographyCombinations.every(({ name }) => aestheticMarkup.includes(name))
   && aestheticMarkup.includes('/demo/LMN-015-001?tipografia=noche-plateada&amp;inicio=invitacion')
+  && aestheticMarkup.includes('aria-busy="true"')
+  && aestheticMarkup.includes('Cargando las tipografías reales para comparar')
+  && aestheticMarkup.includes('Nombre de portada · Cormorant Garamond')
   && aestheticMarkup.includes('Evaluación · sin persistencia')
   && aestheticMarkup.includes('Sistema visual curado')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
