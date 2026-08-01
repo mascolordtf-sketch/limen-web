@@ -1,18 +1,22 @@
 import { AppRoutes } from '../src/app/routes'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
+import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
 import { Origin01Community } from '../src/features/invitations/origin01/Origin01Community'
 import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
+import { origin01VisualMatrixViewports,
+  resolveOrigin01VisualMatrixCase } from '../src/features/invitations/origin01/origin01VisualMatrix'
 import { findOrigin01TypographyCombination, getOrigin01TypographyStylesheets,
   origin01TypographyCombinations } from '../src/features/invitations/origin01/origin01Typography'
 import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '../src/features/invitations/origin01/origin01Weather'
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
+import { StudioVisualMatrixCase } from '../src/features/studio/StudioVisualMatrixCase'
 import { StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
 import { canReuseEvaluationStylesheets,
   isTypographyEvaluationBusy } from '../src/features/studio/typographyEvaluationReadiness'
@@ -38,6 +42,8 @@ import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventSch
 import { StudioScheduleEditor } from '../src/features/studio/StudioScheduleEditor'
 import { StudioWeatherEditor } from '../src/features/studio/StudioWeatherEditor'
 import { StudioCommunityEditor } from '../src/features/studio/StudioCommunityEditor'
+import { validateOrigin01Community } from '../src/features/studio/studioCommunityValidation'
+import { isTriviaContentValid } from '../src/features/studio/studioTriviaValidation'
 import { StudioDressCodeEditor } from '../src/features/studio/StudioDressCodeEditor'
 import { StudioGiftsEditor } from '../src/features/studio/StudioGiftsEditor'
 import { getStudioEditorResolution, isStudioEditorId } from '../src/features/studio/studioEditorContract'
@@ -132,6 +138,84 @@ const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
   && origin01ThemeVariants.map(({ id }) => id).join('|') === origin01Template.supportedThemeVariants.join('|'),
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
+
+const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
+  ...(['protagonist', 'guest'] as const).flatMap((audience) =>
+    origin01Template.supportedThemeVariants.flatMap((variant) =>
+      (Object.keys(origin01VisualMatrixViewports) as (keyof typeof origin01VisualMatrixViewports)[])
+        .map((viewport) => `BASE-${scene}-${audience}-${variant}-${viewport}`))),
+  ...(['short', 'long'] as const).flatMap((profile) =>
+    (Object.keys(origin01VisualMatrixViewports) as (keyof typeof origin01VisualMatrixViewports)[])
+      .map((viewport) => `BOUNDARY-${scene}-${profile}-${viewport}`)),
+])
+const resolvedMatrixCases = matrixCaseIds.map((id) =>
+  resolveOrigin01VisualMatrixCase(id, origin01DemoData))
+assert(matrixCaseIds.length === 224 && resolvedMatrixCases.every(Boolean),
+  'cada fila canónica de la matriz resuelve una invitación y un viewport reproducibles')
+assert(resolvedMatrixCases.every((matrixCase) => matrixCase
+  && validateInvitationConfiguration(matrixCase.invitation, findInvitationTemplate).valid),
+  'todas las invitaciones derivadas conservan una configuración estructural válida')
+assert(new Set(resolvedMatrixCases.map((matrixCase) => matrixCase?.id)).size === 224
+  && resolveOrigin01VisualMatrixCase('BASE-unknown-protagonist-origin01-wine-mobile', origin01DemoData) === undefined,
+  'la matriz conserva identidades únicas y rechaza casos inventados')
+
+const midnightGuestDesktop = resolveOrigin01VisualMatrixCase(
+  'BASE-hero-guest-origin01-midnight-desktop', origin01DemoData)
+const guestPrelude = resolveOrigin01VisualMatrixCase(
+  'BASE-prelude-guest-origin01-wine-mobile', origin01DemoData)
+assert(midnightGuestDesktop?.audience === 'guest'
+  && midnightGuestDesktop.variant === 'origin01-midnight'
+  && midnightGuestDesktop.invitation.themeVariant === 'origin01-midnight'
+  && midnightGuestDesktop.viewport.width === 1440
+  && midnightGuestDesktop.viewport.height === 1000,
+  'un caso base aplica audiencia, variante y viewport desde su identificador')
+const forcedPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: guestPrelude!.invitation,
+  audience: guestPrelude!.audience,
+  startAtPrelude: guestPrelude!.startAtPrelude,
+}))
+const canonicalGuestMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: origin01DemoData,
+  audience: 'guest',
+}))
+assert(guestPrelude?.audience === 'guest' && guestPrelude.startAtPrelude
+  && forcedPreludeMarkup.includes('origin01-prelude')
+  && !forcedPreludeMarkup.includes('origin01-envelope-stage')
+  && canonicalGuestMarkup.includes('origin01-envelope-stage')
+  && !canonicalGuestMarkup.includes('origin01-prelude'),
+  'el harness puede inspeccionar el Preludio de invitado sin cambiar su entrada pública predeterminada')
+
+const shortHero = resolveOrigin01VisualMatrixCase(
+  'BOUNDARY-hero-short-mobile', origin01DemoData)
+const longSchedule = resolveOrigin01VisualMatrixCase(
+  'BOUNDARY-schedule-long-desktop', origin01DemoData)
+const longCommunity = resolveOrigin01VisualMatrixCase(
+  'BOUNDARY-instagram-long-desktop', origin01DemoData)
+const longTrivia = resolveOrigin01VisualMatrixCase(
+  'BOUNDARY-trivia-long-desktop', origin01DemoData)
+assert(shortHero?.invitation.event.name === 'Ana'
+  && shortHero.invitation.content.story === origin01DemoData.content.story
+  && origin01DemoData.event.name === 'Valentina',
+  'el perfil corto deriva solo la escena y sus dependencias sin mutar el fixture canónico')
+assert(longSchedule?.invitation.content.schedule.moments.length === 8
+  && longSchedule.invitation.content.schedule.moments.every(({ description }) => Boolean(description))
+  && Object.values(validateOrigin01Schedule(longSchedule.invitation.content.schedule)).every((error) => error === null)
+  && longSchedule.invitation.content.hero === origin01DemoData.content.hero,
+  'el perfil largo utiliza valores concretos y conserva las escenas ajenas')
+assert(longCommunity !== undefined
+  && Object.values(validateOrigin01Community(longCommunity.invitation.content.community)).every((error) => error === null)
+  && longTrivia !== undefined && isTriviaContentValid(longTrivia.invitation.content.trivia),
+  'los perfiles complejos de Comunidad y Trivia continúan siendo contenido editorial válido')
+
+const harnessMarkup = renderToStaticMarkup(createElement(MemoryRouter, {
+  initialEntries: ['/studio/matriz/BASE-hero-guest-origin01-midnight-desktop'],
+}, createElement(Routes, null, createElement(Route, {
+  path: '/studio/matriz/:caseId', element: createElement(StudioVisualMatrixCase),
+}))))
+assert(harnessMarkup.includes('width="1440"') && harnessMarkup.includes('height="1000"')
+  && harnessMarkup.includes('matriz=BASE-hero-guest-origin01-midnight-desktop'),
+  'el harness materializa la fila en un iframe con dimensiones y estado exactos')
+
 assert(initial.event.venue === 'Palacio del Lago', 'inicializa el lugar desde el fixture')
 assert(initial !== createOrigin01StudioDraft(origin01DemoData), 'crea borradores independientes')
 const canonicalMediaState = createOrigin01StudioMediaState(origin01DemoData)

@@ -261,4 +261,6 @@ La revisión perceptual de Origin 01 queda formalizada en una matriz de 224 caso
 
 El generador versionado comprueba que sus ejes coincidan con `canonicalOrder` y con el registro real de variantes antes de aceptar el CSV canónico. La matriz define criterios comunes para desbordes, superposiciones, recortes, jerarquía, acciones, recursos y continuidad entre escenas; un caso pendiente nunca equivale a aprobado.
 
+Cada fila posee una ruta de harness que reproduce audiencia, variante, viewport y perfil de contenido sobre el renderer real. Los perfiles límite utilizan fixtures tipados con valores exactos por escena, de modo que un mismo identificador no depende de decisiones manuales del revisor. El verificador lee las variantes desde `origin01ThemeVariantIds`, la misma fuente consumida por la plantilla.
+
 Esta fase no modifica el renderer, las escenas, el contenido, las variantes ni Studio. Los defectos perceptuales encontrados deben registrarse con evidencia y trasladarse a la Fase 1.3, responsable de composición. La matriz y el procedimiento de ejecución se documentan en [`origin01-visual-matrix.md`](origin01-visual-matrix.md).

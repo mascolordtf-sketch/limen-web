@@ -1,0 +1,45 @@
+.limen-matrix-case {
+  min-width: 320px;
+  min-height: 100dvh;
+  padding: 1.25rem;
+  color: #f5f1e9;
+  background: #171717;
+}
+
+.limen-matrix-case__header {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 90rem);
+  margin: 0 auto 1.25rem;
+}
+
+.limen-matrix-case__header p,
+.limen-matrix-case__header h1,
+.limen-matrix-case__header dl,
+.limen-matrix-case__header dd { margin: 0; }
+.limen-matrix-case__header p { color: #b7b0a5; }
+.limen-matrix-case__header h1 { font-size: clamp(1rem, 3vw, 1.4rem); overflow-wrap: anywhere; }
+.limen-matrix-case__header dl { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; }
+.limen-matrix-case__header dl > div { display: grid; gap: .15rem; }
+.limen-matrix-case__header dt { color: #b7b0a5; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
+
+.limen-matrix-case__viewport {
+  width: min(100%, 90rem);
+  margin: 0 auto;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.limen-matrix-case__viewport iframe {
+  display: block;
+  max-width: none;
+  border: 0;
+  background: #fff;
+}
+
+@media (min-width: 60rem) {
+  .limen-matrix-case__header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+}

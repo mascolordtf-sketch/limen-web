@@ -8,6 +8,7 @@ import { DesignDetailPage } from '../pages/DesignDetailPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
+import { StudioVisualMatrixCase } from '../features/studio/StudioVisualMatrixCase'
 import { defaultStudioInvitationCode } from '../features/studio/studioInvitationRegistry'
 
 export function AppRoutes() {
@@ -19,6 +20,7 @@ export function AppRoutes() {
         element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
       />
       <Route path="studio/invitaciones/:code" element={<StudioInvitationRoute />} />
+      <Route path="studio/matriz/:caseId" element={<StudioVisualMatrixCase />} />
 
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
