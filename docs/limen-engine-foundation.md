@@ -264,3 +264,11 @@ El generador versionado comprueba que sus ejes coincidan con `canonicalOrder` y 
 Cada fila posee una ruta de harness que reproduce audiencia, variante, viewport y perfil de contenido sobre el renderer real. Los perfiles límite utilizan fixtures tipados con valores exactos por escena, de modo que un mismo identificador no depende de decisiones manuales del revisor. El verificador lee las variantes desde `origin01ThemeVariantIds`, la misma fuente consumida por la plantilla.
 
 Esta fase no modifica el renderer, las escenas, el contenido, las variantes ni Studio. Los defectos perceptuales encontrados deben registrarse con evidencia y trasladarse a la Fase 1.3, responsable de composición. La matriz y el procedimiento de ejecución se documentan en [`origin01-visual-matrix.md`](origin01-visual-matrix.md).
+
+## Fase 1.3 — cierre de composición de Origin 01
+
+La revisión de composición parte de las 224 rutas reproducibles de la matriz y conserva el renderer, el orden narrativo, el contenido y las tres variantes existentes. La jerarquía editorial, la escala y presencia de los iconos, los espacios, los encuadres fotográficos, los fondos y las transiciones entre escenas permanecen aprobados cuando no presentan un defecto demostrable en los viewports y perfiles límite documentados.
+
+El resultado de Trivia corrige un recorte compositivo concreto: el confeti ya no se dimensiona desde la columna editorial de resultado ni queda limitado por el recorte de la escena. Su superficie ocupa el ancho completo del contenedor de Origin 01, dispone de altura mínima equivalente al viewport y puede extenderse por encima del bloque de resultado, mientras el contenido interactivo conserva su nivel visual superior.
+
+La fase no incorpora controles creativos de Studio, nuevas composiciones, cambios de textos, nuevas escenas, movimiento o música, trabajo específico de accesibilidad ni optimizaciones de rendimiento. Esas responsabilidades permanecen en sus fases posteriores. El inventario y la puerta de salida se documentan en [`origin01-composition-audit.md`](origin01-composition-audit.md).

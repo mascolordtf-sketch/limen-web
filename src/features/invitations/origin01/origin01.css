@@ -2587,7 +2587,8 @@
 /* Origin 01 trivia — a quiet game scene, kept in natural document flow. */
 .origin01-trivia {
   position: relative;
-  overflow: clip;
+  /* The result celebration belongs to the whole scene, not to its 38rem text column. */
+  overflow: visible;
   padding-block: clamp(4.5rem, 15cqw, 7rem);
   background: color-mix(in srgb, var(--origin-ivory) 91%, var(--origin-old-rose));
 }
@@ -2670,12 +2671,15 @@
 .origin01-trivia__result > :not(.origin01-trivia__confetti) { position: relative; z-index: 1; }
 .origin01-trivia__confetti {
   position: absolute;
-  inset: -4.5rem -20% -4rem;
+  top: min(-8rem, -10cqw);
+  bottom: -4rem;
+  left: 50%;
   z-index: 0;
-  width: auto;
-  height: auto;
+  width: 100cqw;
+  height: max(48rem, 100svh);
   overflow: visible;
   pointer-events: none;
+  transform: translateX(-50%);
 }
 .origin01-trivia__score { position: relative; display: flex; align-items: baseline; justify-content: center; gap: .45rem; margin: 0; color: var(--origin-text-muted); }
 .origin01-trivia__score strong { color: var(--origin-wine-deep); font-family: var(--origin-display); font-size: clamp(4.5rem, 22cqw, 7rem); font-weight: 400; line-height: 1; }
