@@ -47,7 +47,9 @@ function extractList(source, property) {
 }
 
 function extractVariantIds(source) {
-  return [...source.matchAll(/id: '(origin01-[^']+)'/g)].map((item) => item[1])
+  const match = source.match(/export const origin01ThemeVariantIds = \[([^\]]+)\]/)
+  if (!match) throw new Error('No se pudo leer origin01ThemeVariantIds desde su registro.')
+  return [...match[1].matchAll(/'([^']+)'/g)].map((item) => item[1])
 }
 
 function sameValues(actual, expected) {
@@ -88,10 +90,10 @@ function buildCases() {
 
 function renderCsv(cases) {
   const header = ['id', 'group', 'scene', 'audience', 'variant', 'viewport', 'width', 'height',
-    'content_profile', 'focus', 'result', 'evidence', 'observation']
+    'content_profile', 'focus', 'harness_path', 'result', 'evidence', 'observation']
   const rows = cases.map(({ id, group, scene, audience, variant, viewport, contentProfile, focus }) => [
     id, group, scene, audience, variant, viewport.id, viewport.width, viewport.height,
-    contentProfile, focus, 'pending', '', '',
+    contentProfile, focus, `/studio/matriz/${id}`, 'pending', '', '',
   ])
   return `${[header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')}\n`
 }
@@ -99,6 +101,7 @@ function renderCsv(cases) {
 async function validateSourceAxes() {
   const templateSource = await readFile(path.join(root, 'src', 'features', 'invitations', 'origin01', 'origin01Template.ts'), 'utf8')
   const variantsSource = await readFile(path.join(root, 'src', 'features', 'invitations', 'origin01', 'origin01ThemeVariants.ts'), 'utf8')
+  const fixturesSource = await readFile(path.join(root, 'src', 'features', 'invitations', 'origin01', 'origin01VisualMatrix.ts'), 'utf8')
   const sourceScenes = extractList(templateSource, 'canonicalOrder')
   const sourceVariants = extractVariantIds(variantsSource)
 
@@ -107,6 +110,10 @@ async function validateSourceAxes() {
   }
   if (!sameValues(sourceVariants, variants)) {
     throw new Error(`La matriz quedó desactualizada respecto de las variantes: ${sourceVariants.join(', ')}`)
+  }
+  const fixtureScenes = [...fixturesSource.matchAll(/case '([^']+)':/g)].map((item) => item[1])
+  if (!sameValues(fixtureScenes, scenes)) {
+    throw new Error(`Los fixtures límite quedaron desactualizados respecto de las escenas: ${fixtureScenes.join(', ')}`)
   }
 }
 

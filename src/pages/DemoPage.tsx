@@ -1,8 +1,10 @@
+import { useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
 import { origin01DemoData } from '../features/invitations/origin01/origin01DemoData'
 import { findOrigin01TypographyCombination } from '../features/invitations/origin01/origin01Typography'
+import { resolveOrigin01VisualMatrixCase } from '../features/invitations/origin01/origin01VisualMatrix'
 
 const demoInvitations = {
   [origin01DemoData.code]: origin01DemoData,
@@ -15,13 +17,34 @@ export function DemoPage() {
   const invitation = code && Object.hasOwn(demoInvitations, code)
     ? demoInvitations[code as keyof typeof demoInvitations]
     : undefined
+  const matrixCase = invitation
+    ? resolveOrigin01VisualMatrixCase(searchParams.get('matriz'), invitation)
+    : undefined
+
+  useEffect(() => {
+    if (!matrixCase || matrixCase.scene === 'prelude') return
+    let secondFrame = 0
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        document.getElementById(matrixCase.targetId)?.scrollIntoView({ block: 'start' })
+      })
+    })
+    return () => {
+      window.cancelAnimationFrame(firstFrame)
+      window.cancelAnimationFrame(secondFrame)
+    }
+  }, [matrixCase])
 
   if (invitation) {
-    const audience = searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist'
+    const renderedInvitation = matrixCase?.invitation ?? invitation
+    const audience = matrixCase?.audience
+      ?? (searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist')
     const typography = findOrigin01TypographyCombination(searchParams.get('tipografia'))
-    const startAtInvitation = searchParams.get('inicio') === 'invitacion'
-    return <Origin01Invitation invitation={invitation} audience={audience}
-      typography={typography} startAtInvitation={startAtInvitation} />
+    const startAtInvitation = matrixCase?.startAtInvitation
+      ?? searchParams.get('inicio') === 'invitacion'
+    return <Origin01Invitation invitation={renderedInvitation} audience={audience}
+      typography={typography} startAtInvitation={startAtInvitation}
+      startAtPrelude={matrixCase?.startAtPrelude} />
   }
 
   return (
