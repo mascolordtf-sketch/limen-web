@@ -15,10 +15,10 @@ Durante la Fase 1, LIMEN no funciona como una plataforma autoservicio. Las perso
 
 No se incluye backend, base de datos, autenticación, pagos ni CMS.
 
-## Instalación
+## Instalación reproducible
 
 ```bash
-npm install
+npm ci
 ```
 
 ## Desarrollo
@@ -32,6 +32,9 @@ npm run dev
 ```bash
 npm run lint
 npm run typecheck
+npm test
+npm run build
+git diff --check
 ```
 
 ## Build de producción
@@ -50,11 +53,15 @@ npm run preview
 - `/contacto`
 - Ruta 404 para direcciones no reconocidas
 
-## Estado actual
+## Línea base técnica
 
-El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye estructura de rutas, estilos globales, una página inicial temporal, páginas placeholder para las secciones principales y la primera demostración funcional Origin 01 en `/demo/LMN-015-001`.
+La línea base vigente fue verificada el 1 de agosto de 2026 sobre `main`, commit `ed13ac7a0356ad7d9a53119ab765b6321755b478`. El repositorio pasa lint, typecheck, 275 aserciones del modelo de Studio, build de producción y `git diff --check`.
 
-Todavía no incluye catálogo real, integración de contacto, identidad visual final ni datos de producto definitivos.
+El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye la experiencia pública Origin 01 en `/demo/LMN-015-001`, un Studio interno temporal, contratos tipados, preview real, administración local de contenido y medios, tres variantes visuales y un laboratorio tipográfico.
+
+La fotografía reproducible, sus advertencias y las deudas que separan esta línea base de la Etapa 1 se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
+
+Todavía no incluye persistencia, backend, autenticación, publicación de proyectos, panel del cliente ni datos reales de RSVP. Studio no debe recibir información real hasta que existan el modelo de datos y la protección de acceso definidos en el roadmap maestro.
 
 ## No objetivos de esta fase
 
