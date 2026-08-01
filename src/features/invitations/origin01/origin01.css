@@ -148,6 +148,11 @@
   color: var(--origin-blush);
 }
 
+.origin01-hero .origin01-kicker {
+  /* Display faces can rise outside their line box; keep the cover label clear of swashes. */
+  margin-bottom: clamp(1.65rem, 4cqw, 2.5rem);
+}
+
 .origin01-entry-topline {
   position: relative;
   z-index: 5;
@@ -1214,9 +1219,10 @@
   margin: 0;
   color: var(--origin-old-rose);
   font-size: clamp(5.6rem, 24cqw, 12rem);
-  font-style: italic;
-  letter-spacing: -.055em;
-  line-height: .9;
+  font-style: normal;
+  font-synthesis: none;
+  letter-spacing: normal;
+  line-height: 1;
 }
 
 .origin01-hero__date {
