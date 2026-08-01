@@ -7,6 +7,7 @@ type Origin01LottieProps = {
   playKey?: number
   hideForReducedMotion?: boolean
   playWhenVisible?: boolean
+  preserveAspectRatio?: string
 }
 
 const useReducedMotion = () => {
@@ -31,6 +32,7 @@ export function Origin01Lottie({
   playKey = 0,
   hideForReducedMotion = false,
   playWhenVisible = false,
+  preserveAspectRatio = 'xMidYMid meet',
 }: Origin01LottieProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
@@ -46,7 +48,7 @@ export function Origin01Lottie({
       autoplay: false,
       animationData,
       rendererSettings: {
-        preserveAspectRatio: 'xMidYMid meet',
+        preserveAspectRatio,
       },
     })
 
@@ -72,7 +74,7 @@ export function Origin01Lottie({
       observer.disconnect()
       animation.destroy()
     }
-  }, [animationData, hideForReducedMotion, playKey, playWhenVisible, reducedMotion])
+  }, [animationData, hideForReducedMotion, playKey, playWhenVisible, preserveAspectRatio, reducedMotion])
 
   if (reducedMotion && hideForReducedMotion) return null
 

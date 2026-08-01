@@ -4,6 +4,7 @@ import { createElement } from 'react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { Origin01Invitation, Origin01Schedule, Origin01WeatherPanel } from '../src/features/invitations/origin01/Origin01Invitation'
 import { Origin01Community } from '../src/features/invitations/origin01/Origin01Community'
+import origin01Css from '../src/features/invitations/origin01/origin01.css?raw'
 import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
@@ -158,6 +159,10 @@ assert(resolvedMatrixCases.every((matrixCase) => matrixCase
 assert(new Set(resolvedMatrixCases.map((matrixCase) => matrixCase?.id)).size === 224
   && resolveOrigin01VisualMatrixCase('BASE-unknown-protagonist-origin01-wine-mobile', origin01DemoData) === undefined,
   'la matriz conserva identidades únicas y rechaza casos inventados')
+assert(/\.origin01-trivia\s*\{[^}]*overflow:\s*visible;/s.test(origin01Css)
+  && /\.origin01-trivia__confetti\s*\{[^}]*width:\s*100cqw;[^}]*height:\s*max\(48rem,\s*100svh\);/s.test(origin01Css)
+  && /\.origin01-trivia__confetti\s*\{[^}]*transform:\s*translateX\(-50%\);/s.test(origin01Css),
+  'la celebración de Trivia ocupa el ancho de Origin 01, conserva altura de viewport y no queda recortada por la escena')
 
 const midnightGuestDesktop = resolveOrigin01VisualMatrixCase(
   'BASE-hero-guest-origin01-midnight-desktop', origin01DemoData)
