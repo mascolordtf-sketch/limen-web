@@ -13,6 +13,12 @@ type StudioGiftsEditorProps = {
   noteValue: string
   canonicalNoteValue: string
   noteError: string | null
+  accountHolderValue: string
+  canonicalAccountHolderValue: string
+  accountHolderError: string | null
+  bankNameValue: string
+  canonicalBankNameValue: string
+  bankNameError: string | null
   accountValue: string
   canonicalAccountValue: string
   accountError: string | null
@@ -22,6 +28,10 @@ type StudioGiftsEditorProps = {
   onDescriptionReset: () => void
   onNoteChange: (value: string) => void
   onNoteReset: () => void
+  onAccountHolderChange: (value: string) => void
+  onAccountHolderReset: () => void
+  onBankNameChange: (value: string) => void
+  onBankNameReset: () => void
   onAccountChange: (value: string) => void
   onAccountReset: () => void
 }
@@ -30,6 +40,8 @@ const fields = {
   title: 'studio-gifts-title',
   description: 'studio-gifts-description',
   note: 'studio-gifts-note',
+  accountHolder: 'studio-gifts-account-holder',
+  bankName: 'studio-gifts-bank-name',
   account: 'studio-gifts-account',
 } as const
 
@@ -73,9 +85,12 @@ export function StudioGiftsEditor({
   mode = 'complete',
   titleValue, canonicalTitleValue, titleError, descriptionValue,
   canonicalDescriptionValue, descriptionError, noteValue, canonicalNoteValue,
-  noteError, accountValue, canonicalAccountValue, accountError, onTitleChange,
+  noteError, accountHolderValue, canonicalAccountHolderValue, accountHolderError,
+  bankNameValue, canonicalBankNameValue, bankNameError,
+  accountValue, canonicalAccountValue, accountError, onTitleChange,
   onTitleReset, onDescriptionChange, onDescriptionReset, onNoteChange,
-  onNoteReset, onAccountChange, onAccountReset,
+  onNoteReset, onAccountHolderChange, onAccountHolderReset, onBankNameChange,
+  onBankNameReset, onAccountChange, onAccountReset,
 }: StudioGiftsEditorProps) {
   return (
     <section className="limen-studio__gifts-editor" aria-labelledby="studio-gifts-heading">
@@ -118,7 +133,27 @@ export function StudioGiftsEditor({
         </GiftsField>
         </>}
 
-        {showsOperationalContent(mode) &&
+        {showsOperationalContent(mode) && <>
+        <GiftsField id={fields.accountHolder} label="Titular de la cuenta"
+          help="Nombre que el invitado debe corroborar antes de transferir." error={accountHolderError}
+          resetLabel="Restablecer titular" resetDisabled={accountHolderValue === canonicalAccountHolderValue}
+          onReset={onAccountHolderReset}>
+          <input className="limen-studio__text-input" id={fields.accountHolder} type="text"
+            value={accountHolderValue} onChange={(event) => onAccountHolderChange(event.target.value)}
+            aria-invalid={accountHolderError ? true : undefined}
+            aria-describedby={describedBy(fields.accountHolder, accountHolderError)} />
+        </GiftsField>
+
+        <GiftsField id={fields.bankName} label="Banco o billetera"
+          help="Entidad que se mostrará junto al titular y el alias." error={bankNameError}
+          resetLabel="Restablecer entidad" resetDisabled={bankNameValue === canonicalBankNameValue}
+          onReset={onBankNameReset}>
+          <input className="limen-studio__text-input" id={fields.bankName} type="text"
+            value={bankNameValue} onChange={(event) => onBankNameChange(event.target.value)}
+            aria-invalid={bankNameError ? true : undefined}
+            aria-describedby={describedBy(fields.bankName, bankNameError)} />
+        </GiftsField>
+
         <GiftsField id={fields.account} label="Alias"
           help="Es el dato que se mostrará o copiará desde la invitación." error={accountError}
           resetLabel="Restablecer dato" resetDisabled={accountValue === canonicalAccountValue}
@@ -128,7 +163,7 @@ export function StudioGiftsEditor({
             onChange={(event) => onAccountChange(event.target.value)}
             aria-invalid={accountError ? true : undefined}
             aria-describedby={describedBy(fields.account, accountError)} />
-        </GiftsField>}
+        </GiftsField></>}
       </div>
     </section>
   )

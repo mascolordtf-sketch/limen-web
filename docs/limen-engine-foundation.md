@@ -272,3 +272,11 @@ La revisión de composición parte de las 224 rutas reproducibles de la matriz y
 El resultado de Trivia corrige un recorte compositivo concreto: el confeti ya no se dimensiona desde la columna editorial de resultado ni queda limitado por el recorte de la escena. Su superficie ocupa el ancho completo del contenedor de Origin 01, dispone de altura mínima equivalente al viewport y puede extenderse por encima del bloque de resultado, mientras el contenido interactivo conserva su nivel visual superior.
 
 La fase no incorpora controles creativos de Studio, nuevas composiciones, cambios de textos, nuevas escenas, movimiento o música, trabajo específico de accesibilidad ni optimizaciones de rendimiento. Esas responsabilidades permanecen en sus fases posteriores. El inventario y la puerta de salida se documentan en [`origin01-composition-audit.md`](origin01-composition-audit.md).
+
+## Cierre correctivo posterior a 1.3 — fidelidad y escenas funcionales
+
+La revisión visual posterior a la composición detectó que Studio utilizaba el renderer real dentro de un contenedor de ancho estable, pero no dentro de un viewport independiente: las unidades de viewport y los elementos fijos todavía respondían a la ventana exterior. La preview monta ahora la misma instancia React mediante un portal dentro de un iframe lógico de 390 × 844 px y escala el dispositivo completo, de modo que estilos, tipografías, cortes responsivos y saltos de línea se calculan en las mismas condiciones que el celular de referencia.
+
+Cuenta regresiva equilibra su espacio superior; Dress Code y Regalo reúnen icono y contenido en composiciones centradas. Regalo distingue titular, banco o billetera y alias como datos operativos editables, los oculta de la escena inicial y los presenta para corroboración dentro de un panel modal antes de copiar. Trivia desplaza suavemente la pregunta al comenzar o avanzar y acerca la devolución y la acción siguiente tras cada respuesta, con una compactación móvil moderada.
+
+Este cierre no modifica fotografías, variantes, iconografía definitiva, música, animaciones, textos canónicos ni orden narrativo. Su alcance y comprobación manual se documentan en [`origin01-functional-scenes-polish.md`](origin01-functional-scenes-polish.md).

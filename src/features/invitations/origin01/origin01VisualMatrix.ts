@@ -216,6 +216,8 @@ function withProfile(
         eyebrow,
         title: isShort ? 'Regalo' : heading,
         description: body,
+        accountHolder: isShort ? 'Ana' : 'María Valentina de los Ángeles González',
+        bankName: isShort ? 'Banco' : 'Banco Cooperativo de la Celebración Argentina',
         accountLabel: isShort ? 'Alias' : 'Alias para acompañar este momento con un regalo',
         accountValue: isShort ? 'ANA15' : 'MARIA.VALENTINA.CELEBRACION.LIMEN',
         demoNote: isShort ? 'Demo.' : `${longCopy.body} Estos datos pertenecen únicamente a una demostración.`,

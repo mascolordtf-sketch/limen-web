@@ -884,6 +884,11 @@ assert(giftIssue?.domainId === 'event' && giftIssue.editorId === 'event-operatio
 assert(giftEventDomain?.complete === false && giftEventDomain.relevantErrorCount === 1, 'Evento contabiliza el error operativo de Regalos')
 assert(giftExperiencesDomain?.complete === true && giftExperiencesDomain.relevantErrorCount === 0, 'Experiencias no hereda silenciosamente el error operativo de Regalos')
 assert(giftScene?.complete === false && giftScene.relevantErrorCount === 1, 'la escena Regalos contempla globalmente su campo operativo')
+const invalidGiftIdentity = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftGroup(validBase, 'gifts', (gifts) => ({ ...gifts, accountHolder: '', bankName: '' })))
+assert(invalidGiftIdentity.issues.filter(({ fieldId }) => fieldId === 'giftsAccountHolder' || fieldId === 'giftsBankName')
+  .every(({ domainId, editorId }) => domainId === 'event' && editorId === 'event-operations'),
+  'titular y banco forman parte de los datos operativos verificables de Regalos')
 
 const invalidRsvpPhone = updateOrigin01StudioDraftGroup(validBase, 'rsvp', (rsvp) => ({
   ...rsvp, recipientPhone: '',
@@ -1176,9 +1181,12 @@ const communityEditorMarkup = renderToStaticMarkup(createElement(StudioCommunity
 }))
 const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
   titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
-  canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
+  canonicalNoteValue: '', noteError: null, accountHolderValue: '', canonicalAccountHolderValue: '', accountHolderError: null,
+  bankNameValue: '', canonicalBankNameValue: '', bankNameError: null,
+  accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
   onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
-  onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
+  onNoteChange: noop, onNoteReset: noop, onAccountHolderChange: noop, onAccountHolderReset: noop,
+  onBankNameChange: noop, onBankNameReset: noop, onAccountChange: noop, onAccountReset: noop }))
 for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
   [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [weatherIssue!, weatherMarkup],
   [communityIssue, communityEditorMarkup],
@@ -1226,8 +1234,20 @@ const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPrev
 assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2
   && previewMarkup.includes('limen-studio__preview-device')
-  && previewMarkup.includes('limen-studio__preview-device-screen'),
-  'la preview productiva expone un heading único, una audiencia y un viewport dentro de un teléfono')
+  && previewMarkup.includes('limen-studio__preview-device-screen')
+  && previewMarkup.includes('Invitación en viewport móvil real')
+  && previewMarkup.includes('width=device-width, initial-scale=1'),
+  'la preview productiva expone un heading único, una audiencia y un iframe con viewport móvil real')
+const giftSceneMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: { ...origin01DemoData, modules: origin01DemoData.modules.map((module) =>
+    module.moduleId === 'trivia' ? { ...module, enabled: false } : module) },
+  audience: 'protagonist', startAtInvitation: true,
+}))
+assert(giftSceneMarkup.includes('Ver datos de la cuenta')
+  && !giftSceneMarkup.includes(origin01DemoData.content.gifts.accountValue)
+  && origin01Css.includes('.origin01-gift-dialog__backdrop')
+  && origin01Css.includes('.origin01-trivia__playing { scroll-margin-top: 1rem; }'),
+  'Regalo posterga los datos sensibles hasta el panel y Trivia conserva anclas de desplazamiento')
 assert(getStudioPreviewMode('trivia') === 'contextual' && getStudioPreviewMode() === 'full'
   && studioPreviewSceneSelectors.trivia === '.origin01-trivia'
   && studioPreviewSceneSelectors.community === '.origin01-community'

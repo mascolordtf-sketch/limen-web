@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type RefObject } from 'react'
 import lottie, { type AnimationConfigWithData } from 'lottie-web'
 
 type Origin01LottieProps = {
@@ -10,18 +10,19 @@ type Origin01LottieProps = {
   preserveAspectRatio?: string
 }
 
-const useReducedMotion = () => {
-  const [reducedMotion, setReducedMotion] = useState(() =>
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+const useReducedMotion = (containerRef: RefObject<HTMLDivElement | null>) => {
+  const [reducedMotion, setReducedMotion] = useState(false)
 
   useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const view = containerRef.current?.ownerDocument.defaultView
+    if (!view) return
+    const query = view.matchMedia('(prefers-reduced-motion: reduce)')
     const updatePreference = () => setReducedMotion(query.matches)
 
     updatePreference()
     query.addEventListener('change', updatePreference)
     return () => query.removeEventListener('change', updatePreference)
-  }, [])
+  }, [containerRef])
 
   return reducedMotion
 }
@@ -35,11 +36,12 @@ export function Origin01Lottie({
   preserveAspectRatio = 'xMidYMid meet',
 }: Origin01LottieProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const reducedMotion = useReducedMotion()
+  const reducedMotion = useReducedMotion(containerRef)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container || (reducedMotion && hideForReducedMotion)) return
+    const view = container.ownerDocument.defaultView
 
     const animation = lottie.loadAnimation({
       container,
@@ -57,12 +59,12 @@ export function Origin01Lottie({
       return () => animation.destroy()
     }
 
-    if (!playWhenVisible || !('IntersectionObserver' in window)) {
+    if (!playWhenVisible || !view?.IntersectionObserver) {
       animation.play()
       return () => animation.destroy()
     }
 
-    const observer = new IntersectionObserver(([entry]) => {
+    const observer = new view.IntersectionObserver(([entry]) => {
       if (!entry.isIntersecting) return
       animation.play()
       observer.disconnect()

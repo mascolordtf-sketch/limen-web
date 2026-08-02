@@ -56,7 +56,8 @@ export type Origin01StudioDraft = {
   }
   readonly community: Origin01InvitationData['content']['community']
   readonly trivia: Origin01TriviaEditorialDraft
-  readonly gifts: Pick<Origin01InvitationData['content']['gifts'], 'title' | 'description' | 'demoNote' | 'accountValue'>
+  readonly gifts: Pick<Origin01InvitationData['content']['gifts'],
+    'title' | 'description' | 'demoNote' | 'accountHolder' | 'bankName' | 'accountValue'>
   readonly rsvp: {
     readonly title: string
     readonly description: string
@@ -150,6 +151,8 @@ export function createOrigin01StudioDraft(invitation: Origin01InvitationData): O
       title: invitation.content.gifts.title,
       description: invitation.content.gifts.description,
       demoNote: invitation.content.gifts.demoNote,
+      accountHolder: invitation.content.gifts.accountHolder,
+      bankName: invitation.content.gifts.bankName,
       accountValue: invitation.content.gifts.accountValue,
     },
     rsvp: {

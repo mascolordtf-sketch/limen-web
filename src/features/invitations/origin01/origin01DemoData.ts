@@ -135,7 +135,8 @@ export const origin01DemoData = {
     gifts: {
       eyebrow: 'Un detalle', title: 'Regalo',
       description: 'Si querés acompañar este momento con un detalle, dejamos una referencia ficticia para esta demo.',
-      accountLabel: 'Alias de demostración', accountValue: 'VALENTINA.DEMO.LIMEN',
+      accountHolder: 'Valentina González', bankName: 'Banco de demostración',
+      accountLabel: 'Alias', accountValue: 'VALENTINA.DEMO.LIMEN',
       demoNote: 'Datos de ejemplo. No corresponden a una cuenta real.', imageMediaId: 'gift',
     },
     rsvp: {
