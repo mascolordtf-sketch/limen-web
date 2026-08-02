@@ -355,8 +355,10 @@ export function Origin01WeatherPanel({ weather, availability, state }: {
       </div>
       <p className="origin01-weather__introduction">{weather.introduction}</p>
       <p className="origin01-weather__location">Pronóstico para <strong>{locationLabel}</strong></p>
-      {body}
-      <p className="origin01-weather__source">Datos meteorológicos de <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>.</p>
+      <div className="origin01-weather__surface">
+        {body}
+        <p className="origin01-weather__source">Fuente: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a></p>
+      </div>
     </div>
   </section>
 }
@@ -410,6 +412,7 @@ export function Origin01Invitation({
   const [isMusicLoading, setIsMusicLoading] = useState(false)
   const [isMusicFailed, setIsMusicFailed] = useState(false)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
+  const [isGiftDetailsOpen, setIsGiftDetailsOpen] = useState(false)
   const [shareStatus, setShareStatus] = useState('')
   const enabledModules = useMemo(
     () => getEnabledInvitationModuleIds(invitation.modules),
@@ -421,6 +424,8 @@ export function Origin01Invitation({
   const coverNameRef = useRef<HTMLHeadingElement | null>(null)
   const coverNameTextRef = useRef<HTMLSpanElement | null>(null)
   const copyResetRef = useRef<number | null>(null)
+  const giftDialogRef = useRef<HTMLDivElement | null>(null)
+  const giftDialogCloseRef = useRef<HTMLButtonElement | null>(null)
   const mapsUrl = buildMapsUrl(invitation)
   const calendarUrl = buildCalendarUrl(invitation)
   const whatsappUrl = buildWhatsAppUrl(invitation)
@@ -439,6 +444,9 @@ export function Origin01Invitation({
     const text = coverNameTextRef.current
     const container = heading?.parentElement
     if (!heading || !text || !container) return
+    const ownerDocument = heading.ownerDocument
+    const view = ownerDocument.defaultView
+    if (!view) return
 
     let frameId: number | undefined
     let disposed = false
@@ -447,12 +455,12 @@ export function Origin01Invitation({
     const fit = () => {
       heading.style.removeProperty('--origin-cover-name-fitted-size')
 
-      const containerStyle = window.getComputedStyle(container)
+      const containerStyle = view.getComputedStyle(container)
       const horizontalPadding = Number.parseFloat(containerStyle.paddingLeft)
         + Number.parseFloat(containerStyle.paddingRight)
       const availableWidth = container.clientWidth - horizontalPadding
       const renderedWidth = text.getBoundingClientRect().width
-      const fontSize = Number.parseFloat(window.getComputedStyle(heading).fontSize)
+      const fontSize = Number.parseFloat(view.getComputedStyle(heading).fontSize)
       const fittedSize = calculateCoverNameFittedSize({ availableWidth, renderedWidth, fontSize })
 
       if (fittedSize !== undefined) {
@@ -461,8 +469,8 @@ export function Origin01Invitation({
     }
 
     const scheduleFit = () => {
-      if (frameId !== undefined) window.cancelAnimationFrame(frameId)
-      frameId = window.requestAnimationFrame(() => {
+      if (frameId !== undefined) view.cancelAnimationFrame(frameId)
+      frameId = view.requestAnimationFrame(() => {
         frameId = undefined
         if (!disposed) fit()
       })
@@ -470,25 +478,25 @@ export function Origin01Invitation({
 
     fit()
 
-    const resizeObserver = typeof ResizeObserver === 'undefined'
+    const resizeObserver = !view.ResizeObserver
       ? undefined
-      : new ResizeObserver(([entry]) => {
+      : new view.ResizeObserver(([entry]) => {
         if (!entry || Math.abs(entry.contentRect.width - observedWidth) < .5) return
         observedWidth = entry.contentRect.width
         scheduleFit()
       })
     resizeObserver?.observe(container)
-    window.addEventListener('resize', scheduleFit)
+    view.addEventListener('resize', scheduleFit)
 
-    const fonts = document.fonts
+    const fonts = ownerDocument.fonts
     void fonts?.ready.then(scheduleFit)
     fonts?.addEventListener('loadingdone', scheduleFit)
 
     return () => {
       disposed = true
-      if (frameId !== undefined) window.cancelAnimationFrame(frameId)
+      if (frameId !== undefined) view.cancelAnimationFrame(frameId)
       resizeObserver?.disconnect()
-      window.removeEventListener('resize', scheduleFit)
+      view.removeEventListener('resize', scheduleFit)
       fonts?.removeEventListener('loadingdone', scheduleFit)
     }
   }, [invitation.event.name, invitationIsVisible, typography?.id])
@@ -496,24 +504,62 @@ export function Origin01Invitation({
   useEffect(() => {
     if (phase !== 'opening') return
 
-    const openingDuration = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 1_450
-    const timeoutId = window.setTimeout(() => {
+    const ownerDocument = envelopeRef.current?.ownerDocument
+    const view = ownerDocument?.defaultView
+    if (!view) return
+    const openingDuration = view.matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 1_450
+    const timeoutId = view.setTimeout(() => {
       setPhase('invitation')
-      window.scrollTo({ top: 0 })
-      window.requestAnimationFrame(() => experienceRef.current?.focus())
+      view.scrollTo({ top: 0 })
+      view.requestAnimationFrame(() => experienceRef.current?.focus())
     }, openingDuration)
 
-    return () => window.clearTimeout(timeoutId)
+    return () => view.clearTimeout(timeoutId)
   }, [phase])
 
   useEffect(() => () => {
     if (copyResetRef.current) window.clearTimeout(copyResetRef.current)
   }, [])
 
+  useEffect(() => {
+    if (!isGiftDetailsOpen) return
+
+    const dialog = giftDialogRef.current
+    const ownerDocument = dialog?.ownerDocument
+    const previousFocus = ownerDocument?.activeElement as HTMLElement | null
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsGiftDetailsOpen(false)
+        return
+      }
+      if (event.key !== 'Tab' || !dialog) return
+      const controls = Array.from(dialog.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+      const first = controls.at(0)
+      const last = controls.at(-1)
+      if (!first || !last) return
+      if (event.shiftKey && ownerDocument?.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && ownerDocument?.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    ownerDocument?.addEventListener('keydown', closeOnEscape)
+    giftDialogCloseRef.current?.focus()
+    return () => {
+      ownerDocument?.removeEventListener('keydown', closeOnEscape)
+      previousFocus?.focus()
+    }
+  }, [isGiftDetailsOpen])
+
   useLayoutEffect(() => {
     if (!invitationIsVisible || !experienceRef.current) return
 
     const experience = experienceRef.current
+    const view = experience.ownerDocument.defaultView
+    if (!view) return
     const motionMap = [
       { selector: '.origin01-countdown-panel__surface > .origin01-kicker, .origin01-countdown-panel__surface > h2', motion: 'up', level: 'content' },
       { selector: '.origin01-countdown', motion: 'depth', level: 'content', delay: 'follow' },
@@ -536,7 +582,7 @@ export function Origin01Invitation({
       { selector: '.origin01-community__card', motion: 'up', level: 'action', delay: 'follow' },
       { selector: '.origin01-gift__media', motion: 'depth', level: 'protagonist' },
       { selector: '.origin01-gift__content > .origin01-kicker, .origin01-gift__content > h2', motion: 'up', level: 'content', delay: 'editorial' },
-      { selector: '.origin01-gift__content > p:not(.origin01-kicker), .origin01-gift__account, .origin01-gift__content > small', motion: 'fade', level: 'content', delay: 'supporting' },
+      { selector: '.origin01-gift__content > p:not(.origin01-kicker), .origin01-gift__details-action, .origin01-gift__content > small', motion: 'fade', level: 'content', delay: 'supporting' },
       { selector: '.origin01-rsvp > .origin01-kicker, .origin01-rsvp > h2', motion: 'up', level: 'content', delay: 'editorial' },
       { selector: '.origin01-rsvp > p:not(.origin01-kicker), .origin01-rsvp > .origin01-button', motion: 'fade', level: 'action', delay: 'supporting' },
       { selector: '.origin01-closing__content', motion: 'up', level: 'protagonist' },
@@ -553,12 +599,12 @@ export function Origin01Invitation({
 
     experience.classList.add('origin01-motion-ready')
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    if (view.matchMedia('(prefers-reduced-motion: reduce)').matches || !view.IntersectionObserver) {
       motionElements.forEach((element) => element.classList.add('origin01-motion-visible'))
       return
     }
 
-    const observer = new IntersectionObserver(
+    const observer = new view.IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return
@@ -921,9 +967,28 @@ export function Origin01Invitation({
                   <p className="origin01-kicker">{invitation.content.gifts.eyebrow}</p>
                   <h2 id="origin01-gift-title">{invitation.content.gifts.title}</h2>
                   <p>{invitation.content.gifts.description}</p>
-                  <div className="origin01-gift__account">
-                    <span>{invitation.content.gifts.accountLabel}</span>
-                    <strong>{invitation.content.gifts.accountValue}</strong>
+                  <button type="button" className="origin01-button origin01-button--dark origin01-gift__details-action"
+                    onClick={() => setIsGiftDetailsOpen(true)} aria-haspopup="dialog">
+                    Ver datos de la cuenta
+                  </button>
+                  <small>{invitation.content.gifts.demoNote}</small>
+                </div>
+              </div>
+              {isGiftDetailsOpen ? (
+                <div className="origin01-gift-dialog__backdrop" onClick={(event) => {
+                  if (event.target === event.currentTarget) setIsGiftDetailsOpen(false)
+                }}>
+                  <div className="origin01-gift-dialog" ref={giftDialogRef} role="dialog" aria-modal="true"
+                    aria-labelledby="origin01-gift-dialog-title">
+                    <button ref={giftDialogCloseRef} type="button" className="origin01-gift-dialog__close"
+                      onClick={() => setIsGiftDetailsOpen(false)} aria-label="Cerrar datos de la cuenta">×</button>
+                    <p className="origin01-kicker">Datos para el regalo</p>
+                    <h3 id="origin01-gift-dialog-title">Corroborá antes de transferir</h3>
+                    <dl className="origin01-gift-dialog__details">
+                      <div><dt>Titular</dt><dd>{invitation.content.gifts.accountHolder}</dd></div>
+                      <div><dt>Banco o billetera</dt><dd>{invitation.content.gifts.bankName}</dd></div>
+                      <div><dt>{invitation.content.gifts.accountLabel}</dt><dd>{invitation.content.gifts.accountValue}</dd></div>
+                    </dl>
                     <button type="button" className={`origin01-copy origin01-copy--${copyStatus}`} onClick={copyGiftAccount} aria-label="Copiar alias">
                       <span className="origin01-copy__icons" aria-hidden="true">
                         <OriginIcon name="copy" />
@@ -933,10 +998,10 @@ export function Origin01Invitation({
                       <span className="origin01-copy__label">{copyStatus === 'copied' ? 'Copiado' : copyStatus === 'error' ? 'No se pudo copiar' : 'Copiar alias'}</span>
                     </button>
                     <span className="origin01-sr-only" aria-live="polite">{copyStatus === 'copied' ? 'Alias copiado' : copyStatus === 'error' ? 'No se pudo copiar el alias' : ''}</span>
+                    <small>{invitation.content.gifts.demoNote}</small>
                   </div>
-                  <small>{invitation.content.gifts.demoNote}</small>
                 </div>
-              </div>
+              ) : null}
           </section>
           ) : null}
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import confettiAnimation from '../../../assets/lottie/origin01-trivia-confetti.json'
 import questionAnimation from '../../../assets/lottie/origin01-trivia-question.json'
@@ -13,11 +13,22 @@ export function Origin01Trivia({ config }: { config: Origin01TriviaContent }) {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
   const [answers, setAnswers] = useState<(string | null)[]>(() => Array(config.questions.length).fill(null))
   const [playthrough, setPlaythrough] = useState(0)
+  const playingRef = useRef<HTMLDivElement | null>(null)
+  const answeredRef = useRef<HTMLDivElement | null>(null)
   const question = config.questions[currentQuestionIndex]
   const isLastQuestion = currentQuestionIndex === config.questions.length - 1
   const completedCount = answers.filter((answer) => answer !== null).length
   const correctCount = config.questions.reduce((score, item, index) =>
     item.isPrediction ? score : score + Number(answers[index] === item.correctOptionId), 0)
+
+  useEffect(() => {
+    if (phase !== 'playing') return
+    const target = selectedOptionId === null ? playingRef.current : answeredRef.current
+    if (!target) return
+    const view = target.ownerDocument.defaultView
+    const behavior = view?.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    view?.requestAnimationFrame(() => target.scrollIntoView({ behavior, block: selectedOptionId === null ? 'start' : 'nearest' }))
+  }, [currentQuestionIndex, phase, selectedOptionId])
 
   const selectOption = (optionId: string) => {
     if (selectedOptionId !== null) return
@@ -56,7 +67,7 @@ export function Origin01Trivia({ config }: { config: Origin01TriviaContent }) {
     const isCorrect = !question.isPrediction && selectedOptionId === question.correctOptionId
     const feedback = question.isPrediction || isCorrect ? question.correctFeedback : question.incorrectFeedback
     return (
-      <div className="origin01-trivia__playing">
+      <div className="origin01-trivia__playing" ref={playingRef}>
         <div className="origin01-trivia__progress">
           <p>{config.questionMetaLabel} {currentQuestionIndex + 1} de {config.questions.length}</p>
           <div className="origin01-trivia__progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={config.questions.length} aria-valuenow={completedCount} aria-label="Progreso de la trivia">
@@ -76,7 +87,7 @@ export function Origin01Trivia({ config }: { config: Origin01TriviaContent }) {
           })}
         </div>
         {selectedOptionId !== null ? (
-          <div className="origin01-trivia__answered">
+          <div className="origin01-trivia__answered" ref={answeredRef}>
             <p className={`origin01-trivia__feedback origin01-trivia__feedback--${question.isPrediction ? 'prediction' : isCorrect ? 'correct' : 'incorrect'}`} aria-live="polite">{feedback}</p>
             <button type="button" className="origin01-button origin01-button--dark origin01-trivia__next" onClick={next}>{isLastQuestion ? config.resultLabel : config.nextLabel}</button>
           </div>

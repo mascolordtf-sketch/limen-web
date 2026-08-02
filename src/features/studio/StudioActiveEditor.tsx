@@ -71,10 +71,13 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const setRsvpDescription = (description: string) => updateGroup('rsvp', (current) => ({ ...current, description }))
   const setRsvpActionLabel = (actionLabel: string) => updateGroup('rsvp', (current) => ({ ...current, actionLabel }))
   const setRsvpRecipientPhone = (recipientPhone: string) => updateGroup('rsvp', (current) => ({ ...current, recipientPhone }))
-  const { title: giftsTitle, description: giftsDescription, demoNote: giftsNote, accountValue: giftsAccount } = draft.gifts
+  const { title: giftsTitle, description: giftsDescription, demoNote: giftsNote,
+    accountHolder: giftsAccountHolder, bankName: giftsBankName, accountValue: giftsAccount } = draft.gifts
   const setGiftsTitle = (title: string) => updateGroup('gifts', (current) => ({ ...current, title }))
   const setGiftsDescription = (description: string) => updateGroup('gifts', (current) => ({ ...current, description }))
   const setGiftsNote = (demoNote: string) => updateGroup('gifts', (current) => ({ ...current, demoNote }))
+  const setGiftsAccountHolder = (accountHolder: string) => updateGroup('gifts', (current) => ({ ...current, accountHolder }))
+  const setGiftsBankName = (bankName: string) => updateGroup('gifts', (current) => ({ ...current, bankName }))
   const setGiftsAccount = (accountValue: string) => updateGroup('gifts', (current) => ({ ...current, accountValue }))
   const { eyebrow: storyEyebrow, message: storyMessage } = draft.story
   const setStoryEyebrow = (eyebrow: string) => updateGroup('story', (current) => ({ ...current, eyebrow }))
@@ -120,6 +123,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const canonicalGiftsTitle = initialDraft.gifts.title
   const canonicalGiftsDescription = initialDraft.gifts.description
   const canonicalGiftsNote = initialDraft.gifts.demoNote
+  const canonicalGiftsAccountHolder = initialDraft.gifts.accountHolder
+  const canonicalGiftsBankName = initialDraft.gifts.bankName
   const canonicalGiftsAccount = initialDraft.gifts.accountValue
   const canonicalStoryEyebrow = initialDraft.story.eyebrow
   const canonicalStoryMessage = initialDraft.story.message
@@ -160,6 +165,8 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const giftsTitleError = errors.giftsTitle
   const giftsDescriptionError = errors.giftsDescription
   const giftsNoteError = errors.giftsNote
+  const giftsAccountHolderError = errors.giftsAccountHolder
+  const giftsBankNameError = errors.giftsBankName
   const giftsAccountError = errors.giftsAccount
   const storyEyebrowError = errors.storyEyebrow
   const storyMessageError = errors.storyMessage
@@ -248,6 +255,12 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             noteValue={giftsNote}
             canonicalNoteValue={canonicalGiftsNote}
             noteError={giftsNoteError}
+            accountHolderValue={giftsAccountHolder}
+            canonicalAccountHolderValue={canonicalGiftsAccountHolder}
+            accountHolderError={giftsAccountHolderError}
+            bankNameValue={giftsBankName}
+            canonicalBankNameValue={canonicalGiftsBankName}
+            bankNameError={giftsBankNameError}
             accountValue={giftsAccount}
             canonicalAccountValue={canonicalGiftsAccount}
             accountError={giftsAccountError}
@@ -257,6 +270,10 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             onDescriptionReset={() => resetField('gifts', 'description')}
             onNoteChange={setGiftsNote}
             onNoteReset={() => resetField('gifts', 'demoNote')}
+            onAccountHolderChange={setGiftsAccountHolder}
+            onAccountHolderReset={() => resetField('gifts', 'accountHolder')}
+            onBankNameChange={setGiftsBankName}
+            onBankNameReset={() => resetField('gifts', 'bankName')}
             onAccountChange={setGiftsAccount}
             onAccountReset={() => resetField('gifts', 'accountValue')}
           />          <StudioRsvpEditor mode="operational"
@@ -478,6 +495,12 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             noteValue={giftsNote}
             canonicalNoteValue={canonicalGiftsNote}
             noteError={giftsNoteError}
+            accountHolderValue={giftsAccountHolder}
+            canonicalAccountHolderValue={canonicalGiftsAccountHolder}
+            accountHolderError={giftsAccountHolderError}
+            bankNameValue={giftsBankName}
+            canonicalBankNameValue={canonicalGiftsBankName}
+            bankNameError={giftsBankNameError}
             accountValue={giftsAccount}
             canonicalAccountValue={canonicalGiftsAccount}
             accountError={giftsAccountError}
@@ -487,6 +510,10 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             onDescriptionReset={() => resetField('gifts', 'description')}
             onNoteChange={setGiftsNote}
             onNoteReset={() => resetField('gifts', 'demoNote')}
+            onAccountHolderChange={setGiftsAccountHolder}
+            onAccountHolderReset={() => resetField('gifts', 'accountHolder')}
+            onBankNameChange={setGiftsBankName}
+            onBankNameReset={() => resetField('gifts', 'bankName')}
             onAccountChange={setGiftsAccount}
             onAccountReset={() => resetField('gifts', 'accountValue')}
           /></div>,

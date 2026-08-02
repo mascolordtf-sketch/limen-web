@@ -114,7 +114,7 @@ export const origin01DemoData = {
       protagonistName: 'Valentina', accessibleTitle: 'Trivia sobre Valentina', introEyebrow: 'Entre nosotros…',
       title: '¿Cuánto conocés de verdad a Valentina?', description: 'Cinco preguntas. Menos de un minuto.',
       primaryActionLabel: 'Aceptar el desafío', questionMetaLabel: 'Pregunta', nextLabel: 'Siguiente', resultLabel: 'Ver resultado',
-      replayLabel: 'Volver a jugar', scoreTotalLabel: '/ 4 respuestas',
+      replayLabel: 'Volver a jugar', scoreTotalLabel: '/ 4 respuestas correctas',
       questions: [
         { id: 'q1', prompt: '¿Cuál sería el plan perfecto de Valentina para un sábado?', correctOptionId: 'b', options: [{ id: 'a', label: 'Salir a bailar' }, { id: 'b', label: 'Una tarde con amigas' }, { id: 'c', label: 'Maratón de películas' }, { id: 'd', label: 'Dormir hasta el domingo' }], correctFeedback: '¡La conocés bien! Con amigas cerca, cualquier tarde puede convertirse en un gran plan.', incorrectFeedback: 'Casi… puede disfrutar muchos planes, pero una tarde con amigas suele ganar.' },
         { id: 'q2', prompt: '¿Qué comida elegiría sin pensarlo?', correctOptionId: 'a', options: [{ id: 'a', label: 'Pizza' }, { id: 'b', label: 'Sushi' }, { id: 'c', label: 'Pastas' }, { id: 'd', label: 'Hamburguesas' }], correctFeedback: 'Punto para vos. Si hay pizza, Valentina difícilmente diga que no.', incorrectFeedback: 'Buena elección, aunque la pizza sigue ocupando un lugar difícil de superar.' },
@@ -135,7 +135,8 @@ export const origin01DemoData = {
     gifts: {
       eyebrow: 'Un detalle', title: 'Regalo',
       description: 'Si querés acompañar este momento con un detalle, dejamos una referencia ficticia para esta demo.',
-      accountLabel: 'Alias de demostración', accountValue: 'VALENTINA.DEMO.LIMEN',
+      accountHolder: 'Valentina González', bankName: 'Banco de demostración',
+      accountLabel: 'Alias', accountValue: 'VALENTINA.DEMO.LIMEN',
       demoNote: 'Datos de ejemplo. No corresponden a una cuenta real.', imageMediaId: 'gift',
     },
     rsvp: {

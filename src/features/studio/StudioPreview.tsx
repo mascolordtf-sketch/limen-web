@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, type RefObject } from 'react'
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { createPortal } from 'react-dom'
 import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import { Origin01Invitation } from '../invitations/origin01/Origin01Invitation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
@@ -35,7 +36,8 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
   previewScene?: StudioSceneId
 }) {
   const stageRef = useRef<HTMLDivElement>(null)
-  const viewportRef = useRef<HTMLDivElement>(null)
+  const viewportRef = useRef<HTMLIFrameElement>(null)
+  const [previewDocument, setPreviewDocument] = useState<Document | null>(null)
   const mode = getStudioPreviewMode(previewScene)
 
   useLayoutEffect(() => {
@@ -45,7 +47,7 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
     const updateScale = () => {
       const availableWidth = Math.max(0, stage.clientWidth - 16)
       const availableHeight = Math.max(0, stage.clientHeight - 16)
-      const scale = Math.min(1, availableWidth / 424, availableHeight / 868)
+      const scale = Math.min(1, availableWidth / 414, availableHeight / 868)
       stage.style.setProperty('--studio-preview-scale', String(scale))
     }
     updateScale()
@@ -56,25 +58,44 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current
-    if (!viewport) return
+    const document = viewport?.contentDocument
+    if (!viewport || !document) return
 
     if (!previewScene) {
-      viewport.scrollTop = 0
+      viewport.contentWindow?.scrollTo({ top: 0 })
       return
     }
 
-    const target = viewport.querySelector<HTMLElement>(studioPreviewSceneSelectors[previewScene])
+    const target = document.querySelector<HTMLElement>(studioPreviewSceneSelectors[previewScene])
     if (!target) return
-    viewport.scrollTop += target.getBoundingClientRect().top - viewport.getBoundingClientRect().top
-  }, [previewScene, previewKey])
+    target.scrollIntoView({ block: 'start' })
+  }, [previewDocument, previewScene, previewKey])
+
+  const preparePreviewDocument = () => {
+    const iframe = viewportRef.current
+    const document = iframe?.contentDocument
+    if (!document) return
+
+    document.head.querySelectorAll('[data-studio-preview-style]').forEach((element) => element.remove())
+    window.document.head.querySelectorAll<HTMLLinkElement | HTMLStyleElement>('link[rel="stylesheet"], style')
+      .forEach((stylesheet) => {
+        const clone = stylesheet.cloneNode(true) as HTMLLinkElement | HTMLStyleElement
+        clone.dataset.studioPreviewStyle = 'true'
+        document.head.append(clone)
+      })
+    setPreviewDocument(document)
+  }
 
   return <div className="limen-studio__preview-device-stage" ref={stageRef}>
     <div className="limen-studio__preview-device" aria-label="Vista previa en un teléfono">
       <span className="limen-studio__preview-device-speaker" aria-hidden="true" />
       <div className="limen-studio__preview-device-screen">
-        <div className="limen-studio__preview-shell" ref={viewportRef}><Origin01Invitation
+        <iframe className="limen-studio__preview-shell" ref={viewportRef} title="Invitación en viewport móvil real"
+          srcDoc="<!doctype html><html lang='es'><head><meta name='viewport' content='width=device-width, initial-scale=1'></head><body class='limen-studio-preview-document'></body></html>"
+          onLoad={preparePreviewDocument} allow="clipboard-write" />
+        {previewDocument ? createPortal(<Origin01Invitation
           key={`${previewKey}:${previewScene ?? mode}`} invitation={invitation} audience={audience}
-          publicInvitationUrl={publicInvitationUrl} startAtInvitation={mode === 'contextual'} /></div>
+          publicInvitationUrl={publicInvitationUrl} startAtInvitation={mode === 'contextual'} />, previewDocument.body) : null}
       </div>
     </div>
   </div>

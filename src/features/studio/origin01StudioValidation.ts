@@ -86,7 +86,8 @@ const studioFieldTargetIds: Readonly<Record<string, string>> = {
   eventStart: 'studio-event-start', eventEnd: 'studio-event-end', venue: 'studio-event-venue', address: 'studio-event-address',
   dressCodeTitle: 'studio-dress-code-title', dressCodeDescription: 'studio-dress-code-description', dressCodeNote: 'studio-dress-code-note',
   rsvpTitle: 'studio-rsvp-title', rsvpDescription: 'studio-rsvp-description', rsvpActionLabel: 'studio-rsvp-action-label', rsvpRecipientPhone: 'studio-rsvp-recipient-phone',
-  giftsTitle: 'studio-gifts-title', giftsDescription: 'studio-gifts-description', giftsNote: 'studio-gifts-note', giftsAccount: 'studio-gifts-account',
+  giftsTitle: 'studio-gifts-title', giftsDescription: 'studio-gifts-description', giftsNote: 'studio-gifts-note',
+  giftsAccountHolder: 'studio-gifts-account-holder', giftsBankName: 'studio-gifts-bank-name', giftsAccount: 'studio-gifts-account',
   storyEyebrow: 'studio-story-eyebrow', storyMessage: 'studio-story-message',
   preludeEyebrow: 'studio-opening-prelude-eyebrow', preludeBody: 'studio-opening-prelude-body', preludeReveal: 'studio-opening-prelude-reveal',
   preludeQuestion: 'studio-opening-prelude-question', preludeActionLabel: 'studio-opening-prelude-action', preludeSoundHint: 'studio-opening-prelude-sound',
@@ -143,6 +144,8 @@ export function validateOrigin01StudioDraft(
     giftsTitle: required(draft.gifts.title, 'Ingresá un título para la sección de regalos.'),
     giftsDescription: required(draft.gifts.description, 'Ingresá una descripción para la sección de regalos.'),
     giftsNote: required(draft.gifts.demoNote, 'Ingresá una nota destacada.'),
+    giftsAccountHolder: required(draft.gifts.accountHolder, 'Ingresá el nombre del titular.'),
+    giftsBankName: required(draft.gifts.bankName, 'Ingresá el nombre del banco o billetera.'),
     giftsAccount: required(draft.gifts.accountValue, 'Ingresá el dato para regalar.'),
     storyEyebrow: required(draft.story.eyebrow, 'Ingresá el texto introductorio.'),
     storyMessage: required(draft.story.message, 'Ingresá el texto de la historia.'),
@@ -227,10 +230,10 @@ export function validateOrigin01StudioDraft(
       editorId: 'community', domainId: 'experiences' as const, sceneId: 'instagram' as const,
     })),
     { fieldId: 'trivia', error: fieldErrors.trivia, message: fieldErrors.trivia ?? '', editorId: 'trivia', domainId: 'experiences', sceneId: 'trivia' },
-    ...(['giftsTitle', 'giftsDescription', 'giftsNote', 'giftsAccount'] as const).map((fieldId) => ({
+    ...(['giftsTitle', 'giftsDescription', 'giftsNote', 'giftsAccountHolder', 'giftsBankName', 'giftsAccount'] as const).map((fieldId) => ({
       fieldId, error: fieldErrors[fieldId], message: fieldErrors[fieldId] ?? '',
-      editorId: fieldId === 'giftsAccount' ? 'event-operations' : 'gifts',
-      domainId: fieldId === 'giftsAccount' ? 'event' as const : 'experiences' as const,
+      editorId: fieldId === 'giftsTitle' || fieldId === 'giftsDescription' || fieldId === 'giftsNote' ? 'gifts' : 'event-operations',
+      domainId: fieldId === 'giftsTitle' || fieldId === 'giftsDescription' || fieldId === 'giftsNote' ? 'experiences' as const : 'event' as const,
       sceneId: 'gifts' as const,
     })),
     ...(['rsvpTitle', 'rsvpDescription', 'rsvpActionLabel', 'rsvpRecipientPhone'] as const).map((fieldId) => ({

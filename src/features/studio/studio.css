@@ -3558,11 +3558,16 @@
   overflow: hidden;
 }
 
+.limen-studio-preview-document {
+  margin: 0;
+  background: #fff;
+}
+
 .limen-studio__preview-device {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 26.5rem;
+  width: 25.875rem;
   height: 54.25rem;
   transform: translate(-50%, -50%) scale(var(--studio-preview-scale));
   transform-origin: center;
@@ -3587,7 +3592,7 @@
 }
 
 .limen-studio__preview-device-screen {
-  width: 25rem;
+  width: 24.375rem;
   height: 52.75rem;
   overflow: hidden;
   border-radius: 2.3rem;
@@ -3595,12 +3600,13 @@
 }
 
 .limen-studio__preview-shell {
-  width: 25rem;
+  width: 24.375rem;
   height: 52.75rem;
-  overflow-y: auto;
+  display: block;
+  overflow: hidden;
+  border: 0;
   border-radius: inherit;
   background: #fff;
-  scrollbar-width: thin;
 }
 
 .limen-studio__review-stage {
@@ -4764,14 +4770,8 @@
   }
 
   .limen-studio__desktop-preview .limen-studio__preview-shell {
-    width: 25rem;
-    height: 52.75rem;
-  }
-
-  .limen-studio__desktop-preview .limen-studio__preview-shell > .origin01 {
     width: 24.375rem;
-    max-width: none;
-    margin-inline: auto;
+    height: 52.75rem;
   }
 
   .limen-studio__content-layout > .limen-studio__desktop-preview--dedicated .limen-studio__preview-pane,
@@ -4782,9 +4782,9 @@
   }
 
   .limen-studio__desktop-preview--dedicated .limen-studio__preview-shell {
-    width: 25rem;
+    width: 24.375rem;
     height: 52.75rem;
-    overflow-y: auto;
+    overflow: hidden;
   }
 
   .limen-studio__review-stage {

@@ -115,6 +115,8 @@ export type Origin01Content = LimenInvitationContent & {
     readonly eyebrow: string
     readonly title: string
     readonly description: string
+    readonly accountHolder: string
+    readonly bankName: string
     readonly accountLabel: string
     readonly accountValue: string
     readonly demoNote: string

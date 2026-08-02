@@ -139,6 +139,10 @@ const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
   && origin01ThemeVariants.map(({ id }) => id).join('|') === origin01Template.supportedThemeVariants.join('|'),
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
+const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
+assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
+  && dynamicDateInitial.event.end === '2026-09-07T02:00',
+  'Studio inicializa el evento a siete días de la fecha local y conserva sus horas y cruce de medianoche')
 
 const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
   ...(['protagonist', 'guest'] as const).flatMap((audience) =>
@@ -663,6 +667,8 @@ assert(renamed.trivia === initial.trivia, 'cambiar el nombre no muta ni reemplaz
 assert(renamedPreview.content.trivia.accessibleTitle === 'Trivia sobre Amparo', 'deriva el título accesible de Trivia')
 assert(renamedPreview.content.trivia.title === '¿Cuánto conocés de verdad a Amparo?', 'deriva el título visible de Trivia')
 assert(renamedPreview.content.trivia.revealSignature === 'Amparo', 'deriva la firma final de Trivia')
+assert(initial.trivia.scoreTotalLabel === '/ 4 respuestas correctas',
+  'el resultado distingue las cuatro preguntas puntuables de la predicción final')
 assert(renamedPreview.content.trivia.description === initial.trivia.description
   && renamedPreview.content.trivia.questions === initial.trivia.questions
   && renamedPreview.content.trivia.resultTiers === initial.trivia.resultTiers,
@@ -820,8 +826,9 @@ assert(deriveOrigin01PreviewInvitation(origin01DemoData, changedWeather).content
 const communityMarkup = renderToStaticMarkup(createElement(Origin01Community, { community: initial.community }))
 assert(communityMarkup.includes('@valentina.limen') && communityMarkup.includes('#ValeCruzaElLimen')
   && communityMarkup.includes('https://photos.google.com/')
+  && !communityMarkup.includes('↗')
   && communityMarkup.indexOf('Instagram') < communityMarkup.indexOf('Hashtag oficial'),
-  'Comunidad renderiza los tres destinos reales en su composición canónica')
+  'Comunidad renderiza los tres destinos reales sin iconos externos genéricos')
 const editedCommunity = updateOrigin01StudioDraftGroup(initial, 'community', (community) => ({
   ...community,
   instagram: { ...community.instagram, handle: '@fiesta.vale' },
@@ -884,6 +891,11 @@ assert(giftIssue?.domainId === 'event' && giftIssue.editorId === 'event-operatio
 assert(giftEventDomain?.complete === false && giftEventDomain.relevantErrorCount === 1, 'Evento contabiliza el error operativo de Regalos')
 assert(giftExperiencesDomain?.complete === true && giftExperiencesDomain.relevantErrorCount === 0, 'Experiencias no hereda silenciosamente el error operativo de Regalos')
 assert(giftScene?.complete === false && giftScene.relevantErrorCount === 1, 'la escena Regalos contempla globalmente su campo operativo')
+const invalidGiftIdentity = validateOrigin01StudioDraft(origin01DemoData,
+  updateOrigin01StudioDraftGroup(validBase, 'gifts', (gifts) => ({ ...gifts, accountHolder: '', bankName: '' })))
+assert(invalidGiftIdentity.issues.filter(({ fieldId }) => fieldId === 'giftsAccountHolder' || fieldId === 'giftsBankName')
+  .every(({ domainId, editorId }) => domainId === 'event' && editorId === 'event-operations'),
+  'titular y banco forman parte de los datos operativos verificables de Regalos')
 
 const invalidRsvpPhone = updateOrigin01StudioDraftGroup(validBase, 'rsvp', (rsvp) => ({
   ...rsvp, recipientPhone: '',
@@ -1176,9 +1188,12 @@ const communityEditorMarkup = renderToStaticMarkup(createElement(StudioCommunity
 }))
 const giftMarkup = renderToStaticMarkup(createElement(StudioGiftsEditor, { mode: 'operational', titleValue: '', canonicalTitleValue: '',
   titleError: null, descriptionValue: '', canonicalDescriptionValue: '', descriptionError: null, noteValue: '',
-  canonicalNoteValue: '', noteError: null, accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
+  canonicalNoteValue: '', noteError: null, accountHolderValue: '', canonicalAccountHolderValue: '', accountHolderError: null,
+  bankNameValue: '', canonicalBankNameValue: '', bankNameError: null,
+  accountValue: '', canonicalAccountValue: '', accountError: giftIssue?.message ?? null,
   onTitleChange: noop, onTitleReset: noop, onDescriptionChange: noop, onDescriptionReset: noop,
-  onNoteChange: noop, onNoteReset: noop, onAccountChange: noop, onAccountReset: noop }))
+  onNoteChange: noop, onNoteReset: noop, onAccountHolderChange: noop, onAccountHolderReset: noop,
+  onBankNameChange: noop, onBankNameReset: noop, onAccountChange: noop, onAccountReset: noop }))
 for (const [issue, markup] of [[identityIssue, identityMarkup], [eventIssue, eventMarkup], [storyIssue, storyEditorMarkup],
   [dressIssue, dressMarkup], [scheduleIssue!, scheduleMarkup], [weatherIssue!, weatherMarkup],
   [communityIssue, communityEditorMarkup],
@@ -1226,8 +1241,20 @@ const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPrev
 assert((previewMarkup.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && (previewMarkup.match(/name="studio-preview-audience"/g) ?? []).length === 2
   && previewMarkup.includes('limen-studio__preview-device')
-  && previewMarkup.includes('limen-studio__preview-device-screen'),
-  'la preview productiva expone un heading único, una audiencia y un viewport dentro de un teléfono')
+  && previewMarkup.includes('limen-studio__preview-device-screen')
+  && previewMarkup.includes('Invitación en viewport móvil real')
+  && previewMarkup.includes('width=device-width, initial-scale=1'),
+  'la preview productiva expone un heading único, una audiencia y un iframe con viewport móvil real')
+const giftSceneMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: { ...origin01DemoData, modules: origin01DemoData.modules.map((module) =>
+    module.moduleId === 'trivia' ? { ...module, enabled: false } : module) },
+  audience: 'protagonist', startAtInvitation: true,
+}))
+assert(giftSceneMarkup.includes('Ver datos de la cuenta')
+  && !giftSceneMarkup.includes(origin01DemoData.content.gifts.accountValue)
+  && origin01Css.includes('.origin01-gift-dialog__backdrop')
+  && origin01Css.includes('.origin01-trivia__playing { scroll-margin-top: 1rem; }'),
+  'Regalo posterga los datos sensibles hasta el panel y Trivia conserva anclas de desplazamiento')
 assert(getStudioPreviewMode('trivia') === 'contextual' && getStudioPreviewMode() === 'full'
   && studioPreviewSceneSelectors.trivia === '.origin01-trivia'
   && studioPreviewSceneSelectors.community === '.origin01-community'
