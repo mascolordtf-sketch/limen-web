@@ -139,6 +139,10 @@ const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
   && origin01ThemeVariants.map(({ id }) => id).join('|') === origin01Template.supportedThemeVariants.join('|'),
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
+const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
+assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
+  && dynamicDateInitial.event.end === '2026-09-07T02:00',
+  'Studio inicializa el evento a siete días de la fecha local y conserva sus horas y cruce de medianoche')
 
 const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
   ...(['protagonist', 'guest'] as const).flatMap((audience) =>

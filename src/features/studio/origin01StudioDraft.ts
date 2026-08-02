@@ -87,15 +87,58 @@ const createTriviaEditorialDraft = (trivia: Origin01TriviaContent): Origin01Triv
   }
 }
 
-export function createOrigin01StudioDraft(invitation: Origin01InvitationData): Origin01StudioDraft {
+const studioDefaultEventOffsetDays = 7
+const millisecondsPerDay = 24 * 60 * 60 * 1000
+
+const formatLocalDate = (date: Date) => [
+  String(date.getFullYear()).padStart(4, '0'),
+  String(date.getMonth() + 1).padStart(2, '0'),
+  String(date.getDate()).padStart(2, '0'),
+].join('-')
+
+function getStudioDefaultEventDateTimes(
+  invitation: Origin01InvitationData,
+  now: Date,
+): { readonly start: string; readonly end: string } {
+  const canonicalStart = toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone)
+  const canonicalEnd = toDateTimeLocalValue(invitation.event.endsAt, invitation.event.timeZone)
+  if (!canonicalStart || !canonicalEnd || Number.isNaN(now.getTime())) {
+    return { start: canonicalStart, end: canonicalEnd }
+  }
+
+  const [startDate, startTime] = canonicalStart.split('T')
+  const [endDate, endTime] = canonicalEnd.split('T')
+  const startDay = Date.parse(`${startDate}T00:00:00Z`)
+  const endDay = Date.parse(`${endDate}T00:00:00Z`)
+  if (Number.isNaN(startDay) || Number.isNaN(endDay) || !startTime || !endTime) {
+    return { start: canonicalStart, end: canonicalEnd }
+  }
+
+  const eventDaySpan = Math.round((endDay - startDay) / millisecondsPerDay)
+  const dynamicStartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + studioDefaultEventOffsetDays)
+  const dynamicEndDate = new Date(
+    dynamicStartDate.getFullYear(), dynamicStartDate.getMonth(), dynamicStartDate.getDate() + eventDaySpan,
+  )
+
+  return {
+    start: `${formatLocalDate(dynamicStartDate)}T${startTime}`,
+    end: `${formatLocalDate(dynamicEndDate)}T${endTime}`,
+  }
+}
+
+export function createOrigin01StudioDraft(
+  invitation: Origin01InvitationData,
+  now: Date = new Date(),
+): Origin01StudioDraft {
   const protagonistName = invitation.identities.find(({ role }) => role === 'protagonist')?.displayName ?? ''
   const suggestedShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
+  const eventDateTimes = getStudioDefaultEventDateTimes(invitation, now)
   return {
     themeVariant: invitation.themeVariant,
     protagonistName,
     event: {
-      start: toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone),
-      end: toDateTimeLocalValue(invitation.event.endsAt, invitation.event.timeZone),
+      start: eventDateTimes.start,
+      end: eventDateTimes.end,
       venue: invitation.event.venue,
       address: invitation.event.address,
     },
