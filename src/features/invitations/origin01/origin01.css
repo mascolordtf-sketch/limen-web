@@ -1039,17 +1039,24 @@
 }
 
 .origin01-weather__source {
-  margin: 1.2rem 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--origin-border) 58%, transparent);
-  padding-top: .7rem;
-  font-size: .62rem;
-  opacity: .72;
+  margin: .85rem 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--origin-border) 34%, transparent);
+  padding-top: .55rem;
+  font-size: .56rem;
+  letter-spacing: .015em;
+  opacity: .55;
 }
 
 .origin01-weather__source a {
   color: inherit;
-  font-weight: 750;
-  text-underline-offset: .2em;
+  font-weight: 600;
+  text-decoration-color: transparent;
+  text-underline-offset: .18em;
+}
+
+.origin01-weather__source a:hover,
+.origin01-weather__source a:focus-visible {
+  text-decoration-color: currentColor;
 }
 
 .origin01-demo-label {
