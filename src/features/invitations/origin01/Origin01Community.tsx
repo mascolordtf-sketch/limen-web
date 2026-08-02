@@ -36,7 +36,7 @@ export function Origin01Community({ community }: { community: CommunityContent }
       {community.instagram.enabled ? <article className="origin01-community__card origin01-community__card--instagram">
         <p>Instagram</p><strong>@{community.instagram.handle.replace(/^@/, '')}</strong>
         <a href={instagramUrl(community.instagram.handle)} target="_blank" rel="noreferrer">
-          {community.instagram.actionLabel}<span aria-hidden="true">↗</span>
+          {community.instagram.actionLabel}
         </a>
       </article> : null}
       {community.hashtag.enabled ? <article className="origin01-community__card origin01-community__card--hashtag">
@@ -50,7 +50,7 @@ export function Origin01Community({ community }: { community: CommunityContent }
         <p>Álbum compartido</p><strong>La historia vista por todos.</strong>
         <span>{community.album.invitation}</span>
         <a href={community.album.url} target="_blank" rel="noreferrer">
-          {community.album.actionLabel}<span aria-hidden="true">↗</span>
+          {community.album.actionLabel}
         </a>
       </article> : null}
     </div>

@@ -355,8 +355,10 @@ export function Origin01WeatherPanel({ weather, availability, state }: {
       </div>
       <p className="origin01-weather__introduction">{weather.introduction}</p>
       <p className="origin01-weather__location">Pronóstico para <strong>{locationLabel}</strong></p>
-      {body}
-      <p className="origin01-weather__source">Datos meteorológicos de <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>.</p>
+      <div className="origin01-weather__surface">
+        {body}
+        <p className="origin01-weather__source">Fuente meteorológica: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a></p>
+      </div>
     </div>
   </section>
 }

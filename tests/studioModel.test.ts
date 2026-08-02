@@ -663,6 +663,8 @@ assert(renamed.trivia === initial.trivia, 'cambiar el nombre no muta ni reemplaz
 assert(renamedPreview.content.trivia.accessibleTitle === 'Trivia sobre Amparo', 'deriva el título accesible de Trivia')
 assert(renamedPreview.content.trivia.title === '¿Cuánto conocés de verdad a Amparo?', 'deriva el título visible de Trivia')
 assert(renamedPreview.content.trivia.revealSignature === 'Amparo', 'deriva la firma final de Trivia')
+assert(initial.trivia.scoreTotalLabel === '/ 4 respuestas correctas',
+  'el resultado distingue las cuatro preguntas puntuables de la predicción final')
 assert(renamedPreview.content.trivia.description === initial.trivia.description
   && renamedPreview.content.trivia.questions === initial.trivia.questions
   && renamedPreview.content.trivia.resultTiers === initial.trivia.resultTiers,
@@ -820,8 +822,9 @@ assert(deriveOrigin01PreviewInvitation(origin01DemoData, changedWeather).content
 const communityMarkup = renderToStaticMarkup(createElement(Origin01Community, { community: initial.community }))
 assert(communityMarkup.includes('@valentina.limen') && communityMarkup.includes('#ValeCruzaElLimen')
   && communityMarkup.includes('https://photos.google.com/')
+  && !communityMarkup.includes('↗')
   && communityMarkup.indexOf('Instagram') < communityMarkup.indexOf('Hashtag oficial'),
-  'Comunidad renderiza los tres destinos reales en su composición canónica')
+  'Comunidad renderiza los tres destinos reales sin iconos externos genéricos')
 const editedCommunity = updateOrigin01StudioDraftGroup(initial, 'community', (community) => ({
   ...community,
   instagram: { ...community.instagram, handle: '@fiesta.vale' },

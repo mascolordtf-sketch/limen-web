@@ -27,7 +27,15 @@ saltos de línea dejan de depender de las dimensiones de la ventana exterior de 
   abierto. Studio edita y valida los tres datos operativos por separado.
 - **Trivia:** al aceptar el desafío y al avanzar de pregunta, desplaza la pregunta al comienzo seguro
   del viewport. Después de responder, acerca la devolución y la acción siguiente. También reduce
-  moderadamente espacios y altura de opciones en móvil sin degradar sus objetivos táctiles.
+  moderadamente espacios y altura de opciones en móvil sin degradar sus objetivos táctiles. El
+  resultado explicita que el máximo corresponde a cuatro respuestas correctas; la quinta pregunta
+  continúa siendo una predicción no puntuable.
+- **Agenda:** recupera el contraste del texto superior sobre la superficie borgoña sin alterar la
+  jerarquía tenue de la escena.
+- **Clima:** conserva la atribución obligatoria a Open-Meteo, integrada como una fuente editorial
+  discreta dentro de la superficie del pronóstico.
+- **Comunidad:** centra las tres acciones, elimina el subrayado y retira las flechas genéricas de los
+  enlaces externos. Instagram, hashtag y álbum comparten ahora el mismo tratamiento de control.
 
 ## Límites
 
