@@ -164,6 +164,28 @@ assert(resolvedMatrixCases.every((matrixCase) => matrixCase
 assert(new Set(resolvedMatrixCases.map((matrixCase) => matrixCase?.id)).size === 224
   && resolveOrigin01VisualMatrixCase('BASE-unknown-protagonist-origin01-wine-mobile', origin01DemoData) === undefined,
   'la matriz conserva identidades únicas y rechaza casos inventados')
+const invitationMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: origin01DemoData,
+  startAtInvitation: true,
+}))
+const longPreludeCase = resolveOrigin01VisualMatrixCase('BOUNDARY-prelude-long-desktop', origin01DemoData)!
+const longPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: longPreludeCase.invitation,
+  startAtPrelude: true,
+}))
+assert(invitationMarkup.includes('class="origin01-music ') && invitationMarkup.includes('aria-label="Reproducir música"')
+  && invitationMarkup.includes('Deslizá para descubrir'),
+  'la invitación conserva el indicador de descubrimiento y el control musical accesible')
+assert(longPreludeMarkup.includes(longPreludeCase.invitation.content.prelude.actionLabel)
+  && longPreludeMarkup.includes('origin01-primary-action'),
+  'Prelude conserva su acción esencial con contenido editorial largo')
+assert(origin01Css.includes('--origin-threshold-action-background: var(--origin-accent);')
+  && origin01Css.includes('background: var(--origin-threshold-action-background);')
+  && /\.origin01-prelude\s*\{[^}]*overflow-y:\s*auto;/s.test(origin01Css),
+  'el CTA de Prelude usa el tratamiento temático compartido y admite desborde vertical deliberado')
+assert(/\.origin01-hero__scroll\s*\{[^}]*left:\s*1\.2rem;[^}]*right:\s*1\.2rem;/s.test(origin01Css)
+  && /@container origin01 \(max-width: 699px\)[\s\S]*\.origin01-section-heading\s*\{[^}]*padding-inline-end:\s*3\.75rem;/s.test(origin01Css),
+  'Hero contiene el indicador y los encabezados móviles reservan el carril real del control musical')
 assert(/\.origin01-trivia\s*\{[^}]*overflow:\s*visible;/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*width:\s*100cqw;[^}]*height:\s*max\(48rem,\s*100svh\);/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*transform:\s*translateX\(-50%\);/s.test(origin01Css),
@@ -880,10 +902,14 @@ assert(deriveOrigin01PreviewInvitation(origin01DemoData, changedWeather).content
 
 const communityMarkup = renderToStaticMarkup(createElement(Origin01Community, { community: initial.community }))
 assert(communityMarkup.includes('@valentina.limen') && communityMarkup.includes('#ValeCruzaElLimen')
+  && (communityMarkup.match(/origin01-community__identifier/g)?.length === 2)
   && communityMarkup.includes('https://photos.google.com/')
   && !communityMarkup.includes('↗')
   && communityMarkup.indexOf('Instagram') < communityMarkup.indexOf('Hashtag oficial'),
   'Comunidad renderiza los tres destinos reales sin iconos externos genéricos')
+assert(/\.origin01-community__identifier\s*\{[^}]*overflow-x:\s*auto;[^}]*overflow-wrap:\s*normal;[^}]*word-break:\s*normal;[^}]*white-space:\s*nowrap;/s.test(origin01Css)
+  && !origin01Css.includes('BOUNDARY-') && !origin01Css.includes('BASE-'),
+  'los identificadores se preservan como tokens completos sin depender de IDs del harness')
 const editedCommunity = updateOrigin01StudioDraftGroup(initial, 'community', (community) => ({
   ...community,
   instagram: { ...community.instagram, handle: '@fiesta.vale' },
