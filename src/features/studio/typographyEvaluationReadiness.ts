@@ -8,12 +8,14 @@ type EvaluationFontSet = {
 export async function waitForTypographyEvaluationFonts(
   families: readonly string[], fonts: EvaluationFontSet | undefined,
 ) {
-  if (!fonts?.load) return
+  if (!fonts) return
 
-  const loadedFaces = await Promise.all(families.map((family) =>
-    fonts.load?.(`1em "${family.replaceAll('"', '\\"')}"`) ?? Promise.resolve([])))
-  if (loadedFaces.some((faces) => faces.length === 0)) {
-    throw new Error('Una o más familias no quedaron disponibles')
+  if (fonts.load) {
+    const loadedFaces = await Promise.all(families.map((family) =>
+      fonts.load?.(`1em "${family.replaceAll('"', '\\"')}"`) ?? Promise.resolve([])))
+    if (loadedFaces.some((faces) => faces.length === 0)) {
+      throw new Error('Una o más familias no quedaron disponibles')
+    }
   }
 
   // Some partial Font Loading API implementations reject `ready` even after

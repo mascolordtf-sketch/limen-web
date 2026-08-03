@@ -413,6 +413,19 @@ await pendingEvaluation
 assert(evaluationSettled, 'la evaluación queda lista después de document.fonts.ready')
 await waitForTypographyEvaluationFonts(['Prata'], undefined)
 await waitForTypographyEvaluationFonts(['Prata'], {})
+let resolvePartialFontsReady: (() => void) | undefined
+const partialFontsReady = new Promise<void>((resolve) => { resolvePartialFontsReady = resolve })
+let partialEvaluationSettled = false
+const pendingPartialEvaluation = waitForTypographyEvaluationFonts(['Prata'], {
+  ready: partialFontsReady,
+}).then(() => { partialEvaluationSettled = true })
+await Promise.resolve()
+assert(!partialEvaluationSettled,
+  'la API parcial sin load espera fonts.ready mientras la promesa permanece pendiente')
+resolvePartialFontsReady?.()
+await pendingPartialEvaluation
+assert(partialEvaluationSettled,
+  'la API parcial sin load queda lista únicamente después de resolver fonts.ready')
 await waitForTypographyEvaluationFonts(['Prata'], {
   load: async () => [{}],
   ready: Promise.reject(new Error('Font Loading API parcial')),
