@@ -712,6 +712,8 @@ export function Origin01Invitation({
   }
 
   const typographyStyle = typography ? {
+    '--origin-script': `'${typography.protagonist.family}', cursive`,
+    '--origin-accent-font': `'${typography.protagonist.family}', cursive`,
     '--origin-cover-name': `'${typography.coverName.family}', cursive`,
     '--origin-display': `'${typography.editorial.family}', serif`,
     '--origin-reading': `'${typography.functional.family}', sans-serif`,

@@ -11,7 +11,7 @@ import { origin01Template } from '../src/features/invitations/origin01/origin01T
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { origin01VisualMatrixViewports,
   resolveOrigin01VisualMatrixCase } from '../src/features/invitations/origin01/origin01VisualMatrix'
-import { findOrigin01TypographyCombination, getOrigin01TypographyStylesheets,
+import { findOrigin01TypographyCombination, getOrigin01TypographyStylesheets, isOrigin01TypographyCombination,
   origin01TypographyCombinations } from '../src/features/invitations/origin01/origin01Typography'
 import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '../src/features/invitations/origin01/origin01Weather'
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
@@ -20,7 +20,7 @@ import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRo
 import { StudioVisualMatrixCase } from '../src/features/studio/StudioVisualMatrixCase'
 import { StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
 import { canReuseEvaluationStylesheets,
-  isTypographyEvaluationBusy } from '../src/features/studio/typographyEvaluationReadiness'
+  isTypographyEvaluationBusy, waitForTypographyEvaluationFonts } from '../src/features/studio/typographyEvaluationReadiness'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
 import { getStudioPreviewMode, studioPreviewSceneSelectors } from '../src/features/studio/studioPreviewScenes'
 import { StudioPreviewPane } from '../src/features/studio/StudioPreviewPane'
@@ -334,11 +334,17 @@ assert(midnightMarkup.includes('origin01--theme-origin01-midnight'),
   'el renderer expone la variante seleccionada como un límite visual propio')
 assert(origin01TypographyCombinations.length === 12
   && new Set(origin01TypographyCombinations.map(({ id }) => id)).size === 12
+  && origin01TypographyCombinations.every(({ protagonist, coverName }) =>
+    protagonist.family === coverName.family && protagonist !== coverName)
+  && origin01TypographyCombinations.every(isOrigin01TypographyCombination)
   && origin01TypographyCombinations.every((combination) =>
     getOrigin01TypographyStylesheets(combination).length >= 2
     && getOrigin01TypographyStylesheets(combination).length <= 3
     && getOrigin01TypographyStylesheets(combination).every((path) => path.endsWith('/font-face.css'))),
   'el laboratorio registra doce combinaciones únicas y limita cada prueba a sus fuentes reales')
+assert(!isOrigin01TypographyCombination({
+  ...origin01TypographyCombinations[0], coverName: undefined,
+}), 'el contrato rechaza una combinación incompleta sin nombre de portada')
 assert(isTypographyEvaluationBusy('loading') && !isTypographyEvaluationBusy('ready')
   && !isTypographyEvaluationBusy('error'),
   'el laboratorio informa aria-busy únicamente mientras prepara las fuentes')
@@ -372,11 +378,46 @@ const typographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, 
   typography: gardenTypography,
 }))
 assert(gardenTypography?.coverName.family === 'WindSong'
+  && gardenTypography.protagonist.family === 'WindSong'
+  && typographyMarkup.includes('--origin-script:&#x27;WindSong&#x27;, cursive')
   && typographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive')
   && typographyMarkup.includes('--origin-display:&#x27;Fraunces&#x27;, serif')
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
   'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
+const independentTypography = gardenTypography && {
+  ...gardenTypography,
+  protagonist: { ...gardenTypography.protagonist, family: 'Prata' },
+  coverName: { ...gardenTypography.coverName, family: 'WindSong' },
+}
+const independentTypographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: origin01DemoData,
+  typography: independentTypography,
+}))
+assert(independentTypographyMarkup.includes('--origin-script:&#x27;Prata&#x27;, cursive')
+  && independentTypographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive')
+  && origin01Css.includes('.origin01-hero h1 {\n  font-family: var(--origin-cover-name);'),
+  'protagonista y nombre de portada son independientes y la portada consume su variable dedicada')
+
+let resolveFontsReady: (() => void) | undefined
+const controlledFontsReady = new Promise<void>((resolve) => { resolveFontsReady = resolve })
+let evaluationSettled = false
+const pendingEvaluation = waitForTypographyEvaluationFonts(['Prata'], {
+  load: async () => [{}],
+  ready: controlledFontsReady,
+}).then(() => { evaluationSettled = true })
+await Promise.resolve()
+assert(!evaluationSettled, 'la evaluación permanece pendiente mientras document.fonts.ready no resuelve')
+resolveFontsReady?.()
+await pendingEvaluation
+assert(evaluationSettled, 'la evaluación queda lista después de document.fonts.ready')
+await waitForTypographyEvaluationFonts(['Prata'], undefined)
+await waitForTypographyEvaluationFonts(['Prata'], {})
+await waitForTypographyEvaluationFonts(['Prata'], {
+  load: async () => [{}],
+  ready: Promise.reject(new Error('Font Loading API parcial')),
+})
+assert(true, 'la ausencia o el rechazo de fonts.ready usa una salida segura sin bloquear la evaluación')
 assert(calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 300, fontSize: 90 }) === undefined
   && calculateCoverNameFittedSize({ availableWidth: 360, renderedWidth: 420, fontSize: 90 }) === 72
   && calculateCoverNameFittedSize({ availableWidth: 0, renderedWidth: 420, fontSize: 90 }) === undefined,
