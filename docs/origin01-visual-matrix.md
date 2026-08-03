@@ -74,15 +74,77 @@ Si Origin 01 incorpora o retira escenas o variantes de forma deliberada, se actu
 npm run visual:matrix:write
 ```
 
-El check falla si la matriz queda desactualizada o si el CSV fue modificado estructuralmente sin actualizar su fuente reproducible. Los campos de resultado se completan en una copia de ejecución o en el informe de hallazgos; el CSV canónico conserva `pending` para poder reutilizarse en cada regresión.
+El check falla si la matriz queda desactualizada o si el CSV fue modificado estructuralmente sin actualizar su fuente reproducible. Los campos `result`, `evidence` y `observation` del CSV canónico conservan el cierre perceptual de esta fase; regenerar el archivo los devuelve a `pending` y solo corresponde al cambiar deliberadamente sus ejes.
 
-## Estado de ejecución inicial
+## Cierre de la revisión perceptual
 
-- Ejes y cantidad de casos: verificados contra el código de `main` posterior al PR #74.
-- Checks estructurales, lint, TypeScript, pruebas y build: deben pasar antes de publicar la rama.
-- Harness reproducible: cada una de las 224 filas posee una ruta que fija estado y viewport.
-- Perfiles límite: versionados mediante valores exactos y deterministas para las catorce escenas.
-- Inspección visual automatizada: puede continuar dependiendo del navegador disponible; la ausencia de Chromium local no impide reconstruir manualmente un caso en preview.
-- Resultados perceptuales: se registran fuera del CSV canónico reutilizable; un caso nunca se considera aprobado solo por existir en la matriz.
+La revisión fue ejecutada externamente, caso por caso, contra el harness real desplegado. Este entorno de Codex no realizó la inspección en navegador y este registro no atribuye capturas durables ni otros artefactos no suministrados.
 
-La Fase 1.2 queda formalmente cerrada solo cuando la matriz se ejecuta sobre el preview, los resultados están registrados y los defectos se trasladan como inventario acotado de la Fase 1.3.
+| Resultado | Cantidad |
+|---|---:|
+| Total canónico | 224 |
+| Inspeccionados | 224 |
+| Aprobados (`pass`) | 196 |
+| Con defecto (`issue`) | 28 |
+| Pendientes | 0 |
+| Bloqueados | 0 |
+| Defectos distintos | 6 |
+| Casos afectados | 28 |
+
+### Procedencia
+
+- Superficie: harness real desplegado de la matriz visual.
+- Deployment: <https://limen-web-six.vercel.app>.
+- Viewport móvil canónico: 390 × 844.
+- Viewport desktop canónico: 1440 × 1000.
+- Entorno de ejecución: navegador cloud externo controlado por ChatGPT.
+- Motor y versión exacta del navegador: **NOT VERIFIABLE**; no fueron suministrados en el registro de revisión.
+
+### Hallazgos destinados a Fase 1.3
+
+Cada ruta de reproducción se obtiene añadiendo el ID indicado a `https://limen-web-six.vercel.app/studio/matriz/`. Ningún caso aparece en más de un hallazgo.
+
+#### VIS-1 — Truncamiento del indicador de descubrimiento en Hero móvil
+
+- Severidad: media.
+- Observado: “Deslizá para descubrir” queda recortado en el borde derecho.
+- Esperado: el indicador completo permanece visible dentro del viewport.
+- Casos (8): `BASE-hero-protagonist-origin01-wine-mobile`, `BASE-hero-guest-origin01-wine-mobile`, `BASE-hero-protagonist-origin01-midnight-mobile`, `BASE-hero-guest-origin01-midnight-mobile`, `BASE-hero-protagonist-origin01-garden-mobile`, `BASE-hero-guest-origin01-garden-mobile`, `BOUNDARY-hero-short-mobile`, `BOUNDARY-hero-long-mobile`.
+
+#### VIS-2 — El control de música móvil se superpone a encabezados
+
+- Severidad: alta.
+- Observado: el control flotante se superpone o recorta encabezados cuando falta espacio horizontal.
+- Esperado: el control y el encabezado editorial permanecen separados y legibles.
+- Casos (10): `BASE-eventDetails-protagonist-origin01-wine-mobile`, `BASE-eventDetails-guest-origin01-wine-mobile`, `BASE-eventDetails-protagonist-origin01-midnight-mobile`, `BASE-eventDetails-guest-origin01-midnight-mobile`, `BASE-eventDetails-protagonist-origin01-garden-mobile`, `BASE-eventDetails-guest-origin01-garden-mobile`, `BOUNDARY-eventDetails-long-mobile`, `BOUNDARY-dressCode-long-mobile`, `BOUNDARY-gifts-long-mobile`, `BOUNDARY-rsvp-long-mobile`.
+
+#### VIS-3 — Colisión del encabezado de Instagram en un caso móvil
+
+- Severidad: media.
+- Observado: el eyebrow/encabezado excede el ancho, queda truncado y es invadido visualmente por el control de música.
+- Esperado: el encabezado completo permanece legible y separado del control flotante.
+- Caso (1): `BASE-instagram-protagonist-origin01-wine-mobile`.
+
+#### VIS-4 — Contraste insuficiente del CTA de Prelude en Garden móvil
+
+- Severidad: alta.
+- Observado: el control esencial “Estoy lista” resulta casi invisible sobre el fondo verde oscuro de Garden.
+- Esperado: la acción principal del umbral tiene contraste visual suficiente y es inmediatamente descubrible.
+- Caso (1): `BASE-prelude-protagonist-origin01-garden-mobile`.
+
+#### VIS-5 — Identificadores de Instagram partidos dentro de palabras en desktop
+
+- Severidad: media.
+- Observado: el usuario o hashtag se parte internamente; en los casos canónicos se divide `#ValeCruzaElLimen` y el límite largo afecta usuario y hashtag.
+- Esperado: los identificadores permanecen íntegros o usan un tratamiento responsive intencional que no los divida internamente.
+- Casos (7): `BASE-instagram-protagonist-origin01-wine-desktop`, `BASE-instagram-guest-origin01-wine-desktop`, `BASE-instagram-protagonist-origin01-midnight-desktop`, `BASE-instagram-guest-origin01-midnight-desktop`, `BASE-instagram-protagonist-origin01-garden-desktop`, `BASE-instagram-guest-origin01-garden-desktop`, `BOUNDARY-instagram-long-desktop`.
+
+#### VIS-6 — Long Prelude CTA clipped at the bottom on desktop
+
+- Severidad: alta.
+- Destino: Fase 1.3.
+- Observado: el CTA esencial queda parcialmente recortado por el borde inferior del viewport después de que la animación se estabiliza.
+- Esperado: el CTA completo permanece visible y operable dentro de la composición prevista de Prelude.
+- Caso (1): `BOUNDARY-prelude-long-desktop`.
+
+La Fase 1.2 queda cerrada como revisión, pero Origin 01 **no queda visualmente aprobado** mientras estos seis defectos permanezcan sin resolver en Fase 1.3. Esta evidencia no altera la Fase 0.2: permanece **NOT VERIFIABLE**, y su resultado histórico de 224/224 corresponde solo a cobertura estructural, no a inspección perceptual.
