@@ -1,6 +1,6 @@
 # Línea base técnica de LIMEN
 
-Fecha de consolidación documental: 3 de agosto de 2026.
+Fecha de consolidación documental: 2 de agosto de 2026.
 
 ## Fuente de verdad actual
 
