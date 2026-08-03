@@ -16,7 +16,7 @@ Fecha de consolidación documental: 2 de agosto de 2026.
 - El árbol de trabajo y el índice comenzaron y terminaron limpios.
 - `package.json` y `package-lock.json` no cambiaron.
 - `git diff --check` y `git diff --cached --check` finalizaron correctamente.
-- La matriz visual completó correctamente `224/224` casos.
+- La validación estructural de la matriz terminó correctamente para los 224 casos definidos. El script valida o regenera la estructura de la matriz; no ejecuta control de calidad visual perceptual. Los 224 casos visuales permanecen pendientes mientras no exista evidencia de una ejecución separada.
 - No se hicieron cambios de código fuente, reparaciones automáticas, commits, pushes, PR ni merges.
 - `npm ci` recibió `403 Forbidden` al solicitar `lottie-web`; la instalación fallida eliminó las dependencias que estaban disponibles previamente.
 - Se ejecutaron `0` pruebas o aserciones.
@@ -49,7 +49,7 @@ La puerta técnica prevista comprende instalación reproducible, lint, typecheck
 
 ### Controles no verificados por la Fase 0.2
 
-La Fase 0.2 no pudo confirmar instalación reproducible, lint, typecheck, pruebas, build, vulnerabilidades, dependencias desactualizadas, advertencias de `lottie-web` ni bundles actuales. Sí dejó la evidencia independiente de higiene Git y el resultado visual `224/224` descritos arriba.
+La Fase 0.2 no pudo confirmar instalación reproducible, lint, typecheck, pruebas, build, vulnerabilidades, dependencias desactualizadas, advertencias de `lottie-web` ni bundles actuales. Sí dejó la evidencia independiente de higiene Git y la validación estructural de los 224 casos definidos descrita arriba; no dejó evidencia de ejecución perceptual de esos casos.
 
 ### Restricción ambiental
 
