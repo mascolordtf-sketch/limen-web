@@ -139,7 +139,7 @@ Cada ruta de reproducción se obtiene añadiendo el ID indicado a `https://limen
 - Esperado: los identificadores permanecen íntegros o usan un tratamiento responsive intencional que no los divida internamente.
 - Casos (7): `BASE-instagram-protagonist-origin01-wine-desktop`, `BASE-instagram-guest-origin01-wine-desktop`, `BASE-instagram-protagonist-origin01-midnight-desktop`, `BASE-instagram-guest-origin01-midnight-desktop`, `BASE-instagram-protagonist-origin01-garden-desktop`, `BASE-instagram-guest-origin01-garden-desktop`, `BOUNDARY-instagram-long-desktop`.
 
-#### VIS-6 — CTA largo de Prelude recortado en el borde inferior de desktop
+#### VIS-6 — Long Prelude CTA clipped at the bottom on desktop
 
 - Severidad: alta.
 - Destino: Fase 1.3.
