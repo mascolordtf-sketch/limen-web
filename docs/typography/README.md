@@ -49,7 +49,7 @@ respaldo como si fuera la fuente elegida.
 
 ## Reglas editoriales
 
-- Una experiencia puede combinar una fuente protagonista, una editorial y una funcional.
+- Una experiencia puede combinar una fuente protagonista, una de nombre de portada, una editorial y una funcional.
 - En muchas experiencias son suficientes dos familias.
 - Las caligráficas y manuscritas delicadas se reservan para nombres, acentos o frases breves.
 - Una familia experimental no se habilita automáticamente en Studio.
@@ -86,14 +86,18 @@ aprobación visual.
 ## Laboratorio de evaluación
 
 Studio incorpora una comparación temporal de las doce combinaciones dentro de la etapa `Estética`.
-Cada tarjeta muestra los roles nombre de portada, editorial y funcional con texto real en español. La
+Cada tarjeta muestra los roles nombre de portada, protagonista, editorial y funcional con texto real en español. La
 combinación elegida puede abrirse sobre la invitación completa mediante los parámetros internos
 `tipografia` e `inicio=invitacion` de la ruta de demostración.
 
-El nombre de la portada usa un rol explícito y no hereda la familia de los títulos editoriales. El
+El nombre de la portada usa un rol explícito, independiente tanto de `protagonist` como de la familia
+de los títulos editoriales. Las combinaciones iniciales conservan el resultado visual anterior al
+asignar de forma explícita la misma familia a `coverName` y `protagonist`, sin vincular ambos valores. El
 laboratorio mantiene sus tarjetas y la acción de prueba bloqueadas hasta que las hojas de estilo y
 `document.fonts.ready` confirman que las familias reales están disponibles. Si una carga falla, no
-expone fuentes de reemplazo y ofrece un reintento.
+expone fuentes de reemplazo y ofrece un reintento. Si la Font Loading API no está disponible, continúa
+de forma segura después de cargar las hojas; si solo `fonts.ready` falla tras verificar las familias
+solicitadas, utiliza esas cargas verificadas para no dejar la interfaz bloqueada.
 
 Este laboratorio no forma parte del modelo persistente, no modifica el borrador canónico y no
 define todavía la tipografía aprobada de Origin 01. Su finalidad es comparar la misma composición

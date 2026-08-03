@@ -3,13 +3,15 @@ import { useEffect, useRef, useState } from 'react'
 import { defaultOrigin01TypographyCombination, getOrigin01TypographyStylesheets,
   origin01TypographyCombinations } from '../invitations/origin01/origin01Typography'
 import type { Origin01TypographyCombination } from '../invitations/origin01/origin01Typography'
-import { canReuseEvaluationStylesheets, isTypographyEvaluationBusy } from './typographyEvaluationReadiness'
+import { canReuseEvaluationStylesheets, isTypographyEvaluationBusy,
+  waitForTypographyEvaluationFonts } from './typographyEvaluationReadiness'
 import type { TypographyReadiness } from './typographyEvaluationReadiness'
 
 const evaluationStylesheets = [...new Set(origin01TypographyCombinations.flatMap(
   getOrigin01TypographyStylesheets))]
 const evaluationFamilies = [...new Set(origin01TypographyCombinations.flatMap(
-  ({ coverName, editorial, functional }) => [coverName.family, editorial.family, functional.family]))]
+  ({ protagonist, coverName, editorial, functional }) =>
+    [protagonist.family, coverName.family, editorial.family, functional.family]))]
 const evaluationStylesheetSelector = 'link[rel="stylesheet"][data-limen-font-owner="typography-evaluation"]'
 
 function getEvaluationStylesheets() {
@@ -102,21 +104,7 @@ export function StudioTypographyEvaluation({ demoPath }: { demoPath: string }) {
           invalidateEvaluationStylesheets()
         }
         await Promise.all(evaluationStylesheets.map(loadEvaluationStylesheet))
-        if (!document.fonts) {
-          if (!active || currentAttempt.current !== attempt) return
-          getEvaluationStylesheets().forEach((stylesheet) => {
-            stylesheet.dataset.limenFontState = 'verified'
-          })
-          setReadiness('ready')
-          return
-        }
-
-        const loadedFaces = await Promise.all(evaluationFamilies.map((family) =>
-          document.fonts.load(`1em "${family.replaceAll('"', '\\"')}"`)))
-        if (loadedFaces.some((faces) => faces.length === 0)) {
-          throw new Error('Una o más familias no quedaron disponibles')
-        }
-        await document.fonts.ready
+        await waitForTypographyEvaluationFonts(evaluationFamilies, document.fonts)
         if (!active || currentAttempt.current !== attempt) return
         getEvaluationStylesheets().forEach((stylesheet) => {
           stylesheet.dataset.limenFontState = 'verified'
@@ -136,7 +124,7 @@ export function StudioTypographyEvaluation({ demoPath }: { demoPath: string }) {
     <header>
       <div><p className="limen-studio__eyebrow">Laboratorio tipográfico</p>
         <h3 id="studio-typography-title">Compará las doce voces de Origin 01</h3>
-        <p>Esta selección es temporal y no modifica la invitación publicada. Cada propuesta combina una tipografía para el nombre de portada, una editorial y una funcional.</p></div>
+        <p>Esta selección es temporal y no modifica la invitación publicada. Cada propuesta distingue el nombre de portada de la voz protagonista, la editorial y la funcional.</p></div>
       <span>Evaluación · sin persistencia</span>
     </header>
     <StudioTypographyEvaluationStatus readiness={readiness} onRetry={() => {
@@ -149,6 +137,7 @@ export function StudioTypographyEvaluation({ demoPath }: { demoPath: string }) {
         const checked = selected.id === combination.id
         return <label className={`limen-studio__typography-card${checked ? ' is-selected' : ''}`} key={combination.id}
           style={{
+            '--studio-type-protagonist': `'${combination.protagonist.family}', cursive`,
             '--studio-type-cover-name': `'${combination.coverName.family}', cursive`,
             '--studio-type-editorial': `'${combination.editorial.family}', serif`,
             '--studio-type-functional': `'${combination.functional.family}', sans-serif`,
@@ -162,6 +151,7 @@ export function StudioTypographyEvaluation({ demoPath }: { demoPath: string }) {
           <span className="limen-studio__typography-functional">18 · 10 · 2026 — Palacio del Lago</span>
           <span className="limen-studio__typography-roles">
             <small>Nombre de portada · {combination.coverName.family}</small>
+            <small>Protagonista · {combination.protagonist.family}</small>
             <small>Editorial · {combination.editorial.family}</small>
             <small>Funcional · {combination.functional.family}</small>
           </span>
@@ -169,12 +159,13 @@ export function StudioTypographyEvaluation({ demoPath }: { demoPath: string }) {
       })}
     </div>
     <footer style={{
+      '--studio-type-protagonist': `'${selected.protagonist.family}', cursive`,
       '--studio-type-cover-name': `'${selected.coverName.family}', cursive`,
       '--studio-type-editorial': `'${selected.editorial.family}', serif`,
       '--studio-type-functional': `'${selected.functional.family}', sans-serif`,
     } as React.CSSProperties}>
       <div><p>Combinación activa</p><strong>{selected.name}</strong>
-        <span><i>{selected.coverName.family}</i> · {selected.editorial.family} · {selected.functional.family}</span></div>
+        <span><i>{selected.coverName.family}</i> · {selected.protagonist.family} · {selected.editorial.family} · {selected.functional.family}</span></div>
       <a href={demoUrl} target="_blank" rel="noreferrer" aria-disabled={!ready} tabIndex={ready ? 0 : -1}
         onClick={(event) => { if (!ready) event.preventDefault() }}>Probar en la invitación completa</a>
     </footer>

@@ -245,9 +245,9 @@ Esta fase no consulta ni incrusta un feed de Instagram, no autentica con Meta, n
 
 ## Fase 1.1 — preparación confiable de la evaluación tipográfica
 
-Origin 01 distingue el nombre principal de portada mediante el rol tipográfico explícito `coverName`. La combinación temporal proyecta ese rol únicamente sobre el nombre de la escena de portada, mientras las voces editoriales, funcionales y los acentos caligráficos propios de la plantilla conservan responsabilidades independientes.
+Origin 01 distingue el nombre principal de portada mediante el rol tipográfico explícito `coverName`. La combinación temporal proyecta ese rol únicamente sobre el nombre de la escena de portada; `protagonist` permanece como rol canónico separado para los acentos caligráficos más amplios. Las combinaciones iniciales asignan explícitamente la misma familia a ambos roles para conservar el resultado visual sin vincular sus valores, mientras las voces editorial y funcional mantienen sus responsabilidades independientes.
 
-El laboratorio de Studio carga las hojas de estilo requeridas por las doce combinaciones, solicita cada familia real mediante la Font Loading API y espera efectivamente a `document.fonts.ready` antes de habilitar la comparación o el acceso a la invitación completa. Durante la preparación no expone tarjetas renderizadas con fuentes de reemplazo; ante una falla mantiene bloqueada la evaluación, informa el problema y permite reintentar la carga.
+El laboratorio de Studio carga las hojas de estilo requeridas por las doce combinaciones, solicita cada familia real mediante la Font Loading API y espera efectivamente a `document.fonts.ready` antes de habilitar la comparación o el acceso a la invitación completa. Durante la preparación no expone tarjetas renderizadas con fuentes de reemplazo; ante una falla de carga mantiene bloqueada la evaluación, informa el problema y permite reintentarla. Si la API no existe, continúa tras cargar las hojas de estilo; si únicamente rechaza `fonts.ready` después de verificar las familias solicitadas, usa esas cargas verificadas como salida segura.
 
 La fase conserva el carácter temporal del laboratorio: no aprueba una combinación definitiva, no modifica el borrador canónico, no persiste la selección y no altera la invitación pública sin el parámetro interno de evaluación.
 
