@@ -98,6 +98,60 @@ function renderCsv(cases) {
   return `${[header, ...rows].map((row) => row.map(csvEscape).join(',')).join('\n')}\n`
 }
 
+function parseCsv(source) {
+  const rows = []
+  let row = []
+  let value = ''
+  let quoted = false
+
+  for (let index = 0; index < source.length; index += 1) {
+    const character = source[index]
+    if (quoted && character === '"' && source[index + 1] === '"') {
+      value += '"'
+      index += 1
+    } else if (character === '"') {
+      quoted = !quoted
+    } else if (character === ',' && !quoted) {
+      row.push(value)
+      value = ''
+    } else if (character === '\n' && !quoted) {
+      row.push(value)
+      rows.push(row)
+      row = []
+      value = ''
+    } else if (character !== '\r' || quoted) {
+      value += character
+    }
+  }
+
+  if (quoted) throw new Error('El CSV canónico contiene una comilla sin cerrar.')
+  if (row.length > 0 || value !== '') {
+    row.push(value)
+    rows.push(row)
+  }
+  return rows
+}
+
+function validateRecordedResults(current, canonicalCsv) {
+  const actualRows = parseCsv(current)
+  const canonicalRows = parseCsv(canonicalCsv)
+  const allowedResults = new Set(['pass', 'issue', 'blocked', 'pending'])
+
+  if (actualRows.length !== canonicalRows.length) {
+    throw new Error('docs/origin01-visual-matrix.csv no contiene la cantidad canónica de filas.')
+  }
+
+  actualRows.forEach((row, index) => {
+    const canonicalRow = canonicalRows[index]
+    if (row.length !== canonicalRow.length || !row.slice(0, 11).every((value, column) => value === canonicalRow[column])) {
+      throw new Error(`La estructura canónica difiere en la fila ${index + 1}.`)
+    }
+    if (index > 0 && !allowedResults.has(row[11])) {
+      throw new Error(`Resultado no admitido en ${row[0]}: ${row[11]}.`)
+    }
+  })
+}
+
 async function validateSourceAxes() {
   const templateSource = await readFile(path.join(root, 'src', 'features', 'invitations', 'origin01', 'origin01Template.ts'), 'utf8')
   const variantsSource = await readFile(path.join(root, 'src', 'features', 'invitations', 'origin01', 'origin01ThemeVariants.ts'), 'utf8')
@@ -131,7 +185,7 @@ async function main() {
   }
 
   const current = await readFile(outputPath, 'utf8')
-  if (current !== csv) throw new Error('docs/origin01-visual-matrix.csv no coincide con la matriz canónica. Ejecutá npm run visual:matrix:write.')
+  validateRecordedResults(current, csv)
   console.log(`Matriz vigente: ${baseCount} casos base + ${boundaryCount} casos límite = ${cases.length}.`)
 }
 
