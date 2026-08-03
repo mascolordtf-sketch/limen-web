@@ -136,18 +136,29 @@ function validateRecordedResults(current, canonicalCsv) {
   const actualRows = parseCsv(current)
   const canonicalRows = parseCsv(canonicalCsv)
   const allowedResults = new Set(['pass', 'issue', 'blocked', 'pending'])
+  const expectedHeader = canonicalRows[0]
 
   if (actualRows.length !== canonicalRows.length) {
     throw new Error('docs/origin01-visual-matrix.csv no contiene la cantidad canónica de filas.')
   }
+  if (!sameValues(actualRows[0], expectedHeader) || expectedHeader.length !== 14) {
+    throw new Error('El encabezado del CSV canónico debe conservar sus 14 columnas completas.')
+  }
 
-  actualRows.forEach((row, index) => {
+  actualRows.slice(1).forEach((row, rowIndex) => {
+    const index = rowIndex + 1
     const canonicalRow = canonicalRows[index]
     if (row.length !== canonicalRow.length || !row.slice(0, 11).every((value, column) => value === canonicalRow[column])) {
       throw new Error(`La estructura canónica difiere en la fila ${index + 1}.`)
     }
-    if (index > 0 && !allowedResults.has(row[11])) {
+    if (!allowedResults.has(row[11])) {
       throw new Error(`Resultado no admitido en ${row[0]}: ${row[11]}.`)
+    }
+    if (['issue', 'blocked'].includes(row[11]) && (!row[12].trim() || !row[13].trim())) {
+      throw new Error(`${row[0]} debe incluir evidencia y observación para el resultado ${row[11]}.`)
+    }
+    if (row[11] === 'issue' && !/\bVIS-[A-Za-z0-9-]+\b/.test(row[13])) {
+      throw new Error(`${row[0]} debe referenciar un identificador VIS-* en su observación.`)
     }
   })
 }

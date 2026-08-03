@@ -84,12 +84,12 @@ La revisión fue ejecutada externamente, caso por caso, contra el harness real d
 |---|---:|
 | Total canónico | 224 |
 | Inspeccionados | 224 |
-| Aprobados (`pass`) | 197 |
-| Con defecto (`issue`) | 27 |
+| Aprobados (`pass`) | 196 |
+| Con defecto (`issue`) | 28 |
 | Pendientes | 0 |
 | Bloqueados | 0 |
-| Defectos distintos | 5 |
-| Casos afectados | 27 |
+| Defectos distintos | 6 |
+| Casos afectados | 28 |
 
 ### Procedencia
 
@@ -139,4 +139,12 @@ Cada ruta de reproducción se obtiene añadiendo el ID indicado a `https://limen
 - Esperado: los identificadores permanecen íntegros o usan un tratamiento responsive intencional que no los divida internamente.
 - Casos (7): `BASE-instagram-protagonist-origin01-wine-desktop`, `BASE-instagram-guest-origin01-wine-desktop`, `BASE-instagram-protagonist-origin01-midnight-desktop`, `BASE-instagram-guest-origin01-midnight-desktop`, `BASE-instagram-protagonist-origin01-garden-desktop`, `BASE-instagram-guest-origin01-garden-desktop`, `BOUNDARY-instagram-long-desktop`.
 
-La Fase 1.2 queda cerrada como revisión, pero Origin 01 **no queda visualmente aprobado** mientras estos cinco defectos permanezcan sin resolver en Fase 1.3. Esta evidencia no altera la Fase 0.2: permanece **NOT VERIFIABLE**, y su resultado histórico de 224/224 corresponde solo a cobertura estructural, no a inspección perceptual.
+#### VIS-6 — CTA largo de Prelude recortado en el borde inferior de desktop
+
+- Severidad: alta.
+- Destino: Fase 1.3.
+- Observado: el CTA esencial queda parcialmente recortado por el borde inferior del viewport después de que la animación se estabiliza.
+- Esperado: el CTA completo permanece visible y operable dentro de la composición prevista de Prelude.
+- Caso (1): `BOUNDARY-prelude-long-desktop`.
+
+La Fase 1.2 queda cerrada como revisión, pero Origin 01 **no queda visualmente aprobado** mientras estos seis defectos permanezcan sin resolver en Fase 1.3. Esta evidencia no altera la Fase 0.2: permanece **NOT VERIFIABLE**, y su resultado histórico de 224/224 corresponde solo a cobertura estructural, no a inspección perceptual.
