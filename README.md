@@ -27,7 +27,7 @@ npm ci
 npm run dev
 ```
 
-## Validación
+## Puerta técnica prevista
 
 ```bash
 npm run lint
@@ -55,11 +55,11 @@ npm run preview
 
 ## Línea base técnica
 
-La línea base vigente fue verificada el 1 de agosto de 2026 sobre `main`, commit `ed13ac7a0356ad7d9a53119ab765b6321755b478`. El repositorio pasa lint, typecheck, 275 aserciones del modelo de Studio, build de producción y `git diff --check`.
+La línea base vigente es `f18fecf2c6afed9b27604e3a819285ef42dc0b58` y el último merge confirmado es el PR #77. La Fase 0.2 quedó **NO VERIFICABLE** (`NOT VERIFIABLE`): `npm ci` recibió `403 Forbidden` al solicitar `lottie-web`, por lo que no se pudieron verificar reproduciblemente lint, typecheck, pruebas ni build. La matriz visual sí completó `224/224` casos y se ejecutaron `0` pruebas o aserciones. La evidencia histórica de `275` aserciones corresponde únicamente a la línea base anterior `ed13ac7…` y a Node 24.
 
 El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye la experiencia pública Origin 01 en `/demo/LMN-015-001`, un Studio interno temporal, contratos tipados, preview real, administración local de contenido y medios, tres variantes visuales y un laboratorio tipográfico.
 
-La fotografía reproducible, sus advertencias y las deudas que separan esta línea base de la Etapa 1 se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
+El estado, la evidencia, los runtimes observados y la diferencia entre el workflow actual y la puerta técnica prevista se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
 
 Todavía no incluye persistencia, backend, autenticación, publicación de proyectos, panel del cliente ni datos reales de RSVP. Studio no debe recibir información real hasta que existan el modelo de datos y la protección de acceso definidos en el roadmap maestro.
 

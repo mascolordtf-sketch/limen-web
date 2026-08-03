@@ -1,8 +1,8 @@
 # LIMEN Engine — base de arquitectura (Fase 1A)
 
-## Etapa 0 — línea base verificada
+## Etapa 0 — evidencia histórica de la línea base anterior
 
-El 1 de agosto de 2026 se confirmó que `main` apunta a `ed13ac7a0356ad7d9a53119ab765b6321755b478`, el mismo commit utilizado por la auditoría técnica de referencia. Una instalación limpia mediante `npm ci` supera lint, typecheck, 275 aserciones del modelo, build y `git diff --check`. Los resultados reproducibles, advertencias y pendientes que abren la Etapa 1 se registran en [`technical-baseline.md`](technical-baseline.md).
+El 1 de agosto de 2026 se confirmó que `main` apuntaba a `ed13ac7a0356ad7d9a53119ab765b6321755b478`, el mismo commit utilizado por aquella auditoría técnica. En esa línea base anterior, una instalación limpia mediante `npm ci` superó lint, typecheck, `275` aserciones del modelo, build y `git diff --check` con Node 24. Es evidencia histórica: no constituye un resultado de la Fase 0.2 ni de la línea base actual `f18fecf…`. El estado vigente, **NO VERIFICABLE**, se registra en [`technical-baseline.md`](technical-baseline.md).
 
 Esta actualización es documental: no modifica contratos, renderizado, Studio ni la invitación pública.
 

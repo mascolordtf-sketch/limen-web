@@ -1,59 +1,77 @@
 # Línea base técnica de LIMEN
 
-Fecha de verificación: 1 de agosto de 2026.
+Fecha de consolidación documental: 3 de agosto de 2026.
 
-## Fuente de verdad
+## Fuente de verdad actual
 
-- Rama remota verificada: `main`.
-- SHA: `ed13ac7a0356ad7d9a53119ab765b6321755b478`.
-- Último merge: PR #71, laboratorio de evaluación tipográfica de Origin 01.
-- La auditoría técnica realizada sobre `ed13ac7…` corresponde, por lo tanto, al `main` remoto vigente en esta fecha.
+- Commit de línea base: `f18fecf2c6afed9b27604e3a819285ef42dc0b58`.
+- Último merge confirmado: PR #77, pulido de las escenas funcionales de Origin 01.
+- Estado de la Fase 0.2: **NO VERIFICABLE** (`NOT VERIFIABLE`).
 
-La comprobación remota se realizó antes de crear una copia de trabajo limpia y aislada. Ninguna carpeta histórica o con cambios locales se utilizó como fuente de los resultados siguientes.
+`NO VERIFICABLE` no significa que la línea base haya fallado. La puerta técnica completa no pudo ejecutarse de forma reproducible porque el registro de paquetes respondió `403 Forbidden` al solicitar `lottie-web`. La evidencia disponible apunta a una restricción del entorno, del proxy o del registro; no permite atribuir el incidente al proyecto, a `lottie-web` ni al lockfile.
 
-## Entorno reproducido
+## Evidencia confirmada de la Fase 0.2
 
-- Node.js: `v24.14.0`.
-- npm: `11.9.0`.
-- Instalación: `npm ci` desde el lockfile versionado.
+- `HEAD` coincidió exactamente con `f18fecf2c6afed9b27604e3a819285ef42dc0b58`.
+- El árbol de trabajo y el índice comenzaron y terminaron limpios.
+- `package.json` y `package-lock.json` no cambiaron.
+- `git diff --check` y `git diff --cached --check` finalizaron correctamente.
+- La matriz visual completó correctamente `224/224` casos.
+- No se hicieron cambios de código fuente, reparaciones automáticas, commits, pushes, PR ni merges.
+- `npm ci` recibió `403 Forbidden` al solicitar `lottie-web`; la instalación fallida eliminó las dependencias que estaban disponibles previamente.
+- Se ejecutaron `0` pruebas o aserciones.
 
-## Controles ejecutados
+Por tanto, esta fase **no verificó** lint, typecheck, pruebas, build, instalación reproducible, vulnerabilidades, dependencias desactualizadas, la advertencia de `lottie-web` ni el tamaño actual de los bundles. No se presenta ninguno de esos controles como aprobado o fallido para esta línea base.
 
-| Control | Comando | Resultado |
-|---|---|---|
-| Estilo y reglas | `npm run lint` | Correcto |
-| Tipos | `npm run typecheck` | Correcto |
-| Modelo de Studio | `npm test` | 275 aserciones correctas |
-| Producción | `npm run build` | Correcto |
-| Higiene del diff | `git diff --check` | Correcto |
+## Runtimes observados
 
-El build generado en esta línea base contiene un CSS de 181,62 kB (30,90 kB gzip) y un JavaScript principal de 882,31 kB (222,82 kB gzip).
+- Node 20: entorno de auditoría de la Fase 0.2.
+- Node 22: runtime configurado y observado en CI.
+- Node 24: entorno de una verificación histórica sobre una línea base anterior.
 
-## Advertencias no bloqueantes
+El proyecto todavía no impone un único runtime de Node explícito y uniforme en todos los entornos. Esta consolidación no añade ni modifica configuración de runtime.
 
-1. `lottie-web` utiliza `eval` internamente y Vite/Rolldown informa el riesgo durante las compilaciones de pruebas y producción.
-2. El chunk JavaScript principal supera 500 kB y activa la advertencia de code splitting.
-3. npm informa que la configuración ambiental `http-proxy` será incompatible con una versión mayor futura.
+## Workflow actual e intención de la puerta técnica
 
-Estas advertencias no impiden compilar, pero las dos primeras deben considerarse en la revisión de rendimiento y dependencias de Origin 01.
+### Controles implementados actualmente en CI
 
-## Pendientes tipográficos confirmados
+El workflow de GitHub Actions usa Node 22, instala desde `package-lock.json` con `npm ci` cuando el lockfile existe y ejecuta:
 
-Las dos correcciones observadas antes del merge del PR #71 no están presentes en `main`:
+1. `npm run lint`;
+2. `npm run typecheck`;
+3. `npm run build`.
 
-- El nombre de portada todavía no posee el rol independiente `coverName`; el contrato vigente utiliza `protagonist` y también proyecta esa familia sobre variables más amplias.
-- El laboratorio no espera efectivamente `document.fonts.ready` en runtime antes de habilitar la evaluación.
+El workflow no ejecuta `npm test` ni la matriz visual.
 
-Existe una implementación local posterior al PR #71 en el commit `756ce45eb307dfabae36aad43ebd9b969f00a4cc` (`Refine typography evaluation readiness`). Se conservó como referencia en `archive/typography-readiness`, pero no se incorporó a esta línea base porque su revisión e integración pertenecen a la Fase 1.1.
+### Controles esperados en la puerta técnica de LIMEN
 
-## Revisión de trabajos locales
+La puerta técnica prevista comprende instalación reproducible, lint, typecheck, pruebas, build, higiene del diff y la verificación visual que corresponda. Los análisis de vulnerabilidades, dependencias desactualizadas, advertencias y tamaño de bundles deben registrarse cuando puedan ejecutarse reproduciblemente; no están implementados todos como pasos del workflow actual.
 
-Las copias históricas con cambios sin commit examinadas corresponden a fases ya integradas en `main` o a versiones iniciales sustituidas por ajustes de revisión dentro de sus PR. No se utilizaron para construir la línea base.
+### Controles no verificados por la Fase 0.2
 
-La única diferencia funcional posterior a `main` identificada como relevante es la corrección tipográfica registrada arriba. Queda clasificada y preservada; no se adelantó su implementación durante la Etapa 0.
+La Fase 0.2 no pudo confirmar instalación reproducible, lint, typecheck, pruebas, build, vulnerabilidades, dependencias desactualizadas, advertencias de `lottie-web` ni bundles actuales. Sí dejó la evidencia independiente de higiene Git y el resultado visual `224/224` descritos arriba.
 
-## Alcance de esta línea base
+### Restricción ambiental
 
-Esta verificación confirma la reproducibilidad técnica del repositorio, no la calidad visual en navegadores o dispositivos. El responsive, el movimiento, el audio, la accesibilidad perceptual, las fuentes reales y la continuidad escena por escena requieren comprobación visual y manual durante la Etapa 1.
+El bloqueo fue la respuesta `403 Forbidden` del registro al solicitar `lottie-web` durante `npm ci`. Al no poder reconstruir las dependencias, la auditoría no continuó con los controles que dependían de la instalación. No hay evidencia suficiente para asignar la causa a un componente del repositorio.
 
-Tampoco cambia las fronteras actuales del producto: no hay persistencia, autenticación, publicación, backend, panel del cliente ni RSVP almacenado.
+## Rutas públicas verificadas en el router
+
+- `/`
+- `/catalogo`
+- `/disenos/:code`
+- `/demo/:code`
+- `/contacto`
+- `/404`, destino de las direcciones no reconocidas
+
+El router también contiene rutas internas de Studio; no forman parte de este inventario de rutas públicas.
+
+## Evidencia histórica: línea base `ed13ac7…`
+
+El 1 de agosto de 2026 se verificó la línea base anterior `ed13ac7a0356ad7d9a53119ab765b6321755b478`, asociada al PR #71, con Node `v24.14.0`, npm `11.9.0` y una instalación mediante `npm ci`. En ese contexto histórico se registraron lint, typecheck, `275` aserciones, build y `git diff --check` correctos. También se registraron bundles de CSS de 181,62 kB (30,90 kB gzip) y JavaScript principal de 882,31 kB (222,82 kB gzip), además de advertencias sobre `eval` en `lottie-web`, un chunk superior a 500 kB y la configuración ambiental `http-proxy`.
+
+Estos datos pertenecen exclusivamente a `ed13ac7…`: las `275` aserciones, los resultados técnicos, las advertencias y los tamaños no son resultados de la Fase 0.2 ni de `f18fecf…` y no describen necesariamente el estado actual.
+
+## Alcance
+
+Esta consolidación solo corrige la documentación de la línea base. No modifica dependencias, runtime, workflow, rutas ni comportamiento de la aplicación. Tampoco cambia las fronteras del producto: no hay persistencia, autenticación, publicación, backend, panel del cliente ni RSVP almacenado.
