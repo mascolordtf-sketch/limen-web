@@ -18,7 +18,8 @@ import { validateInvitationConfiguration } from '../src/features/invitations/eng
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioVisualMatrixCase } from '../src/features/studio/StudioVisualMatrixCase'
-import { StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
+import { StudioTypographyEvaluation,
+  StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
 import { canReuseEvaluationStylesheets,
   isTypographyEvaluationBusy, waitForTypographyEvaluationFonts } from '../src/features/studio/typographyEvaluationReadiness'
 import { StudioPreview } from '../src/features/studio/StudioPreview'
@@ -412,20 +413,20 @@ resolveFontsReady?.()
 await pendingEvaluation
 assert(evaluationSettled, 'la evaluación queda lista después de document.fonts.ready')
 await waitForTypographyEvaluationFonts(['Prata'], undefined)
-await waitForTypographyEvaluationFonts(['Prata'], {})
-let resolvePartialFontsReady: (() => void) | undefined
-const partialFontsReady = new Promise<void>((resolve) => { resolvePartialFontsReady = resolve })
-let partialEvaluationSettled = false
-const pendingPartialEvaluation = waitForTypographyEvaluationFonts(['Prata'], {
-  ready: partialFontsReady,
-}).then(() => { partialEvaluationSettled = true })
-await Promise.resolve()
-assert(!partialEvaluationSettled,
-  'la API parcial sin load espera fonts.ready mientras la promesa permanece pendiente')
-resolvePartialFontsReady?.()
-await pendingPartialEvaluation
-assert(partialEvaluationSettled,
-  'la API parcial sin load queda lista únicamente después de resolver fonts.ready')
+let partialEvaluationReady = false
+let partialEvaluationFailed = false
+await waitForTypographyEvaluationFonts(['Prata'], { ready: Promise.resolve() })
+  .then(() => { partialEvaluationReady = true })
+  .catch(() => { partialEvaluationFailed = true })
+const blockedTypographyMarkup = renderToStaticMarkup(createElement(StudioTypographyEvaluation, {
+  demoPath: '/demo/LMN-015-001',
+}))
+assert(partialEvaluationFailed && !partialEvaluationReady
+  && blockedTypographyMarkup.includes('aria-hidden="true"')
+  && blockedTypographyMarkup.includes('disabled=""')
+  && typographyErrorMarkup.includes('role="alert"')
+  && typographyErrorMarkup.includes('Reintentar carga'),
+  'la API parcial sin load falla, mantiene las tarjetas bloqueadas y expone recuperación accesible')
 await waitForTypographyEvaluationFonts(['Prata'], {
   load: async () => [{}],
   ready: Promise.reject(new Error('Font Loading API parcial')),
