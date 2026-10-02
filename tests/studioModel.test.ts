@@ -128,6 +128,14 @@ import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
 import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
   issueNeedsCorrectionReturn, resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
 import { resolveStudioAvailability } from '../src/features/studio/studioAvailability'
+import {
+  createPublicationDocument,
+  currentProjectSchemaVersion,
+  isPublicationDocumentDetachedFromDraft,
+  planHasCapability,
+  type InvitationDraft,
+  type InvitationPublication,
+} from '../src/features/platform/dataModel'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -142,6 +150,30 @@ assert(resolveStudioAvailability({ dev: true })
   && !resolveStudioAvailability({ dev: false })
   && !resolveStudioAvailability({ dev: false, explicitFlag: 'false' }),
   'Studio queda habilitado en desarrollo o mediante una bandera explícita, pero no en producción por defecto')
+
+assert(currentProjectSchemaVersion === 1
+  && planHasCapability('essential', 'general_public_link')
+  && !planHasCapability('essential', 'native_rsvp')
+  && planHasCapability('premium', 'host_dashboard')
+  && !planHasCapability('premium', 'qr_access')
+  && planHasCapability('premium_access', 'qr_access')
+  && planHasCapability('premium_access', 'check_in'),
+  'los planes conservan calidad visual y habilitan capacidades operativas acumulativas')
+
+const publicationDocument = createPublicationDocument(maiaInvitationData)
+const dataFoundationDraft: InvitationDraft<typeof maiaInvitationData> = {
+  id: 'draft-maia', projectId: 'project-maia', schemaVersion: 1, revision: 1,
+  document: maiaInvitationData, updatedAt: '2026-10-02T16:00:00Z', updatedBy: 'admin',
+}
+const dataFoundationPublication: InvitationPublication<typeof maiaInvitationData> = {
+  id: 'publication-maia', projectId: 'project-maia', publicCode: maiaInvitationData.code,
+  schemaVersion: 1, revision: 1, document: publicationDocument, status: 'active',
+  publishedAt: '2026-10-02T16:00:00Z', publishedBy: 'admin',
+}
+assert(isPublicationDocumentDetachedFromDraft(dataFoundationDraft, dataFoundationPublication)
+  && dataFoundationPublication.publicCode === 'LMN-015-002'
+  && dataFoundationPublication.document.content.rsvp.recipientPhone === '5491178205507',
+  'una publicación usa un snapshot separado y conserva el código y contenido aprobado')
 
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
