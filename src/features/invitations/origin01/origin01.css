@@ -92,22 +92,22 @@
 }
 
 .origin01--theme-origin01-ivory {
-  --origin-wine-deep: #40352c;
-  --origin-wine-soft: #6a5745;
-  --origin-old-rose: #d8c4a4;
-  --origin-ivory: #f7f0e4;
-  --origin-photo-surface: #eadfce;
-  --origin-text-primary: #382d24;
-  --origin-text-muted: #75685a;
-  --origin-text-light: #fff9ef;
-  --origin-border: #d7c5aa;
-  --origin-divider: #c7af88;
-  --origin-accent: #c89a49;
-  --origin-focus: #e2b75f;
-  --origin-charcoal: #211810;
-  --origin-rose: #aa8b61;
-  --origin-rose-haze: #efe3cf;
-  --origin-shadow-soft: 0 14px 36px rgba(64, 53, 44, .12);
+  --origin-wine-deep: #4a4036;
+  --origin-wine-soft: #6d5d4d;
+  --origin-old-rose: #d5b97f;
+  --origin-ivory: #fbf6ec;
+  --origin-photo-surface: #eadcc5;
+  --origin-text-primary: #40372f;
+  --origin-text-muted: #706457;
+  --origin-text-light: #fffaf2;
+  --origin-border: #d7c3a1;
+  --origin-divider: #bea06b;
+  --origin-accent: #a9792b;
+  --origin-focus: #c9953c;
+  --origin-charcoal: #2e2822;
+  --origin-rose: #b89154;
+  --origin-rose-haze: #efe2cd;
+  --origin-shadow-soft: 0 14px 36px rgba(74, 64, 54, .1);
 }
 
 .origin01 *,
@@ -223,8 +223,8 @@
 
 .origin01--theme-origin01-ivory .origin01-prelude {
   background:
-    radial-gradient(circle at 50% 42%, rgba(216, 179, 105, .22), transparent 22rem),
-    linear-gradient(160deg, #4a3c30 0%, #241c16 68%, #5b4937 100%);
+    radial-gradient(circle at 50% 42%, rgba(169, 121, 43, .16), transparent 22rem),
+    linear-gradient(160deg, #fbf6ec 0%, #eadcc5 68%, #f4ead9 100%);
 }
 
 .origin01-prelude::before {
@@ -396,8 +396,8 @@
 
 .origin01--theme-origin01-ivory .origin01-envelope-stage {
   background:
-    radial-gradient(circle at 50% 48%, rgba(216, 179, 105, .2), transparent 23rem),
-    linear-gradient(155deg, #4c3e31, #241c16 66%, #5b4937);
+    radial-gradient(circle at 50% 48%, rgba(169, 121, 43, .15), transparent 23rem),
+    linear-gradient(155deg, #fbf6ec, #eadcc5 66%, #f3e6d1);
 }
 
 .origin01--theme-origin01-midnight .origin01-primary-action,
@@ -2619,6 +2619,82 @@
   border-radius: var(--origin-radius-surface);
   background: rgba(59, 29, 45, .64);
   box-shadow: none;
+}
+
+/* Marfil dorado keeps dark neutrals functional instead of letting them become
+   large color fields. The visible art direction remains beige, ivory and gold. */
+.origin01--theme-origin01-ivory .origin01-prelude,
+.origin01--theme-origin01-ivory .origin01-envelope-stage {
+  color: var(--origin-text-primary);
+}
+
+.origin01--theme-origin01-ivory .origin01-entry-topline,
+.origin01--theme-origin01-ivory .origin01-prelude__body,
+.origin01--theme-origin01-ivory .origin01-prelude__question,
+.origin01--theme-origin01-ivory .origin01-prelude__sound,
+.origin01--theme-origin01-ivory .origin01-envelope-stage__instruction {
+  color: var(--origin-text-muted);
+}
+
+.origin01--theme-origin01-ivory .origin01-prelude h1,
+.origin01--theme-origin01-ivory .origin01-envelope-stage h1 {
+  color: var(--origin-text-primary);
+}
+
+.origin01--theme-origin01-ivory .origin01-envelope__seal {
+  border-color: color-mix(in srgb, var(--origin-accent) 55%, var(--origin-ivory));
+  color: var(--origin-ivory);
+  background: radial-gradient(circle at 35% 28%, rgba(255, 255, 255, .25), transparent 24%), var(--origin-accent);
+  box-shadow: 0 6px 13px rgba(74, 64, 54, .18), inset 0 0 0 4px rgba(111, 79, 28, .13);
+}
+
+.origin01--theme-origin01-ivory .origin01-dress {
+  color: var(--origin-text-primary);
+  background:
+    radial-gradient(circle at 78% 18%, rgba(169, 121, 43, .13), transparent 22rem),
+    linear-gradient(155deg, var(--origin-photo-surface), var(--origin-ivory));
+}
+
+.origin01--theme-origin01-ivory .origin01-dress .origin01-feature-icon,
+.origin01--theme-origin01-ivory .origin01-dress .origin01-kicker,
+.origin01--theme-origin01-ivory .origin01-rsvp .origin01-feature-icon,
+.origin01--theme-origin01-ivory .origin01-rsvp .origin01-kicker {
+  color: var(--origin-accent);
+}
+
+.origin01--theme-origin01-ivory .origin01-dress h2 {
+  color: var(--origin-accent);
+}
+
+.origin01--theme-origin01-ivory .origin01-dress__content > p:not(.origin01-kicker) {
+  color: var(--origin-text-muted);
+}
+
+.origin01--theme-origin01-ivory .origin01-dress__note {
+  border-color: color-mix(in srgb, var(--origin-accent) 38%, transparent);
+  color: color-mix(in srgb, var(--origin-accent) 82%, var(--origin-text-primary));
+}
+
+.origin01--theme-origin01-ivory .origin01-rsvp {
+  color: var(--origin-text-primary);
+  background:
+    radial-gradient(circle at 50% 120%, rgba(169, 121, 43, .18), transparent 32rem),
+    linear-gradient(145deg, var(--origin-photo-surface), var(--origin-ivory));
+}
+
+.origin01--theme-origin01-ivory .origin01-rsvp h2,
+.origin01--theme-origin01-ivory .origin01-rsvp__note {
+  color: var(--origin-text-primary);
+}
+
+.origin01--theme-origin01-ivory .origin01-rsvp > p:not(.origin01-kicker):not(.origin01-rsvp__note) {
+  color: var(--origin-text-muted);
+}
+
+.origin01--theme-origin01-ivory .origin01-rsvp .origin01-button--light {
+  border-color: var(--origin-wine-deep);
+  color: var(--origin-text-light);
+  background: var(--origin-wine-deep);
 }
 
 .origin01-icon {

@@ -143,8 +143,10 @@ assert(initial.themeVariant === 'origin01-wine'
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
 const ivoryVariant = origin01ThemeVariants.find(({ id }) => id === 'origin01-ivory')
 assert(ivoryVariant?.name === 'Marfil dorado'
-  && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado' && value === '#c89a49')
-  && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#f7f0e4;[^}]*--origin-accent:\s*#c89a49;/s.test(origin01Css),
+  && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado antiguo' && value === '#a9792b')
+  && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#fbf6ec;[^}]*--origin-accent:\s*#a9792b;/s.test(origin01Css)
+  && /\.origin01--theme-origin01-ivory \.origin01-dress\s*\{[^}]*linear-gradient\(155deg,\s*var\(--origin-photo-surface\),\s*var\(--origin-ivory\)\)/s.test(origin01Css)
+  && /\.origin01--theme-origin01-ivory \.origin01-rsvp\s*\{[^}]*linear-gradient\(145deg,\s*var\(--origin-photo-surface\),\s*var\(--origin-ivory\)\)/s.test(origin01Css),
   'Marfil dorado registra su identidad y aplica tokens beige y dorados en la experiencia real')
 assert(maiaInvitationData.code === 'LMN-015-002'
   && maiaInvitationData.lifecycleStatus === 'review'
