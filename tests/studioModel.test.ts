@@ -198,8 +198,9 @@ assert(origin01Css.includes('--origin-threshold-action-background: var(--origin-
   && /\.origin01-prelude\s*\{[^}]*overflow-y:\s*auto;/s.test(origin01Css),
   'el CTA de Prelude usa el tratamiento temático compartido y admite desborde vertical deliberado')
 assert(/\.origin01-hero__scroll\s*\{[^}]*left:\s*1\.2rem;[^}]*right:\s*1\.2rem;/s.test(origin01Css)
-  && /@container origin01 \(max-width: 699px\)[\s\S]*\.origin01-section-heading\s*\{[^}]*padding-inline-end:\s*3\.75rem;/s.test(origin01Css),
-  'Hero contiene el indicador y los encabezados móviles reservan el carril real del control musical')
+  && !origin01Css.includes('padding-inline-end: 3.75rem')
+  && !origin01Css.includes('padding-inline-end: 5rem'),
+  'Hero contiene el indicador y el contenido móvil conserva un eje horizontal simétrico')
 assert(/\.origin01-trivia\s*\{[^}]*overflow:\s*visible;/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*width:\s*100cqw;[^}]*height:\s*max\(48rem,\s*100svh\);/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*transform:\s*translateX\(-50%\);/s.test(origin01Css),

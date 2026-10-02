@@ -2689,20 +2689,6 @@
   white-space: nowrap;
 }
 
-/* The fixed music control owns this mobile inline-end lane. Editorial copy never
-   enters it, regardless of scene, theme, or content length. */
-@container origin01 (max-width: 699px) {
-  .origin01-section-heading {
-    padding-inline-end: 3.75rem;
-  }
-
-  .origin01-dress__content,
-  .origin01-gift__content,
-  .origin01-rsvp {
-    padding-inline-end: 5rem;
-  }
-}
-
 /* Preserve the full-screen threshold when it fits while tightening only the
    vertical rhythm that would otherwise crop a long, valid Prelude at desktop. */
 @media (min-width: 700px) and (max-height: 1050px) {
