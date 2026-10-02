@@ -2,17 +2,16 @@
 
 Fecha de consolidación documental: 2 de agosto de 2026.
 
-## Estado vigente — candidato de cierre para piloto (2 de octubre de 2026)
+## Estado vigente — cierre técnico del piloto asistido (2 de octubre de 2026)
 
-- `main` verificado antes del cierre: `bc5c414a3cc886c4849d2cfb01b58973196aa7bf`, merge del PR #83.
-- El árbol de `main` coincide con la primera invitación real publicada y con la versión pública revisada.
+- `main` verificado: `52f3e809b60eb85feb8615054ceb1c80f7292a72`, merge del PR #84.
+- El árbol de `main` conserva la primera invitación real publicada y agrega el cierre técnico del piloto.
 - Una instalación limpia con Node `v24.19.0` y npm `11.9.0` completó correctamente lint, typecheck,
   310 aserciones, matriz estructural de 280 casos, build y `git diff --check`.
 - `npm audit --omit=dev --audit-level=high` informó `0` vulnerabilidades después de actualizar
   React Router a `7.18.4`.
-- El workflow candidato incorpora tests, matriz visual, auditoría de dependencias de producción y
-  control del diff, además de lint, typecheck y build. GitHub Actions continúa usando Node 22 y su
-  resultado remoto debe confirmarse en el PR.
+- El workflow incorpora tests, matriz visual, auditoría de dependencias de producción y control del
+  diff, además de lint, typecheck y build. GitHub Actions continúa usando Node 22.
 - Persisten advertencias no bloqueantes: `eval` dentro de `lottie-web`, bundle principal superior a
   500 kB y la configuración ambiental `http-proxy` observada por npm.
 - Studio continúa sin autenticación ni persistencia. Por eso sus rutas quedan deshabilitadas en
