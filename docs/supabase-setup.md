@@ -4,7 +4,7 @@ Esta etapa agrega autenticación real para LIMEN Studio y prepara la persistenci
 
 ## 1. Aplicar la migración
 
-Vincular el repositorio al proyecto `limen-prod` y aplicar `supabase/migrations/20261002165311_studio_auth_foundation.sql` con el flujo habitual de Supabase CLI o desde una integración autorizada.
+Vincular el repositorio al proyecto `limen-prod` y aplicar, en orden, las migraciones de `supabase/migrations` con el flujo habitual de Supabase CLI o desde una integración autorizada. La segunda migración restringe los datos por proyecto y debe quedar aplicada antes de habilitar Studio.
 
 La migración crea:
 
@@ -13,6 +13,9 @@ La migración crea:
 - borradores editables y publicaciones inmutables por revisión;
 - referencias a imágenes y audio;
 - RLS y permisos explícitos para todas las tablas.
+
+La administración de `project_access` y las escrituras sobre `invitation_publications` permanecen
+bloqueadas para el navegador hasta incorporar las operaciones server-side validadas.
 
 No se concede acceso a `anon`. Las invitaciones públicas se expondrán más adelante mediante una lectura pública controlada, no abriendo las tablas internas.
 

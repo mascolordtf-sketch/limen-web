@@ -23,6 +23,11 @@ Studio comenzará con una cuenta administradora. El modelo admite editores sin e
 piloto. Una contraseña escrita en variables `VITE_*`, el bundle o `localStorage` no es autenticación:
 los permisos se validarán en el backend y las rutas privadas exigirán una sesión real.
 
+La cuenta administradora activa puede operar todos los proyectos. Los editores sólo pueden leer o
+modificar proyectos, borradores y medios cuando poseen una asignación explícita en `project_access`.
+La administración de esas asignaciones y la creación o cambio de publicaciones no se exponen como
+escrituras directas al navegador: se incorporarán mediante operaciones server-side validadas.
+
 ## Núcleo persistente
 
 1. **Proyecto:** identidad operativa estable, código público, plan, tipo de evento y ciclo de vida.
