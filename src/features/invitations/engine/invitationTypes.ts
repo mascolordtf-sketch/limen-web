@@ -44,6 +44,7 @@ export type InvitationMediaReference = {
     readonly x: number
     readonly y: number
   }
+  readonly fit?: 'cover' | 'contain'
   readonly zoom?: number
 }
 

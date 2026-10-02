@@ -7,6 +7,7 @@ import { Origin01Community } from '../src/features/invitations/origin01/Origin01
 import origin01Css from '../src/features/invitations/origin01/origin01.css?raw'
 import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
+import { maiaInvitationData } from '../src/features/invitations/origin01/maiaInvitationData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { origin01VisualMatrixViewports,
@@ -145,6 +146,14 @@ assert(ivoryVariant?.name === 'Marfil dorado'
   && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado' && value === '#c89a49')
   && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#f7f0e4;[^}]*--origin-accent:\s*#c89a49;/s.test(origin01Css),
   'Marfil dorado registra su identidad y aplica tokens beige y dorados en la experiencia real')
+assert(maiaInvitationData.code === 'LMN-015-002'
+  && maiaInvitationData.lifecycleStatus === 'review'
+  && maiaInvitationData.themeVariant === 'origin01-ivory'
+  && maiaInvitationData.event.startsAt === '2026-10-17T21:30:00-03:00'
+  && maiaInvitationData.event.endsAt === '2026-10-18T04:00:00-03:00'
+  && maiaInvitationData.content.rsvp.recipientPhone === undefined
+  && validateInvitationConfiguration(maiaInvitationData, findInvitationTemplate).valid,
+  'la invitación de Maia conserva fecha, cruce de medianoche, tema y RSVP sin teléfono público')
 const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
 assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
   && dynamicDateInitial.event.end === '2026-09-07T02:00',

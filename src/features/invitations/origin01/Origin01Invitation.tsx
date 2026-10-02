@@ -255,8 +255,9 @@ function InvitationImageAsset({
         aria-hidden={decorative || undefined}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'auto'}
-        style={image.focalPoint || image.zoom !== undefined ? {
+        style={image.focalPoint || image.fit || image.zoom !== undefined ? {
           objectPosition: `${focalPoint.x}% ${focalPoint.y}%`,
+          objectFit: image.fit,
           transform: image.zoom === undefined ? undefined : `scale(${image.zoom})`,
           transformOrigin: image.zoom === undefined ? undefined : `${focalPoint.x}% ${focalPoint.y}%`,
         } : undefined}

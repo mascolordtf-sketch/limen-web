@@ -1826,6 +1826,7 @@
 
 .origin01-gift__media {
   height: clamp(15rem, 67cqw, 20rem);
+  background: radial-gradient(circle at 50% 45%, var(--origin-paper) 0, var(--origin-ivory) 68%);
 }
 
 .origin01-gift__image {
