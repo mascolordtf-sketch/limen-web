@@ -33,6 +33,7 @@ npm run dev
 npm run lint
 npm run typecheck
 npm test
+npm run visual:matrix:check
 npm run build
 git diff --check
 ```
@@ -50,8 +51,14 @@ npm run preview
 - `/catalogo`
 - `/disenos/:code`
 - `/demo/:code`
+- `/invitacion/:code`
 - `/contacto`
 - Ruta 404 para direcciones no reconocidas
+
+Las rutas `/studio`, `/studio/invitaciones/:code` y `/studio/matriz/:caseId` son internas. Se habilitan
+automáticamente en desarrollo local. En un build desplegado permanecen ocultas salvo que
+`VITE_ENABLE_STUDIO=true`; esa excepción solo debe configurarse en un Preview protegido, nunca en
+la producción pública mientras Studio no tenga autenticación propia.
 
 ## Línea base técnica
 
@@ -60,6 +67,11 @@ La línea base auditada durante la Fase 0.2 fue `f18fecf2c6afed9b27604e3a819285e
 El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye la experiencia pública Origin 01 en `/demo/LMN-015-001`, un Studio interno temporal, contratos tipados, preview real, administración local de contenido y medios, cuatro variantes visuales y un laboratorio tipográfico.
 
 El estado, la evidencia, los runtimes observados y la diferencia entre el workflow actual y la puerta técnica prevista se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
+
+Después del merge del PR #83, `main` quedó en `bc5c414a3cc886c4849d2cfb01b58973196aa7bf` con la
+primera invitación real publicada. Sobre ese estado se ejecutaron correctamente lint, typecheck,
+308 aserciones, build, la matriz estructural vigente de 280 casos y `git diff --check`. El procedimiento
+manual y los límites del piloto están documentados en [`docs/pilot-operativo.md`](docs/pilot-operativo.md).
 
 Todavía no incluye persistencia, backend, autenticación, publicación de proyectos, panel del cliente ni datos reales de RSVP. Studio no debe recibir información real hasta que existan el modelo de datos y la protección de acceso definidos en el roadmap maestro.
 

@@ -9,6 +9,7 @@ type OpeningFieldProps = {
 }
 
 type StudioOpeningEditorProps = {
+  hasMusic: boolean
   preludeEyebrow: OpeningFieldProps
   preludeBody: OpeningFieldProps
   preludeReveal: OpeningFieldProps
@@ -68,6 +69,7 @@ function OpeningField({
 }
 
 export function StudioOpeningEditor({
+  hasMusic,
   preludeEyebrow, preludeBody, preludeReveal, preludeQuestion, preludeActionLabel,
   preludeSoundHint, heroPhrase, heroScrollHint,
 }: StudioOpeningEditorProps) {
@@ -96,9 +98,11 @@ export function StudioOpeningEditor({
           <OpeningField id="studio-opening-prelude-action" label="Texto de la acción"
             help="Es la invitación que impulsa a continuar."
             resetLabel="Restablecer acción" field={preludeActionLabel} />
-          <OpeningField id="studio-opening-prelude-sound" label="Indicación de sonido"
-            help="Anticipa qué sucede con el sonido al continuar."
-            resetLabel="Restablecer indicación de sonido" field={preludeSoundHint} />
+          {hasMusic ? (
+            <OpeningField id="studio-opening-prelude-sound" label="Indicación de sonido"
+              help="Anticipa qué sucede con el sonido al continuar."
+              resetLabel="Restablecer indicación de sonido" field={preludeSoundHint} />
+          ) : null}
         </section>
 
         <section className="limen-studio__opening-group" aria-labelledby="studio-hero-heading">
