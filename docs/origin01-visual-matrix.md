@@ -148,3 +148,10 @@ Cada ruta de reproducción se obtiene añadiendo el ID indicado a `https://limen
 - Caso (1): `BOUNDARY-prelude-long-desktop`.
 
 La Fase 1.2 queda cerrada como revisión, pero Origin 01 **no queda visualmente aprobado** mientras estos seis defectos permanezcan sin resolver en Fase 1.3. Esta evidencia no altera la Fase 0.2: permanece **NOT VERIFIABLE**, y su resultado histórico de 224/224 corresponde solo a cobertura estructural, no a inspección perceptual.
+
+
+## Extensión posterior — variante Marfil dorado
+
+La incorporación de la variante `origin01-ivory` no modifica el cierre histórico de la Fase 1.2: sus 224 casos, 196 aprobaciones y 28 incidencias permanecen registrados con su resultado original.
+
+La matriz vigente suma 56 casos base nuevos —catorce escenas, dos audiencias y dos viewports— para la cuarta variante. Por lo tanto, el inventario estructural actual contiene 280 casos: los 224 históricos conservan su evidencia y los 56 de Marfil dorado permanecen en `pending` hasta una inspección perceptual real posterior al despliegue. La variante no puede considerarse visualmente aprobada por validaciones estructurales o pruebas DOM.

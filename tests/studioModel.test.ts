@@ -140,6 +140,11 @@ const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
   && origin01ThemeVariants.map(({ id }) => id).join('|') === origin01Template.supportedThemeVariants.join('|'),
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
+const ivoryVariant = origin01ThemeVariants.find(({ id }) => id === 'origin01-ivory')
+assert(ivoryVariant?.name === 'Marfil dorado'
+  && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado' && value === '#c89a49')
+  && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#f7f0e4;[^}]*--origin-accent:\s*#c89a49;/s.test(origin01Css),
+  'Marfil dorado registra su identidad y aplica tokens beige y dorados en la experiencia real')
 const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
 assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
   && dynamicDateInitial.event.end === '2026-09-07T02:00',
@@ -156,12 +161,12 @@ const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
 ])
 const resolvedMatrixCases = matrixCaseIds.map((id) =>
   resolveOrigin01VisualMatrixCase(id, origin01DemoData))
-assert(matrixCaseIds.length === 224 && resolvedMatrixCases.every(Boolean),
+assert(matrixCaseIds.length === 280 && resolvedMatrixCases.every(Boolean),
   'cada fila canónica de la matriz resuelve una invitación y un viewport reproducibles')
 assert(resolvedMatrixCases.every((matrixCase) => matrixCase
   && validateInvitationConfiguration(matrixCase.invitation, findInvitationTemplate).valid),
   'todas las invitaciones derivadas conservan una configuración estructural válida')
-assert(new Set(resolvedMatrixCases.map((matrixCase) => matrixCase?.id)).size === 224
+assert(new Set(resolvedMatrixCases.map((matrixCase) => matrixCase?.id)).size === 280
   && resolveOrigin01VisualMatrixCase('BASE-unknown-protagonist-origin01-wine-mobile', origin01DemoData) === undefined,
   'la matriz conserva identidades únicas y rechaza casos inventados')
 const invitationMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {

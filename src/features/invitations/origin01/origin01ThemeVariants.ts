@@ -4,6 +4,7 @@ export const origin01ThemeVariantIds = [
   'origin01-wine',
   'origin01-midnight',
   'origin01-garden',
+  'origin01-ivory',
 ] as const satisfies readonly ThemeVariantId[]
 
 export type Origin01ThemeVariantId = (typeof origin01ThemeVariantIds)[number]
@@ -55,6 +56,18 @@ export const origin01ThemeVariants: readonly Origin01ThemeVariantDefinition[] = 
       { name: 'Lino', role: 'Texto', value: '#f2eee4' },
       { name: 'Bronce', role: 'Acento', value: '#b28a5f' },
       { name: 'Salvia', role: 'Detalle', value: '#aab7a5' },
+    ],
+  },
+  {
+    id: 'origin01-ivory',
+    name: 'Marfil dorado',
+    description: 'Beige luminoso, marfil y dorado cálido para una celebración elegante y delicada.',
+    character: 'Luminoso · Elegante · Cálido',
+    palette: [
+      { name: 'Café humo', role: 'Fondo', value: '#40352c' },
+      { name: 'Marfil', role: 'Texto', value: '#f7f0e4' },
+      { name: 'Dorado', role: 'Acento', value: '#c89a49' },
+      { name: 'Beige', role: 'Detalle', value: '#d8c4a4' },
     ],
   },
 ]

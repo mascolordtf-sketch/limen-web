@@ -91,6 +91,25 @@
   --origin-shadow-soft: 0 14px 36px rgba(29, 48, 40, .11);
 }
 
+.origin01--theme-origin01-ivory {
+  --origin-wine-deep: #40352c;
+  --origin-wine-soft: #6a5745;
+  --origin-old-rose: #d8c4a4;
+  --origin-ivory: #f7f0e4;
+  --origin-photo-surface: #eadfce;
+  --origin-text-primary: #382d24;
+  --origin-text-muted: #75685a;
+  --origin-text-light: #fff9ef;
+  --origin-border: #d7c5aa;
+  --origin-divider: #c7af88;
+  --origin-accent: #c89a49;
+  --origin-focus: #e2b75f;
+  --origin-charcoal: #211810;
+  --origin-rose: #aa8b61;
+  --origin-rose-haze: #efe3cf;
+  --origin-shadow-soft: 0 14px 36px rgba(64, 53, 44, .12);
+}
+
 .origin01 *,
 .origin01 *::before,
 .origin01 *::after {
@@ -200,6 +219,12 @@
   background:
     radial-gradient(circle at 50% 42%, rgba(116, 145, 119, .2), transparent 22rem),
     linear-gradient(160deg, #1c3329 0%, #101c17 68%, #263c30 100%);
+}
+
+.origin01--theme-origin01-ivory .origin01-prelude {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(216, 179, 105, .22), transparent 22rem),
+    linear-gradient(160deg, #4a3c30 0%, #241c16 68%, #5b4937 100%);
 }
 
 .origin01-prelude::before {
@@ -369,12 +394,21 @@
     linear-gradient(155deg, #21382e, #101c17 66%, #294234);
 }
 
+.origin01--theme-origin01-ivory .origin01-envelope-stage {
+  background:
+    radial-gradient(circle at 50% 48%, rgba(216, 179, 105, .2), transparent 23rem),
+    linear-gradient(155deg, #4c3e31, #241c16 66%, #5b4937);
+}
+
 .origin01--theme-origin01-midnight .origin01-primary-action,
 .origin01--theme-origin01-midnight .origin01-envelope-stage::before,
 .origin01--theme-origin01-midnight .origin01-envelope-stage::after,
 .origin01--theme-origin01-garden .origin01-primary-action,
 .origin01--theme-origin01-garden .origin01-envelope-stage::before,
-.origin01--theme-origin01-garden .origin01-envelope-stage::after {
+.origin01--theme-origin01-garden .origin01-envelope-stage::after,
+.origin01--theme-origin01-ivory .origin01-primary-action,
+.origin01--theme-origin01-ivory .origin01-envelope-stage::before,
+.origin01--theme-origin01-ivory .origin01-envelope-stage::after {
   border-color: color-mix(in srgb, var(--origin-accent) 60%, transparent);
 }
 
@@ -931,6 +965,12 @@
     linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
 }
 
+.origin01--theme-origin01-ivory .origin01-schedule {
+  background:
+    radial-gradient(circle at 90% 10%, rgba(226, 183, 95, .16), transparent 22rem),
+    linear-gradient(155deg, var(--origin-plum-deep), var(--origin-wine));
+}
+
 /* Weather — live information with an explicit source and graceful horizon states. */
 
 .origin01-weather {
@@ -1208,6 +1248,12 @@
   background:
     linear-gradient(to top, rgba(12, 24, 19, .97) 0%, rgba(24, 45, 35, .34) 58%, rgba(13, 27, 21, .2) 100%),
     linear-gradient(to right, rgba(18, 38, 29, .3), transparent 62%);
+}
+
+.origin01--theme-origin01-ivory .origin01-hero__veil {
+  background:
+    linear-gradient(to top, rgba(35, 26, 19, .97) 0%, rgba(77, 61, 47, .34) 58%, rgba(39, 29, 21, .2) 100%),
+    linear-gradient(to right, rgba(55, 42, 31, .32), transparent 62%);
 }
 
 .origin01-hero__brand {
@@ -2062,6 +2108,10 @@
   background: linear-gradient(to top, rgba(10, 21, 16, .99), rgba(24, 45, 35, .46) 67%, rgba(13, 27, 21, .2));
 }
 
+.origin01--theme-origin01-ivory .origin01-closing__veil {
+  background: linear-gradient(to top, rgba(31, 23, 17, .99), rgba(76, 59, 44, .48) 67%, rgba(39, 29, 21, .2));
+}
+
 .origin01-closing__content {
   width: min(100%, 68rem);
   margin: 0 auto;
@@ -2722,6 +2772,14 @@
 
 .origin01--theme-origin01-garden .origin01-community__card {
   background: color-mix(in srgb, var(--origin-ivory) 90%, var(--origin-old-rose));
+}
+
+.origin01--theme-origin01-ivory .origin01-community {
+  background: color-mix(in srgb, var(--origin-accent) 8%, var(--origin-photo-surface));
+}
+
+.origin01--theme-origin01-ivory .origin01-community__card {
+  background: color-mix(in srgb, var(--origin-ivory) 91%, var(--origin-old-rose));
 }
 
 @container origin01 (min-width: 42rem) {
