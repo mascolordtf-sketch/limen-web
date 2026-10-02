@@ -127,6 +127,7 @@ import { commitStudioRenderablePreview, createStudioCommittedPreviewCell,
   selectStudioRenderablePreview } from '../src/features/studio/useStudioRenderablePreview'
 import { createStudioIssueCorrectionContext, groupStudioIssues, resolveStudioCorrectionReturn,
   issueNeedsCorrectionReturn, resolveStudioIssueDestination, resolveStudioStructuralDestination } from '../src/features/studio/studioReviewIssues'
+import { resolveStudioAvailability } from '../src/features/studio/studioAvailability'
 
 let passed = 0
 const assert = (condition: unknown, message: string) => {
@@ -136,6 +137,11 @@ const assert = (condition: unknown, message: string) => {
 
 assert(studioDesktopMediaQuery === '(min-width: 76rem)',
   'Studio interpreta como escritorio el mismo breakpoint de 76rem usado por CSS')
+assert(resolveStudioAvailability({ dev: true })
+  && resolveStudioAvailability({ dev: false, explicitFlag: 'true' })
+  && !resolveStudioAvailability({ dev: false })
+  && !resolveStudioAvailability({ dev: false, explicitFlag: 'false' }),
+  'Studio queda habilitado en desarrollo o mediante una bandera explícita, pero no en producción por defecto')
 
 const initial = createOrigin01StudioDraft(origin01DemoData)
 assert(initial.themeVariant === 'origin01-wine'
@@ -593,6 +599,19 @@ assert(getStudioMediaAssignments(withoutMusic.assignments, 'music.audio').length
     invitation: withoutMusicPreview, audience: 'protagonist',
   })).includes('<audio'),
   'desactivar música vacía el slot sin recuperar la pista canónica y descarta el audio temporal sin uso')
+const withoutMusicAndHint = {
+  ...initial,
+  opening: { ...initial.opening, preludeSoundHint: '' },
+  media: removeStudioMusicAssignment(initial.media),
+}
+const withoutMusicValidation = validateOrigin01StudioDraft(origin01DemoData, withoutMusicAndHint)
+const musicWithoutHintValidation = validateOrigin01StudioDraft(origin01DemoData, {
+  ...initial,
+  opening: { ...initial.opening, preludeSoundHint: '' },
+})
+assert(withoutMusicValidation.fieldErrors.preludeSoundHint === null
+  && musicWithoutHintValidation.fieldErrors.preludeSoundHint !== null,
+  'la indicación de sonido solo es obligatoria cuando la invitación tiene música asignada')
 const restoredMusic = assignStudioMusic(withoutMusic, 'music')
 assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.mediaId === 'music'
   && findStudioMediaById(restoredMusic.items, 'music')?.origin === 'canonical',

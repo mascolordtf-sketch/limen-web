@@ -84,6 +84,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const setStoryMessage = (message: string) => updateGroup('story', (current) => ({ ...current, message }))
   const { preludeEyebrow, preludeBody, preludeReveal, preludeQuestion, preludeActionLabel,
     preludeSoundHint, heroPhrase, heroScrollHint } = draft.opening
+  const hasMusic = draft.media.assignments.some(({ slotId }) => slotId === 'music.audio')
   const setOpening = <K extends keyof typeof draft.opening>(key: K, value: (typeof draft.opening)[K]) =>
     updateGroup('opening', (current) => ({ ...current, [key]: value }))
   const { eyebrow: closingEyebrow, title: closingTitle, sharePrompt: closingSharePrompt,
@@ -337,6 +338,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
             }}
           /></div>,
     'opening': <div className="limen-studio__panel-grid">          <StudioOpeningEditor
+            hasMusic={hasMusic}
             preludeEyebrow={{ value: preludeEyebrow, canonicalValue: canonicalPreludeEyebrow,
               error: preludeEyebrowError, onChange: (value) => setOpening('preludeEyebrow', value),
               onReset: () => resetField('opening', 'preludeEyebrow') }}

@@ -10,18 +10,23 @@ import { NotFoundPage } from '../pages/NotFoundPage'
 import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
 import { StudioVisualMatrixCase } from '../features/studio/StudioVisualMatrixCase'
 import { defaultStudioInvitationCode } from '../features/studio/studioInvitationRegistry'
+import { studioRoutesEnabled } from '../features/studio/studioAvailability'
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="demo/:code" element={<DemoPage />} />
       <Route path="invitacion/:code" element={<DemoPage />} />
-      <Route
-        path="studio"
-        element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
-      />
-      <Route path="studio/invitaciones/:code" element={<StudioInvitationRoute />} />
-      <Route path="studio/matriz/:caseId" element={<StudioVisualMatrixCase />} />
+      {studioRoutesEnabled ? (
+        <>
+          <Route
+            path="studio"
+            element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
+          />
+          <Route path="studio/invitaciones/:code" element={<StudioInvitationRoute />} />
+          <Route path="studio/matriz/:caseId" element={<StudioVisualMatrixCase />} />
+        </>
+      ) : null}
 
       <Route element={<SiteLayout />}>
         <Route index element={<HomePage />} />
