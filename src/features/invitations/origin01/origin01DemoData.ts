@@ -21,6 +21,7 @@ export const origin01DemoData = {
     address: 'Av. del Encuentro 1540, Buenos Aires',
   },
   identities: [{ displayName: 'Valentina', role: 'protagonist' }],
+  presentation: { showTemplateBranding: true },
   modules: [
     { moduleId: 'prelude', enabled: true },
     { moduleId: 'hero', enabled: true },

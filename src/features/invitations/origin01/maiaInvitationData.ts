@@ -19,6 +19,7 @@ export const maiaInvitationData = {
     address: 'Almafuerte 3515, San Justo, Buenos Aires',
   },
   identities: [{ displayName: 'Maia', role: 'protagonist' }],
+  presentation: { showTemplateBranding: false },
   modules: [
     { moduleId: 'prelude', enabled: true },
     { moduleId: 'hero', enabled: true },
@@ -175,10 +176,10 @@ export const maiaInvitationData = {
     rsvp: {
       eyebrow: 'Tu presencia es muy importante',
       title: 'Confirmá tu asistencia',
-      description: 'Por favor, confirmá tu asistencia antes del 2 de octubre.',
+      description: 'Por favor, confirmá tu asistencia antes del 4 de octubre.',
       actionLabel: 'Confirmar aquí',
+      recipientPhone: '5491178205507',
       message: 'Hola, confirmo mi asistencia a los 15 años de Maia.',
-      demoNote: 'El botón de WhatsApp se habilitará con el número definitivo.',
     },
     closing: {
       eyebrow: 'Nos vemos muy pronto',

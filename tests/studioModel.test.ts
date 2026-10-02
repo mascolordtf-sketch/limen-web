@@ -153,9 +153,10 @@ assert(maiaInvitationData.code === 'LMN-015-002'
   && maiaInvitationData.themeVariant === 'origin01-ivory'
   && maiaInvitationData.event.startsAt === '2026-10-17T21:30:00-03:00'
   && maiaInvitationData.event.endsAt === '2026-10-18T04:00:00-03:00'
-  && maiaInvitationData.content.rsvp.recipientPhone === undefined
+  && maiaInvitationData.content.rsvp.recipientPhone === '5491178205507'
+  && maiaInvitationData.content.rsvp.description.includes('4 de octubre')
   && validateInvitationConfiguration(maiaInvitationData, findInvitationTemplate).valid,
-  'la invitación de Maia conserva fecha, cruce de medianoche, tema y RSVP sin teléfono público')
+  'la invitación de Maia conserva fecha, cruce de medianoche, tema y RSVP definitivo')
 const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
 assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
   && dynamicDateInitial.event.end === '2026-09-07T02:00',
@@ -184,6 +185,10 @@ const invitationMarkup = renderToStaticMarkup(createElement(Origin01Invitation, 
   invitation: origin01DemoData,
   startAtInvitation: true,
 }))
+const maiaMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: maiaInvitationData,
+  startAtInvitation: true,
+}))
 const longPreludeCase = resolveOrigin01VisualMatrixCase('BOUNDARY-prelude-long-desktop', origin01DemoData)!
 const longPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
   invitation: longPreludeCase.invitation,
@@ -192,6 +197,10 @@ const longPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation,
 assert(invitationMarkup.includes('class="origin01-music ') && invitationMarkup.includes('aria-label="Reproducir música"')
   && invitationMarkup.includes('Deslizá para descubrir'),
   'la invitación conserva el indicador de descubrimiento y el control musical accesible')
+assert(invitationMarkup.includes('Origin 01') && invitationMarkup.includes('Demo LIMEN')
+  && !maiaMarkup.includes('Origin 01') && !maiaMarkup.includes('Demo LIMEN')
+  && maiaMarkup.includes('LIMEN'),
+  'la demo conserva su identificación técnica y la invitación real muestra únicamente la marca LIMEN')
 assert(longPreludeMarkup.includes(longPreludeCase.invitation.content.prelude.actionLabel)
   && longPreludeMarkup.includes('origin01-primary-action'),
   'Prelude conserva su acción esencial con contenido editorial largo')

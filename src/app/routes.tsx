@@ -15,6 +15,7 @@ export function AppRoutes() {
   return (
     <Routes>
       <Route path="demo/:code" element={<DemoPage />} />
+      <Route path="invitacion/:code" element={<DemoPage />} />
       <Route
         path="studio"
         element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}

@@ -719,6 +719,7 @@ export function Origin01Invitation({
     '--origin-display': `'${typography.editorial.family}', serif`,
     '--origin-reading': `'${typography.functional.family}', sans-serif`,
   } as CSSProperties : undefined
+  const showTemplateBranding = invitation.presentation?.showTemplateBranding === true
 
   return (
     <main className={`origin01 origin01--${phase} origin01--theme-${invitation.themeVariant}`}
@@ -760,7 +761,7 @@ export function Origin01Invitation({
           <div className="origin01-prelude__light" aria-hidden="true" />
           <div className="origin01-entry-topline">
             <span>LIMEN</span>
-            <span>Origin 01</span>
+            <span>{showTemplateBranding ? 'Origin 01' : invitation.event.celebrationLabel}</span>
           </div>
           <div className="origin01-prelude__content">
             <p className="origin01-prelude__eyebrow">{invitation.content.prelude.eyebrow}</p>
@@ -784,7 +785,7 @@ export function Origin01Invitation({
         >
           <div className="origin01-entry-topline">
             <span>LIMEN</span>
-            <span>Origin 01 · El primer instante</span>
+            <span>{showTemplateBranding ? 'Origin 01 · El primer instante' : invitation.event.celebrationLabel}</span>
           </div>
           <div className="origin01-envelope-stage__content">
             <p className="origin01-envelope-stage__eyebrow">{invitation.content.envelope.eyebrow}</p>
@@ -819,16 +820,18 @@ export function Origin01Invitation({
 
       {invitationIsVisible ? (
         <div ref={experienceRef} className="origin01-experience" aria-labelledby="origin01-hero-title" tabIndex={-1}>
-          <p className="origin01-demo-label origin01-demo-label--fixed">
-            <span aria-hidden="true" />
-            Demo LIMEN
-          </p>
+          {showTemplateBranding ? (
+            <p className="origin01-demo-label origin01-demo-label--fixed">
+              <span aria-hidden="true" />
+              Demo LIMEN
+            </p>
+          ) : null}
 
           <section className="origin01-hero" aria-labelledby="origin01-hero-title">
             <InvitationImageAsset image={coverImage} className="origin01-hero__image" eager />
             <div className="origin01-hero__veil" aria-hidden="true" />
             <div className="origin01-hero__brand" aria-hidden="true">
-              <span>Origin 01</span>
+              <span>{showTemplateBranding ? 'Origin 01' : 'LIMEN'}</span>
               <span>El primer instante</span>
             </div>
             <div className="origin01-hero__content">
@@ -1040,7 +1043,7 @@ export function Origin01Invitation({
                   <p className="origin01-closing__share-status" aria-live="polite">{shareStatus}</p>
                 </div>
               ) : null}
-              <p className="origin01-closing__brand">Origin 01 · LIMEN</p>
+              <p className="origin01-closing__brand">{showTemplateBranding ? 'Origin 01 · LIMEN' : 'LIMEN'}</p>
             </div>
           </section>
         </div>
