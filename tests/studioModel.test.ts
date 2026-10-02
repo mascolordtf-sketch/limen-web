@@ -201,6 +201,9 @@ assert(invitationMarkup.includes('Origin 01') && invitationMarkup.includes('Demo
   && !maiaMarkup.includes('Origin 01') && !maiaMarkup.includes('Demo LIMEN')
   && maiaMarkup.includes('LIMEN'),
   'la demo conserva su identificación técnica y la invitación real muestra únicamente la marca LIMEN')
+assert(!maiaMarkup.includes('<audio') && !maiaMarkup.includes('origin01-music')
+  && !maiaMarkup.includes('origin01-prelude__sound'),
+  'la invitación de Maia no carga música ni muestra controles o indicaciones de sonido')
 assert(longPreludeMarkup.includes(longPreludeCase.invitation.content.prelude.actionLabel)
   && longPreludeMarkup.includes('origin01-primary-action'),
   'Prelude conserva su acción esencial con contenido editorial largo')

@@ -774,7 +774,9 @@ export function Origin01Invitation({
               <span className="origin01-primary-action__arrow" aria-hidden="true">→</span>
             </button>
           </div>
-          <p className="origin01-prelude__sound">{invitation.content.prelude.soundHint}</p>
+          {invitation.content.prelude.soundHint ? (
+            <p className="origin01-prelude__sound">{invitation.content.prelude.soundHint}</p>
+          ) : null}
         </section>
       ) : null}
 

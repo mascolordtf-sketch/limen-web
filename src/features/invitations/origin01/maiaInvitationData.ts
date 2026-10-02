@@ -59,7 +59,6 @@ export const maiaInvitationData = {
       title: 'Un detalle especial',
       fit: 'contain',
     },
-    { id: 'music', kind: 'audio', src: '/audio/origin-01-demo.mp3', title: 'Música de fondo' },
   ],
   content: {
     prelude: {
@@ -69,7 +68,7 @@ export const maiaInvitationData = {
       reveal: 'Mis 15 años',
       question: '¿Estás lista para vivirlos?',
       actionLabel: 'Estoy lista',
-      soundHint: 'La música comienza al continuar',
+      soundHint: '',
     },
     envelope: {
       eyebrow: 'Una invitación para vos',
@@ -191,8 +190,8 @@ export const maiaInvitationData = {
       shareTitle: 'Mis 15 años de Maia',
       shareText: 'Te invito a compartir conmigo una noche muy especial.',
     },
-    music: { mediaId: 'music' },
+    music: { mediaId: '' },
   },
   createdAt: '2026-10-02T02:20:00.000Z',
-  updatedAt: '2026-10-02T02:20:00.000Z',
+  updatedAt: '2026-10-02T13:40:00.000Z',
 } satisfies Origin01InvitationData
