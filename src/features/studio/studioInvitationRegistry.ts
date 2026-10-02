@@ -1,8 +1,10 @@
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { maiaInvitationData } from '../invitations/origin01/maiaInvitationData'
 import { origin01DemoData } from '../invitations/origin01/origin01DemoData'
 
 const studioInvitations = {
   [origin01DemoData.code]: origin01DemoData,
+  [maiaInvitationData.code]: maiaInvitationData,
 } as const satisfies Readonly<Record<string, Origin01InvitationData>>
 
 export const defaultStudioInvitationCode = origin01DemoData.code

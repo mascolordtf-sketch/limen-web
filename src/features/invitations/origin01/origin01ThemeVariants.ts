@@ -61,13 +61,13 @@ export const origin01ThemeVariants: readonly Origin01ThemeVariantDefinition[] = 
   {
     id: 'origin01-ivory',
     name: 'Marfil dorado',
-    description: 'Beige luminoso, marfil y dorado cálido para una celebración elegante y delicada.',
+    description: 'Marfil luminoso, beige arena y dorado antiguo para una celebración elegante y delicada.',
     character: 'Luminoso · Elegante · Cálido',
     palette: [
-      { name: 'Café humo', role: 'Fondo', value: '#40352c' },
-      { name: 'Marfil', role: 'Texto', value: '#f7f0e4' },
-      { name: 'Dorado', role: 'Acento', value: '#c89a49' },
-      { name: 'Beige', role: 'Detalle', value: '#d8c4a4' },
+      { name: 'Beige arena', role: 'Fondo', value: '#eadcc5' },
+      { name: 'Marfil', role: 'Superficie', value: '#fbf6ec' },
+      { name: 'Dorado antiguo', role: 'Acento', value: '#a9792b' },
+      { name: 'Taupe', role: 'Texto', value: '#40372f' },
     ],
   },
 ]

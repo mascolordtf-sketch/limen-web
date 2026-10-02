@@ -2,12 +2,14 @@ import { useEffect } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
+import { maiaInvitationData } from '../features/invitations/origin01/maiaInvitationData'
 import { origin01DemoData } from '../features/invitations/origin01/origin01DemoData'
 import { findOrigin01TypographyCombination } from '../features/invitations/origin01/origin01Typography'
 import { resolveOrigin01VisualMatrixCase } from '../features/invitations/origin01/origin01VisualMatrix'
 
 const demoInvitations = {
   [origin01DemoData.code]: origin01DemoData,
+  [maiaInvitationData.code]: maiaInvitationData,
 } as const
 
 export function DemoPage() {
@@ -40,6 +42,9 @@ export function DemoPage() {
     const audience = matrixCase?.audience
       ?? (searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist')
     const typography = findOrigin01TypographyCombination(searchParams.get('tipografia'))
+      ?? (invitation.code === maiaInvitationData.code
+        ? findOrigin01TypographyCombination('romantica-clasica')
+        : undefined)
     const startAtInvitation = matrixCase?.startAtInvitation
       ?? searchParams.get('inicio') === 'invitacion'
     return <Origin01Invitation invitation={renderedInvitation} audience={audience}

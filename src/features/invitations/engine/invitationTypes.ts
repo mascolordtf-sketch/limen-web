@@ -44,6 +44,7 @@ export type InvitationMediaReference = {
     readonly x: number
     readonly y: number
   }
+  readonly fit?: 'cover' | 'contain'
   readonly zoom?: number
 }
 
@@ -74,6 +75,9 @@ export type LimenInvitation<TContent extends LimenInvitationContent = LimenInvit
   readonly modules: readonly InvitationModuleConfig[]
   readonly content: TContent
   readonly media: readonly InvitationMediaReference[]
+  readonly presentation?: {
+    readonly showTemplateBranding: boolean
+  }
   readonly createdAt: string
   readonly updatedAt: string
   readonly publishedAt?: string

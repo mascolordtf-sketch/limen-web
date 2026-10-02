@@ -7,6 +7,7 @@ import { Origin01Community } from '../src/features/invitations/origin01/Origin01
 import origin01Css from '../src/features/invitations/origin01/origin01.css?raw'
 import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
+import { maiaInvitationData } from '../src/features/invitations/origin01/maiaInvitationData'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { origin01VisualMatrixViewports,
@@ -142,9 +143,20 @@ assert(initial.themeVariant === 'origin01-wine'
   'inicializa la variante canónica y mantiene una única fuente de variantes admitidas')
 const ivoryVariant = origin01ThemeVariants.find(({ id }) => id === 'origin01-ivory')
 assert(ivoryVariant?.name === 'Marfil dorado'
-  && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado' && value === '#c89a49')
-  && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#f7f0e4;[^}]*--origin-accent:\s*#c89a49;/s.test(origin01Css),
+  && ivoryVariant.palette.some(({ name, value }) => name === 'Dorado antiguo' && value === '#a9792b')
+  && /\.origin01--theme-origin01-ivory\s*\{[^}]*--origin-ivory:\s*#fbf6ec;[^}]*--origin-accent:\s*#a9792b;/s.test(origin01Css)
+  && /\.origin01--theme-origin01-ivory \.origin01-dress\s*\{[^}]*linear-gradient\(155deg,\s*var\(--origin-photo-surface\),\s*var\(--origin-ivory\)\)/s.test(origin01Css)
+  && /\.origin01--theme-origin01-ivory \.origin01-rsvp\s*\{[^}]*linear-gradient\(145deg,\s*var\(--origin-photo-surface\),\s*var\(--origin-ivory\)\)/s.test(origin01Css),
   'Marfil dorado registra su identidad y aplica tokens beige y dorados en la experiencia real')
+assert(maiaInvitationData.code === 'LMN-015-002'
+  && maiaInvitationData.lifecycleStatus === 'review'
+  && maiaInvitationData.themeVariant === 'origin01-ivory'
+  && maiaInvitationData.event.startsAt === '2026-10-17T21:30:00-03:00'
+  && maiaInvitationData.event.endsAt === '2026-10-18T04:00:00-03:00'
+  && maiaInvitationData.content.rsvp.recipientPhone === '5491178205507'
+  && maiaInvitationData.content.rsvp.description.includes('4 de octubre')
+  && validateInvitationConfiguration(maiaInvitationData, findInvitationTemplate).valid,
+  'la invitación de Maia conserva fecha, cruce de medianoche, tema y RSVP definitivo')
 const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(2026, 7, 30, 23, 45))
 assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
   && dynamicDateInitial.event.end === '2026-09-07T02:00',
@@ -173,6 +185,10 @@ const invitationMarkup = renderToStaticMarkup(createElement(Origin01Invitation, 
   invitation: origin01DemoData,
   startAtInvitation: true,
 }))
+const maiaMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: maiaInvitationData,
+  startAtInvitation: true,
+}))
 const longPreludeCase = resolveOrigin01VisualMatrixCase('BOUNDARY-prelude-long-desktop', origin01DemoData)!
 const longPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
   invitation: longPreludeCase.invitation,
@@ -181,6 +197,13 @@ const longPreludeMarkup = renderToStaticMarkup(createElement(Origin01Invitation,
 assert(invitationMarkup.includes('class="origin01-music ') && invitationMarkup.includes('aria-label="Reproducir música"')
   && invitationMarkup.includes('Deslizá para descubrir'),
   'la invitación conserva el indicador de descubrimiento y el control musical accesible')
+assert(invitationMarkup.includes('Origin 01') && invitationMarkup.includes('Demo LIMEN')
+  && !maiaMarkup.includes('Origin 01') && !maiaMarkup.includes('Demo LIMEN')
+  && maiaMarkup.includes('LIMEN'),
+  'la demo conserva su identificación técnica y la invitación real muestra únicamente la marca LIMEN')
+assert(!maiaMarkup.includes('<audio') && !maiaMarkup.includes('origin01-music')
+  && !maiaMarkup.includes('origin01-prelude__sound'),
+  'la invitación de Maia no carga música ni muestra controles o indicaciones de sonido')
 assert(longPreludeMarkup.includes(longPreludeCase.invitation.content.prelude.actionLabel)
   && longPreludeMarkup.includes('origin01-primary-action'),
   'Prelude conserva su acción esencial con contenido editorial largo')
@@ -189,8 +212,9 @@ assert(origin01Css.includes('--origin-threshold-action-background: var(--origin-
   && /\.origin01-prelude\s*\{[^}]*overflow-y:\s*auto;/s.test(origin01Css),
   'el CTA de Prelude usa el tratamiento temático compartido y admite desborde vertical deliberado')
 assert(/\.origin01-hero__scroll\s*\{[^}]*left:\s*1\.2rem;[^}]*right:\s*1\.2rem;/s.test(origin01Css)
-  && /@container origin01 \(max-width: 699px\)[\s\S]*\.origin01-section-heading\s*\{[^}]*padding-inline-end:\s*3\.75rem;/s.test(origin01Css),
-  'Hero contiene el indicador y los encabezados móviles reservan el carril real del control musical')
+  && !origin01Css.includes('padding-inline-end: 3.75rem')
+  && !origin01Css.includes('padding-inline-end: 5rem'),
+  'Hero contiene el indicador y el contenido móvil conserva un eje horizontal simétrico')
 assert(/\.origin01-trivia\s*\{[^}]*overflow:\s*visible;/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*width:\s*100cqw;[^}]*height:\s*max\(48rem,\s*100svh\);/s.test(origin01Css)
   && /\.origin01-trivia__confetti\s*\{[^}]*transform:\s*translateX\(-50%\);/s.test(origin01Css),
