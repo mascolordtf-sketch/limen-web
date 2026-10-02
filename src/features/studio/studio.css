@@ -3031,7 +3031,10 @@
   padding: .45rem .75rem;
   background: var(--studio-paper);
   box-shadow: 0 1px 2px rgb(44 48 40 / 5%);
+  color: inherit;
   font-size: .85rem;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .limen-studio__back-link svg {
