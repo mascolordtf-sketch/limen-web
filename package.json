@@ -14,6 +14,7 @@
     "visual:matrix:write": "node scripts/origin01-visual-matrix.mjs --write"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.117.2",
     "lottie-web": "5.13.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",

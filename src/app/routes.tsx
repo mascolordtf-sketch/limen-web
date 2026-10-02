@@ -7,6 +7,9 @@ import { DemoPage } from '../pages/DemoPage'
 import { DesignDetailPage } from '../pages/DesignDetailPage'
 import { HomePage } from '../pages/HomePage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { StudioAuthProvider } from '../features/auth/StudioAuthContext'
+import { StudioLoginPage } from '../features/auth/StudioLoginPage'
+import { StudioProtectedRoute } from '../features/auth/StudioProtectedRoute'
 import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
 import { StudioVisualMatrixCase } from '../features/studio/StudioVisualMatrixCase'
 import { defaultStudioInvitationCode } from '../features/studio/studioInvitationRegistry'
@@ -18,14 +21,17 @@ export function AppRoutes() {
       <Route path="demo/:code" element={<DemoPage />} />
       <Route path="invitacion/:code" element={<DemoPage />} />
       {studioRoutesEnabled ? (
-        <>
-          <Route
-            path="studio"
-            element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
-          />
-          <Route path="studio/invitaciones/:code" element={<StudioInvitationRoute />} />
-          <Route path="studio/matriz/:caseId" element={<StudioVisualMatrixCase />} />
-        </>
+        <Route path="studio" element={<StudioAuthProvider />}>
+          <Route path="acceso" element={<StudioLoginPage />} />
+          <Route element={<StudioProtectedRoute />}>
+            <Route
+              index
+              element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
+            />
+            <Route path="invitaciones/:code" element={<StudioInvitationRoute />} />
+            <Route path="matriz/:caseId" element={<StudioVisualMatrixCase />} />
+          </Route>
+        </Route>
       ) : null}
 
       <Route element={<SiteLayout />}>

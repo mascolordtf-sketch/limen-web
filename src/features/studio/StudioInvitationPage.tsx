@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 
+import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { StudioActiveEditor } from './StudioActiveEditor'
@@ -35,6 +35,7 @@ import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import './studio.css'
 
 export function StudioInvitationPage({ invitation }: { invitation: Origin01InvitationData }) {
+  const { signOut } = useStudioAuth()
   const template = findInvitationTemplate(invitation.templateId)
   const model = useOrigin01StudioModel(invitation)
   const audience = useStudioPreviewAudience('protagonist')
@@ -152,7 +153,9 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
       <div className="limen-studio__header-actions">
         <span className="limen-studio__draft-status"><StudioIcon name="temporary" />
           <span><small>Estado</small>Cambios temporales</span></span>
-        <Link className="limen-studio__back-link" to="/"><StudioIcon name="exit" />Salir</Link>
+        <button className="limen-studio__back-link" type="button" onClick={() => void signOut()}>
+          <StudioIcon name="exit" />Cerrar sesión
+        </button>
       </div>
     </header>
     <main className="limen-studio__stage">

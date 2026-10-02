@@ -11,11 +11,12 @@ Durante la Fase 1, LIMEN no funciona como una plataforma autoservicio. Las perso
 - TypeScript
 - Tailwind CSS mediante `@tailwindcss/vite`
 - React Router
+- Supabase Auth y Postgres
 - npm
 
-La aplicación pública todavía no consume backend. La arquitectura aprobada para la siguiente etapa
-incorpora Supabase de forma incremental para datos, autenticación y storage, sin conectar producción
-hasta contar con migraciones, permisos y recuperación verificados.
+La invitación pública actual todavía se resuelve desde el frontend. LIMEN Studio ya cuenta con la
+integración de Supabase Auth, rutas protegidas y una primera migración para persistencia, que debe
+aplicarse y verificarse en el proyecto antes de habilitar Studio en producción.
 
 ## Instalación reproducible
 
@@ -57,10 +58,11 @@ npm run preview
 - `/contacto`
 - Ruta 404 para direcciones no reconocidas
 
-Las rutas `/studio`, `/studio/invitaciones/:code` y `/studio/matriz/:caseId` son internas. Se habilitan
-automáticamente en desarrollo local. En un build desplegado permanecen ocultas salvo que
-`VITE_ENABLE_STUDIO=true`; esa excepción solo debe configurarse en un Preview protegido, nunca en
-la producción pública mientras Studio no tenga autenticación propia.
+Las rutas `/studio`, `/studio/invitaciones/:code` y `/studio/matriz/:caseId` son internas y requieren
+una sesión de Supabase más una membresía activa en `platform_members`. Se habilitan automáticamente
+en desarrollo local. En un build desplegado permanecen ocultas salvo que `VITE_ENABLE_STUDIO=true`.
+La instalación, el primer administrador y las pruebas manuales se detallan en
+[`docs/supabase-setup.md`](docs/supabase-setup.md).
 
 ## Línea base técnica
 
@@ -76,8 +78,8 @@ correctamente lint, typecheck, 310 aserciones, build, la matriz estructural vige
 `git diff --check`. El procedimiento manual y los límites del piloto están documentados en
 [`docs/pilot-operativo.md`](docs/pilot-operativo.md).
 
-Todavía no incluye persistencia conectada, autenticación, publicación de proyectos, panel del cliente ni
-datos reales de RSVP. El modelo versionado y la decisión de infraestructura están documentados en
+Todavía no incluye guardado del editor, publicación dinámica de proyectos, panel del cliente ni datos
+reales de RSVP. El modelo versionado y la decisión de infraestructura están documentados en
 [`docs/platform-data-foundation.md`](docs/platform-data-foundation.md) y
 [`docs/adr/0001-supabase-platform.md`](docs/adr/0001-supabase-platform.md). Studio no debe recibir
 información real hasta que la protección de acceso y las políticas de backend estén aplicadas.
@@ -85,13 +87,10 @@ información real hasta que la protección de acceso y las políticas de backend
 La dirección recuperada para ampliar el catálogo —con Garden 01 como siguiente candidata— está en
 [`docs/catalogue-direction.md`](docs/catalogue-direction.md).
 
-## No objetivos de esta fase
+## No objetivos de esta etapa
 
 - Cuentas de cliente.
-- Autenticación conectada en esta fase de fundamento.
 - Pagos.
-- Panel de administración.
-- Supabase conectado a producción en esta fase de fundamento.
 - Editor de invitaciones autoservicio.
 - Gestión de invitados.
 - Seguimiento de RSVP.
