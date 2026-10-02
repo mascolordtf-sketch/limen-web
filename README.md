@@ -13,7 +13,9 @@ Durante la Fase 1, LIMEN no funciona como una plataforma autoservicio. Las perso
 - React Router
 - npm
 
-No se incluye backend, base de datos, autenticación, pagos ni CMS.
+La aplicación pública todavía no consume backend. La arquitectura aprobada para la siguiente etapa
+incorpora Supabase de forma incremental para datos, autenticación y storage, sin conectar producción
+hasta contar con migraciones, permisos y recuperación verificados.
 
 ## Instalación reproducible
 
@@ -68,20 +70,28 @@ El proyecto contiene una base técnica desplegable para evolucionar LIMEN de for
 
 El estado, la evidencia, los runtimes observados y la diferencia entre el workflow actual y la puerta técnica prevista se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
 
-Después del merge del PR #83, `main` quedó en `bc5c414a3cc886c4849d2cfb01b58973196aa7bf` con la
-primera invitación real publicada. Sobre ese estado se ejecutaron correctamente lint, typecheck,
-308 aserciones, build, la matriz estructural vigente de 280 casos y `git diff --check`. El procedimiento
-manual y los límites del piloto están documentados en [`docs/pilot-operativo.md`](docs/pilot-operativo.md).
+Después del merge del PR #84, `main` quedó en `52f3e809b60eb85feb8615054ceb1c80f7292a72` con la
+primera invitación real publicada y el cierre técnico del piloto asistido. Sobre ese estado se ejecutaron
+correctamente lint, typecheck, 310 aserciones, build, la matriz estructural vigente de 280 casos y
+`git diff --check`. El procedimiento manual y los límites del piloto están documentados en
+[`docs/pilot-operativo.md`](docs/pilot-operativo.md).
 
-Todavía no incluye persistencia, backend, autenticación, publicación de proyectos, panel del cliente ni datos reales de RSVP. Studio no debe recibir información real hasta que existan el modelo de datos y la protección de acceso definidos en el roadmap maestro.
+Todavía no incluye persistencia conectada, autenticación, publicación de proyectos, panel del cliente ni
+datos reales de RSVP. El modelo versionado y la decisión de infraestructura están documentados en
+[`docs/platform-data-foundation.md`](docs/platform-data-foundation.md) y
+[`docs/adr/0001-supabase-platform.md`](docs/adr/0001-supabase-platform.md). Studio no debe recibir
+información real hasta que la protección de acceso y las políticas de backend estén aplicadas.
+
+La dirección recuperada para ampliar el catálogo —con Garden 01 como siguiente candidata— está en
+[`docs/catalogue-direction.md`](docs/catalogue-direction.md).
 
 ## No objetivos de esta fase
 
 - Cuentas de cliente.
-- Autenticación.
+- Autenticación conectada en esta fase de fundamento.
 - Pagos.
 - Panel de administración.
-- Supabase u otra base de datos.
+- Supabase conectado a producción en esta fase de fundamento.
 - Editor de invitaciones autoservicio.
 - Gestión de invitados.
 - Seguimiento de RSVP.
