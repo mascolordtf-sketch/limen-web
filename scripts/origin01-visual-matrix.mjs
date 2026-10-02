@@ -12,7 +12,7 @@ const scenes = [
   'dressCode', 'gallery', 'instagram', 'trivia', 'gifts', 'rsvp', 'closing',
 ]
 const audiences = ['protagonist', 'guest']
-const variants = ['origin01-wine', 'origin01-midnight', 'origin01-garden']
+const variants = ['origin01-wine', 'origin01-midnight', 'origin01-garden', 'origin01-ivory']
 const viewports = [
   { id: 'mobile', width: 390, height: 844 },
   { id: 'desktop', width: 1440, height: 1000 },

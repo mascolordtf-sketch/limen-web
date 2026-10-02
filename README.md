@@ -57,7 +57,7 @@ npm run preview
 
 La línea base auditada durante la Fase 0.2 fue `f18fecf2c6afed9b27604e3a819285ef42dc0b58` y el último merge confirmado entonces era el PR #77. La Fase 0.2 quedó **NO VERIFICABLE** (`NOT VERIFIABLE`): `npm ci` recibió `403 Forbidden` al solicitar `lottie-web`, por lo que no se pudieron verificar reproduciblemente lint, typecheck, pruebas ni build. La validación estructural de la matriz terminó correctamente para los 224 casos definidos; ese resultado histórico fue solo cobertura estructural y no control perceptual. En la fase se ejecutaron `0` pruebas o aserciones. La evidencia histórica de `275` aserciones corresponde únicamente a la línea base anterior `ed13ac7…` y a Node 24. La inspección perceptual externa posterior de Fase 1.2 está registrada por separado en [`docs/origin01-visual-matrix.md`](docs/origin01-visual-matrix.md) y no cambia el estado de Fase 0.2.
 
-El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye la experiencia pública Origin 01 en `/demo/LMN-015-001`, un Studio interno temporal, contratos tipados, preview real, administración local de contenido y medios, tres variantes visuales y un laboratorio tipográfico.
+El proyecto contiene una base técnica desplegable para evolucionar LIMEN de forma progresiva. Incluye la experiencia pública Origin 01 en `/demo/LMN-015-001`, un Studio interno temporal, contratos tipados, preview real, administración local de contenido y medios, cuatro variantes visuales y un laboratorio tipográfico.
 
 El estado, la evidencia, los runtimes observados y la diferencia entre el workflow actual y la puerta técnica prevista se documentan en [`docs/technical-baseline.md`](docs/technical-baseline.md).
 
