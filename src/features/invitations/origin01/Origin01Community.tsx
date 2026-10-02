@@ -34,13 +34,13 @@ export function Origin01Community({ community }: { community: CommunityContent }
     <p className="origin01-community__introduction">{community.introduction}</p>
     <div className="origin01-community__actions">
       {community.instagram.enabled ? <article className="origin01-community__card origin01-community__card--instagram">
-        <p>Instagram</p><strong>@{community.instagram.handle.replace(/^@/, '')}</strong>
+        <p>Instagram</p><strong className="origin01-community__identifier">@{community.instagram.handle.replace(/^@/, '')}</strong>
         <a href={instagramUrl(community.instagram.handle)} target="_blank" rel="noreferrer">
           {community.instagram.actionLabel}
         </a>
       </article> : null}
       {community.hashtag.enabled ? <article className="origin01-community__card origin01-community__card--hashtag">
-        <p>Hashtag oficial</p><strong>{community.hashtag.value}</strong>
+        <p>Hashtag oficial</p><strong className="origin01-community__identifier">{community.hashtag.value}</strong>
         <button type="button" onClick={() => void copyHashtag()} aria-live="polite">
           {copyState === 'copied' ? community.hashtag.copiedLabel
             : copyState === 'error' ? 'No se pudo copiar' : community.hashtag.actionLabel}
