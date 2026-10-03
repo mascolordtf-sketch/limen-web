@@ -1,4 +1,5 @@
-import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
+import type { StudioPublicationSnapshot, StudioPublicationState } from './studioPublication'
+import type { StudioPublicationEquivalence } from './studioPublicationEquivalence'
 
 const publicationDateFormatter = new Intl.DateTimeFormat('es-AR', {
   dateStyle: 'short',
@@ -14,7 +15,8 @@ const publicationStatusLabels = {
 
 type Props = {
   readonly draftRevision?: number
-  readonly publication?: StudioPublicationSummary
+  readonly publication?: StudioPublicationSnapshot
+  readonly equivalence?: StudioPublicationEquivalence
   readonly state: StudioPublicationState
   readonly blockReason?: string
   readonly editoriallyConfirmed: boolean
@@ -25,6 +27,7 @@ type Props = {
 export function StudioPublicationPanel({
   draftRevision,
   publication,
+  equivalence,
   state,
   blockReason,
   editoriallyConfirmed,
@@ -49,6 +52,27 @@ export function StudioPublicationPanel({
         {publicationDateFormatter.format(new Date(publication.publishedAt))}.
       </p>
       : <p className="limen-studio__publication-history">Este proyecto todavía no tiene publicaciones.</p>}
+    {publication?.document && equivalence && <div className={`limen-studio__publication-equivalence${equivalence.equivalent
+      ? ' limen-studio__publication-equivalence--exact'
+      : ''}`}>
+      <div><strong>{equivalence.equivalent ? 'Coincide con la invitación pública actual' : 'Hay diferencias con la invitación pública actual'}</strong>
+        <span>{equivalence.equivalent
+          ? 'El contenido visible del snapshot y la versión pública estática es equivalente.'
+          : `Revisá: ${equivalence.changedSections.join(', ')}.`}</span></div>
+      <div className="limen-studio__publication-links">
+        <a href={`/studio/publicaciones/${publication.id}?inicio=invitacion`} target="_blank" rel="noreferrer">
+          Abrir snapshot privado
+        </a>
+        <a href={`/invitacion/${publication.document.code}`} target="_blank" rel="noreferrer">
+          Abrir invitación pública actual
+        </a>
+      </div>
+    </div>}
+    {publication && !publication.document && <div className="limen-studio__publication-equivalence">
+      <div><strong>Snapshot histórico no compatible con este Studio</strong>
+        <span>El borrador sigue disponible. La comparación y la vista privada de esta publicación quedan deshabilitadas.</span>
+      </div>
+    </div>}
     <label className="limen-studio__publication-confirmation">
       <input type="checkbox" checked={editoriallyConfirmed}
         onChange={(event) => onEditorialConfirmation(event.currentTarget.checked)} />

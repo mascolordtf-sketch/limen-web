@@ -27,6 +27,7 @@ function PersistedStudioInvitationRoute({ invitation }: { invitation: NonNullabl
   return <StudioInvitationPage
     key={getOrigin01StudioDraftSessionId(invitation)}
     invitation={persistence.loadState.document}
+    publicBaseline={invitation}
     persisted={Boolean(persistence.loadState.persisted)}
     revision={persistence.loadState.persisted?.revision}
     updatedAt={persistence.loadState.persisted?.updatedAt}

@@ -37,18 +37,20 @@ import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScen
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
 import { getStudioPublicationBlockReason } from './studioPublication'
-import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
+import type { StudioPublicationSnapshot, StudioPublicationState } from './studioPublication'
+import { compareStudioPublicationToPublicBaseline } from './studioPublicationEquivalence'
 import './studio.css'
 
 const studioSavedAtFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
 
 type StudioInvitationPageProps = {
   readonly invitation: Origin01InvitationData
+  readonly publicBaseline: Origin01InvitationData
   readonly persisted: boolean
   readonly revision?: number
   readonly updatedAt?: string
   readonly saveState: StudioSaveState
-  readonly publication?: StudioPublicationSummary
+  readonly publication?: StudioPublicationSnapshot
   readonly publicationState: StudioPublicationState
   readonly onSave: (document: Origin01InvitationData) => Promise<boolean>
   readonly onPublish: (expectedDraftRevision: number) => Promise<boolean>
@@ -56,7 +58,7 @@ type StudioInvitationPageProps = {
   readonly onEdit: () => void
 }
 
-export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, publication,
+export function StudioInvitationPage({ invitation, publicBaseline, persisted, revision, updatedAt, saveState, publication,
   publicationState, onSave, onPublish, onUploadMedia, onEdit }:
 StudioInvitationPageProps) {
   const { signOut } = useStudioAuth()
@@ -114,6 +116,9 @@ StudioInvitationPageProps) {
     saveStatus: saveState.status,
     latestPublication: publication,
   })
+  const publicationEquivalence = publication?.document
+    ? compareStudioPublicationToPublicBaseline(publicBaseline, publication.document)
+    : undefined
 
   useEffect(() => {
     if (observedDraft.current === model.draft) return
@@ -330,7 +335,8 @@ StudioInvitationPageProps) {
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
         validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
         onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
-        publication={publication} publicationState={publicationState} draftRevision={revision}
+        publication={publication} publicationEquivalence={publicationEquivalence}
+        publicationState={publicationState} draftRevision={revision}
         publicationBlockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
         onEditorialConfirmation={(confirmed) => setEditoriallyConfirmedDraft(confirmed ? model.draft : undefined)}
         onPublish={requestPublication} />}

@@ -11,6 +11,7 @@ import { StudioAuthProvider } from '../features/auth/StudioAuthContext'
 import { StudioLoginPage } from '../features/auth/StudioLoginPage'
 import { StudioProtectedRoute } from '../features/auth/StudioProtectedRoute'
 import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
+import { StudioPublicationPreviewRoute } from '../features/studio/StudioPublicationPreviewRoute'
 import { StudioVisualMatrixCase } from '../features/studio/StudioVisualMatrixCase'
 import { defaultStudioInvitationCode } from '../features/studio/studioInvitationRegistry'
 import { studioRoutesEnabled } from '../features/studio/studioAvailability'
@@ -29,6 +30,7 @@ export function AppRoutes() {
               element={<Navigate to={`/studio/invitaciones/${defaultStudioInvitationCode}`} replace />}
             />
             <Route path="invitaciones/:code" element={<StudioInvitationRoute />} />
+            <Route path="publicaciones/:publicationId" element={<StudioPublicationPreviewRoute />} />
             <Route path="matriz/:caseId" element={<StudioVisualMatrixCase />} />
           </Route>
         </Route>

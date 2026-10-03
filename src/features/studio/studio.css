@@ -3847,6 +3847,46 @@
   line-height: 1.45;
 }
 
+.limen-studio__publication-equivalence {
+  display: grid;
+  gap: .7rem;
+  border: 1px solid #ddb86f;
+  border-radius: .75rem;
+  padding: .8rem;
+  background: #fff8e8;
+  color: #6f4d18;
+}
+
+.limen-studio__publication-equivalence--exact {
+  border-color: #9bc3ad;
+  background: #eff8f2;
+  color: #285c3e;
+}
+
+.limen-studio__publication-equivalence > div:first-child {
+  display: grid;
+  gap: .2rem;
+}
+
+.limen-studio__publication-equivalence span {
+  font-size: .8rem;
+  line-height: 1.45;
+}
+
+.limen-studio__publication-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+
+.limen-studio__publication-links a {
+  border-bottom: 1px solid currentColor;
+  color: inherit;
+  font-size: .78rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
 .limen-studio__publication-confirmation {
   display: flex;
   align-items: flex-start;

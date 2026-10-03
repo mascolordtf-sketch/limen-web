@@ -5,10 +5,10 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { ensureStudioProject, loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
 import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
 import type { StudioSaveState } from './studioAutosave'
-import { uploadStudioMedia } from './studioMediaStorage'
+import { serializeStudioDocument, uploadStudioMedia } from './studioMediaStorage'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
 import { loadLatestStudioPublication, publishStudioDraft, StudioPublicationError } from './studioPublication'
-import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
+import type { StudioPublicationSnapshot, StudioPublicationState } from './studioPublication'
 
 type LoadState =
   | { readonly status: 'loading' }
@@ -18,7 +18,7 @@ type LoadState =
       readonly document: Origin01InvitationData
       readonly location?: StudioDraftLocation
       readonly persisted?: PersistedStudioDraft
-      readonly publication?: StudioPublicationSummary
+      readonly publication?: StudioPublicationSnapshot
     }
 
 export function useStudioInvitationPersistence(baseInvitation: Origin01InvitationData) {
@@ -131,7 +131,12 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
     const request = (async () => {
       setPublicationState({ status: 'publishing' })
       try {
-        const publication = await publishStudioDraft(location.projectId, expectedDraftRevision)
+        const summary = await publishStudioDraft(location.projectId, expectedDraftRevision)
+        const publication: StudioPublicationSnapshot = {
+          ...summary,
+          projectId: location.projectId,
+          document: serializeStudioDocument(loadState.document),
+        }
         setLoadState((current) => current.status === 'ready' ? { ...current, publication } : current)
         setPublicationState({ status: 'success', message: 'La publicación se creó correctamente.' })
         return true
@@ -151,7 +156,7 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
       if (publicationRequestRef.current === request) publicationRequestRef.current = undefined
     })
     return request
-  }, [loadState.status])
+  }, [loadState])
 
   const clearSaveFeedback = useCallback(() => {
     setSaveState((current) => current.status === 'saving' || current.status === 'conflict'
