@@ -3692,7 +3692,8 @@
 
 .limen-studio__review-summary > div,
 .limen-studio__review-audience,
-.limen-studio__review-checks {
+.limen-studio__review-checks,
+.limen-studio__publication {
   border: 1px solid var(--studio-line);
   border-radius: 1rem;
   padding: 1rem;
@@ -3804,6 +3805,106 @@
 
 .limen-studio__review-note {
   margin: 1rem 0 0;
+}
+
+.limen-studio__publication {
+  display: grid;
+  gap: .9rem;
+}
+
+.limen-studio__publication p,
+.limen-studio__publication h3 {
+  margin: 0;
+}
+
+.limen-studio__publication-heading,
+.limen-studio__publication-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio__publication-heading h3 {
+  margin-top: .2rem;
+  font-size: 1.05rem;
+}
+
+.limen-studio__publication-status {
+  border-radius: 999px;
+  padding: .28rem .55rem;
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+  font-size: .72rem;
+  font-weight: 750;
+}
+
+.limen-studio__publication-history,
+.limen-studio__publication-note,
+.limen-studio__publication-action small {
+  color: var(--studio-muted);
+  font-size: .8rem;
+  line-height: 1.45;
+}
+
+.limen-studio__publication-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .75rem;
+  padding: .8rem;
+  background: var(--studio-canvas);
+  font-size: .86rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.limen-studio__publication-confirmation input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: .05rem 0 0;
+  accent-color: var(--studio-accent);
+}
+
+.limen-studio__publication-action button {
+  min-height: 2.6rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--studio-accent-strong);
+  border-radius: .7rem;
+  padding: .55rem .8rem;
+  background: var(--studio-accent-strong);
+  color: #fff;
+  font: 750 .82rem/1.2 inherit;
+  cursor: pointer;
+}
+
+.limen-studio__publication-action button:disabled {
+  border-color: var(--studio-line-strong);
+  background: var(--studio-line);
+  color: var(--studio-muted);
+  cursor: not-allowed;
+}
+
+.limen-studio__publication-message {
+  border-radius: .7rem;
+  padding: .7rem .8rem;
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent);
+  font-size: .82rem;
+}
+
+.limen-studio__publication-message[role='alert'] {
+  background: #fff1ee;
+  color: #8b3328;
+}
+
+@media (max-width: 40rem) {
+  .limen-studio__publication-heading,
+  .limen-studio__publication-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 .limen-studio__desktop-preview--dedicated {

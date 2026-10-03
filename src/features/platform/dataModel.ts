@@ -87,6 +87,7 @@ export type InvitationPublication<TDocument extends LimenInvitation = LimenInvit
   readonly publicCode: string
   readonly schemaVersion: typeof currentProjectSchemaVersion
   readonly revision: number
+  readonly draftRevision: number
   readonly document: TDocument
   readonly status: PublicationStatus
   readonly publishedAt: string

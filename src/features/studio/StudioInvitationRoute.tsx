@@ -31,7 +31,10 @@ function PersistedStudioInvitationRoute({ invitation }: { invitation: NonNullabl
     revision={persistence.loadState.persisted?.revision}
     updatedAt={persistence.loadState.persisted?.updatedAt}
     saveState={persistence.saveState}
+    publication={persistence.loadState.publication}
+    publicationState={persistence.publicationState}
     onSave={persistence.save}
+    onPublish={persistence.publish}
     onUploadMedia={persistence.uploadMedia}
     onEdit={persistence.clearSaveFeedback}
   />

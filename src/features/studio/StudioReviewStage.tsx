@@ -4,6 +4,8 @@ import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import type { Origin01StudioValidation, StudioIssue } from './origin01StudioValidation'
 import type { StudioDomainDefinition } from './studioNavigation'
 import { groupStudioIssues, resolveStudioIssueDestination } from './studioReviewIssues'
+import { StudioPublicationPanel } from './StudioPublicationPanel'
+import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
 
 type Props = {
   audience: InvitationAudience
@@ -16,12 +18,20 @@ type Props = {
   onIssue: (issue: StudioIssue) => void
   onOpenPreview: (event: MouseEvent<HTMLButtonElement>) => void
   onShowPreview: () => void
+  publication?: StudioPublicationSummary
+  publicationState: StudioPublicationState
+  draftRevision?: number
+  publicationBlockReason?: string
+  editoriallyConfirmed: boolean
+  onEditorialConfirmation: (confirmed: boolean) => void
+  onPublish: () => void
 }
 
 const visibleSeverities = new Set<StudioIssue['severity']>(['structural', 'active-error', 'warning'])
 
 export function StudioReviewStage({ audience, domains, preview, previewCollapsed, previewDedicated, validation,
-  onAudience, onIssue, onOpenPreview, onShowPreview }: Props) {
+  onAudience, onIssue, onOpenPreview, onShowPreview, publication, publicationState, draftRevision,
+  publicationBlockReason, editoriallyConfirmed, onEditorialConfirmation, onPublish }: Props) {
   const actionableGroups = groupStudioIssues(validation.issues)
     .filter(({ severity }) => visibleSeverities.has(severity))
     .map((group) => ({ ...group, issues: group.issues.filter(({ relevant }) => relevant) }))
@@ -75,8 +85,11 @@ export function StudioReviewStage({ audience, domains, preview, previewCollapsed
           {inactiveCount > 0 && <p className="limen-studio__review-note">
             Hay contenido conservado en {inactiveCount} {inactiveCount === 1 ? 'campo de una sección excluida' : 'campos de secciones excluidas'}.
           </p>}
-          <p className="limen-studio__review-note">La publicación y la persistencia todavía no forman parte de este prototipo.</p>
+          <p className="limen-studio__review-note">Las advertencias no bloquean la publicación, pero deben revisarse antes de confirmarla.</p>
         </section>
+        <StudioPublicationPanel draftRevision={draftRevision} publication={publication} state={publicationState}
+          blockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
+          onEditorialConfirmation={onEditorialConfirmation} onPublish={onPublish} />
       </div>
       <aside className={`limen-studio__desktop-preview${previewDedicated ? ' limen-studio__desktop-preview--dedicated' : ''}`}>
         {previewCollapsed && !previewDedicated && <div className="limen-studio__preview-collapsed">
