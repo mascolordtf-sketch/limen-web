@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
-import { loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
+import { ensureStudioProject, loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
 import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
+import { uploadStudioMedia } from './studioMediaStorage'
+import type { StudioMediaUploadInput } from './studioMediaStorage'
 
 type LoadState =
   | { readonly status: 'loading' }
@@ -21,12 +23,15 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
   const [saveState, setSaveState] = useState<{ readonly status: 'idle' | 'saving' | 'saved' | 'error'; readonly message?: string }>({
     status: 'idle',
   })
+  const locationRef = useRef<StudioDraftLocation | undefined>(undefined)
+  const projectRequestRef = useRef<Promise<string> | undefined>(undefined)
 
   useEffect(() => {
     let active = true
     void loadStudioDraft(baseInvitation.code)
       .then(({ location, persisted }) => {
         if (!active) return
+        locationRef.current = location
         setLoadState({
           status: 'ready',
           document: persisted?.document ?? baseInvitation,
@@ -46,6 +51,28 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
     return () => { active = false }
   }, [baseInvitation])
 
+  const ensureProject = useCallback(async () => {
+    if (locationRef.current?.projectId) return locationRef.current.projectId
+    if (!userId) throw new StudioPersistenceError('save', 'Tu sesión no está disponible.')
+    projectRequestRef.current ??= ensureStudioProject(baseInvitation, userId)
+    try {
+      const projectId = await projectRequestRef.current
+      locationRef.current = { projectId }
+      setLoadState((current) => current.status === 'ready'
+        ? { ...current, location: { projectId } }
+        : current)
+      return projectId
+    } finally {
+      projectRequestRef.current = undefined
+    }
+  }, [baseInvitation, userId])
+
+  const uploadMedia = useCallback(async (input: StudioMediaUploadInput) => {
+    if (!userId) throw new StudioPersistenceError('save', 'Tu sesión no está disponible.')
+    const projectId = await ensureProject()
+    return uploadStudioMedia(projectId, userId, input)
+  }, [ensureProject, userId])
+
   const save = useCallback(async (document: Origin01InvitationData) => {
     if (loadState.status !== 'ready' || !userId || saveState.status === 'saving') return false
     setSaveState({ status: 'saving' })
@@ -53,9 +80,10 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
       const persisted = await saveStudioDraft({
         baseInvitation,
         document,
-        location: loadState.location,
+        location: locationRef.current,
         userId,
       })
+      locationRef.current = persisted
       setLoadState({ status: 'ready', document, location: persisted, persisted })
       setSaveState({ status: 'saved' })
       return true
@@ -72,5 +100,5 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
     setSaveState((current) => current.status === 'saving' ? current : { status: 'idle' })
   }, [])
 
-  return { loadState, saveState, save, clearSaveFeedback }
+  return { loadState, saveState, save, uploadMedia, clearSaveFeedback }
 }

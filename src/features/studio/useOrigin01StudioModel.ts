@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import type { InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
@@ -26,10 +26,6 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
   const createInitialDraft = persisted ? createOrigin01StudioDraftFromDocument : createOrigin01StudioDraft
   const [initialDraft, setInitialDraft] = useState<Origin01StudioDraft>(() => createInitialDraft(invitation))
   const [draft, setDraft] = useState<Origin01StudioDraft>(() => initialDraft)
-  const temporaryMediaUrls = useRef(new Set<string>())
-  useEffect(() => () => {
-    for (const url of temporaryMediaUrls.current) URL.revokeObjectURL(url)
-  }, [])
   const validation = useMemo(() => validateOrigin01StudioDraft(invitation, draft), [draft, invitation])
   const previewInvitation = useMemo(() => deriveOrigin01PreviewInvitation(invitation, draft), [draft, invitation])
   const configurationValidation = useMemo(
@@ -61,7 +57,6 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
     setDraft((current) => resetOrigin01StudioConfiguration(current, initialDraft))
   const setModuleEnabled = (moduleId: InvitationModuleId, enabled: boolean) =>
     setDraft((current) => updateOrigin01StudioModule(invitation, current, moduleId, enabled))
-  const registerTemporaryMediaUrl = (url: string) => temporaryMediaUrls.current.add(url)
   const markSaved = (savedDraft: Origin01StudioDraft) => setInitialDraft(savedDraft)
 
   const dirtyState: StudioDirtyStateBoundary<Origin01StudioDraft> = {
@@ -86,7 +81,6 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
     resetScene,
     resetConfiguration,
     setModuleEnabled,
-    registerTemporaryMediaUrl,
     markSaved,
   }
 }

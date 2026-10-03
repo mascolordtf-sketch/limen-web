@@ -33,6 +33,7 @@ import { hasUnpersistedStudioMedia } from './studioPersistence'
 import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScene, studioScenes,
   type StudioSceneId } from './studioScenes'
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
+import type { StudioMediaUploadInput } from './studioMediaStorage'
 import './studio.css'
 
 const studioSavedAtFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
@@ -47,10 +48,11 @@ type StudioInvitationPageProps = {
     readonly message?: string
   }
   readonly onSave: (document: Origin01InvitationData) => Promise<boolean>
+  readonly onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
   readonly onEdit: () => void
 }
 
-export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, onSave, onEdit }:
+export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, onSave, onUploadMedia, onEdit }:
 StudioInvitationPageProps) {
   const { signOut } = useStudioAuth()
   const template = findInvitationTemplate(invitation.templateId)
@@ -209,7 +211,7 @@ StudioInvitationPageProps) {
           <span><small>Estado</small>{saveStatusLabel}</span>
         </span>
         <button className="limen-studio__save-button" type="button" disabled={!canSave}
-          title={hasTemporaryMedia ? 'Antes de guardar, quitá las imágenes cargadas en esta sesión.' : undefined}
+          title={hasTemporaryMedia ? 'Esperá a que termine la carga del archivo antes de guardar.' : undefined}
           onClick={() => void saveDraft()}>
           {saveState.status === 'saving' ? 'Guardando…' : 'Guardar'}
         </button>
@@ -221,7 +223,7 @@ StudioInvitationPageProps) {
     <main className="limen-studio__stage">
       {(saveState.message || hasTemporaryMedia) && <div className="limen-studio__save-notice"
         role={saveState.status === 'error' ? 'alert' : 'status'}>
-        {saveState.message ?? 'Las imágenes nuevas todavía son temporales. Quitalas antes de guardar; la carga permanente llegará con Storage.'}
+        {saveState.message ?? 'Hay un archivo que todavía se está preparando. Cuando termine, vas a poder guardar el borrador.'}
       </div>}
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
         {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
@@ -241,7 +243,7 @@ StudioInvitationPageProps) {
           captions: updater(current.captions),
         }))}
         onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)}
-        onTemporaryUrl={model.registerTemporaryMediaUrl} />}
+        onUploadMedia={onUploadMedia} />}
       {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
         for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
         if (!included && selectedScene === scene.id) {

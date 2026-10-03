@@ -5,6 +5,7 @@ import type { Json } from '../platform/database.types'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { supabase } from '../auth/supabaseClient'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
+import { hydrateStudioDocument, serializeStudioDocument } from './studioMediaStorage'
 
 export type StudioDraftLocation = {
   readonly projectId: string
@@ -43,7 +44,10 @@ export function isOrigin01InvitationDocument(value: Json): value is Json & Origi
 }
 
 export function hasUnpersistedStudioMedia(draft: Pick<Origin01StudioDraft, 'media'>): boolean {
-  return draft.media.items.some(({ origin }) => origin === 'studio')
+  const assignedMediaIds = new Set(draft.media.assignments.map(({ mediaId }) => mediaId))
+  return draft.media.items.some((item) => item.origin === 'studio'
+    && (!item.storageKey || item.status !== 'ready')
+    && (item.status === 'pending' || item.status === 'processing' || assignedMediaIds.has(item.id)))
 }
 
 const toJson = (document: Origin01InvitationData) => document as unknown as Json
@@ -82,11 +86,12 @@ export async function loadStudioDraft(publicCode: string): Promise<LoadedStudioD
     )
   }
 
+  const document = await hydrateStudioDocument(draft.document, draft.project_id)
   const persisted = {
     projectId: draft.project_id,
     draftId: draft.id,
     revision: draft.revision,
-    document: draft.document,
+    document,
     updatedAt: draft.updated_at,
   }
   return { location: persisted, persisted }
@@ -126,10 +131,25 @@ async function createProject(baseInvitation: Origin01InvitationData, userId: str
   return data.id
 }
 
+export async function ensureStudioProject(
+  baseInvitation: Origin01InvitationData,
+  userId: string,
+): Promise<string> {
+  if (!supabase) throw new StudioPersistenceError('configuration', 'Supabase no está configurado.')
+  const { data, error } = await supabase
+    .from('invitation_projects')
+    .select('id')
+    .eq('public_code', baseInvitation.code)
+    .maybeSingle()
+  if (error) throw loadError(error)
+  return data?.id ?? createProject(baseInvitation, userId)
+}
+
 export async function saveStudioDraft({ baseInvitation, document, location, userId }: SaveStudioDraftInput): Promise<PersistedStudioDraft> {
   if (!supabase) throw new StudioPersistenceError('configuration', 'Supabase no está configurado.')
-  const projectId = location?.projectId ?? await createProject(baseInvitation, userId)
+  const projectId = location?.projectId ?? await ensureStudioProject(baseInvitation, userId)
   const updatedAt = new Date().toISOString()
+  const persistedDocument = serializeStudioDocument(document)
 
   if (!location?.draftId || location.revision === undefined) {
     const { data, error } = await supabase
@@ -138,7 +158,7 @@ export async function saveStudioDraft({ baseInvitation, document, location, user
         project_id: projectId,
         schema_version: currentProjectSchemaVersion,
         revision: 1,
-        document: toJson(document),
+        document: toJson(persistedDocument),
         updated_by: userId,
         updated_at: updatedAt,
       })
@@ -160,7 +180,7 @@ export async function saveStudioDraft({ baseInvitation, document, location, user
     .update({
       schema_version: currentProjectSchemaVersion,
       revision: nextRevision,
-      document: toJson(document),
+      document: toJson(persistedDocument),
       updated_by: userId,
       updated_at: updatedAt,
     })
