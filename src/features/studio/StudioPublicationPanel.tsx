@@ -52,7 +52,7 @@ export function StudioPublicationPanel({
         {publicationDateFormatter.format(new Date(publication.publishedAt))}.
       </p>
       : <p className="limen-studio__publication-history">Este proyecto todavía no tiene publicaciones.</p>}
-    {publication && equivalence && <div className={`limen-studio__publication-equivalence${equivalence.equivalent
+    {publication?.document && equivalence && <div className={`limen-studio__publication-equivalence${equivalence.equivalent
       ? ' limen-studio__publication-equivalence--exact'
       : ''}`}>
       <div><strong>{equivalence.equivalent ? 'Coincide con la invitación pública actual' : 'Hay diferencias con la invitación pública actual'}</strong>
@@ -66,6 +66,11 @@ export function StudioPublicationPanel({
         <a href={`/invitacion/${publication.document.code}`} target="_blank" rel="noreferrer">
           Abrir invitación pública actual
         </a>
+      </div>
+    </div>}
+    {publication && !publication.document && <div className="limen-studio__publication-equivalence">
+      <div><strong>Snapshot histórico no compatible con este Studio</strong>
+        <span>El borrador sigue disponible. La comparación y la vista privada de esta publicación quedan deshabilitadas.</span>
       </div>
     </div>}
     <label className="limen-studio__publication-confirmation">

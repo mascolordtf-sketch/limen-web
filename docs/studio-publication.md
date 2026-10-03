@@ -29,6 +29,11 @@ autenticada para recorrer exactamente ese snapshot, incluidos los medios guardad
 URLs firmadas. La comparación omite únicamente metadatos internos que no participan del render
 (`id` e `internalName`).
 
+Si la publicación más reciente pertenece a una versión de esquema que el Studio actual ya no puede
+interpretar, se conserva su resumen e historial sin intentar renderizarla. Esa incompatibilidad sólo
+deshabilita la comparación y la vista privada del snapshot: nunca impide abrir ni editar un borrador
+actual compatible.
+
 La activación de lectura pública queda deliberadamente fuera de esta fase: primero se debe confirmar
 equivalencia automática y visual. El paso siguiente será incorporar una selección explícita de fuente
 con fallback al fixture estático, sin cambiar el código ni el enlace público de Maia.

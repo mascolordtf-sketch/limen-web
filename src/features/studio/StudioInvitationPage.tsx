@@ -116,7 +116,7 @@ StudioInvitationPageProps) {
     saveStatus: saveState.status,
     latestPublication: publication,
   })
-  const publicationEquivalence = publication
+  const publicationEquivalence = publication?.document
     ? compareStudioPublicationToPublicBaseline(publicBaseline, publication.document)
     : undefined
 

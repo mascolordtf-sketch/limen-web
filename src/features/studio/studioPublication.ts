@@ -16,7 +16,7 @@ export type StudioPublicationSummary = {
 
 export type StudioPublicationSnapshot = StudioPublicationSummary & {
   readonly projectId: string
-  readonly document: Origin01InvitationData
+  readonly document?: Origin01InvitationData
 }
 
 export type StudioPublicationState = {
@@ -109,17 +109,19 @@ export async function loadLatestStudioPublication(projectId: string): Promise<St
 
   if (error) throw new StudioPublicationError('No pudimos recuperar el estado de publicación.')
   if (!data) return undefined
-  if (!publicationStatuses.includes(data.status as PublicationStatus)
-    || data.schema_version !== currentProjectSchemaVersion
-    || !isOrigin01InvitationDocument(data.document)) {
-    throw new StudioPublicationError('La publicación guardada usa un formato que este Studio todavía no puede abrir.')
+  if (!publicationStatuses.includes(data.status as PublicationStatus)) {
+    throw new StudioPublicationError('La publicación guardada tiene un estado desconocido.')
   }
+  const compatibleDocument = data.schema_version === currentProjectSchemaVersion
+    && isOrigin01InvitationDocument(data.document)
+    ? data.document
+    : undefined
   return {
     id: data.id,
     projectId: data.project_id,
     revision: data.revision,
     draftRevision: data.draft_revision,
-    document: data.document,
+    ...(compatibleDocument ? { document: compatibleDocument } : {}),
     status: data.status as PublicationStatus,
     publishedAt: data.published_at,
   }

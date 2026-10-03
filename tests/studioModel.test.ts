@@ -19,6 +19,7 @@ import { validateInvitationConfiguration } from '../src/features/invitations/eng
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
 import { StudioPublicationPreviewRoute } from '../src/features/studio/StudioPublicationPreviewRoute'
+import { StudioPublicationPanel } from '../src/features/studio/StudioPublicationPanel'
 import { StudioVisualMatrixCase } from '../src/features/studio/StudioVisualMatrixCase'
 import { StudioTypographyEvaluation,
   StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
@@ -1516,6 +1517,18 @@ assert(exactEquivalence.equivalent && exactEquivalence.changedSections.length ==
   'la equivalencia ignora metadatos internos que no participan del render público')
 assert(!changedEquivalence.equivalent && changedEquivalence.changedSections.join(',') === 'contenido',
   'la equivalencia identifica la sección renderizable que difiere del fixture público')
+const historicalPublicationMarkup = renderToStaticMarkup(createElement(StudioPublicationPanel, {
+  publication: {
+    id: 'historical-publication', projectId: 'project-1', revision: 1, draftRevision: 1,
+    status: 'superseded', publishedAt: '2026-10-01T12:00:00.000Z',
+  },
+  state: { status: 'idle' }, editoriallyConfirmed: false,
+  onEditorialConfirmation: () => undefined, onPublish: () => undefined,
+}))
+assert(historicalPublicationMarkup.includes('Snapshot histórico no compatible con este Studio')
+  && historicalPublicationMarkup.includes('El borrador sigue disponible')
+  && !historicalPublicationMarkup.includes('Abrir snapshot privado'),
+  'una publicación histórica incompatible conserva su resumen sin bloquear Studio ni ofrecer una preview inválida')
 assert(/\.limen-studio__review-layout\s*\{[^}]*align-items:\s*stretch;[^}]*overflow:\s*hidden;/s.test(studioCss),
   'Revisión estira sus columnas en el workspace de escritorio para que el panel principal pueda desplazarse')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')
