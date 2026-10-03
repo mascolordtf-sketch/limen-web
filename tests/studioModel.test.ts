@@ -34,6 +34,9 @@ import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
 import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
 import { createStudioReturnToReview, studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
+import { StudioMusicManager } from '../src/features/studio/StudioMusicManager'
+import { StudioActiveEditor } from '../src/features/studio/StudioActiveEditor'
+import { useOrigin01StudioModel } from '../src/features/studio/useOrigin01StudioModel'
 import { StudioSectionsStage } from '../src/features/studio/StudioSectionsStage'
 import { StudioScenesContent } from '../src/features/studio/StudioScenesContent'
 import { findStudioSceneByEditorId, getVisibleStudioScenes, selectSceneAfterExclusion, studioGeneralScene,
@@ -58,6 +61,7 @@ import { showsCountdownContent, showsEditorialContent, showsEventDetailsContent,
 import { deriveOrigin01PreviewInvitation } from '../src/features/studio/origin01StudioDerivations'
 import {
   createOrigin01StudioMediaState,
+  getOrigin01StudioMusic,
   origin01MediaSlots,
   validateOrigin01StudioMedia,
 } from '../src/features/studio/origin01StudioMedia'
@@ -746,6 +750,65 @@ const musicWithoutHintValidation = validateOrigin01StudioDraft(origin01DemoData,
 assert(withoutMusicValidation.fieldErrors.preludeSoundHint === null
   && musicWithoutHintValidation.fieldErrors.preludeSoundHint !== null,
   'la indicación de sonido solo es obligatoria cuando la invitación tiene música asignada')
+const maiaStudioDraft = createOrigin01StudioDraftFromDocument(maiaInvitationData)
+assert(getStudioMediaAssignments(maiaStudioDraft.media.assignments, 'music.audio').length === 0
+  && getOrigin01StudioMusic(maiaStudioDraft.media) === undefined
+  && validateOrigin01StudioDraft(maiaInvitationData, maiaStudioDraft).fieldErrors.preludeSoundHint === null,
+  'abrir Maia sin música no crea una asignación vacía ni exige la indicación de sonido')
+const emptyHistoricalMusic = {
+  ...maiaStudioDraft,
+  media: { ...maiaStudioDraft.media, assignments: [
+    ...maiaStudioDraft.media.assignments, { slotId: 'music.audio' as const, mediaId: '' },
+  ] },
+}
+assert(getOrigin01StudioMusic(emptyHistoricalMusic.media) === undefined
+  && validateOrigin01StudioDraft(maiaInvitationData, emptyHistoricalMusic).fieldErrors.preludeSoundHint === null,
+  'una asignación vacía histórica tampoco cuenta como música activa')
+const inactiveAudioStates = [
+  { ...initial.media, items: initial.media.items.filter(({ id }) => id !== 'music') },
+  { ...initial.media, assignments: [{ slotId: 'music.audio' as const, mediaId: 'hero' }] },
+  { ...initial.media, items: initial.media.items.map((media) => media.id === 'music'
+    ? { ...media, status: 'pending' as const } : media) },
+  { ...initial.media, items: initial.media.items.map((media) => media.id === 'music'
+    ? { ...media, status: 'error' as const, message: 'No se pudo cargar el audio.' } : media) },
+  { ...initial.media, items: initial.media.items.map((media) => media.id === 'music'
+    ? { ...media, status: 'ready' as const, src: '' } : media) },
+]
+assert(inactiveAudioStates.every((media) => getOrigin01StudioMusic(media) === undefined
+  && validateOrigin01StudioDraft(origin01DemoData, { ...withoutMusicAndHint, media })
+    .fieldErrors.preludeSoundHint === null)
+  && getOrigin01StudioMusic(assignedMusic)?.id === readyAudio.id,
+  'panel, editor y validación usan solo audio disponible; referencias faltantes, imágenes y audio no listo no cuentan')
+assert(validateOrigin01StudioMedia(inactiveAudioStates[0]).some(({ code }) => code === 'missing-media')
+  && validateOrigin01StudioMedia(inactiveAudioStates[4]).some(({ code }) => code === 'ready-without-source'),
+  'no exigir un texto de sonido no oculta problemas del contrato de medios')
+const noMusicMarkup = renderToStaticMarkup(createElement(StudioMusicManager, {
+  state: emptyHistoricalMusic.media, initialState: emptyHistoricalMusic.media,
+  onMediaChange: () => undefined,
+  onUploadMedia: async () => ({ storageKey: '', src: '' }),
+}))
+assert(noMusicMarkup.includes('Música desactivada') && noMusicMarkup.includes('Sin música')
+  && noMusicMarkup.includes('Agregar audio') && noMusicMarkup.includes('Desactivar música')
+  && noMusicMarkup.includes('aria-label="Seleccionar archivo de audio"') && !noMusicMarkup.includes('<audio'),
+  'el estado sin música tiene una acción accesible y permite limpiar asignaciones históricas')
+const rehydratedSilentMaia = createOrigin01StudioDraftFromDocument(
+  serializeStudioDocument(deriveOrigin01PreviewInvitation(maiaInvitationData, maiaStudioDraft)),
+)
+assert(getOrigin01StudioMusic(rehydratedSilentMaia.media) === undefined
+  && validateOrigin01StudioDraft(maiaInvitationData, rehydratedSilentMaia).fieldErrors.preludeSoundHint === null
+  && JSON.stringify(serializeStudioDocument(deriveOrigin01PreviewInvitation(maiaInvitationData, rehydratedSilentMaia)))
+    === JSON.stringify(serializeStudioDocument(deriveOrigin01PreviewInvitation(maiaInvitationData, maiaStudioDraft))),
+  'guardar y reabrir el borrador de Maia sin música conserva su documento serializado')
+function OpeningMusicCheck({ invitation }: { invitation: typeof origin01DemoData }) {
+  const model = useOrigin01StudioModel(invitation, true)
+  return createElement(StudioActiveEditor, { invitation, template: origin01Template, model, editorId: 'opening' })
+}
+assert(!renderToStaticMarkup(createElement(OpeningMusicCheck, { invitation: maiaInvitationData }))
+  .includes('id="studio-opening-prelude-sound"'),
+  'el editor productivo de Maia no muestra un campo de sonido cuando no tiene audio')
+assert(renderToStaticMarkup(createElement(OpeningMusicCheck, { invitation: origin01DemoData }))
+  .includes('id="studio-opening-prelude-sound"'),
+  'el editor productivo conserva el campo de sonido cuando hay música disponible')
 const restoredMusic = assignStudioMusic(withoutMusic, 'music')
 assert(getStudioMediaAssignments(restoredMusic.assignments, 'music.audio')[0]?.mediaId === 'music'
   && findStudioMediaById(restoredMusic.items, 'music')?.origin === 'canonical',
@@ -850,7 +913,6 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
 const aestheticStageElement = createElement(StudioAestheticStage, {
-  demoPath: '/demo/LMN-015-001',
   media: initial.media,
   initialMedia: initial.media,
   themeVariant: initial.themeVariant,
@@ -860,44 +922,40 @@ const aestheticStageElement = createElement(StudioAestheticStage, {
   onMediaChange: () => undefined,
   onGalleryCaptionsChange: () => undefined,
   onThemeVariantChange: () => undefined,
-  onTemporaryUrl: () => undefined,
+  onUploadMedia: async () => ({ storageKey: '', src: '' }),
 })
 const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
-assert(aestheticMarkup.includes('Elegí la atmósfera de Origin 01')
+assert(aestheticMarkup.includes('Colores, fotos y música') && aestheticMarkup.includes('Paleta de colores')
   && origin01ThemeVariants.every(({ name }) => aestheticMarkup.includes(name))
-  && aestheticMarkup.includes('Compará las doce voces de Origin 01')
-  && origin01TypographyCombinations.every(({ name }) => aestheticMarkup.includes(name))
-  && aestheticMarkup.includes('/demo/LMN-015-001?tipografia=noche-plateada&amp;inicio=invitacion')
-  && aestheticMarkup.includes('aria-busy="true"')
-  && aestheticMarkup.includes('Cargando las tipografías reales para comparar')
-  && aestheticMarkup.includes('Nombre de portada · Cormorant Garamond')
-  && aestheticMarkup.includes('Evaluación · sin persistencia')
-  && aestheticMarkup.includes('Sistema visual curado')
+  && !aestheticMarkup.includes('Compará las doce voces')
+  && !aestheticMarkup.includes('Evaluación · sin persistencia')
+  && !aestheticMarkup.includes('Dirección visual')
+  && !aestheticMarkup.includes('font-face.css')
   && aestheticMarkup.includes('Las imágenes que cuentan la historia')
   && aestheticMarkup.includes('Zoom')
   && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
-  && aestheticMarkup.includes('El sonido que acompaña la experiencia')
+  && aestheticMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
   && aestheticMarkup.includes('Música asignada')
   && aestheticMarkup.includes('Cambiar audio')
   && aestheticMarkup.includes('Desactivar música')
   && aestheticMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Estética administra variantes, fotografías y música sin mutar el borrador')
+  'Estética conserva los controles reales sin laboratorio, carga de fuentes experimental ni explicación duplicada')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
-assert(templateMainMarkup.includes('Elegí cómo contar la celebración') && templateMainMarkup.includes('Origin 01')
+assert(templateMainMarkup.includes('Plantilla de la invitación') && templateMainMarkup.includes('Origin 01')
   && templateMainMarkup.includes('Universo Origen') && templateMainMarkup.includes('Experiencia narrativa')
   && templateMainMarkup.includes('Seleccionada') && templateMainMarkup.includes('Ver demostración')
   && templateMainMarkup.includes('/demo/RUTA-DINAMICA')
   && templateMainMarkup.includes('/images/origin-01/hero-valentina.webp'),
   'Plantilla presenta Origin 01 con preview vertical, nomenclatura aprobada, estado y demo dinámica')
-assert(['Editorial', 'Esencial', 'Celebración'].every((name) => templateMainMarkup.includes(name))
-  && (templateMainMarkup.match(/Próximamente/g) ?? []).length === 3
+assert(['Editorial', 'Esencial', 'Celebración', 'Próximamente', 'Exploraciones futuras']
+  .every((name) => !templateMainMarkup.includes(name))
   && !templateMainMarkup.includes('Seleccionar plantilla')
   && !templateMainMarkup.includes('/images/origin-01/dress-detail.webp')
   && !templateMainMarkup.includes('/images/origin-01/gift-still-life.webp')
   && !templateMainMarkup.includes('/images/origin-01/closing-valentina.webp'),
-  'las exploraciones son conceptos visibles sin controles ni fotografías de Origin 01')
+  'Plantilla muestra solo el diseño disponible y no conceptos que todavía no pueden usarse')
 const options = createStudioTemplateOptions(origin01Template)
 assert(options.filter(({ selectable }) => selectable).map(({ id }) => id).join() === 'origin01'
   && options.filter(({ availability }) => availability === 'coming-soon').length === 3
@@ -1613,7 +1671,8 @@ const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean
     }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
 const independentGalleryPresentation = renderStagePresentation(true, false)
 assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')
-  && independentGalleryPresentation.includes('Exploraciones futuras')
+  && independentGalleryPresentation.includes('Plantilla de la invitación')
+  && !independentGalleryPresentation.includes('Exploraciones futuras')
   && !independentGalleryPresentation.includes('Resumen de invitación')
   && !independentGalleryPresentation.includes('Estado del prototipo')
   && !independentGalleryPresentation.includes('Shell de edición')

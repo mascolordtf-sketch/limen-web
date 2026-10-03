@@ -8,7 +8,7 @@ import type { StudioDomainId } from './studioNavigation'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { validateOrigin01Schedule } from './origin01StudioSchedule'
 import { validateOrigin01Community } from './studioCommunityValidation'
-import { getStudioMediaAssignments } from './studioMedia'
+import { getOrigin01StudioMusic } from './origin01StudioMedia'
 
 export type StudioIssueSeverity =
   | 'structural'
@@ -114,7 +114,7 @@ export function validateOrigin01StudioDraft(
   invitation: Origin01InvitationData,
   draft: Origin01StudioDraft,
 ): Origin01StudioValidation {
-  const hasMusic = getStudioMediaAssignments(draft.media.assignments, 'music.audio').length > 0
+  const hasMusic = Boolean(getOrigin01StudioMusic(draft.media))
   const start = fromDateTimeLocalValue(draft.event.start, invitation.event.timeZone)
   const end = fromDateTimeLocalValue(draft.event.end, invitation.event.timeZone)
   const moduleValidation = validateInvitationConfiguration({

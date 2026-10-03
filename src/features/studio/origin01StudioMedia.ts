@@ -46,7 +46,9 @@ export function createOrigin01StudioMediaState(
     })),
     { slotId: 'gifts.image', mediaId: invitation.content.gifts.imageMediaId },
     { slotId: 'closing.image', mediaId: invitation.content.closing.imageMediaId },
-    { slotId: 'music.audio', mediaId: invitation.content.music.mediaId },
+    ...(invitation.content.music.mediaId.trim()
+      ? [{ slotId: 'music.audio' as const, mediaId: invitation.content.music.mediaId }]
+      : []),
   ]
   return {
     items: invitation.media.flatMap((media) => {
@@ -55,6 +57,13 @@ export function createOrigin01StudioMediaState(
     }),
     assignments,
   }
+}
+
+export function getOrigin01StudioMusic(state: Origin01StudioMediaState) {
+  const assignment = getStudioMediaAssignments(state.assignments, 'music.audio')[0]
+  const media = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
+  return media?.kind === 'audio' && media.status === 'ready' && media.src.trim()
+    ? media : undefined
 }
 
 const singleMediaId = (

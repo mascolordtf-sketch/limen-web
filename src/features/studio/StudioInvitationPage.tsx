@@ -285,7 +285,6 @@ StudioInvitationPageProps) {
           state={templateState} onStateChange={setTemplateState} />}
       </div>
       {activeStage === 'aesthetic' && <StudioAestheticStage
-        demoPath={`/demo/${invitation.code}`}
         media={model.draft.media}
         initialMedia={model.initialDraft.media}
         themeVariant={model.draft.themeVariant}

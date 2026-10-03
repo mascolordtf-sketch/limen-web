@@ -18,13 +18,12 @@ export function StudioVisualVariantSelector({
   return <section className="limen-studio__visual-variants" aria-labelledby="studio-visual-variants-title">
     <header>
       <div>
-        <p className="limen-studio__eyebrow">Variante visual</p>
-        <h3 id="studio-visual-variants-title">Elegí la atmósfera de Origin 01</h3>
-        <p>La estructura y el relato permanecen iguales. Cambia el sistema de color completo de la experiencia.</p>
+        <h3 id="studio-visual-variants-title">Paleta de colores</h3>
+        <p>Elegí una combinación para toda la invitación.</p>
       </div>
       <button type="button" className="limen-studio__reset-button"
         disabled={value === initialValue} onClick={() => onChange(initialValue)}>
-        Restablecer variante
+        Restablecer colores
       </button>
     </header>
     <div className="limen-studio__variant-grid" role="radiogroup" aria-label="Variantes visuales de Origin 01">

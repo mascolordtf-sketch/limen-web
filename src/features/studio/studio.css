@@ -2796,15 +2796,14 @@
   gap: 1rem;
 }
 
-.limen-studio__music > header h2,
+.limen-studio__music > header h3,
 .limen-studio__music > header p {
   margin: 0;
 }
 
-.limen-studio__music > header h2 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.6rem, 5vw, 2.35rem);
-  font-weight: 500;
+.limen-studio__music > header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .limen-studio__music > header p:last-child {
@@ -5578,7 +5577,7 @@
 .limen-studio__template-feature-copy h3 {
   margin: .3rem 0 .65rem;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2rem, 8vw, 3rem);
+  font-size: 1.75rem;
   font-weight: 500;
   letter-spacing: -.04em;
 }
@@ -5726,14 +5725,13 @@
 
 @media (min-width: 42rem) {
   .limen-studio__template-feature {
-    grid-template-columns: 13.5rem minmax(16rem, 19rem);
+    grid-template-columns: 10rem minmax(0, 1fr);
     justify-content: center;
     align-items: center;
     gap: clamp(2rem, 4vw, 2.5rem);
   }
 
   .limen-studio__template-preview { width: 100%; }
-  .limen-studio__template-feature-copy h3 { font-size: 3rem; }
 
   .limen-studio .limen-studio__template-grid--future {
     grid-template-columns: repeat(3, minmax(0, 1fr));

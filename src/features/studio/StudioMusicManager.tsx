@@ -1,6 +1,7 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 
-import { findStudioMediaById, getStudioMediaAssignments } from './studioMedia'
+import { getStudioMediaAssignments } from './studioMedia'
+import { getOrigin01StudioMusic } from './origin01StudioMedia'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { addStudioAudioItem, assignStudioMusic, removeStudioMusicAssignment } from './origin01StudioMusic'
 import { createReadyStudioAudio, resolveStudioAudioMimeType, validateStudioAudioFile } from './studioAudioSelection'
@@ -21,12 +22,12 @@ export function StudioMusicManager({
   onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
 }) {
   const inputId = useId()
+  const fileInput = useRef<HTMLInputElement>(null)
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
   const assignment = getStudioMediaAssignments(state.assignments, 'music.audio')[0]
   const initialAssignment = getStudioMediaAssignments(initialState.assignments, 'music.audio')[0]
-  const found = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
-  const audio = found?.kind === 'audio' && found.status === 'ready' ? found : undefined
+  const audio = getOrigin01StudioMusic(state)
   const changed = assignment?.mediaId !== initialAssignment?.mediaId
 
   const chooseAudio = async (file: File) => {
@@ -61,11 +62,10 @@ export function StudioMusicManager({
 
   return <section className="limen-studio__music" aria-labelledby="studio-music-title">
     <header>
-      <div><p className="limen-studio__eyebrow">Música</p>
-        <h2 id="studio-music-title">El sonido que acompaña la experiencia</h2>
-        <p>Elegí un audio MP3, M4A, OGG o WAV de hasta 20 MB. Podés escucharlo antes de continuar.</p>
+      <div><h3 id="studio-music-title">Música</h3>
+        <p>Opcional · MP3, M4A, OGG o WAV · Hasta 20 MB.</p>
       </div>
-      {changed && <button type="button" onClick={() => {
+      {changed && <button type="button" disabled={uploading} onClick={() => {
         if (initialAssignment) {
           onMediaChange((current) => assignStudioMusic({
             ...current,
@@ -83,32 +83,33 @@ export function StudioMusicManager({
       <div className="limen-studio__music-summary">
         <span aria-hidden="true">♫</span>
         <div><small>{audio ? 'Música asignada' : 'Música desactivada'}</small>
-          <strong>{audio?.title ?? 'La invitación se reproducirá sin música'}</strong>
+          <strong>{audio?.title ?? 'Sin música'}</strong>
           {audio?.originalName && <span>{audio.originalName}</span>}</div>
       </div>
       {audio && <audio key={audio.id} controls preload="metadata" src={audio.src}>
         Tu navegador no puede reproducir este audio.
       </audio>}
       <div className="limen-studio__music-actions">
-        <label className="limen-studio__photo-action" htmlFor={inputId}>
-          {audio ? 'Cambiar audio' : 'Elegir audio'}
-        </label>
-        <input id={inputId} className="limen-studio__visually-hidden" type="file" disabled={uploading}
+        <button type="button" disabled={uploading} onClick={() => fileInput.current?.click()}>
+          {audio ? 'Cambiar audio' : 'Agregar audio'}
+        </button>
+        <input ref={fileInput} id={inputId} hidden type="file" disabled={uploading}
+          aria-label="Seleccionar archivo de audio"
           accept={studioAudioMimeTypesForInput}
           onChange={(event) => {
             const file = event.currentTarget.files?.[0]
             event.currentTarget.value = ''
             if (file) void chooseAudio(file)
           }} />
-        {audio && <button type="button" disabled={uploading} onClick={() => {
+        {assignment && <button type="button" disabled={uploading} onClick={() => {
           onMediaChange(removeStudioMusicAssignment)
           setError('')
         }}>Desactivar música</button>}
       </div>
       {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
     </div>
-    <p className="limen-studio__photo-status" aria-live="polite">
-      {uploading ? 'Guardando el audio de forma privada…' : 'El audio queda privado hasta que la invitación se publique.'}
+    <p className={uploading || audio ? 'limen-studio__photo-status' : 'limen-studio__visually-hidden'} aria-live="polite">
+      {uploading ? 'Guardando audio…' : audio ? 'Audio privado hasta publicar.' : ''}
     </p>
   </section>
 }
