@@ -3,42 +3,60 @@ import { useId, useState } from 'react'
 import { findStudioMediaById, getStudioMediaAssignments } from './studioMedia'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { addStudioAudioItem, assignStudioMusic, removeStudioMusicAssignment } from './origin01StudioMusic'
-import { createReadyStudioAudio, validateStudioAudioFile } from './studioAudioSelection'
+import { createReadyStudioAudio, resolveStudioAudioMimeType, validateStudioAudioFile } from './studioAudioSelection'
+import { createStudioMediaAssetId } from './studioMediaStorage'
+import type { StudioMediaUploadInput } from './studioMediaStorage'
 
 type MediaUpdater = (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
-
-const createdAudioId = () => `studio-audio-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`}`
 
 export function StudioMusicManager({
   state,
   initialState,
   onMediaChange,
-  onTemporaryUrl,
+  onUploadMedia,
 }: {
   state: Origin01StudioMediaState
   initialState: Origin01StudioMediaState
   onMediaChange: MediaUpdater
-  onTemporaryUrl: (url: string) => void
+  onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
 }) {
   const inputId = useId()
   const [error, setError] = useState('')
+  const [uploading, setUploading] = useState(false)
   const assignment = getStudioMediaAssignments(state.assignments, 'music.audio')[0]
   const initialAssignment = getStudioMediaAssignments(initialState.assignments, 'music.audio')[0]
   const found = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
   const audio = found?.kind === 'audio' && found.status === 'ready' ? found : undefined
   const changed = assignment?.mediaId !== initialAssignment?.mediaId
 
-  const chooseAudio = (file: File) => {
+  const chooseAudio = async (file: File) => {
     const validationError = validateStudioAudioFile(file)
     if (validationError) {
       setError(validationError)
       return
     }
-    const src = URL.createObjectURL(file)
-    const media = createReadyStudioAudio(createdAudioId(), file, src)
-    onTemporaryUrl(src)
-    onMediaChange((current) => assignStudioMusic(addStudioAudioItem(current, media), media.id))
+    setUploading(true)
     setError('')
+    try {
+      const id = createStudioMediaAssetId()
+      const mimeType = resolveStudioAudioMimeType(file)
+      const persisted = await onUploadMedia({
+        id,
+        kind: 'audio',
+        body: file,
+        mimeType,
+        originalFilename: file.name,
+      })
+      const media = {
+        ...createReadyStudioAudio(id, { name: file.name, type: mimeType, size: file.size }, persisted.src),
+        storageKey: persisted.storageKey,
+      }
+      onMediaChange((current) => assignStudioMusic(addStudioAudioItem(current, media), media.id))
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'No pudimos guardar el audio.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return <section className="limen-studio__music" aria-labelledby="studio-music-title">
@@ -75,14 +93,14 @@ export function StudioMusicManager({
         <label className="limen-studio__photo-action" htmlFor={inputId}>
           {audio ? 'Cambiar audio' : 'Elegir audio'}
         </label>
-        <input id={inputId} className="limen-studio__visually-hidden" type="file"
+        <input id={inputId} className="limen-studio__visually-hidden" type="file" disabled={uploading}
           accept={studioAudioMimeTypesForInput}
           onChange={(event) => {
             const file = event.currentTarget.files?.[0]
             event.currentTarget.value = ''
-            if (file) chooseAudio(file)
+            if (file) void chooseAudio(file)
           }} />
-        {audio && <button type="button" onClick={() => {
+        {audio && <button type="button" disabled={uploading} onClick={() => {
           onMediaChange(removeStudioMusicAssignment)
           setError('')
         }}>Desactivar música</button>}
@@ -90,7 +108,7 @@ export function StudioMusicManager({
       {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
     </div>
     <p className="limen-studio__photo-status" aria-live="polite">
-      Los cambios se reflejan en la preview de Studio y no modifican la invitación canónica.
+      {uploading ? 'Guardando el audio de forma privada…' : 'El audio queda privado hasta que la invitación se publique.'}
     </p>
   </section>
 }

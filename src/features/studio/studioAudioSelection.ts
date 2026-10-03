@@ -31,6 +31,13 @@ export function validateStudioAudioFile(file: StudioAudioFileMetadata): string |
   return null
 }
 
+export function resolveStudioAudioMimeType(file: StudioAudioFileMetadata): string {
+  if (file.type === 'audio/mpeg' || /\.mp3$/i.test(file.name)) return 'audio/mpeg'
+  if (file.type === 'audio/ogg' || /\.ogg$/i.test(file.name)) return 'audio/ogg'
+  if (file.type.includes('wav') || /\.wav$/i.test(file.name)) return 'audio/wav'
+  return 'audio/mp4'
+}
+
 const audioTitle = (name: string) => name.replace(/\.[^.]+$/, '').trim() || 'Música de la invitación'
 
 export function createReadyStudioAudio(

@@ -78,12 +78,12 @@ cambiar la fuente de lectura. Este fundamento no modifica su ruta, contenido, me
 
 ## Próximas fases
 
-Completado en el primer bloque: proyecto Supabase, schema migrado, login/cierre, rutas protegidas,
-RLS endurecida y guardado manual de proyectos y borradores con revisión optimista.
+Completado: proyecto Supabase, schema migrado, login/cierre, rutas protegidas, RLS endurecida,
+guardado manual de proyectos y borradores con revisión optimista, y contrato de Storage privado para
+fotografías y audio.
 
-1. Incorporar storage privado con límites, tipos admitidos y URLs temporales.
-2. Añadir autosave sobre el mismo control de revisión y una recuperación explícita de conflictos.
-3. Publicar snapshots inmutables mediante una operación validada del servidor.
-4. Migrar Maia a publicaciones conservando su enlace, únicamente después de verificar equivalencia.
-5. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
-6. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.
+1. Añadir autosave sobre el mismo control de revisión y una recuperación explícita de conflictos.
+2. Publicar snapshots inmutables mediante una operación validada del servidor.
+3. Migrar Maia a publicaciones conservando su enlace, únicamente después de verificar equivalencia.
+4. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
+5. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.

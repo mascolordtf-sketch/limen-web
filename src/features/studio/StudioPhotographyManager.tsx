@@ -14,6 +14,8 @@ import {
   updateStudioPhotoZoom,
 } from './origin01StudioPhotos'
 import { createPendingStudioPhoto, processStudioPhoto, validateStudioPhotoFile } from './studioPhotoProcessing'
+import { createStudioMediaAssetId } from './studioMediaStorage'
+import type { StudioMediaUploadInput } from './studioMediaStorage'
 
 type MediaUpdater = (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
 
@@ -24,7 +26,7 @@ type StudioPhotographyManagerProps = {
   initialGalleryCaptions: readonly string[]
   onMediaChange: MediaUpdater
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
-  onTemporaryUrl: (url: string) => void
+  onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
 }
 
 type PhotoTarget = {
@@ -41,7 +43,6 @@ const singleTargets = [
   { key: 'closing', slotId: 'closing.image', label: 'Cierre' },
 ] as const satisfies readonly PhotoTarget[]
 
-const createdPhotoId = () => `studio-photo-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`}`
 const defaultAlt = (label: string, name: string) =>
   `${label === 'Galería' ? 'Fotografía' : `Imagen de ${label.toLowerCase()}`} de ${name.trim() || 'la protagonista'}`
 
@@ -131,7 +132,7 @@ function StudioPhotoCard({
 
 export function StudioPhotographyManager({
   state, initialState, protagonistName, initialGalleryCaptions,
-  onMediaChange, onGalleryCaptionsChange, onTemporaryUrl,
+  onMediaChange, onGalleryCaptionsChange, onUploadMedia,
 }: StudioPhotographyManagerProps) {
   const [busyTarget, setBusyTarget] = useState<string>()
   const [errors, setErrors] = useState<Readonly<Record<string, string>>>({})
@@ -147,7 +148,7 @@ export function StudioPhotographyManager({
       setErrors((current) => ({ ...current, [target.key]: validationError }))
       return
     }
-    const id = createdPhotoId()
+    const id = createStudioMediaAssetId()
     setErrors((current) => ({ ...current, [target.key]: '' }))
     setBusyTarget(target.key)
     onMediaChange((current) => addStudioPhotoItem(current,
@@ -157,14 +158,20 @@ export function StudioPhotographyManager({
     })))
     try {
       const processed = await processStudioPhoto(file)
-      const src = URL.createObjectURL(processed.blob)
-      onTemporaryUrl(src)
+      const persisted = await onUploadMedia({
+        id,
+        kind: 'image',
+        body: processed.blob,
+        mimeType: processed.mimeType,
+        originalFilename: file.name,
+      })
       onMediaChange((current) => assignStudioPhoto(updateStudioPhotoItem(current, id, (item) => ({
         ...item,
         mimeType: processed.mimeType,
         sizeBytes: processed.blob.size,
         status: 'ready',
-        src,
+        storageKey: persisted.storageKey,
+        src: persisted.src,
       })), target.slotId, id, target.position))
       if (target.slotId === 'gallery.images' && target.position === galleryAssignments.length) {
         onGalleryCaptionsChange((current) => [...current, ''])
@@ -244,7 +251,7 @@ export function StudioPhotographyManager({
     <header>
       <div><p className="limen-studio__eyebrow">Fotografías</p>
         <h2 id="studio-photography-title">Las imágenes que cuentan la historia</h2>
-        <p>JPG, PNG o WebP de hasta 12 MB. Studio optimiza cada foto para esta preview; los cambios siguen siendo temporales.</p>
+        <p>JPG, PNG o WebP de hasta 12 MB. Studio optimiza y guarda cada foto de forma privada.</p>
       </div>
       <button type="button" disabled={busyTarget !== undefined} onClick={() => {
         onMediaChange(() => initialState)
@@ -272,8 +279,8 @@ export function StudioPhotographyManager({
       {errors[addTargetKey] && <p className="limen-studio__field-error" role="alert">{errors[addTargetKey]}</p>}
     </div>
     <p className="limen-studio__photo-status" aria-live="polite">
-      {busyTarget ? 'Preparando la fotografía. La imagen anterior permanece visible hasta terminar.'
-        : 'Los cambios se reflejan en la preview de Studio y no modifican la invitación canónica.'}
+      {busyTarget ? 'Preparando y guardando la fotografía. La imagen anterior permanece visible hasta terminar.'
+        : 'Las fotografías quedan privadas hasta que la invitación se publique.'}
     </p>
   </section>
 }

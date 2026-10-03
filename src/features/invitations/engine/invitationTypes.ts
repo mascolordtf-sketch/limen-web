@@ -38,6 +38,10 @@ export type InvitationMediaReference = {
   readonly id: string
   readonly kind: 'image' | 'audio' | 'video'
   readonly src: string
+  readonly storageKey?: string
+  readonly originalName?: string
+  readonly mimeType?: string
+  readonly sizeBytes?: number
   readonly alt?: string
   readonly title?: string
   readonly focalPoint?: {

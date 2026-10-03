@@ -12,6 +12,7 @@ export type StudioImageAccessibility =
 type StudioMediaBase = {
   readonly id: string
   readonly origin: StudioMediaOrigin
+  readonly storageKey?: string
   readonly originalName?: string
   readonly mimeType?: string
   readonly sizeBytes?: number
@@ -99,8 +100,11 @@ export function normalizeInvitationMediaReference(
   if (media.kind === 'video') return null
   const common = {
     id: media.id,
-    origin: 'canonical' as const,
-    mimeType: inferMimeType(media.src),
+    origin: media.storageKey ? 'studio' as const : 'canonical' as const,
+    storageKey: media.storageKey,
+    originalName: media.originalName,
+    mimeType: media.mimeType ?? inferMimeType(media.src),
+    sizeBytes: media.sizeBytes,
     title: media.title,
     status: 'ready' as const,
     src: media.src,
@@ -144,12 +148,25 @@ export function projectRenderableMedia(
   return items.flatMap((media): readonly InvitationMediaReference[] => {
     if (media.status !== 'ready') return []
     if (media.kind === 'audio') {
-      return [{ id: media.id, kind: 'audio', src: media.src, title: media.title }]
+      return [{
+        id: media.id,
+        kind: 'audio',
+        src: media.src,
+        storageKey: media.storageKey,
+        originalName: media.originalName,
+        mimeType: media.mimeType,
+        sizeBytes: media.sizeBytes,
+        title: media.title,
+      }]
     }
     return [{
       id: media.id,
       kind: 'image',
       src: media.src,
+      storageKey: media.storageKey,
+      originalName: media.originalName,
+      mimeType: media.mimeType,
+      sizeBytes: media.sizeBytes,
       alt: media.accessibility.kind === 'informative' ? media.accessibility.alt : '',
       title: media.title,
     }]

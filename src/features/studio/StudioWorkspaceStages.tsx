@@ -8,6 +8,7 @@ import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01The
 import { findOrigin01ThemeVariant } from '../invitations/origin01/origin01ThemeVariants'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
 import { StudioTypographyEvaluation } from './StudioTypographyEvaluation'
+import type { StudioMediaUploadInput } from './studioMediaStorage'
 
 export function StudioStageNavigation({ activeStage, onStageChange }: {
   activeStage: StudioWorkspaceStage
@@ -29,7 +30,7 @@ export function StudioAestheticStage({
   initialGalleryCaptions,
   onMediaChange,
   onGalleryCaptionsChange,
-  onTemporaryUrl,
+  onUploadMedia,
   onThemeVariantChange,
   demoPath,
 }: {
@@ -41,7 +42,7 @@ export function StudioAestheticStage({
   initialGalleryCaptions: readonly string[]
   onMediaChange: (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
-  onTemporaryUrl: (url: string) => void
+  onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
   onThemeVariantChange: (variant: Origin01ThemeVariantId) => void
   demoPath: string
 }) {
@@ -96,9 +97,9 @@ export function StudioAestheticStage({
     <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
       initialGalleryCaptions={initialGalleryCaptions}
       onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
-      onTemporaryUrl={onTemporaryUrl} />
+      onUploadMedia={onUploadMedia} />
     <StudioMusicManager state={media} initialState={initialMedia}
-      onMediaChange={onMediaChange} onTemporaryUrl={onTemporaryUrl} />
+      onMediaChange={onMediaChange} onUploadMedia={onUploadMedia} />
   </section>
 }
 

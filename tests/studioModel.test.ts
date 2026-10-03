@@ -72,6 +72,8 @@ import {
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
+import { createStudioMediaStorageKey, serializeStudioDocument } from '../src/features/studio/studioMediaStorage'
+import { resolveStudioAudioMimeType } from '../src/features/studio/studioAudioSelection'
 import {
   addOrigin01ScheduleMoment,
   moveOrigin01ScheduleMoment,
@@ -240,6 +242,23 @@ assert(!hasUnpersistedStudioMedia(initial)
     },
   }),
   'Studio distingue medios canónicos de cargas temporales antes de guardar')
+const storageProjectId = '11111111-1111-4111-8111-111111111111'
+const storageAssetId = '22222222-2222-4222-8222-222222222222'
+const storageKey = createStudioMediaStorageKey(storageProjectId, storageAssetId, 'image/webp')
+const storageBackedDocument = {
+  ...origin01DemoData,
+  media: origin01DemoData.media.map((media, index) => index === 0
+    ? { ...media, id: storageAssetId, src: 'https://signed.example.test/photo', storageKey }
+    : media),
+}
+const storageBackedDraft = createOrigin01StudioDraftFromDocument(storageBackedDocument)
+assert(storageKey === `${storageProjectId}/${storageAssetId}.webp`
+  && serializeStudioDocument(storageBackedDocument).media[0]?.src === storageKey
+  && !hasUnpersistedStudioMedia(storageBackedDraft),
+  'Storage conserva una clave estable por proyecto y permite guardar medios ya persistidos')
+assert(resolveStudioAudioMimeType({ name: 'entrada.MP3', type: '', size: 10 }) === 'audio/mpeg'
+  && resolveStudioAudioMimeType({ name: 'vals.m4a', type: 'audio/x-m4a', size: 10 }) === 'audio/mp4',
+  'la carga normaliza los tipos de audio aceptados por el bucket privado')
 
 const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
   ...(['protagonist', 'guest'] as const).flatMap((audience) =>
