@@ -7,6 +7,7 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { deriveOrigin01PreviewInvitation } from './origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
+  createOrigin01StudioDraftFromDocument,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
   resetOrigin01StudioGroup,
@@ -20,9 +21,10 @@ import type { Origin01EditableSceneId, Origin01StudioDraft } from './origin01Stu
 import { validateOrigin01StudioDraft } from './origin01StudioValidation'
 import type { StudioDirtyStateBoundary } from './studioNavigation'
 
-export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
-  const initialDraft = useMemo(() => createOrigin01StudioDraft(invitation), [invitation])
-  const [draft, setDraft] = useState<Origin01StudioDraft>(() => createOrigin01StudioDraft(invitation))
+export function useOrigin01StudioModel(invitation: Origin01InvitationData, persisted = false) {
+  const createInitialDraft = persisted ? createOrigin01StudioDraftFromDocument : createOrigin01StudioDraft
+  const initialDraft = useMemo(() => createInitialDraft(invitation), [createInitialDraft, invitation])
+  const [draft, setDraft] = useState<Origin01StudioDraft>(() => createInitialDraft(invitation))
   const temporaryMediaUrls = useRef(new Set<string>())
   useEffect(() => () => {
     for (const url of temporaryMediaUrls.current) URL.revokeObjectURL(url)
@@ -64,6 +66,7 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
     initialDraft,
     currentDraft: draft,
   }
+  const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft)
 
   return {
     draft,
@@ -72,6 +75,7 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
     configurationValidation,
     previewInvitation,
     dirtyState,
+    isDirty,
     update,
     updateGroup,
     resetValue,

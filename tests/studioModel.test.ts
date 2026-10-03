@@ -60,6 +60,7 @@ import {
 } from '../src/features/studio/origin01StudioMedia'
 import {
   createOrigin01StudioDraft,
+  createOrigin01StudioDraftFromDocument,
   getOrigin01StudioDraftSessionId,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
@@ -69,6 +70,7 @@ import {
   updateOrigin01StudioDraftGroup,
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
+import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
 import {
   addOrigin01ScheduleMoment,
   moveOrigin01ScheduleMoment,
@@ -199,6 +201,32 @@ const dynamicDateInitial = createOrigin01StudioDraft(origin01DemoData, new Date(
 assert(dynamicDateInitial.event.start === '2026-09-06T21:00'
   && dynamicDateInitial.event.end === '2026-09-07T02:00',
   'Studio inicializa el evento a siete días de la fecha local y conserva sus horas y cruce de medianoche')
+
+const persistenceBaseDraft = createOrigin01StudioDraftFromDocument(origin01DemoData)
+const persistenceDraft = updateOrigin01StudioDraftGroup(persistenceBaseDraft, 'share', (share) => ({
+  ...share,
+  mode: 'custom',
+  customMessage: 'Un mensaje guardado para compartir.',
+  customMessageInitialized: true,
+}))
+const persistenceDocument = deriveOrigin01PreviewInvitation(origin01DemoData, persistenceDraft)
+const hydratedDraft = createOrigin01StudioDraftFromDocument(persistenceDocument)
+assert(hydratedDraft.event.start === '2027-03-20T21:00'
+  && hydratedDraft.event.end === '2027-03-21T02:00'
+  && hydratedDraft.share.mode === 'custom'
+  && hydratedDraft.share.customMessage === 'Un mensaje guardado para compartir.',
+  'un borrador persistido conserva fechas canónicas y el mensaje personalizado al reabrirse')
+assert(isOrigin01InvitationDocument(maiaInvitationData)
+  && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
+  'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
+assert(!hasUnpersistedStudioMedia(initial)
+  && hasUnpersistedStudioMedia({
+    media: {
+      ...initial.media,
+      items: initial.media.items.map((item, index) => index === 0 ? { ...item, origin: 'studio' as const } : item),
+    },
+  }),
+  'Studio distingue medios canónicos de cargas temporales antes de guardar')
 
 const matrixCaseIds = origin01Template.canonicalOrder.flatMap((scene) => [
   ...(['protagonist', 'guest'] as const).flatMap((audience) =>

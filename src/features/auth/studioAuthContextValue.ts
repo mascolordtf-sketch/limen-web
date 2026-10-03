@@ -11,6 +11,7 @@ export type StudioAuthStatus =
 
 export type StudioAuthContextValue = {
   email?: string
+  userId?: string
   role?: StudioRole
   status: StudioAuthStatus
   signIn: (email: string, password: string) => Promise<string | null>

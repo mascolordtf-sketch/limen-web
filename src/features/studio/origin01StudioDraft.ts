@@ -98,11 +98,11 @@ const formatLocalDate = (date: Date) => [
 
 function getStudioDefaultEventDateTimes(
   invitation: Origin01InvitationData,
-  now: Date,
+  now?: Date,
 ): { readonly start: string; readonly end: string } {
   const canonicalStart = toDateTimeLocalValue(invitation.event.startsAt, invitation.event.timeZone)
   const canonicalEnd = toDateTimeLocalValue(invitation.event.endsAt, invitation.event.timeZone)
-  if (!canonicalStart || !canonicalEnd || Number.isNaN(now.getTime())) {
+  if (!canonicalStart || !canonicalEnd || !now || Number.isNaN(now.getTime())) {
     return { start: canonicalStart, end: canonicalEnd }
   }
 
@@ -129,6 +129,29 @@ function getStudioDefaultEventDateTimes(
 export function createOrigin01StudioDraft(
   invitation: Origin01InvitationData,
   now: Date = new Date(),
+): Origin01StudioDraft {
+  return createOrigin01StudioDraftBase(invitation, now)
+}
+
+export function createOrigin01StudioDraftFromDocument(
+  invitation: Origin01InvitationData,
+): Origin01StudioDraft {
+  const draft = createOrigin01StudioDraftBase(invitation)
+  const protagonistName = invitation.identities.find(({ role }) => role === 'protagonist')?.displayName ?? ''
+  const suggestedShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`
+  const persistedShareMessage = invitation.content.closing.shareText
+
+  return {
+    ...draft,
+    share: persistedShareMessage === suggestedShareMessage
+      ? { mode: 'default', customMessage: suggestedShareMessage, customMessageInitialized: false }
+      : { mode: 'custom', customMessage: persistedShareMessage, customMessageInitialized: true },
+  }
+}
+
+function createOrigin01StudioDraftBase(
+  invitation: Origin01InvitationData,
+  now?: Date,
 ): Origin01StudioDraft {
   const protagonistName = invitation.identities.find(({ role }) => role === 'protagonist')?.displayName ?? ''
   const suggestedShareMessage = `${protagonistName} está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.`

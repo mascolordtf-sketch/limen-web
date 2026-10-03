@@ -78,11 +78,12 @@ cambiar la fuente de lectura. Este fundamento no modifica su ruta, contenido, me
 
 ## Próximas fases
 
-1. Crear el proyecto Supabase separado de producción y aplicar el schema mediante migraciones.
-2. Incorporar login, recuperación, sesión y cierre para administrador/editor.
-3. Proteger rutas y operaciones de Studio mediante políticas RLS y funciones server-side.
-4. Incorporar storage privado con límites, tipos admitidos y URLs temporales.
-5. Persistir proyectos y drafts con autosave y control de versión optimista.
-6. Publicar snapshots inmutables y migrar Maia conservando su enlace.
-7. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
-8. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.
+Completado en el primer bloque: proyecto Supabase, schema migrado, login/cierre, rutas protegidas,
+RLS endurecida y guardado manual de proyectos y borradores con revisión optimista.
+
+1. Incorporar storage privado con límites, tipos admitidos y URLs temporales.
+2. Añadir autosave sobre el mismo control de revisión y una recuperación explícita de conflictos.
+3. Publicar snapshots inmutables mediante una operación validada del servidor.
+4. Migrar Maia a publicaciones conservando su enlace, únicamente después de verificar equivalencia.
+5. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
+6. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.
