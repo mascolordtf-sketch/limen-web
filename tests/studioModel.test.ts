@@ -62,6 +62,7 @@ import {
   createOrigin01StudioDraft,
   createOrigin01StudioDraftFromDocument,
   getOrigin01StudioDraftSessionId,
+  isOrigin01StudioDraftDirty,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
   resetOrigin01StudioGroup,
@@ -216,6 +217,18 @@ assert(hydratedDraft.event.start === '2027-03-20T21:00'
   && hydratedDraft.share.mode === 'custom'
   && hydratedDraft.share.customMessage === 'Un mensaje guardado para compartir.',
   'un borrador persistido conserva fechas canónicas y el mensaje personalizado al reabrirse')
+const suggestedShareDraft = updateOrigin01StudioDraftGroup(persistenceBaseDraft, 'share', () => ({
+  mode: 'default',
+  customMessage: 'Valentina está por vivir una noche muy especial y quiere compartirla con vos.\nAntes era un sueño. Ahora empieza.',
+  customMessageInitialized: false,
+}))
+const renamedSuggestedDraft = updateOrigin01StudioDraftField(suggestedShareDraft, 'protagonistName', 'Renata')
+const rehydratedRenamedDraft = createOrigin01StudioDraftFromDocument(
+  deriveOrigin01PreviewInvitation(origin01DemoData, renamedSuggestedDraft),
+)
+assert(isOrigin01StudioDraftDirty(renamedSuggestedDraft, rehydratedRenamedDraft)
+  && !isOrigin01StudioDraftDirty(renamedSuggestedDraft, renamedSuggestedDraft),
+  'el baseline limpio conserva el snapshot exacto guardado aunque una rehidratación normalice valores ocultos')
 assert(isOrigin01InvitationDocument(maiaInvitationData)
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')

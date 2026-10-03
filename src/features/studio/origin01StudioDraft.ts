@@ -70,6 +70,11 @@ export type Origin01StudioDraft = {
 
 export const getOrigin01StudioDraftSessionId = (invitation: Origin01InvitationData) => invitation.id
 
+export const isOrigin01StudioDraftDirty = (
+  draft: Origin01StudioDraft,
+  baseline: Origin01StudioDraft,
+) => JSON.stringify(draft) !== JSON.stringify(baseline)
+
 const createTriviaEditorialDraft = (trivia: Origin01TriviaContent): Origin01TriviaEditorialDraft => {
   const { protagonistName, accessibleTitle, title, revealSignature, ...editorial } = trivia
   void protagonistName

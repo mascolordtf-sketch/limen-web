@@ -102,6 +102,16 @@ StudioInvitationPageProps) {
     return () => window.removeEventListener('beforeunload', warnBeforeLeaving)
   }, [model.isDirty])
 
+  const saveDraft = async () => {
+    const savedDraft = model.draft
+    const saved = await onSave(model.previewInvitation)
+    if (saved) model.markSaved(savedDraft)
+  }
+  const requestSignOut = () => {
+    if (model.isDirty && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
+    void signOut()
+  }
+
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
     scrollPosition.current = window.scrollY
@@ -200,10 +210,10 @@ StudioInvitationPageProps) {
         </span>
         <button className="limen-studio__save-button" type="button" disabled={!canSave}
           title={hasTemporaryMedia ? 'Antes de guardar, quitá las imágenes cargadas en esta sesión.' : undefined}
-          onClick={() => void onSave(model.previewInvitation)}>
+          onClick={() => void saveDraft()}>
           {saveState.status === 'saving' ? 'Guardando…' : 'Guardar'}
         </button>
-        <button className="limen-studio__back-link" type="button" onClick={() => void signOut()}>
+        <button className="limen-studio__back-link" type="button" onClick={requestSignOut}>
           <StudioIcon name="exit" />Cerrar sesión
         </button>
       </div>

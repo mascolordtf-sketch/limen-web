@@ -8,6 +8,7 @@ import { deriveOrigin01PreviewInvitation } from './origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
   createOrigin01StudioDraftFromDocument,
+  isOrigin01StudioDraftDirty,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
   resetOrigin01StudioGroup,
@@ -23,8 +24,8 @@ import type { StudioDirtyStateBoundary } from './studioNavigation'
 
 export function useOrigin01StudioModel(invitation: Origin01InvitationData, persisted = false) {
   const createInitialDraft = persisted ? createOrigin01StudioDraftFromDocument : createOrigin01StudioDraft
-  const initialDraft = useMemo(() => createInitialDraft(invitation), [createInitialDraft, invitation])
-  const [draft, setDraft] = useState<Origin01StudioDraft>(() => createInitialDraft(invitation))
+  const [initialDraft, setInitialDraft] = useState<Origin01StudioDraft>(() => createInitialDraft(invitation))
+  const [draft, setDraft] = useState<Origin01StudioDraft>(() => initialDraft)
   const temporaryMediaUrls = useRef(new Set<string>())
   useEffect(() => () => {
     for (const url of temporaryMediaUrls.current) URL.revokeObjectURL(url)
@@ -61,12 +62,13 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
   const setModuleEnabled = (moduleId: InvitationModuleId, enabled: boolean) =>
     setDraft((current) => updateOrigin01StudioModule(invitation, current, moduleId, enabled))
   const registerTemporaryMediaUrl = (url: string) => temporaryMediaUrls.current.add(url)
+  const markSaved = (savedDraft: Origin01StudioDraft) => setInitialDraft(savedDraft)
 
   const dirtyState: StudioDirtyStateBoundary<Origin01StudioDraft> = {
     initialDraft,
     currentDraft: draft,
   }
-  const isDirty = JSON.stringify(draft) !== JSON.stringify(initialDraft)
+  const isDirty = isOrigin01StudioDraftDirty(draft, initialDraft)
 
   return {
     draft,
@@ -85,5 +87,6 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
     resetConfiguration,
     setModuleEnabled,
     registerTemporaryMediaUrl,
+    markSaved,
   }
 }
