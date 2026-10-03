@@ -51,6 +51,7 @@ export function hasUnpersistedStudioMedia(draft: Pick<Origin01StudioDraft, 'medi
 }
 
 const toJson = (document: Origin01InvitationData) => document as unknown as Json
+const isUniqueViolation = (error: PostgrestError | null) => error?.code === '23505'
 
 const loadError = (error: PostgrestError) => new StudioPersistenceError(
   'load',
@@ -121,6 +122,12 @@ async function createProject(baseInvitation: Origin01InvitationData, userId: str
     .single()
 
   if (error || !data) {
+    if (isUniqueViolation(error)) {
+      throw new StudioPersistenceError(
+        'conflict',
+        'Este proyecto se creó en otra sesión. Recargá Studio para abrir la versión guardada.',
+      )
+    }
     throw new StudioPersistenceError(
       'save',
       error?.code === '42501'
@@ -164,6 +171,12 @@ export async function saveStudioDraft({ baseInvitation, document, location, user
       })
       .select('id, project_id, revision, document, updated_at')
       .single()
+    if (isUniqueViolation(error)) {
+      throw new StudioPersistenceError(
+        'conflict',
+        'Este borrador se guardó por primera vez en otra sesión. Recargá Studio para abrirlo.',
+      )
+    }
     if (error || !data) throw new StudioPersistenceError('save', 'No pudimos guardar el primer borrador.')
     return {
       projectId: data.project_id,

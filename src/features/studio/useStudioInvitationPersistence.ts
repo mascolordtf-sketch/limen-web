@@ -4,6 +4,7 @@ import { useStudioAuth } from '../auth/studioAuthContextValue'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { ensureStudioProject, loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
 import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
+import type { StudioSaveState } from './studioAutosave'
 import { uploadStudioMedia } from './studioMediaStorage'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
 
@@ -20,11 +21,10 @@ type LoadState =
 export function useStudioInvitationPersistence(baseInvitation: Origin01InvitationData) {
   const { userId } = useStudioAuth()
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
-  const [saveState, setSaveState] = useState<{ readonly status: 'idle' | 'saving' | 'saved' | 'error'; readonly message?: string }>({
-    status: 'idle',
-  })
+  const [saveState, setSaveState] = useState<StudioSaveState>({ status: 'idle' })
   const locationRef = useRef<StudioDraftLocation | undefined>(undefined)
   const projectRequestRef = useRef<Promise<string> | undefined>(undefined)
+  const saveRequestRef = useRef<Promise<boolean> | undefined>(undefined)
 
   useEffect(() => {
     let active = true
@@ -73,31 +73,43 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
     return uploadStudioMedia(projectId, userId, input)
   }, [ensureProject, userId])
 
-  const save = useCallback(async (document: Origin01InvitationData) => {
-    if (loadState.status !== 'ready' || !userId || saveState.status === 'saving') return false
-    setSaveState({ status: 'saving' })
-    try {
-      const persisted = await saveStudioDraft({
-        baseInvitation,
-        document,
-        location: locationRef.current,
-        userId,
-      })
-      locationRef.current = persisted
-      setLoadState({ status: 'ready', document, location: persisted, persisted })
-      setSaveState({ status: 'saved' })
-      return true
-    } catch (error) {
-      setSaveState({
-        status: 'error',
-        message: error instanceof StudioPersistenceError ? error.message : 'No pudimos guardar los cambios.',
-      })
-      return false
-    }
-  }, [baseInvitation, loadState, saveState.status, userId])
+  const save = useCallback((document: Origin01InvitationData) => {
+    if (loadState.status !== 'ready' || !userId || saveRequestRef.current) return Promise.resolve(false)
+
+    const request = (async () => {
+      setSaveState({ status: 'saving' })
+      try {
+        const persisted = await saveStudioDraft({
+          baseInvitation,
+          document,
+          location: locationRef.current,
+          userId,
+        })
+        locationRef.current = persisted
+        setLoadState({ status: 'ready', document, location: persisted, persisted })
+        setSaveState({ status: 'saved' })
+        return true
+      } catch (error) {
+        const persistenceError = error instanceof StudioPersistenceError ? error : undefined
+        setSaveState({
+          status: persistenceError?.code === 'conflict' ? 'conflict' : 'error',
+          message: persistenceError?.message ?? 'No pudimos guardar los cambios.',
+        })
+        return false
+      }
+    })()
+
+    saveRequestRef.current = request
+    void request.finally(() => {
+      if (saveRequestRef.current === request) saveRequestRef.current = undefined
+    })
+    return request
+  }, [baseInvitation, loadState.status, userId])
 
   const clearSaveFeedback = useCallback(() => {
-    setSaveState((current) => current.status === 'saving' ? current : { status: 'idle' })
+    setSaveState((current) => current.status === 'saving' || current.status === 'conflict'
+      ? current
+      : { status: 'idle' })
   }, [])
 
   return { loadState, saveState, save, uploadMedia, clearSaveFeedback }

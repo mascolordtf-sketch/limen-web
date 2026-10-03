@@ -6,10 +6,16 @@ local y crea el proyecto con el primer guardado.
 
 ## Comportamiento
 
-- El guardado es manual y requiere una sesión con membresía activa.
+- Studio guarda automáticamente dos segundos después de la última edición y conserva el botón
+  `Guardar` como respaldo explícito. Ambos caminos requieren una sesión con membresía activa.
 - El primer guardado crea `invitation_projects` e `invitation_drafts`.
 - Cada guardado posterior exige la revisión leída y la incrementa. Si otra sesión ya la cambió, Studio
-  rechaza la escritura y pide recargar en lugar de sobrescribir datos silenciosamente.
+  rechaza la escritura, detiene el autosave y conserva los cambios locales visibles. El usuario debe
+  confirmar una recarga para descartar esos cambios y abrir la última versión guardada.
+- Los guardados se serializan en el navegador para que el temporizador y el botón manual no puedan
+  escribir dos revisiones en paralelo.
+- Un error de red no se reintenta indefinidamente: el usuario puede usar `Guardar`, o una edición
+  posterior vuelve a habilitar un intento automático.
 - El documento persistido usa `schema_version = 1` y conserva la invitación completa, no solamente el
   estado visual del formulario.
 - Las fotografías procesadas y los audios se guardan en el bucket privado `invitation-media`. El
@@ -22,7 +28,6 @@ local y crea el proyecto con el primer guardado.
 
 ## Límites deliberados
 
-- No hay autosave ni resolución interactiva de conflictos todavía.
 - Restablecer o reemplazar un archivo no lo elimina inmediatamente de Storage: se conserva para no
   invalidar la última revisión guardada. La recolección de archivos sin referencias será una tarea
   server-side posterior.

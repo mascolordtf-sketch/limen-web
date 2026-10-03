@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
@@ -30,6 +30,8 @@ import { StudioSectionsStage } from './StudioSectionsStage'
 import { StudioScenesContent } from './StudioScenesContent'
 import { StudioIcon } from './StudioIcon'
 import { hasUnpersistedStudioMedia } from './studioPersistence'
+import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from './studioAutosave'
+import type { StudioSaveState } from './studioAutosave'
 import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScene, studioScenes,
   type StudioSceneId } from './studioScenes'
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
@@ -43,10 +45,7 @@ type StudioInvitationPageProps = {
   readonly persisted: boolean
   readonly revision?: number
   readonly updatedAt?: string
-  readonly saveState: {
-    readonly status: 'idle' | 'saving' | 'saved' | 'error'
-    readonly message?: string
-  }
+  readonly saveState: StudioSaveState
   readonly onSave: (document: Origin01InvitationData) => Promise<boolean>
   readonly onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
   readonly onEdit: () => void
@@ -80,17 +79,23 @@ StudioInvitationPageProps) {
   const layerOpen = isStudioPreviewDedicated(surface)
   const previewCollapsed = isStudioPreviewEffectivelyCollapsed(surface)
   const hasTemporaryMedia = hasUnpersistedStudioMedia(model.draft)
-  const canSave = saveState.status !== 'saving' && (!persisted || model.isDirty) && !hasTemporaryMedia
+  const currentDraft = model.draft
+  const currentPreviewInvitation = model.previewInvitation
+  const markCurrentDraftSaved = model.markSaved
+  const saveBlocked = saveState.status === 'saving' || saveState.status === 'conflict'
+  const canSave = !saveBlocked && (!persisted || model.isDirty) && !hasTemporaryMedia
   const savedAtLabel = updatedAt ? studioSavedAtFormatter.format(new Date(updatedAt)) : undefined
   const saveStatusLabel = saveState.status === 'saving'
     ? 'Guardando…'
-    : saveState.status === 'error'
-      ? 'Error al guardar'
-      : persisted && !model.isDirty
-        ? `Guardado${revision ? ` · revisión ${revision}` : ''}`
-        : persisted
-          ? 'Cambios sin guardar'
-          : 'Todavía sin guardar'
+    : saveState.status === 'conflict'
+      ? 'Conflicto de edición'
+      : saveState.status === 'error'
+        ? 'Error al guardar'
+        : persisted && !model.isDirty
+          ? `Guardado${revision ? ` · revisión ${revision}` : ''}`
+          : persisted
+            ? 'Cambios sin guardar'
+            : 'Todavía sin guardar'
 
   useEffect(() => {
     if (observedDraft.current === model.draft) return
@@ -104,10 +109,24 @@ StudioInvitationPageProps) {
     return () => window.removeEventListener('beforeunload', warnBeforeLeaving)
   }, [model.isDirty])
 
-  const saveDraft = async () => {
-    const savedDraft = model.draft
-    const saved = await onSave(model.previewInvitation)
-    if (saved) model.markSaved(savedDraft)
+  const saveDraft = useCallback(async () => {
+    const saved = await onSave(currentPreviewInvitation)
+    if (saved) markCurrentDraftSaved(currentDraft)
+  }, [currentDraft, currentPreviewInvitation, markCurrentDraftSaved, onSave])
+  useEffect(() => {
+    if (!shouldScheduleStudioAutosave({
+      dirty: model.isDirty,
+      hasTemporaryMedia,
+      saveStatus: saveState.status,
+    })) return
+
+    const timer = window.setTimeout(() => { void saveDraft() }, studioAutosaveDelayMs)
+    return () => window.clearTimeout(timer)
+  }, [hasTemporaryMedia, model.draft, model.isDirty, saveDraft, saveState.status])
+
+  const reloadSavedDraft = () => {
+    if (!window.confirm('Se van a descartar los cambios que ves en pantalla y se abrirá la última versión guardada. ¿Querés continuar?')) return
+    window.location.reload()
   }
   const requestSignOut = () => {
     if (model.isDirty && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
@@ -211,7 +230,11 @@ StudioInvitationPageProps) {
           <span><small>Estado</small>{saveStatusLabel}</span>
         </span>
         <button className="limen-studio__save-button" type="button" disabled={!canSave}
-          title={hasTemporaryMedia ? 'Esperá a que termine la carga del archivo antes de guardar.' : undefined}
+          title={hasTemporaryMedia
+            ? 'Esperá a que termine la carga del archivo antes de guardar.'
+            : saveState.status === 'conflict'
+              ? 'Recargá la versión guardada antes de continuar.'
+              : undefined}
           onClick={() => void saveDraft()}>
           {saveState.status === 'saving' ? 'Guardando…' : 'Guardar'}
         </button>
@@ -222,8 +245,12 @@ StudioInvitationPageProps) {
     </header>
     <main className="limen-studio__stage">
       {(saveState.message || hasTemporaryMedia) && <div className="limen-studio__save-notice"
-        role={saveState.status === 'error' ? 'alert' : 'status'}>
-        {saveState.message ?? 'Hay un archivo que todavía se está preparando. Cuando termine, vas a poder guardar el borrador.'}
+        role={saveState.status === 'error' || saveState.status === 'conflict' ? 'alert' : 'status'}>
+        <span>{saveState.message
+          ?? 'Hay un archivo que todavía se está preparando. Cuando termine, vas a poder guardar el borrador.'}</span>
+        {saveState.status === 'conflict' && <button type="button" onClick={reloadSavedDraft}>
+          Recargar versión guardada
+        </button>}
       </div>}
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
         {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
