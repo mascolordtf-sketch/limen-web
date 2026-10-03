@@ -7,6 +7,8 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { deriveOrigin01PreviewInvitation } from './origin01StudioDerivations'
 import {
   createOrigin01StudioDraft,
+  createOrigin01StudioDraftFromDocument,
+  isOrigin01StudioDraftDirty,
   resetOrigin01StudioConfiguration,
   resetOrigin01StudioField,
   resetOrigin01StudioGroup,
@@ -20,9 +22,10 @@ import type { Origin01EditableSceneId, Origin01StudioDraft } from './origin01Stu
 import { validateOrigin01StudioDraft } from './origin01StudioValidation'
 import type { StudioDirtyStateBoundary } from './studioNavigation'
 
-export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
-  const initialDraft = useMemo(() => createOrigin01StudioDraft(invitation), [invitation])
-  const [draft, setDraft] = useState<Origin01StudioDraft>(() => createOrigin01StudioDraft(invitation))
+export function useOrigin01StudioModel(invitation: Origin01InvitationData, persisted = false) {
+  const createInitialDraft = persisted ? createOrigin01StudioDraftFromDocument : createOrigin01StudioDraft
+  const [initialDraft, setInitialDraft] = useState<Origin01StudioDraft>(() => createInitialDraft(invitation))
+  const [draft, setDraft] = useState<Origin01StudioDraft>(() => initialDraft)
   const temporaryMediaUrls = useRef(new Set<string>())
   useEffect(() => () => {
     for (const url of temporaryMediaUrls.current) URL.revokeObjectURL(url)
@@ -59,11 +62,13 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
   const setModuleEnabled = (moduleId: InvitationModuleId, enabled: boolean) =>
     setDraft((current) => updateOrigin01StudioModule(invitation, current, moduleId, enabled))
   const registerTemporaryMediaUrl = (url: string) => temporaryMediaUrls.current.add(url)
+  const markSaved = (savedDraft: Origin01StudioDraft) => setInitialDraft(savedDraft)
 
   const dirtyState: StudioDirtyStateBoundary<Origin01StudioDraft> = {
     initialDraft,
     currentDraft: draft,
   }
+  const isDirty = isOrigin01StudioDraftDirty(draft, initialDraft)
 
   return {
     draft,
@@ -72,6 +77,7 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
     configurationValidation,
     previewInvitation,
     dirtyState,
+    isDirty,
     update,
     updateGroup,
     resetValue,
@@ -81,5 +87,6 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData) {
     resetConfiguration,
     setModuleEnabled,
     registerTemporaryMediaUrl,
+    markSaved,
   }
 }

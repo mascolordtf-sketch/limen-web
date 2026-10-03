@@ -6,7 +6,7 @@ import { StudioAuthContext } from './studioAuthContextValue'
 import type { StudioAuthContextValue } from './studioAuthContextValue'
 import { isSupabaseConfigured, supabase } from './supabaseClient'
 
-async function resolveStudioAccess(): Promise<Pick<StudioAuthContextValue, 'email' | 'role' | 'status'>> {
+async function resolveStudioAccess(): Promise<Pick<StudioAuthContextValue, 'email' | 'role' | 'status' | 'userId'>> {
   if (!supabase) return { status: 'configuration_error' }
 
   const { data: userData, error: userError } = await supabase.auth.getUser()
@@ -24,13 +24,14 @@ async function resolveStudioAccess(): Promise<Pick<StudioAuthContextValue, 'emai
 
   return {
     email: userData.user.email,
+    userId: userData.user.id,
     role: membership.role as StudioRole,
     status: 'authenticated',
   }
 }
 
 export function StudioAuthProvider() {
-  const [authState, setAuthState] = useState<Pick<StudioAuthContextValue, 'email' | 'role' | 'status'>>({
+  const [authState, setAuthState] = useState<Pick<StudioAuthContextValue, 'email' | 'role' | 'status' | 'userId'>>({
     status: isSupabaseConfigured ? 'loading' : 'configuration_error',
   })
 

@@ -29,15 +29,32 @@ import { studioDesktopMediaQuery } from './studioViewport'
 import { StudioSectionsStage } from './StudioSectionsStage'
 import { StudioScenesContent } from './StudioScenesContent'
 import { StudioIcon } from './StudioIcon'
+import { hasUnpersistedStudioMedia } from './studioPersistence'
 import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScene, studioScenes,
   type StudioSceneId } from './studioScenes'
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import './studio.css'
 
-export function StudioInvitationPage({ invitation }: { invitation: Origin01InvitationData }) {
+const studioSavedAtFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
+
+type StudioInvitationPageProps = {
+  readonly invitation: Origin01InvitationData
+  readonly persisted: boolean
+  readonly revision?: number
+  readonly updatedAt?: string
+  readonly saveState: {
+    readonly status: 'idle' | 'saving' | 'saved' | 'error'
+    readonly message?: string
+  }
+  readonly onSave: (document: Origin01InvitationData) => Promise<boolean>
+  readonly onEdit: () => void
+}
+
+export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, onSave, onEdit }:
+StudioInvitationPageProps) {
   const { signOut } = useStudioAuth()
   const template = findInvitationTemplate(invitation.templateId)
-  const model = useOrigin01StudioModel(invitation)
+  const model = useOrigin01StudioModel(invitation, persisted)
   const audience = useStudioPreviewAudience('protagonist')
   const domains = createOrigin01StudioDomains(template)
   const [navigation, navigate] = useStudioNavigation(domains)
@@ -52,6 +69,7 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   })
   const [templateState, setTemplateState] = useState(() => createStudioTemplateGalleryState(template?.id ?? invitation.templateId))
   const opener = useRef<HTMLElement | null>(null)
+  const observedDraft = useRef(model.draft)
   const scrollPosition = useRef(0)
   const layerTitle = useRef<HTMLHeadingElement>(null)
   const activeDomain = domains.find(({ id }) => id === navigation.domainId)
@@ -59,6 +77,40 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
   const publicInvitationUrl = new URL(`/demo/${invitation.code}`, window.location.origin).toString()
   const layerOpen = isStudioPreviewDedicated(surface)
   const previewCollapsed = isStudioPreviewEffectivelyCollapsed(surface)
+  const hasTemporaryMedia = hasUnpersistedStudioMedia(model.draft)
+  const canSave = saveState.status !== 'saving' && (!persisted || model.isDirty) && !hasTemporaryMedia
+  const savedAtLabel = updatedAt ? studioSavedAtFormatter.format(new Date(updatedAt)) : undefined
+  const saveStatusLabel = saveState.status === 'saving'
+    ? 'Guardando…'
+    : saveState.status === 'error'
+      ? 'Error al guardar'
+      : persisted && !model.isDirty
+        ? `Guardado${revision ? ` · revisión ${revision}` : ''}`
+        : persisted
+          ? 'Cambios sin guardar'
+          : 'Todavía sin guardar'
+
+  useEffect(() => {
+    if (observedDraft.current === model.draft) return
+    observedDraft.current = model.draft
+    onEdit()
+  }, [model.draft, onEdit])
+  useEffect(() => {
+    if (!model.isDirty) return
+    const warnBeforeLeaving = (event: BeforeUnloadEvent) => event.preventDefault()
+    window.addEventListener('beforeunload', warnBeforeLeaving)
+    return () => window.removeEventListener('beforeunload', warnBeforeLeaving)
+  }, [model.isDirty])
+
+  const saveDraft = async () => {
+    const savedDraft = model.draft
+    const saved = await onSave(model.previewInvitation)
+    if (saved) model.markSaved(savedDraft)
+  }
+  const requestSignOut = () => {
+    if (model.isDirty && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
+    void signOut()
+  }
 
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
@@ -151,14 +203,26 @@ export function StudioInvitationPage({ invitation }: { invitation: Origin01Invit
         <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
       </div>
       <div className="limen-studio__header-actions">
-        <span className="limen-studio__draft-status"><StudioIcon name="temporary" />
-          <span><small>Estado</small>Cambios temporales</span></span>
-        <button className="limen-studio__back-link" type="button" onClick={() => void signOut()}>
+        <span className={`limen-studio__draft-status limen-studio__draft-status--${saveState.status}`}
+          title={savedAtLabel ? `Último guardado: ${savedAtLabel}` : undefined} aria-live="polite">
+          <StudioIcon name="temporary" />
+          <span><small>Estado</small>{saveStatusLabel}</span>
+        </span>
+        <button className="limen-studio__save-button" type="button" disabled={!canSave}
+          title={hasTemporaryMedia ? 'Antes de guardar, quitá las imágenes cargadas en esta sesión.' : undefined}
+          onClick={() => void saveDraft()}>
+          {saveState.status === 'saving' ? 'Guardando…' : 'Guardar'}
+        </button>
+        <button className="limen-studio__back-link" type="button" onClick={requestSignOut}>
           <StudioIcon name="exit" />Cerrar sesión
         </button>
       </div>
     </header>
     <main className="limen-studio__stage">
+      {(saveState.message || hasTemporaryMedia) && <div className="limen-studio__save-notice"
+        role={saveState.status === 'error' ? 'alert' : 'status'}>
+        {saveState.message ?? 'Las imágenes nuevas todavía son temporales. Quitalas antes de guardar; la carga permanente llegará con Storage.'}
+      </div>}
       <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
         {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
           state={templateState} onStateChange={setTemplateState} />}
