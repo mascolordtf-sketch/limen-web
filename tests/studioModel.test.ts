@@ -18,6 +18,7 @@ import { getOrigin01WeatherAvailability, parseOrigin01WeatherForecast } from '..
 import { validateInvitationConfiguration } from '../src/features/invitations/engine/invitationValidation'
 import { findInvitationTemplate } from '../src/features/invitations/engine/templateRegistry'
 import { StudioInvitationRoute } from '../src/features/studio/StudioInvitationRoute'
+import { StudioPublicationPreviewRoute } from '../src/features/studio/StudioPublicationPreviewRoute'
 import { StudioVisualMatrixCase } from '../src/features/studio/StudioVisualMatrixCase'
 import { StudioTypographyEvaluation,
   StudioTypographyEvaluationStatus } from '../src/features/studio/StudioTypographyEvaluation'
@@ -75,6 +76,7 @@ import {
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
 import { getStudioPublicationBlockReason } from '../src/features/studio/studioPublication'
+import { compareStudioPublicationToPublicBaseline } from '../src/features/studio/studioPublicationEquivalence'
 import { createStudioMediaStorageKey, serializeStudioDocument } from '../src/features/studio/studioMediaStorage'
 import { resolveStudioAudioMimeType } from '../src/features/studio/studioAudioSelection'
 import {
@@ -1494,6 +1496,26 @@ assert(editedFirstSession.protagonistName === 'Borrador anterior' && secondSessi
 assert(secondSessionDraft.event.venue === secondInvitation.event.venue, 'resets y derivaciones de la nueva sesión parten de su propia invitación')
 
 assert(typeof AppRoutes === 'function' && typeof StudioInvitationRoute === 'function', 'la ruta actual de Studio continúa disponible')
+assert(typeof StudioPublicationPreviewRoute === 'function', 'Studio expone una ruta privada para revisar snapshots publicados')
+const equivalentPublication = {
+  ...maiaInvitationData,
+  id: 'snapshot-interno',
+  internalName: 'Nombre operativo distinto',
+  content: { ...maiaInvitationData.content },
+}
+const exactEquivalence = compareStudioPublicationToPublicBaseline(maiaInvitationData, equivalentPublication)
+const changedPublication = {
+  ...equivalentPublication,
+  content: {
+    ...equivalentPublication.content,
+    story: { ...equivalentPublication.content.story, message: 'Texto publicado distinto' },
+  },
+}
+const changedEquivalence = compareStudioPublicationToPublicBaseline(maiaInvitationData, changedPublication)
+assert(exactEquivalence.equivalent && exactEquivalence.changedSections.length === 0,
+  'la equivalencia ignora metadatos internos que no participan del render público')
+assert(!changedEquivalence.equivalent && changedEquivalence.changedSections.join(',') === 'contenido',
+  'la equivalencia identifica la sección renderizable que difiere del fixture público')
 assert(/\.limen-studio__review-layout\s*\{[^}]*align-items:\s*stretch;[^}]*overflow:\s*hidden;/s.test(studioCss),
   'Revisión estira sus columnas en el workspace de escritorio para que el panel principal pueda desplazarse')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')

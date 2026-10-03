@@ -1,7 +1,10 @@
 import type { PublicationStatus } from '../platform/dataModel'
-import { publicationStatuses } from '../platform/dataModel'
+import { currentProjectSchemaVersion, publicationStatuses } from '../platform/dataModel'
 import { supabase } from '../auth/supabaseClient'
+import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import type { StudioSaveStatus } from './studioAutosave'
+import { hydrateStudioDocument } from './studioMediaStorage'
+import { isOrigin01InvitationDocument } from './studioPersistence'
 
 export type StudioPublicationSummary = {
   readonly id: string
@@ -9,6 +12,11 @@ export type StudioPublicationSummary = {
   readonly draftRevision: number
   readonly status: PublicationStatus
   readonly publishedAt: string
+}
+
+export type StudioPublicationSnapshot = StudioPublicationSummary & {
+  readonly projectId: string
+  readonly document: Origin01InvitationData
 }
 
 export type StudioPublicationState = {
@@ -89,11 +97,11 @@ export function getStudioPublicationBlockReason({
   return undefined
 }
 
-export async function loadLatestStudioPublication(projectId: string): Promise<StudioPublicationSummary | undefined> {
+export async function loadLatestStudioPublication(projectId: string): Promise<StudioPublicationSnapshot | undefined> {
   if (!supabase) throw new StudioPublicationError('Supabase no está configurado.')
   const { data, error } = await supabase
     .from('invitation_publications')
-    .select('id, revision, draft_revision, status, published_at')
+    .select('id, project_id, revision, draft_revision, schema_version, document, status, published_at')
     .eq('project_id', projectId)
     .order('revision', { ascending: false })
     .limit(1)
@@ -101,16 +109,36 @@ export async function loadLatestStudioPublication(projectId: string): Promise<St
 
   if (error) throw new StudioPublicationError('No pudimos recuperar el estado de publicación.')
   if (!data) return undefined
-  if (!publicationStatuses.includes(data.status as PublicationStatus)) {
-    throw new StudioPublicationError('La publicación guardada tiene un estado desconocido.')
+  if (!publicationStatuses.includes(data.status as PublicationStatus)
+    || data.schema_version !== currentProjectSchemaVersion
+    || !isOrigin01InvitationDocument(data.document)) {
+    throw new StudioPublicationError('La publicación guardada usa un formato que este Studio todavía no puede abrir.')
   }
   return {
     id: data.id,
+    projectId: data.project_id,
     revision: data.revision,
     draftRevision: data.draft_revision,
+    document: data.document,
     status: data.status as PublicationStatus,
     publishedAt: data.published_at,
   }
+}
+
+export async function loadStudioPublicationPreview(publicationId: string): Promise<Origin01InvitationData> {
+  if (!supabase) throw new StudioPublicationError('Supabase no está configurado.')
+  const { data, error } = await supabase
+    .from('invitation_publications')
+    .select('project_id, schema_version, document')
+    .eq('id', publicationId)
+    .maybeSingle()
+
+  if (error) throw new StudioPublicationError('No pudimos recuperar la publicación.')
+  if (!data) throw new StudioPublicationError('No encontramos la publicación solicitada.')
+  if (data.schema_version !== currentProjectSchemaVersion || !isOrigin01InvitationDocument(data.document)) {
+    throw new StudioPublicationError('La publicación usa un formato que este Studio todavía no puede abrir.')
+  }
+  return hydrateStudioDocument(data.document, data.project_id)
 }
 
 export async function publishStudioDraft(
