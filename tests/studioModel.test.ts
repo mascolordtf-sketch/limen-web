@@ -73,6 +73,7 @@ import {
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
+import { getStudioPublicationBlockReason } from '../src/features/studio/studioPublication'
 import { createStudioMediaStorageKey, serializeStudioDocument } from '../src/features/studio/studioMediaStorage'
 import { resolveStudioAudioMimeType } from '../src/features/studio/studioAudioSelection'
 import {
@@ -172,6 +173,27 @@ for (const state of [
     'autosave no agenda estados limpios, medios temporales, guardados activos, errores ni conflictos')
 }
 
+const publishableStudioRevision = {
+  persisted: true,
+  draftRevision: 3,
+  dirty: false,
+  hasTemporaryMedia: false,
+  invitationValid: true,
+  editoriallyConfirmed: true,
+  saveStatus: 'saved' as const,
+}
+assert(getStudioPublicationBlockReason(publishableStudioRevision) === undefined,
+  'una revisión guardada, válida y confirmada queda lista para crear un snapshot')
+assert(getStudioPublicationBlockReason({ ...publishableStudioRevision, dirty: true })?.includes('autoguardado')
+  && getStudioPublicationBlockReason({ ...publishableStudioRevision, invitationValid: false })?.includes('errores')
+  && getStudioPublicationBlockReason({ ...publishableStudioRevision, editoriallyConfirmed: false })?.includes('revisión editorial')
+  && getStudioPublicationBlockReason({
+    ...publishableStudioRevision,
+    latestPublication: { id: 'publication-1', revision: 1, draftRevision: 3, status: 'active',
+      publishedAt: '2026-10-03T15:00:00Z' },
+  })?.includes('ya tiene una publicación'),
+  'publicar se bloquea ante cambios pendientes, errores, falta de revisión o una revisión ya publicada')
+
 assert(currentProjectSchemaVersion === 1
   && planHasCapability('essential', 'general_public_link')
   && !planHasCapability('essential', 'native_rsvp')
@@ -188,7 +210,7 @@ const dataFoundationDraft: InvitationDraft<typeof maiaInvitationData> = {
 }
 const dataFoundationPublication: InvitationPublication<typeof maiaInvitationData> = {
   id: 'publication-maia', projectId: 'project-maia', publicCode: maiaInvitationData.code,
-  schemaVersion: 1, revision: 1, document: publicationDocument, status: 'active',
+  schemaVersion: 1, revision: 1, draftRevision: 1, document: publicationDocument, status: 'active',
   publishedAt: '2026-10-02T16:00:00Z', publishedBy: 'admin',
 }
 assert(isPublicationDocumentDetachedFromDraft(dataFoundationDraft, dataFoundationPublication)
@@ -1531,7 +1553,8 @@ assert((dedicatedContentBoundary.match(/id="studio-preview-renderer-title"/g) ??
 const realReviewBoundary = renderToStaticMarkup(createElement(StudioReviewStage, {
   audience: 'protagonist', domains, preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
   validation: validResult, onAudience: () => undefined, onIssue: () => undefined, onOpenPreview: () => undefined,
-  onShowPreview: () => undefined,
+  onShowPreview: () => undefined, publicationState: { status: 'idle' }, editoriallyConfirmed: false,
+  onEditorialConfirmation: () => undefined, onPublish: () => undefined,
 }))
 assert((realReviewBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && realReviewBoundary.includes('Revisá la invitación antes de compartirla')

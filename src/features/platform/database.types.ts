@@ -95,6 +95,7 @@ export type Database = {
           public_code: string
           schema_version: number
           revision: number
+          draft_revision: number
           document: Json
           status: string
           published_by: string
@@ -106,6 +107,7 @@ export type Database = {
           public_code: string
           schema_version: number
           revision: number
+          draft_revision: number
           document: Json
           status?: string
           published_by: string
@@ -142,7 +144,12 @@ export type Database = {
       >
     }
     Views: Record<never, never>
-    Functions: Record<never, never>
+    Functions: {
+      publish_invitation_draft: {
+        Args: { p_project_id: string; p_expected_draft_revision: number }
+        Returns: Json
+      }
+    }
     Enums: Record<never, never>
     CompositeTypes: Record<never, never>
   }

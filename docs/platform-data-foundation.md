@@ -25,8 +25,8 @@ los permisos se validarán en el backend y las rutas privadas exigirán una sesi
 
 La cuenta administradora activa puede operar todos los proyectos. Los editores sólo pueden leer o
 modificar proyectos, borradores y medios cuando poseen una asignación explícita en `project_access`.
-La administración de esas asignaciones y la creación o cambio de publicaciones no se exponen como
-escrituras directas al navegador: se incorporarán mediante operaciones server-side validadas.
+La administración de esas asignaciones no se expone como escritura directa al navegador. La creación
+de publicaciones se ejecuta mediante una función server-side validada y reservada a administradores.
 
 ## Núcleo persistente
 
@@ -80,9 +80,9 @@ cambiar la fuente de lectura. Este fundamento no modifica su ruta, contenido, me
 
 Completado: proyecto Supabase, schema migrado, login/cierre, rutas protegidas, RLS endurecida,
 guardado manual y automático de proyectos y borradores con revisión optimista, recuperación explícita
-de conflictos, y contrato de Storage privado para fotografías y audio.
+de conflictos, Storage privado y publicación inmutable mediante una operación validada.
 
-1. Publicar snapshots inmutables mediante una operación validada del servidor.
-2. Migrar Maia a publicaciones conservando su enlace, únicamente después de verificar equivalencia.
+1. Verificar la equivalencia del snapshot de Maia y migrar su lectura conservando el enlace.
+2. Incorporar el panel de invitaciones y operaciones de pausa, reactivación, archivo y rollback.
 3. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
 4. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.
