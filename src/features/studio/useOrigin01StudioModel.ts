@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import type { InvitationModuleId } from '../invitations/engine/moduleTypes'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
@@ -57,7 +57,7 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
     setDraft((current) => resetOrigin01StudioConfiguration(current, initialDraft))
   const setModuleEnabled = (moduleId: InvitationModuleId, enabled: boolean) =>
     setDraft((current) => updateOrigin01StudioModule(invitation, current, moduleId, enabled))
-  const markSaved = (savedDraft: Origin01StudioDraft) => setInitialDraft(savedDraft)
+  const markSaved = useCallback((savedDraft: Origin01StudioDraft) => setInitialDraft(savedDraft), [])
 
   const dirtyState: StudioDirtyStateBoundary<Origin01StudioDraft> = {
     initialDraft,

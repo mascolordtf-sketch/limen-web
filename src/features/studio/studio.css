@@ -3023,7 +3023,8 @@
   text-transform: uppercase;
 }
 
-.limen-studio__draft-status--error {
+.limen-studio__draft-status--error,
+.limen-studio__draft-status--conflict {
   color: #9b3f32;
 }
 
@@ -3046,6 +3047,10 @@
 }
 
 .limen-studio__save-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
   margin: .75rem 1rem 0;
   border: 1px solid #d8c6a2;
   border-radius: .7rem;
@@ -3054,6 +3059,25 @@
   color: #624c27;
   font-size: .82rem;
   line-height: 1.45;
+}
+
+.limen-studio__save-notice button {
+  flex: 0 0 auto;
+  min-height: 2.3rem;
+  border: 1px solid currentcolor;
+  border-radius: .6rem;
+  padding: .45rem .7rem;
+  background: transparent;
+  color: inherit;
+  font: 750 .78rem/1.2 inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 40rem) {
+  .limen-studio__save-notice {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 
 .limen-studio__persistence-message {

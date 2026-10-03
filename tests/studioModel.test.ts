@@ -72,6 +72,7 @@ import {
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
+import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
 import { createStudioMediaStorageKey, serializeStudioDocument } from '../src/features/studio/studioMediaStorage'
 import { resolveStudioAudioMimeType } from '../src/features/studio/studioAudioSelection'
 import {
@@ -155,6 +156,21 @@ assert(resolveStudioAvailability({ dev: true })
   && !resolveStudioAvailability({ dev: false })
   && !resolveStudioAvailability({ dev: false, explicitFlag: 'false' }),
   'Studio queda habilitado en desarrollo o mediante una bandera explícita, pero no en producción por defecto')
+
+assert(studioAutosaveDelayMs === 2_000
+  && shouldScheduleStudioAutosave({ dirty: true, hasTemporaryMedia: false, saveStatus: 'idle' })
+  && shouldScheduleStudioAutosave({ dirty: true, hasTemporaryMedia: false, saveStatus: 'saved' }),
+  'autosave espera dos segundos y sólo agenda borradores modificados que están listos para guardar')
+for (const state of [
+  { dirty: false, hasTemporaryMedia: false, saveStatus: 'idle' as const },
+  { dirty: true, hasTemporaryMedia: true, saveStatus: 'idle' as const },
+  { dirty: true, hasTemporaryMedia: false, saveStatus: 'saving' as const },
+  { dirty: true, hasTemporaryMedia: false, saveStatus: 'error' as const },
+  { dirty: true, hasTemporaryMedia: false, saveStatus: 'conflict' as const },
+]) {
+  assert(!shouldScheduleStudioAutosave(state),
+    'autosave no agenda estados limpios, medios temporales, guardados activos, errores ni conflictos')
+}
 
 assert(currentProjectSchemaVersion === 1
   && planHasCapability('essential', 'general_public_link')
