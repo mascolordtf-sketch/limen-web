@@ -40,6 +40,7 @@ import { studioDesktopMediaQuery } from '../src/features/studio/studioViewport'
 import { createStudioTemplateGalleryState, createStudioTemplateOptions,
   transitionStudioTemplateGallery } from '../src/features/studio/studioTemplateGallery'
 import { StudioStoryEditor } from '../src/features/studio/StudioStoryEditor'
+import studioCss from '../src/features/studio/studio.css?raw'
 import { StudioContentEditor } from '../src/features/studio/StudioContentEditor'
 import { StudioEventScheduleEditor } from '../src/features/studio/StudioEventScheduleEditor'
 import { StudioScheduleEditor } from '../src/features/studio/StudioScheduleEditor'
@@ -1493,6 +1494,8 @@ assert(editedFirstSession.protagonistName === 'Borrador anterior' && secondSessi
 assert(secondSessionDraft.event.venue === secondInvitation.event.venue, 'resets y derivaciones de la nueva sesión parten de su propia invitación')
 
 assert(typeof AppRoutes === 'function' && typeof StudioInvitationRoute === 'function', 'la ruta actual de Studio continúa disponible')
+assert(/\.limen-studio__review-layout\s*\{[^}]*align-items:\s*stretch;[^}]*overflow:\s*hidden;/s.test(studioCss),
+  'Revisión estira sus columnas en el workspace de escritorio para que el panel principal pueda desplazarse')
 assert(typeof StudioPreview === 'function' && typeof Origin01Invitation === 'function', 'StudioPreview continúa conectado al renderer público real')
 const previewMarkup = renderToStaticMarkup(StudioPreview({ invitation: validPreview, audience: 'protagonist',
   publicInvitationUrl: '/demo/LMN-ORIGIN01', previewKey: 'protagonist-0', showing: 'current',
