@@ -4984,6 +4984,7 @@
   .limen-studio__review-layout {
     min-height: 0;
     grid-template-columns: minmax(0, 1fr) 27rem;
+    align-items: stretch;
     overflow: hidden;
   }
 
