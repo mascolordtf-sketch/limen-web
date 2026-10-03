@@ -7,6 +7,8 @@ import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersiste
 import type { StudioSaveState } from './studioAutosave'
 import { uploadStudioMedia } from './studioMediaStorage'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
+import { loadLatestStudioPublication, publishStudioDraft, StudioPublicationError } from './studioPublication'
+import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
 
 type LoadState =
   | { readonly status: 'loading' }
@@ -16,20 +18,26 @@ type LoadState =
       readonly document: Origin01InvitationData
       readonly location?: StudioDraftLocation
       readonly persisted?: PersistedStudioDraft
+      readonly publication?: StudioPublicationSummary
     }
 
 export function useStudioInvitationPersistence(baseInvitation: Origin01InvitationData) {
   const { userId } = useStudioAuth()
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
   const [saveState, setSaveState] = useState<StudioSaveState>({ status: 'idle' })
+  const [publicationState, setPublicationState] = useState<StudioPublicationState>({ status: 'idle' })
   const locationRef = useRef<StudioDraftLocation | undefined>(undefined)
   const projectRequestRef = useRef<Promise<string> | undefined>(undefined)
   const saveRequestRef = useRef<Promise<boolean> | undefined>(undefined)
+  const publicationRequestRef = useRef<Promise<boolean> | undefined>(undefined)
 
   useEffect(() => {
     let active = true
     void loadStudioDraft(baseInvitation.code)
-      .then(({ location, persisted }) => {
+      .then(async ({ location, persisted }) => {
+        const publication = location?.projectId
+          ? await loadLatestStudioPublication(location.projectId)
+          : undefined
         if (!active) return
         locationRef.current = location
         setLoadState({
@@ -37,6 +45,7 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
           document: persisted?.document ?? baseInvitation,
           location,
           persisted,
+          publication,
         })
       })
       .catch((error: unknown) => {
@@ -86,7 +95,13 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
           userId,
         })
         locationRef.current = persisted
-        setLoadState({ status: 'ready', document, location: persisted, persisted })
+        setLoadState((current) => ({
+          status: 'ready',
+          document,
+          location: persisted,
+          persisted,
+          publication: current.status === 'ready' ? current.publication : undefined,
+        }))
         setSaveState({ status: 'saved' })
         return true
       } catch (error) {
@@ -106,11 +121,44 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
     return request
   }, [baseInvitation, loadState.status, userId])
 
+  const publish = useCallback((expectedDraftRevision: number) => {
+    const location = locationRef.current
+    if (loadState.status !== 'ready' || !location?.projectId || !location.draftId
+      || location.revision !== expectedDraftRevision || publicationRequestRef.current) {
+      return Promise.resolve(false)
+    }
+
+    const request = (async () => {
+      setPublicationState({ status: 'publishing' })
+      try {
+        const publication = await publishStudioDraft(location.projectId, expectedDraftRevision)
+        setLoadState((current) => current.status === 'ready' ? { ...current, publication } : current)
+        setPublicationState({ status: 'success', message: 'La publicación se creó correctamente.' })
+        return true
+      } catch (error) {
+        setPublicationState({
+          status: 'error',
+          message: error instanceof StudioPublicationError
+            ? error.message
+            : 'No pudimos crear la publicación.',
+        })
+        return false
+      }
+    })()
+
+    publicationRequestRef.current = request
+    void request.finally(() => {
+      if (publicationRequestRef.current === request) publicationRequestRef.current = undefined
+    })
+    return request
+  }, [loadState.status])
+
   const clearSaveFeedback = useCallback(() => {
     setSaveState((current) => current.status === 'saving' || current.status === 'conflict'
       ? current
       : { status: 'idle' })
+    setPublicationState((current) => current.status === 'publishing' ? current : { status: 'idle' })
   }, [])
 
-  return { loadState, saveState, save, uploadMedia, clearSaveFeedback }
+  return { loadState, saveState, publicationState, save, publish, uploadMedia, clearSaveFeedback }
 }

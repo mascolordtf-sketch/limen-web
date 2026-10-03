@@ -36,6 +36,8 @@ import { findStudioSceneByEditorId, selectSceneAfterExclusion, studioGeneralScen
   type StudioSceneId } from './studioScenes'
 import { createStudioTemplateGalleryState } from './studioTemplateGallery'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
+import { getStudioPublicationBlockReason } from './studioPublication'
+import type { StudioPublicationState, StudioPublicationSummary } from './studioPublication'
 import './studio.css'
 
 const studioSavedAtFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
@@ -46,12 +48,16 @@ type StudioInvitationPageProps = {
   readonly revision?: number
   readonly updatedAt?: string
   readonly saveState: StudioSaveState
+  readonly publication?: StudioPublicationSummary
+  readonly publicationState: StudioPublicationState
   readonly onSave: (document: Origin01InvitationData) => Promise<boolean>
+  readonly onPublish: (expectedDraftRevision: number) => Promise<boolean>
   readonly onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
   readonly onEdit: () => void
 }
 
-export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, onSave, onUploadMedia, onEdit }:
+export function StudioInvitationPage({ invitation, persisted, revision, updatedAt, saveState, publication,
+  publicationState, onSave, onPublish, onUploadMedia, onEdit }:
 StudioInvitationPageProps) {
   const { signOut } = useStudioAuth()
   const template = findInvitationTemplate(invitation.templateId)
@@ -64,6 +70,7 @@ StudioInvitationPageProps) {
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
+  const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
   const [selectedEditorByScene, setSelectedEditorByScene] = useState<Partial<Record<StudioSceneId, string>>>({
     general: studioGeneralScene.editorIds[0],
@@ -79,6 +86,7 @@ StudioInvitationPageProps) {
   const layerOpen = isStudioPreviewDedicated(surface)
   const previewCollapsed = isStudioPreviewEffectivelyCollapsed(surface)
   const hasTemporaryMedia = hasUnpersistedStudioMedia(model.draft)
+  const editoriallyConfirmed = editoriallyConfirmedDraft === model.draft
   const currentDraft = model.draft
   const currentPreviewInvitation = model.previewInvitation
   const markCurrentDraftSaved = model.markSaved
@@ -96,6 +104,16 @@ StudioInvitationPageProps) {
           : persisted
             ? 'Cambios sin guardar'
             : 'Todavía sin guardar'
+  const publicationBlockReason = getStudioPublicationBlockReason({
+    persisted,
+    draftRevision: revision,
+    dirty: model.isDirty,
+    hasTemporaryMedia,
+    invitationValid: model.validation.invitationValid,
+    editoriallyConfirmed,
+    saveStatus: saveState.status,
+    latestPublication: publication,
+  })
 
   useEffect(() => {
     if (observedDraft.current === model.draft) return
@@ -131,6 +149,11 @@ StudioInvitationPageProps) {
   const requestSignOut = () => {
     if (model.isDirty && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
     void signOut()
+  }
+  const requestPublication = () => {
+    if (revision === undefined || publicationBlockReason) return
+    if (!window.confirm(`Se creará una publicación inmutable desde el borrador ${revision}. ¿Querés continuar?`)) return
+    void onPublish(revision)
   }
 
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
@@ -306,7 +329,11 @@ StudioInvitationPageProps) {
       {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
         validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
-        onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })} />}
+        onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
+        publication={publication} publicationState={publicationState} draftRevision={revision}
+        publicationBlockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
+        onEditorialConfirmation={(confirmed) => setEditoriallyConfirmedDraft(confirmed ? model.draft : undefined)}
+        onPublish={requestPublication} />}
     </main>
   </div></div>
 }
