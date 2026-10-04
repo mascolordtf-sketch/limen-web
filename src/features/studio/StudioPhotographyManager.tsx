@@ -1,4 +1,30 @@
-import { useEffect, useId, useRef, useState, type RefObject } from 'react'
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
+import {
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  SortableContext,
+  useSortable,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type RefObject,
+} from 'react'
 
 import { findStudioMediaById, getStudioMediaAssignments } from './studioMedia'
 import type { StudioImageMedia } from './studioMedia'
@@ -28,6 +54,8 @@ type StudioPhotographyManagerProps = {
   onMediaChange: MediaUpdater
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
+  selectedTarget?: StudioPhotoTarget
+  onSelectedTargetChange?: (target?: StudioPhotoTarget) => void
   editingTarget?: StudioPhotoTarget
   onEditingTargetChange?: (target?: StudioPhotoTarget) => void
 }
@@ -55,94 +83,138 @@ const photographyFingerprint = (state: Origin01StudioMediaState) => JSON.stringi
   assignments: state.assignments.filter(({ slotId }) => slotId !== 'music.audio'),
 })
 
-const targetLabel = (target: StudioPhotoTarget) =>
-  `${target.label}${target.position === undefined ? '' : ` ${target.position + 1}`}`
+const targetLabel = (target: StudioPhotoTarget) => target.slotId === 'gallery.images'
+  ? `Foto ${(target.position ?? 0) + 1}`
+  : target.label
 
-function StudioPhotoCard({
-  target, media, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
-  onChoose, onReset, onRemove, onMove, onEdit,
-}: {
+type StudioPhotoCardProps = {
   target: StudioPhotoTarget
   media?: StudioImageMedia
   focalPoint?: { readonly x: number; readonly y: number }
   zoom?: number
-  canonical: boolean
-  canRemove: boolean
-  canMoveUp: boolean
-  canMoveDown: boolean
+  selected: boolean
   disabled: boolean
   processing: boolean
   error?: string
+  dragHandle?: ReactNode
+  overlay?: boolean
+  onSelect: () => void
+}
+
+function StudioPhotoCard({
+  target, media, focalPoint, zoom = 1, selected, disabled, processing, error, dragHandle, overlay, onSelect,
+}: StudioPhotoCardProps) {
+  const src = media?.status === 'ready' ? media.src : media?.previewSrc
+
+  return <article className={`limen-studio__photo-card${selected ? ' is-selected' : ''}${overlay ? ' is-overlay' : ''}`}>
+    <button id={overlay ? undefined : `studio-photo-select-${target.key}`}
+      className="limen-studio__photo-card-select" type="button" disabled={disabled || overlay}
+      aria-pressed={selected} aria-label={`Seleccionar ${targetLabel(target)}`} onClick={onSelect}>
+      <span className="limen-studio__photo-preview">
+        {src ? <img src={src} alt="" style={{
+          objectPosition: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
+          transform: `scale(${zoom})`,
+          transformOrigin: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
+        }} /> : <span>Sin fotografía</span>}
+        {processing && <span className="limen-studio__photo-progress">Procesando…</span>}
+      </span>
+      <span className="limen-studio__photo-card-caption">
+        <strong>{targetLabel(target)}</strong>
+        {selected && <small>Seleccionada</small>}
+      </span>
+    </button>
+    {dragHandle}
+    {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
+  </article>
+}
+
+function SortableStudioPhotoCard({ sortableId, ...props }: StudioPhotoCardProps & { sortableId: string }) {
+  const {
+    attributes,
+    listeners,
+    setActivatorNodeRef,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: sortableId, disabled: props.disabled })
+  const style: CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return <div ref={setNodeRef} style={style}
+    className={`limen-studio__sortable-photo${isDragging ? ' is-dragging' : ''}`}>
+    <StudioPhotoCard {...props} dragHandle={<button ref={setActivatorNodeRef}
+      className="limen-studio__photo-drag-handle" type="button" disabled={props.disabled}
+      aria-label={`Reordenar ${targetLabel(props.target)}`} {...attributes} {...listeners}>
+      <span aria-hidden="true"><i /><i /><i /><i /><i /><i /></span>
+    </button>} />
+  </div>
+}
+
+function StudioPhotoInspector({
+  target, media, canonical, canRemove, disabled, processing, onChoose, onEdit, onReset, onRemove,
+}: {
+  target: StudioPhotoTarget
+  media?: StudioImageMedia
+  canonical: boolean
+  canRemove: boolean
+  disabled: boolean
+  processing: boolean
   onChoose: (file: File) => void
+  onEdit: () => void
   onReset: () => void
   onRemove: () => void
-  onMove: (direction: -1 | 1) => void
-  onEdit: () => void
 }) {
   const inputId = useId()
   const actionsMenuRef = useRef<HTMLDetailsElement>(null)
-  const src = media?.status === 'ready' ? media.src : media?.previewSrc
-  const hasSecondaryActions = !canonical || canRemove || canMoveUp || canMoveDown
   const closeActionsMenu = () => actionsMenuRef.current?.removeAttribute('open')
   const runMenuAction = (action: () => void) => {
     closeActionsMenu()
     action()
   }
+  const hasSecondaryActions = !canonical || canRemove
 
-  return <article className="limen-studio__photo-card">
-    <div className="limen-studio__photo-preview">
-      {src ? <img src={src} alt="" style={{
-        objectPosition: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
-        transform: `scale(${zoom})`,
-        transformOrigin: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
-      }} /> : <span>Sin fotografía</span>}
+  return <section className="limen-studio__photo-inspector" aria-label={`Acciones para ${targetLabel(target)}`}>
+    <div className="limen-studio__photo-inspector-copy">
       <strong>{targetLabel(target)}</strong>
-      {processing && <span className="limen-studio__photo-progress">Procesando…</span>}
-      {media && <button id={`studio-photo-edit-${target.key}`} className="limen-studio__photo-preview-edit"
-        type="button" disabled={disabled}
-        aria-label={`Detalles y encuadre de ${targetLabel(target)}: posición y Zoom`}
-        onClick={onEdit}><span>Editar</span></button>}
+      <span>{target.slotId === 'gallery.images'
+        ? 'Esta fotografía forma parte de la galería.'
+        : 'Esta imagen se muestra en una escena fija de la invitación.'}</span>
     </div>
-    <div className="limen-studio__photo-card-body">
-      <div className="limen-studio__photo-actions">
-        <label className="limen-studio__photo-action" htmlFor={inputId}
-          aria-label={`${src ? 'Cambiar foto' : 'Elegir foto'} de ${targetLabel(target)}`}>
-          {src ? 'Cambiar' : 'Elegir'}
-        </label>
-        <input id={inputId} className="limen-studio__visually-hidden" type="file"
-          accept="image/jpeg,image/png,image/webp" disabled={disabled}
-          onChange={(event) => {
-            const file = event.currentTarget.files?.[0]
-            event.currentTarget.value = ''
-            if (file) onChoose(file)
-          }} />
-        {hasSecondaryActions && <details className="limen-studio__photo-actions-menu" ref={actionsMenuRef}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) closeActionsMenu()
-          }}
-          onKeyDown={(event) => {
-            if (event.key !== 'Escape') return
-            closeActionsMenu()
-            event.currentTarget.querySelector<HTMLElement>('summary')?.focus()
-          }}>
-          <summary aria-label={`Más acciones para ${targetLabel(target)}`}>
-            <span aria-hidden="true">•••</span>
-          </summary>
-          <div>
-            {!canonical && <button type="button" onClick={() => runMenuAction(onReset)}
-              disabled={disabled}>Restablecer</button>}
-            {canMoveUp && <button type="button" onClick={() => runMenuAction(() => onMove(-1))}
-              disabled={disabled}>Mover antes</button>}
-            {canMoveDown && <button type="button" onClick={() => runMenuAction(() => onMove(1))}
-              disabled={disabled}>Mover después</button>}
-            {canRemove && <button className="limen-studio__photo-destructive-action" type="button"
-              onClick={() => runMenuAction(onRemove)} disabled={disabled}>Quitar</button>}
-          </div>
-        </details>}
-      </div>
-      {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
+    <div className="limen-studio__photo-inspector-actions">
+      <button type="button" disabled={disabled || !media} onClick={onEdit}>Reencuadrar</button>
+      <label className="limen-studio__photo-action" htmlFor={inputId}>
+        {media ? 'Reemplazar' : 'Elegir fotografía'}
+      </label>
+      <input id={inputId} className="limen-studio__visually-hidden" type="file"
+        accept="image/jpeg,image/png,image/webp" disabled={disabled}
+        onChange={(event) => {
+          const file = event.currentTarget.files?.[0]
+          event.currentTarget.value = ''
+          if (file) onChoose(file)
+        }} />
+      {hasSecondaryActions && <details className="limen-studio__photo-actions-menu" ref={actionsMenuRef}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) closeActionsMenu()
+        }}
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') return
+          closeActionsMenu()
+          event.currentTarget.querySelector<HTMLElement>('summary')?.focus()
+        }}>
+        <summary aria-label={`Más acciones para ${targetLabel(target)}`}><span aria-hidden="true">•••</span></summary>
+        <div>
+          {!canonical && <button type="button" onClick={() => runMenuAction(onReset)}
+            disabled={disabled}>Restablecer</button>}
+          {canRemove && <button className="limen-studio__photo-destructive-action" type="button"
+            onClick={() => runMenuAction(onRemove)} disabled={disabled}>Quitar</button>}
+        </div>
+      </details>}
     </div>
-  </article>
+    {processing && <p className="limen-studio__photo-inspector-status" role="status">Preparando fotografía…</p>}
+  </section>
 }
 
 function StudioPhotoEditor({
@@ -174,7 +246,7 @@ function StudioPhotoEditor({
     <header className="limen-studio__photo-editor-heading">
       <p className="limen-studio__eyebrow">Encuadre</p>
       <h3 id="studio-photo-editor-title" ref={headingRef} tabIndex={-1}>{targetLabel(target)}</h3>
-      <p>La preview ya está ubicada en la escena real. Ajustá la imagen y mirá el resultado a la derecha.</p>
+      <p>La vista previa está ubicada en la escena real. Ajustá la imagen y mirá el resultado a la derecha.</p>
     </header>
     <div className="limen-studio__photo-editor-form">
       <fieldset className="limen-studio__photo-editor-framing">
@@ -210,15 +282,22 @@ function StudioPhotoEditor({
 
 export function StudioPhotographyManager({
   state, initialState, protagonistName, initialGalleryCaptions,
-  onMediaChange, onGalleryCaptionsChange, onUploadMedia, editingTarget, onEditingTargetChange,
+  onMediaChange, onGalleryCaptionsChange, onUploadMedia,
+  selectedTarget, onSelectedTargetChange, editingTarget, onEditingTargetChange,
 }: StudioPhotographyManagerProps) {
   const [busyTarget, setBusyTarget] = useState<string>()
   const [errors, setErrors] = useState<Readonly<Record<string, string>>>({})
   const [galleryOrderAnnouncement, setGalleryOrderAnnouncement] = useState('')
+  const [activeGalleryId, setActiveGalleryId] = useState<string>()
   const editorHeadingRef = useRef<HTMLHeadingElement>(null)
   const editorOpenerKeyRef = useRef<string | undefined>(undefined)
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
 
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
+  const galleryIds = galleryAssignments.map(({ mediaId }) => mediaId)
   const photographyChanged = photographyFingerprint(state) !== photographyFingerprint(initialState)
   const assignmentFor = (target: StudioPhotoTarget, source = state) =>
     getStudioMediaAssignments(source.assignments, target.slotId)
@@ -244,6 +323,14 @@ export function StudioPhotographyManager({
     }
   }
 
+  const galleryTargetAt = (position: number): StudioPhotoTarget => ({
+    key: `gallery-${galleryAssignments[position]?.mediaId ?? position}`,
+    slotId: 'gallery.images',
+    label: 'Galería',
+    position,
+    previewScene: 'gallery',
+  })
+
   useEffect(() => {
     if (editingTarget) editorHeadingRef.current?.focus()
   }, [editingTarget])
@@ -252,12 +339,13 @@ export function StudioPhotographyManager({
     onEditingTargetChange?.(undefined)
     requestAnimationFrame(() => {
       if (!editorOpenerKeyRef.current) return
-      document.getElementById(`studio-photo-edit-${editorOpenerKeyRef.current}`)?.focus()
+      document.getElementById(`studio-photo-select-${editorOpenerKeyRef.current}`)?.focus()
     })
   }
 
   const beginEditing = (target: StudioPhotoTarget) => {
     editorOpenerKeyRef.current = target.key
+    onSelectedTargetChange?.(target)
     onEditingTargetChange?.(target)
   }
 
@@ -295,6 +383,9 @@ export function StudioPhotographyManager({
       if (target.slotId === 'gallery.images' && target.position === galleryAssignments.length) {
         onGalleryCaptionsChange((current) => [...current, ''])
       }
+      onSelectedTargetChange?.(target.slotId === 'gallery.images'
+        ? { ...target, key: `gallery-${id}` }
+        : target)
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : 'No pudimos preparar la imagen.'
       onMediaChange((current) => updateStudioPhotoItem(current, id, (item) => ({
@@ -314,7 +405,7 @@ export function StudioPhotographyManager({
       const withInitialMedia = current.items.some(({ id }) => id === initialMedia.id)
         ? current
         : { ...current, items: [...current.items, initialMedia] }
-      const restored = assignStudioPhoto(withInitialMedia, target.slotId, initial.mediaId, target.position)
+      const restored = assignStudioPhoto(withInitialMedia, target.slotId, initialMedia.id, target.position)
       return {
         ...restored,
         assignments: restored.assignments.map((assignment) => assignment.slotId === target.slotId
@@ -324,7 +415,20 @@ export function StudioPhotographyManager({
       }
     })
     setErrors((current) => ({ ...current, [target.key]: '' }))
-    if (!initial && editingTarget?.key === target.key) closeEditor()
+    if (!initial) {
+      if (editingTarget?.key === target.key) closeEditor()
+      if (selectedTarget?.key === target.key) onSelectedTargetChange?.(undefined)
+    } else if (target.slotId === 'gallery.images') {
+      onSelectedTargetChange?.({ ...target, key: `gallery-${initial.mediaId}` })
+    }
+  }
+
+  const removeTarget = (target: StudioPhotoTarget) => {
+    onMediaChange((current) => removeStudioPhotoAssignment(current, target.slotId, target.position))
+    if (target.slotId === 'gallery.images' && target.position !== undefined) {
+      onGalleryCaptionsChange((current) => current.filter((_, position) => position !== target.position))
+    }
+    if (selectedTarget?.key === target.key) onSelectedTargetChange?.(undefined)
   }
 
   const moveGalleryPhoto = (from: number, to: number) => {
@@ -343,32 +447,40 @@ export function StudioPhotographyManager({
     setGalleryOrderAnnouncement(`La foto ${from + 1} ahora ocupa la posición ${to + 1}.`)
   }
 
-  const renderCard = (target: StudioPhotoTarget, index?: number) => {
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    const id = String(active.id)
+    setActiveGalleryId(id)
+    const position = galleryIds.indexOf(id)
+    if (position >= 0) onSelectedTargetChange?.(galleryTargetAt(position))
+  }
+
+  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    setActiveGalleryId(undefined)
+    if (!over || active.id === over.id) return
+    const from = galleryIds.indexOf(String(active.id))
+    const to = galleryIds.indexOf(String(over.id))
+    if (from < 0 || to < 0) return
+    const movedTarget = galleryTargetAt(from)
+    moveGalleryPhoto(from, to)
+    onSelectedTargetChange?.({ ...movedTarget, position: to })
+  }
+
+  const renderCard = (target: StudioPhotoTarget, sortableId?: string) => {
     const resolved = resolveTarget(target)
-    return <StudioPhotoCard key={target.key} target={target} media={resolved.media}
-      focalPoint={resolved.assignment?.focalPoint}
-      zoom={resolved.assignment?.zoom}
-      canonical={resolved.canonical}
-      canRemove={(target.slotId === 'gallery.images' && galleryAssignments.length > 1)
-        || target.slotId === 'dressCode.image' || target.slotId === 'gifts.image'}
-      canMoveUp={target.slotId === 'gallery.images' && (index ?? 0) > 0}
-      canMoveDown={target.slotId === 'gallery.images' && (index ?? 0) < galleryAssignments.length - 1}
-      disabled={busyTarget !== undefined} processing={busyTarget === target.key}
-      error={errors[target.key] || resolved.accessibilityError}
-      onChoose={(file) => void choosePhoto(target, file)}
-      onReset={() => resetTarget(target)}
-      onEdit={() => beginEditing(target)}
-      onRemove={() => {
-        onMediaChange((current) => removeStudioPhotoAssignment(current, target.slotId, target.position))
-        if (target.slotId === 'gallery.images' && target.position !== undefined) {
-          onGalleryCaptionsChange((current) => current.filter((_, position) => position !== target.position))
-        }
-      }}
-      onMove={(direction) => {
-        if (target.position === undefined) return
-        moveGalleryPhoto(target.position, target.position + direction)
-      }}
-    />
+    const cardProps: StudioPhotoCardProps = {
+      target,
+      media: resolved.media,
+      focalPoint: resolved.assignment?.focalPoint,
+      zoom: resolved.assignment?.zoom,
+      selected: selectedTarget?.key === target.key,
+      disabled: busyTarget !== undefined,
+      processing: busyTarget === target.key,
+      error: errors[target.key] || resolved.accessibilityError,
+      onSelect: () => onSelectedTargetChange?.(target),
+    }
+    return sortableId
+      ? <SortableStudioPhotoCard key={sortableId} sortableId={sortableId} {...cardProps} />
+      : <StudioPhotoCard key={target.key} {...cardProps} />
   }
 
   if (editingTarget) {
@@ -401,11 +513,20 @@ export function StudioPhotographyManager({
   }
 
   const addTargetKey = `gallery-new-${galleryAssignments.length}`
+  const selected = selectedTarget ? resolveTarget(selectedTarget) : undefined
+  const selectedCanRemove = selectedTarget
+    ? (selectedTarget.slotId === 'gallery.images' && galleryAssignments.length > 1)
+      || selectedTarget.slotId === 'dressCode.image' || selectedTarget.slotId === 'gifts.image'
+    : false
+  const activeGalleryPosition = activeGalleryId ? galleryIds.indexOf(activeGalleryId) : -1
+  const activeGalleryTarget = activeGalleryPosition >= 0 ? galleryTargetAt(activeGalleryPosition) : undefined
+  const activeGalleryResolved = activeGalleryTarget ? resolveTarget(activeGalleryTarget) : undefined
+
   return <section className="limen-studio__photography" aria-labelledby="studio-photography-title">
     <header className="limen-studio__media-section-heading">
       <div>
         <h3 id="studio-photography-title" className="limen-studio__visually-hidden">Fotografías</h3>
-        <p>Portada, escenas y galería · JPG, PNG o WebP · hasta 12 MB.</p>
+        <p>Seleccioná una imagen para trabajarla. La vista previa te muestra su escena real.</p>
       </div>
       {photographyChanged && <button type="button" disabled={busyTarget !== undefined} onClick={() => {
         onMediaChange((current) => ({
@@ -419,39 +540,63 @@ export function StudioPhotographyManager({
           ],
         }))
         onGalleryCaptionsChange(() => [...initialGalleryCaptions])
+        onSelectedTargetChange?.(undefined)
         setErrors({})
       }}>Restablecer fotos</button>}
     </header>
     <section className="limen-studio__photo-group" aria-labelledby="studio-primary-photos-title">
       <h4 id="studio-primary-photos-title">Escenas principales</h4>
-      <div className="limen-studio__photo-grid">{singleTargets.map((target) => renderCard(target))}</div>
-    </section>
-    <div className="limen-studio__gallery-manager">
-      <header><div><h4>Galería</h4><p>Cambiá el orden desde el menú de cada fotografía.</p></div></header>
-      <div className="limen-studio__photo-grid">{galleryAssignments.map((_, index) => renderCard({
-        key: `gallery-${index}`, slotId: 'gallery.images', label: 'Galería', position: index,
-        previewScene: 'gallery',
-      }, index))}
-        <label className="limen-studio__photo-add-tile" htmlFor="studio-add-gallery-photo">
-          <span aria-hidden="true">+</span><strong>Agregar foto</strong><small>JPG, PNG o WebP</small>
-        </label>
-        <input id="studio-add-gallery-photo" className="limen-studio__visually-hidden" type="file"
-          accept="image/jpeg,image/png,image/webp" disabled={busyTarget !== undefined}
-          onChange={(event) => {
-            const file = event.currentTarget.files?.[0]
-            event.currentTarget.value = ''
-            if (file) void choosePhoto({
-              key: addTargetKey, slotId: 'gallery.images', label: 'Galería', position: galleryAssignments.length,
-              previewScene: 'gallery',
-            }, file)
-          }} />
+      <div className="limen-studio__photo-grid limen-studio__photo-grid--scenes">
+        {singleTargets.map((target) => renderCard(target))}
       </div>
+    </section>
+    {selectedTarget && selected && <StudioPhotoInspector target={selectedTarget} media={selected.media}
+      canonical={selected.canonical} canRemove={selectedCanRemove} disabled={busyTarget !== undefined}
+      processing={busyTarget === selectedTarget.key}
+      onChoose={(file) => void choosePhoto(selectedTarget, file)}
+      onEdit={() => beginEditing(selectedTarget)} onReset={() => resetTarget(selectedTarget)}
+      onRemove={() => removeTarget(selectedTarget)} />}
+    <div className="limen-studio__gallery-manager">
+      <header><div><h4>Galería</h4><p>Arrastrá desde el controlador para ordenar.</p></div></header>
+      <DndContext sensors={sensors} collisionDetection={closestCenter}
+        onDragStart={handleDragStart} onDragCancel={() => setActiveGalleryId(undefined)} onDragEnd={handleDragEnd}>
+        <SortableContext items={galleryIds} strategy={rectSortingStrategy}>
+          <div className="limen-studio__photo-grid limen-studio__photo-grid--gallery">
+            {galleryAssignments.map((assignment, index) => renderCard(galleryTargetAt(index), assignment.mediaId))}
+            <label className="limen-studio__photo-add-tile" htmlFor="studio-add-gallery-photo">
+              <span aria-hidden="true">+</span><strong>Agregar foto</strong><small>JPG, PNG o WebP</small>
+            </label>
+            <input id="studio-add-gallery-photo" className="limen-studio__visually-hidden" type="file"
+              accept="image/jpeg,image/png,image/webp" disabled={busyTarget !== undefined}
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0]
+                event.currentTarget.value = ''
+                if (file) void choosePhoto({
+                  key: addTargetKey,
+                  slotId: 'gallery.images',
+                  label: 'Galería',
+                  position: galleryAssignments.length,
+                  previewScene: 'gallery',
+                }, file)
+              }} />
+          </div>
+        </SortableContext>
+        <DragOverlay dropAnimation={null}>
+          {activeGalleryTarget && activeGalleryResolved
+            ? <div className="limen-studio__photo-drag-overlay">
+              <StudioPhotoCard target={activeGalleryTarget} media={activeGalleryResolved.media}
+                focalPoint={activeGalleryResolved.assignment?.focalPoint}
+                zoom={activeGalleryResolved.assignment?.zoom} selected={false} disabled processing={false}
+                overlay onSelect={() => undefined} />
+            </div>
+            : null}
+        </DragOverlay>
+      </DndContext>
       {errors[addTargetKey] && <p className="limen-studio__field-error" role="alert">{errors[addTargetKey]}</p>}
     </div>
     <p className="limen-studio__visually-hidden" aria-live="polite">{galleryOrderAnnouncement}</p>
     <p className={busyTarget ? 'limen-studio__photo-status' : 'limen-studio__visually-hidden'} aria-live="polite">
-      {busyTarget ? 'Preparando y guardando la fotografía. La imagen anterior permanece visible hasta terminar.'
-        : ''}
+      {busyTarget ? 'Preparando y guardando la fotografía. La imagen anterior permanece visible hasta terminar.' : ''}
     </p>
   </section>
 }
