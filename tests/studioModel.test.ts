@@ -761,9 +761,13 @@ const emptyHistoricalMusic = {
     ...maiaStudioDraft.media.assignments, { slotId: 'music.audio' as const, mediaId: '' },
   ] },
 }
+const emptyHistoricalMusicValidation = validateOrigin01StudioDraft(maiaInvitationData, emptyHistoricalMusic)
 assert(getOrigin01StudioMusic(emptyHistoricalMusic.media) === undefined
-  && validateOrigin01StudioDraft(maiaInvitationData, emptyHistoricalMusic).fieldErrors.preludeSoundHint === null,
-  'una asignación vacía histórica tampoco cuenta como música activa')
+  && emptyHistoricalMusicValidation.fieldErrors.preludeSoundHint === null
+  && !emptyHistoricalMusicValidation.structurallyValid
+  && emptyHistoricalMusicValidation.issues.some(({ id, message }) => id.startsWith('media-missing-media-')
+    && message.includes('desde Estética')),
+  'una asignación vacía histórica no activa música pero bloquea la publicación hasta corregirse')
 const inactiveAudioStates = [
   { ...initial.media, items: initial.media.items.filter(({ id }) => id !== 'music') },
   { ...initial.media, assignments: [{ slotId: 'music.audio' as const, mediaId: 'hero' }] },
@@ -782,6 +786,17 @@ assert(inactiveAudioStates.every((media) => getOrigin01StudioMusic(media) === un
 assert(validateOrigin01StudioMedia(inactiveAudioStates[0]).some(({ code }) => code === 'missing-media')
   && validateOrigin01StudioMedia(inactiveAudioStates[4]).some(({ code }) => code === 'ready-without-source'),
   'no exigir un texto de sonido no oculta problemas del contrato de medios')
+const invalidMusicDrafts = inactiveAudioStates.map((media) => ({ ...withoutMusicAndHint, media }))
+const invalidMusicResults = invalidMusicDrafts.map((draft) => validateOrigin01StudioDraft(origin01DemoData, draft))
+assert([0, 1, 4].every((index) => {
+  const validation = invalidMusicResults[index]!
+  return !validation.structurallyValid && !validation.invitationValid && validation.previewBlocked
+    && validation.issues.some(({ id, severity }) => id.startsWith('media-') && severity === 'structural')
+}),
+  'el flujo productivo bloquea preview y publicación ante asignaciones musicales inválidas')
+assert(invalidMusicDrafts.every((draft) =>
+  deriveOrigin01PreviewInvitation(origin01DemoData, draft).content.music.mediaId === ''),
+  'la derivación no entrega imágenes, referencias faltantes ni audio no listo al renderer musical')
 const noMusicMarkup = renderToStaticMarkup(createElement(StudioMusicManager, {
   state: emptyHistoricalMusic.media, initialState: emptyHistoricalMusic.media,
   onMediaChange: () => undefined,

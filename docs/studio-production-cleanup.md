@@ -28,8 +28,10 @@ mientras el panel exigía que el recurso fuera audio listo: por eso mostraban es
 
 El inicializador ya no crea esa asignación vacía. Panel, editor y validación comparten
 `getOrigin01StudioMusic`, que reconoce únicamente un audio listo con fuente no vacía. También
-tolera referencias vacías anteriores. La validación del contrato de medios sigue detectando
-recursos faltantes o sin fuente; esta corrección no los convierte en archivos válidos.
+tolera referencias vacías anteriores. Los errores del contrato de medios forman parte de la
+validación estructural: bloquean preview y publicación hasta corregirse. Como defensa adicional,
+la derivación limpia una asignación musical incompatible para que el renderer nunca reciba una
+imagen, una referencia faltante o una fuente vacía como audio.
 
 ## Verificación manual del Preview
 
@@ -49,7 +51,8 @@ replantear Revisión y resolver el responsive general quedan para los siguientes
 ## Evidencia automatizada
 
 - Pruebas de regresión para Maia sin audio, asignaciones vacías históricas, audio faltante,
-  incompatible o no listo, guardado y reapertura, y el editor productivo de apertura.
+  incompatible o no listo, bloqueo estructural, derivación segura, guardado y reapertura,
+  y el editor productivo de apertura.
 - Render de componentes para verificar que los controles reales siguen presentes y que
   laboratorio y conceptos futuros no se montan en el flujo productivo.
 - Lint, typecheck, build y control estructural de la matriz visual.

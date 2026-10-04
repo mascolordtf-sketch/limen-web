@@ -66,12 +66,6 @@ export function getOrigin01StudioMusic(state: Origin01StudioMediaState) {
     ? media : undefined
 }
 
-const singleMediaId = (
-  state: Origin01StudioMediaState,
-  slotId: Origin01MediaSlotId,
-  fallback: string,
-) => getStudioMediaAssignments(state.assignments, slotId)[0]?.mediaId ?? fallback
-
 const projectedAssignment = (
   state: Origin01StudioMediaState,
   assignment: StudioMediaAssignment<Origin01MediaSlotId> | undefined,
@@ -100,6 +94,7 @@ export function deriveOrigin01MediaInvitation(
   invitation: Origin01InvitationData,
   state: Origin01StudioMediaState,
 ): Origin01InvitationData {
+  const music = getOrigin01StudioMusic(state)
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
   const hero = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'hero.image')[0],
     invitation.content.hero.imageMediaId)
@@ -141,7 +136,7 @@ export function deriveOrigin01MediaInvitation(
         imageMediaId: closing.mediaId,
       },
       music: {
-        mediaId: singleMediaId(state, 'music.audio', ''),
+        mediaId: music?.id ?? '',
       },
     },
   }
