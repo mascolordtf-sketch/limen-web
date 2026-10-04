@@ -2882,7 +2882,7 @@
 
 .limen-studio__photo-drag-overlay {
   width: clamp(9rem, 12vw, 11rem);
-  opacity: .88;
+  opacity: .62;
   transform: rotate(1.25deg) scale(1.025);
   filter: drop-shadow(0 18px 22px rgb(31 42 34 / 25%));
   cursor: grabbing;
