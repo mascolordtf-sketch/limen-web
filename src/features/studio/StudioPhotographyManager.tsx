@@ -450,8 +450,6 @@ export function StudioPhotographyManager({
   const handleDragStart = ({ active }: DragStartEvent) => {
     const id = String(active.id)
     setActiveGalleryId(id)
-    const position = galleryIds.indexOf(id)
-    if (position >= 0) onSelectedTargetChange?.(galleryTargetAt(position))
   }
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
@@ -461,8 +459,23 @@ export function StudioPhotographyManager({
     const to = galleryIds.indexOf(String(over.id))
     if (from < 0 || to < 0) return
     const movedTarget = galleryTargetAt(from)
+    const selectedGalleryTarget = selectedTarget?.slotId === 'gallery.images' ? selectedTarget : undefined
+    const selectedGalleryMediaId = selectedGalleryTarget
+      ? assignmentFor(selectedGalleryTarget)?.mediaId
+      : undefined
+    const reorderedIds = [...galleryIds]
+    const [movedId] = reorderedIds.splice(from, 1)
+    reorderedIds.splice(to, 0, movedId)
     moveGalleryPhoto(from, to)
-    onSelectedTargetChange?.({ ...movedTarget, position: to })
+    if (selectedGalleryTarget && selectedGalleryMediaId) {
+      onSelectedTargetChange?.({
+        ...selectedGalleryTarget,
+        key: `gallery-${selectedGalleryMediaId}`,
+        position: reorderedIds.indexOf(selectedGalleryMediaId),
+      })
+    } else {
+      onSelectedTargetChange?.({ ...movedTarget, position: to })
+    }
   }
 
   const renderCard = (target: StudioPhotoTarget, sortableId?: string) => {

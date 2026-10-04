@@ -6628,7 +6628,7 @@
   .limen-studio__unified-workspace--media .limen-studio__photo-preview {
     min-height: 0;
     aspect-ratio: 4 / 3;
-    border-radius: .95rem;
+    border-radius: .85rem .85rem 0 0;
   }
 
   .limen-studio__unified-workspace--media .limen-studio__photo-preview img {
