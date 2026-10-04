@@ -46,6 +46,11 @@ const singleTargets = [
 const defaultAlt = (label: string, name: string) =>
   `${label === 'Galería' ? 'Fotografía' : `Imagen de ${label.toLowerCase()}`} de ${name.trim() || 'la protagonista'}`
 
+const photographyFingerprint = (state: Origin01StudioMediaState) => JSON.stringify({
+  items: state.items.filter(({ kind }) => kind === 'image'),
+  assignments: state.assignments.filter(({ slotId }) => slotId !== 'music.audio'),
+})
+
 function StudioPhotoCard({
   target, media, alt, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
   onChoose, onReset, onRemove, onMove, onAltChange, onFocalPoint, onZoom,
@@ -146,6 +151,7 @@ export function StudioPhotographyManager({
   const [errors, setErrors] = useState<Readonly<Record<string, string>>>({})
 
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
+  const photographyChanged = photographyFingerprint(state) !== photographyFingerprint(initialState)
   const assignmentFor = (target: PhotoTarget, source = state) =>
     getStudioMediaAssignments(source.assignments, target.slotId)
       .find((assignment) => target.slotId !== 'gallery.images' || assignment.position === target.position)
@@ -261,11 +267,20 @@ export function StudioPhotographyManager({
         <h3 id="studio-photography-title">Fotografías</h3>
         <p>Portada, escenas y galería · JPG, PNG o WebP · hasta 12 MB.</p>
       </div>
-      <button type="button" disabled={busyTarget !== undefined} onClick={() => {
-        onMediaChange(() => initialState)
+      {photographyChanged && <button type="button" disabled={busyTarget !== undefined} onClick={() => {
+        onMediaChange((current) => ({
+          items: [
+            ...current.items.filter(({ kind }) => kind !== 'image'),
+            ...initialState.items.filter(({ kind }) => kind === 'image'),
+          ],
+          assignments: [
+            ...current.assignments.filter(({ slotId }) => slotId === 'music.audio'),
+            ...initialState.assignments.filter(({ slotId }) => slotId !== 'music.audio'),
+          ],
+        }))
         onGalleryCaptionsChange(() => [...initialGalleryCaptions])
         setErrors({})
-      }}>Restablecer fotos</button>
+      }}>Restablecer fotos</button>}
     </header>
     <section className="limen-studio__photo-group" aria-labelledby="studio-primary-photos-title">
       <h4 id="studio-primary-photos-title">Escenas principales</h4>
