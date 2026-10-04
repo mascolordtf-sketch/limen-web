@@ -962,7 +962,10 @@ assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes
   && !mediaMarkup.includes('Evaluación · sin persistencia')
   && !mediaMarkup.includes('Dirección visual')
   && !mediaMarkup.includes('font-face.css')
-  && mediaMarkup.includes('Las imágenes que cuentan la historia')
+  && mediaMarkup.includes('Escenas principales')
+  && mediaMarkup.includes('Portada, escenas y galería')
+  && (mediaMarkup.match(/Detalles y encuadre/g) ?? []).length === 7
+  && !mediaMarkup.includes('Las imágenes que cuentan la historia')
   && mediaMarkup.includes('Zoom')
   && (mediaMarkup.match(/Cambiar foto/g) ?? []).length === 7
   && mediaMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
@@ -972,6 +975,9 @@ assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes
   && mediaMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Fotos y música conserva los controles reales sin laboratorio ni explicación duplicada')
+assert(/\.limen-studio__unified-workspace--media \.limen-studio__photo-card\s*\{[^}]*grid-template-columns:/s.test(studioCss)
+  && !/\.limen-studio__photo-grid\s*\{[^}]*repeat\(4,/s.test(studioCss),
+  'Fotos y música usa tarjetas horizontales y evita cuatro columnas estrechas dentro del editor')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Plantilla de la invitación') && templateMainMarkup.includes('Origin 01')

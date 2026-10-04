@@ -2535,16 +2535,22 @@
   .limen-studio *, .limen-studio *::before, .limen-studio *::after { scroll-behavior: auto !important; }
 }
 
-/* Fase 2C.4: administración temporal de fotografías. */
-.limen-studio__photography {
+/* Administración de medios: superficies compactas y ajustes bajo demanda. */
+.limen-studio__photography,
+.limen-studio__music {
   display: grid;
   gap: 1rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--studio-line);
-  padding-top: 1.5rem;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgb(255 255 255 / 46%);
 }
 
-.limen-studio__photography > header,
+.limen-studio__music {
+  margin-top: 1rem;
+}
+
+.limen-studio__media-section-heading,
 .limen-studio__gallery-manager > header {
   display: flex;
   align-items: flex-start;
@@ -2552,25 +2558,27 @@
   gap: 1rem;
 }
 
-.limen-studio__photography > header h2,
-.limen-studio__photography > header p,
-.limen-studio__gallery-manager h3,
+.limen-studio__media-section-heading h3,
+.limen-studio__media-section-heading p,
+.limen-studio__photo-group h4,
+.limen-studio__gallery-manager h4,
 .limen-studio__gallery-manager p {
   margin: 0;
 }
 
-.limen-studio__photography > header h2 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.6rem, 5vw, 2.35rem);
-  font-weight: 500;
+.limen-studio__media-section-heading h3 {
+  font-size: 1.2rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
 }
 
-.limen-studio__photography > header p:last-child,
+.limen-studio__media-section-heading p,
 .limen-studio__gallery-manager p {
   max-width: 42rem;
-  margin-top: .35rem;
+  margin-top: .25rem;
   color: var(--studio-muted);
-  line-height: 1.5;
+  font-size: .78rem;
+  line-height: 1.45;
 }
 
 .limen-studio__photography button,
@@ -2614,7 +2622,21 @@
 
 .limen-studio__photo-grid {
   display: grid;
-  gap: .85rem;
+  gap: .7rem;
+}
+
+.limen-studio__photo-group {
+  display: grid;
+  gap: .7rem;
+}
+
+.limen-studio__photo-group h4,
+.limen-studio__gallery-manager h4 {
+  color: var(--studio-ink-soft);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
 .limen-studio__photo-card {
@@ -2678,11 +2700,12 @@
 .limen-studio__photo-card-body,
 .limen-studio__photo-fields {
   display: grid;
-  gap: .75rem;
+  gap: .7rem;
 }
 
 .limen-studio__photo-card-body {
-  padding: .85rem;
+  align-content: start;
+  padding: .75rem;
 }
 
 .limen-studio__photo-actions,
@@ -2692,9 +2715,39 @@
   gap: .45rem;
 }
 
-.limen-studio__photo-fields {
+.limen-studio__photo-settings {
   border-top: 1px solid var(--studio-line);
   padding-top: .75rem;
+}
+
+.limen-studio__photo-settings > summary {
+  cursor: pointer;
+  color: var(--studio-ink-soft);
+  font-size: .74rem;
+  font-weight: 750;
+}
+
+.limen-studio__photo-settings > summary span,
+.limen-studio__photo-settings > summary small {
+  margin-left: .25rem;
+}
+
+.limen-studio__photo-settings > summary small {
+  display: block;
+  margin-top: .18rem;
+  color: var(--studio-muted);
+  font-size: .66rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.limen-studio__photo-settings[open] > summary {
+  margin-bottom: .7rem;
+}
+
+.limen-studio__photo-fields {
+  border-top: 1px solid var(--studio-line);
+  padding-top: .7rem;
 }
 
 .limen-studio__photo-fields label {
@@ -2717,20 +2770,22 @@
   font-size: .8rem;
 }
 
-.limen-studio__photo-fields details {
+.limen-studio__photo-framing {
+  display: grid;
+  gap: .65rem;
+  min-width: 0;
+  margin: 0;
+  border: 0;
   border-radius: .65rem;
   padding: .65rem;
   background: var(--studio-paper-muted, #f5f4f0);
 }
 
-.limen-studio__photo-fields summary {
-  cursor: pointer;
-  font-size: .75rem;
+.limen-studio__photo-framing legend {
+  padding: 0;
+  color: var(--studio-ink-soft);
+  font-size: .7rem;
   font-weight: 750;
-}
-
-.limen-studio__photo-fields details label {
-  margin-top: .65rem;
 }
 
 .limen-studio__photo-fields output {
@@ -2747,11 +2802,10 @@
 .limen-studio__gallery-manager {
   display: grid;
   gap: .85rem;
-  margin-top: .5rem;
   border: 1px solid var(--studio-line);
   border-radius: 1rem;
-  padding: 1rem;
-  background: rgb(255 255 255 / 46%);
+  padding: .85rem;
+  background: var(--studio-paper);
 }
 
 .limen-studio__photo-status {
@@ -2767,50 +2821,11 @@
   }
 }
 
-@media (min-width: 72rem) {
-  .limen-studio__photo-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 41.99rem) {
-  .limen-studio__photography > header,
+  .limen-studio__media-section-heading,
   .limen-studio__gallery-manager > header {
     display: grid;
   }
-}
-
-/* Fase 2C.5: administración temporal de música. */
-.limen-studio__music {
-  display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--studio-line);
-  padding-top: 1.5rem;
-}
-
-.limen-studio__music > header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.limen-studio__music > header h3,
-.limen-studio__music > header p {
-  margin: 0;
-}
-
-.limen-studio__music > header h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.limen-studio__music > header p:last-child {
-  max-width: 42rem;
-  margin-top: .35rem;
-  color: var(--studio-muted);
-  line-height: 1.5;
 }
 
 .limen-studio__music button {
@@ -2885,8 +2900,9 @@
 }
 
 @media (max-width: 41.99rem) {
-  .limen-studio__music > header {
-    display: grid;
+  .limen-studio__photography,
+  .limen-studio__music {
+    padding: .85rem;
   }
 }
 
@@ -6163,5 +6179,30 @@
 
   .limen-studio__design-content .limen-studio__template-feature {
     width: 100%;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-card {
+    display: grid;
+    grid-template-columns: minmax(7.75rem, .8fr) minmax(9.5rem, 1.2fr);
+    align-items: stretch;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-preview {
+    min-height: 9rem;
+    aspect-ratio: auto;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-actions {
+    justify-content: flex-end;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-card audio,
+  .limen-studio__unified-workspace--media .limen-studio__music-card > .limen-studio__field-error {
+    grid-column: 1 / -1;
   }
 }

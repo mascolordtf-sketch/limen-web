@@ -94,7 +94,7 @@ export function StudioMediaStage({
     <header className="limen-studio__stage-heading">
       <p className="limen-studio__eyebrow">Fotos y música</p>
       <h2 id="studio-media-title">Completá la experiencia</h2>
-      <p>Administrá las imágenes y el audio que acompañan la invitación.</p>
+      <p>Configurá las imágenes y, si corresponde, la música de la invitación.</p>
     </header>
     <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
       initialGalleryCaptions={initialGalleryCaptions}

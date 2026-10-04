@@ -71,6 +71,7 @@ function StudioPhotoCard({
   onZoom: (value: number) => void
 }) {
   const inputId = useId()
+  const [settingsOpen, setSettingsOpen] = useState(Boolean(error))
   const src = media?.status === 'ready' ? media.src : media?.previewSrc
   return <article className="limen-studio__photo-card">
     <div className="limen-studio__photo-preview">
@@ -101,30 +102,37 @@ function StudioPhotoCard({
         <button type="button" disabled={!canMoveUp || disabled} onClick={() => onMove(-1)}>Subir</button>
         <button type="button" disabled={!canMoveDown || disabled} onClick={() => onMove(1)}>Bajar</button>
       </div>}
-      {media && <div className="limen-studio__photo-fields">
-        <label>Texto alternativo
-          <input type="text" value={alt} maxLength={180} onChange={(event) => onAltChange(event.target.value)} />
-        </label>
-        <details>
-          <summary>Ajustar encuadre</summary>
-          <label>Horizontal
-            <input type="range" min="0" max="100" value={focalPoint?.x ?? 50}
-              onChange={(event) => onFocalPoint('x', Number(event.target.value))} />
+      {media && <details className="limen-studio__photo-settings" open={settingsOpen}
+        onToggle={(event) => setSettingsOpen(event.currentTarget.open)}>
+        <summary>
+          <span>Detalles y encuadre</span>
+          <small>Descripción, foco y zoom</small>
+        </summary>
+        <div className="limen-studio__photo-fields">
+          <label>Descripción accesible
+            <input type="text" value={alt} maxLength={180} onChange={(event) => onAltChange(event.target.value)} />
           </label>
-          <label>Vertical
-            <input type="range" min="0" max="100" value={focalPoint?.y ?? 50}
-              onChange={(event) => onFocalPoint('y', Number(event.target.value))} />
-          </label>
-          <label>Zoom <output>{zoom.toLocaleString('es-AR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}×</output>
-            <input type="range" min="1" max="2" step=".05" value={zoom}
-              aria-valuetext={`${zoom.toLocaleString('es-AR', { maximumFractionDigits: 2 })} aumentos`}
-              onChange={(event) => onZoom(Number(event.target.value))} />
-          </label>
-        </details>
-      </div>}
+          <fieldset className="limen-studio__photo-framing">
+            <legend>Encuadre</legend>
+            <label>Horizontal
+              <input type="range" min="0" max="100" value={focalPoint?.x ?? 50}
+                onChange={(event) => onFocalPoint('x', Number(event.target.value))} />
+            </label>
+            <label>Vertical
+              <input type="range" min="0" max="100" value={focalPoint?.y ?? 50}
+                onChange={(event) => onFocalPoint('y', Number(event.target.value))} />
+            </label>
+            <label>Zoom <output>{zoom.toLocaleString('es-AR', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}×</output>
+              <input type="range" min="1" max="2" step=".05" value={zoom}
+                aria-valuetext={`${zoom.toLocaleString('es-AR', { maximumFractionDigits: 2 })} aumentos`}
+                onChange={(event) => onZoom(Number(event.target.value))} />
+            </label>
+          </fieldset>
+        </div>
+      </details>}
       {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
     </div>
   </article>
@@ -248,20 +256,23 @@ export function StudioPhotographyManager({
 
   const addTargetKey = `gallery-new-${galleryAssignments.length}`
   return <section className="limen-studio__photography" aria-labelledby="studio-photography-title">
-    <header>
-      <div><p className="limen-studio__eyebrow">Fotografías</p>
-        <h2 id="studio-photography-title">Las imágenes que cuentan la historia</h2>
-        <p>JPG, PNG o WebP de hasta 12 MB. Studio optimiza y guarda cada foto de forma privada.</p>
+    <header className="limen-studio__media-section-heading">
+      <div>
+        <h3 id="studio-photography-title">Fotografías</h3>
+        <p>Portada, escenas y galería · JPG, PNG o WebP · hasta 12 MB.</p>
       </div>
       <button type="button" disabled={busyTarget !== undefined} onClick={() => {
         onMediaChange(() => initialState)
         onGalleryCaptionsChange(() => [...initialGalleryCaptions])
         setErrors({})
-      }}>Restablecer fotografías</button>
+      }}>Restablecer fotos</button>
     </header>
-    <div className="limen-studio__photo-grid">{singleTargets.map((target) => renderCard(target))}</div>
+    <section className="limen-studio__photo-group" aria-labelledby="studio-primary-photos-title">
+      <h4 id="studio-primary-photos-title">Escenas principales</h4>
+      <div className="limen-studio__photo-grid">{singleTargets.map((target) => renderCard(target))}</div>
+    </section>
     <div className="limen-studio__gallery-manager">
-      <header><div><h3>Galería</h3><p>Ordená las imágenes según el recorrido que querés construir.</p></div>
+      <header><div><h4>Galería</h4><p>Ordená las fotos que aparecen durante el recorrido.</p></div>
         <label className="limen-studio__photo-action" htmlFor="studio-add-gallery-photo">Agregar foto</label>
         <input id="studio-add-gallery-photo" className="limen-studio__visually-hidden" type="file"
           accept="image/jpeg,image/png,image/webp" disabled={busyTarget !== undefined}
@@ -278,9 +289,9 @@ export function StudioPhotographyManager({
       }, index))}</div>
       {errors[addTargetKey] && <p className="limen-studio__field-error" role="alert">{errors[addTargetKey]}</p>}
     </div>
-    <p className="limen-studio__photo-status" aria-live="polite">
+    <p className={busyTarget ? 'limen-studio__photo-status' : 'limen-studio__visually-hidden'} aria-live="polite">
       {busyTarget ? 'Preparando y guardando la fotografía. La imagen anterior permanece visible hasta terminar.'
-        : 'Las fotografías quedan privadas hasta que la invitación se publique.'}
+        : ''}
     </p>
   </section>
 }
