@@ -17,4 +17,9 @@ export const studioPreviewSceneSelectors: Readonly<Record<StudioSceneId, string>
   closing: '.origin01-closing',
 }
 
+export const getStudioPreviewSelector = (scene: StudioSceneId, item?: number) =>
+  scene === 'gallery' && item !== undefined
+    ? `.origin01-gallery__item--${item + 1}`
+    : studioPreviewSceneSelectors[scene]
+
 export const getStudioPreviewMode = (scene?: StudioSceneId) => scene ? 'contextual' : 'full'

@@ -962,9 +962,14 @@ assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes
   && !mediaMarkup.includes('Evaluación · sin persistencia')
   && !mediaMarkup.includes('Dirección visual')
   && !mediaMarkup.includes('font-face.css')
-  && mediaMarkup.includes('Las imágenes que cuentan la historia')
-  && mediaMarkup.includes('Zoom')
-  && (mediaMarkup.match(/Cambiar foto/g) ?? []).length === 7
+  && mediaMarkup.includes('Escenas principales')
+  && mediaMarkup.includes('Seleccioná una imagen para trabajarla')
+  && (mediaMarkup.match(/Seleccionar (?:Portada|Dress Code|Regalos|Cierre|Foto \d)/g) ?? []).length === 7
+  && (mediaMarkup.match(/Reordenar Foto/g) ?? []).length === 3
+  && mediaMarkup.includes('Arrastrá desde el controlador para ordenar')
+  && !mediaMarkup.includes('Las imágenes que cuentan la historia')
+  && !mediaMarkup.includes('Mover antes')
+  && !mediaMarkup.includes('Mover después')
   && mediaMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
   && mediaMarkup.includes('Música asignada')
   && mediaMarkup.includes('Cambiar audio')
@@ -972,6 +977,10 @@ assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes
   && mediaMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Fotos y música conserva los controles reales sin laboratorio ni explicación duplicada')
+assert(/\.limen-studio__photo-grid--scenes\s*\{[^}]*repeat\(4,/s.test(studioCss)
+  && /\.limen-studio__sortable-photo\.is-dragging[^}]*opacity:\s*\.16/s.test(studioCss)
+  && /\.limen-studio__photo-drag-handle\s*\{[^}]*cursor:\s*grab/s.test(studioCss),
+  'Fotos y música prioriza imágenes limpias y un sortable con hueco visible durante el arrastre')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Plantilla de la invitación') && templateMainMarkup.includes('Origin 01')

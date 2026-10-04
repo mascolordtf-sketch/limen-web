@@ -2535,16 +2535,71 @@
   .limen-studio *, .limen-studio *::before, .limen-studio *::after { scroll-behavior: auto !important; }
 }
 
-/* Fase 2C.4: administración temporal de fotografías. */
-.limen-studio__photography {
+/* Administración de medios: superficies compactas y ajustes bajo demanda. */
+.limen-studio__media-tabs {
   display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--studio-line);
-  padding-top: 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem 1rem 0 0;
+  padding: .35rem .35rem 0;
+  background: var(--studio-paper);
 }
 
-.limen-studio__photography > header,
+.limen-studio__media-tabs button {
+  min-height: 2.75rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: .65rem .8rem;
+  background: transparent;
+  color: var(--studio-muted);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.limen-studio__media-tabs button[aria-selected='true'] {
+  border-bottom-color: var(--studio-accent);
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__media-tabs button:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: -3px;
+}
+
+.limen-studio__media-panel {
+  min-width: 0;
+  border: 1px solid var(--studio-line);
+  border-top: 0;
+  border-radius: 0 0 1rem 1rem;
+  background: rgb(255 255 255 / 46%);
+}
+
+.limen-studio__media-panel--editing {
+  border-top: 1px solid var(--studio-line);
+  border-radius: 1rem;
+}
+
+.limen-studio__media-panel[hidden] {
+  display: none;
+}
+
+.limen-studio__photography,
+.limen-studio__music {
+  display: grid;
+  gap: 1rem;
+  border: 0;
+  border-radius: inherit;
+  padding: 1rem;
+  background: transparent;
+}
+
+.limen-studio__music {
+  margin-top: 0;
+}
+
+.limen-studio__media-section-heading,
 .limen-studio__gallery-manager > header {
   display: flex;
   align-items: flex-start;
@@ -2552,25 +2607,27 @@
   gap: 1rem;
 }
 
-.limen-studio__photography > header h2,
-.limen-studio__photography > header p,
-.limen-studio__gallery-manager h3,
+.limen-studio__media-section-heading h3,
+.limen-studio__media-section-heading p,
+.limen-studio__photo-group h4,
+.limen-studio__gallery-manager h4,
 .limen-studio__gallery-manager p {
   margin: 0;
 }
 
-.limen-studio__photography > header h2 {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(1.6rem, 5vw, 2.35rem);
-  font-weight: 500;
+.limen-studio__media-section-heading h3 {
+  font-size: 1.2rem;
+  font-weight: 750;
+  letter-spacing: -.02em;
 }
 
-.limen-studio__photography > header p:last-child,
+.limen-studio__media-section-heading p,
 .limen-studio__gallery-manager p {
   max-width: 42rem;
-  margin-top: .35rem;
+  margin-top: .25rem;
   color: var(--studio-muted);
-  line-height: 1.5;
+  font-size: .78rem;
+  line-height: 1.45;
 }
 
 .limen-studio__photography button,
@@ -2602,6 +2659,22 @@
   color: #fff;
 }
 
+.limen-studio__photo-card .limen-studio__photo-action {
+  border-color: var(--studio-line-strong);
+  background: var(--studio-paper);
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__photo-card .limen-studio__photo-action:hover {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent-soft);
+}
+
+.limen-studio__photo-action:has(+ input:focus-visible) {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
 .limen-studio__visually-hidden {
   position: absolute;
   width: 1px;
@@ -2614,21 +2687,81 @@
 
 .limen-studio__photo-grid {
   display: grid;
-  gap: .85rem;
+  grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+  gap: .7rem;
+}
+
+.limen-studio__photo-grid--scenes {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.limen-studio__photo-grid--gallery {
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  align-items: stretch;
+}
+
+.limen-studio__photo-group {
+  display: grid;
+  gap: .7rem;
+}
+
+.limen-studio__photo-group h4,
+.limen-studio__gallery-manager h4 {
+  color: var(--studio-ink-soft);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
 .limen-studio__photo-card {
+  position: relative;
+  z-index: 0;
   min-width: 0;
+  height: 100%;
+  border-radius: .95rem;
+  background: transparent;
+}
+
+.limen-studio__photo-card-select {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 0 !important;
   overflow: hidden;
-  border: 1px solid var(--studio-line);
-  border-radius: 1rem;
-  background: var(--studio-paper);
+  border: 1px solid var(--studio-line) !important;
+  border-radius: .95rem !important;
+  padding: 0 !important;
+  background: var(--studio-paper) !important;
+  color: var(--studio-ink) !important;
+  text-align: left;
+  box-shadow: 0 1px 2px rgb(31 42 34 / 5%);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.limen-studio__photo-card-select:hover {
+  border-color: var(--studio-line-strong) !important;
+  box-shadow: 0 5px 14px rgb(31 42 34 / 9%);
+  transform: translateY(-1px);
+}
+
+.limen-studio__photo-card-select:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
+.limen-studio__photo-card.is-selected .limen-studio__photo-card-select {
+  border-color: var(--studio-accent) !important;
+  box-shadow: 0 0 0 1px var(--studio-accent), 0 6px 16px rgb(31 65 48 / 10%);
 }
 
 .limen-studio__photo-preview {
   position: relative;
+  display: block;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  border: 0;
+  border-radius: .85rem .85rem 0 0;
   background: #e4e2dc;
 }
 
@@ -2639,7 +2772,6 @@
   transition: transform 160ms ease, object-position 160ms ease;
 }
 
-.limen-studio__photo-preview > strong,
 .limen-studio__photo-preview > span {
   position: absolute;
   z-index: 1;
@@ -2649,10 +2781,6 @@
   background: rgb(24 29 26 / 76%);
   color: #fff;
   font-size: .68rem;
-}
-
-.limen-studio__photo-preview > strong {
-  bottom: .7rem;
 }
 
 .limen-studio__photo-preview > span {
@@ -2675,83 +2803,460 @@
   transform: none;
 }
 
-.limen-studio__photo-card-body,
-.limen-studio__photo-fields {
-  display: grid;
-  gap: .75rem;
-}
-
-.limen-studio__photo-card-body {
-  padding: .85rem;
-}
-
-.limen-studio__photo-actions,
-.limen-studio__photo-order {
+.limen-studio__photo-card-caption {
   display: flex;
-  flex-wrap: wrap;
-  gap: .45rem;
+  min-width: 0;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .62rem .72rem;
 }
 
-.limen-studio__photo-fields {
-  border-top: 1px solid var(--studio-line);
-  padding-top: .75rem;
-}
-
-.limen-studio__photo-fields label {
-  display: grid;
-  gap: .35rem;
-  color: var(--studio-muted);
-  font-size: .7rem;
-  font-weight: 700;
-}
-
-.limen-studio__photo-fields input[type='text'] {
-  width: 100%;
-  min-height: 2.65rem;
-  border: 1px solid var(--studio-line-strong);
-  border-radius: .6rem;
-  padding: .55rem .65rem;
-  background: #fff;
-  color: var(--studio-ink);
-  font: inherit;
-  font-size: .8rem;
-}
-
-.limen-studio__photo-fields details {
-  border-radius: .65rem;
-  padding: .65rem;
-  background: var(--studio-paper-muted, #f5f4f0);
-}
-
-.limen-studio__photo-fields summary {
-  cursor: pointer;
+.limen-studio__photo-card-caption strong {
+  min-width: 0;
+  overflow: hidden;
   font-size: .75rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.limen-studio__photo-card-caption small {
+  flex: 0 0 auto;
+  color: var(--studio-accent);
+  font-size: .61rem;
   font-weight: 750;
 }
 
-.limen-studio__photo-fields details label {
-  margin-top: .65rem;
+.limen-studio__sortable-photo {
+  position: relative;
+  min-width: 0;
+  touch-action: manipulation;
+  will-change: transform;
 }
 
-.limen-studio__photo-fields output {
-  justify-self: end;
+.limen-studio__sortable-photo.is-dragging .limen-studio__photo-card {
+  opacity: .16;
+}
+
+.limen-studio__photo-drag-handle {
+  position: absolute;
+  z-index: 5;
+  top: .48rem;
+  right: .48rem;
+  display: grid;
+  width: 2.15rem;
+  min-width: 2.15rem;
+  min-height: 2.15rem !important;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 42%) !important;
+  border-radius: .6rem !important;
+  padding: 0 !important;
+  background: rgb(255 253 249 / 78%) !important;
+  box-shadow: 0 2px 6px rgb(31 42 34 / 8%);
+  opacity: .62;
+  cursor: grab !important;
+  touch-action: none;
+  transition: opacity 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.limen-studio__photo-drag-handle:hover,
+.limen-studio__photo-drag-handle:focus-visible {
+  background: rgb(255 253 249 / 94%) !important;
+  box-shadow: 0 2px 8px rgb(31 42 34 / 14%);
+  opacity: 1;
+}
+
+.limen-studio__photo-drag-handle:active {
+  cursor: grabbing !important;
+}
+
+.limen-studio__photo-drag-handle:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
+.limen-studio__photo-drag-handle > span {
+  display: grid;
+  grid-template-columns: repeat(2, 3px);
+  gap: 3px;
+}
+
+.limen-studio__photo-drag-handle i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--studio-ink-soft);
+}
+
+.limen-studio__photo-drag-overlay {
+  width: clamp(9rem, 12vw, 11rem);
+  opacity: 1;
+  transform: rotate(1.25deg) scale(1.025);
+  filter: drop-shadow(0 18px 22px rgb(31 42 34 / 25%));
+  cursor: grabbing;
+}
+
+.limen-studio__photo-card.is-overlay .limen-studio__photo-card-select {
+  border-color: var(--studio-accent) !important;
+  box-shadow: none;
+  transform: none;
+}
+
+.limen-studio__photo-card.is-overlay .limen-studio__photo-card-select:disabled {
+  opacity: 1;
+}
+
+.limen-studio__photo-actions-menu {
+  position: relative;
+}
+
+.limen-studio__photo-actions-menu > summary {
+  display: grid;
+  min-width: 2.1rem;
+  min-height: 2.1rem;
+  place-items: center;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .7rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink-soft);
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 800;
+  list-style: none;
+}
+
+.limen-studio__photo-actions-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.limen-studio__photo-actions-menu > summary:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
+.limen-studio__photo-actions-menu > div {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + .35rem);
+  right: 0;
+  display: grid;
+  min-width: 9.5rem;
+  overflow: hidden;
+  border: 1px solid var(--studio-line);
+  border-radius: .75rem;
+  padding: .3rem;
+  background: var(--studio-paper);
+  box-shadow: 0 12px 28px rgb(31 42 34 / 18%);
+}
+
+.limen-studio__photo-card > .limen-studio__field-error {
+  margin: .5rem .15rem 0;
+}
+
+.limen-studio__photo-actions-menu > div > button {
+  min-height: 2.35rem;
+  border: 0;
+  padding: .5rem .6rem;
+  text-align: left;
+}
+
+.limen-studio__photo-actions-menu > div > button:hover,
+.limen-studio__photo-actions-menu > div > button:focus-visible {
+  background: var(--studio-accent-soft);
+}
+
+.limen-studio__photo-actions-menu > div > .limen-studio__photo-destructive-action {
+  color: #85483f;
+}
+
+.limen-studio__photo-inspector {
+  position: relative;
+  z-index: 8;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .75rem 1rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .9rem;
+  padding: .72rem .8rem;
+  background: var(--studio-paper);
+  box-shadow: 0 4px 14px rgb(31 42 34 / 5%);
+}
+
+.limen-studio__photo-inspector-copy {
+  display: grid;
+  min-width: 0;
+  gap: .16rem;
+}
+
+.limen-studio__photo-inspector-copy strong {
+  color: var(--studio-ink);
+  font-size: .8rem;
+}
+
+.limen-studio__photo-inspector-copy span,
+.limen-studio__photo-inspector-status {
+  color: var(--studio-muted);
+  font-size: .68rem;
+  line-height: 1.4;
+}
+
+.limen-studio__photo-inspector-actions {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+}
+
+.limen-studio__photo-inspector-actions > button,
+.limen-studio__photo-inspector-actions > .limen-studio__photo-action {
+  min-height: 2.35rem;
+  padding: .48rem .7rem;
+}
+
+.limen-studio__photo-inspector-actions > .limen-studio__photo-action {
+  border-color: var(--studio-line-strong);
+  background: var(--studio-paper);
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__photo-inspector-actions > .limen-studio__photo-action:hover {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent-soft);
+}
+
+.limen-studio__photo-inspector .limen-studio__photo-actions-menu > summary {
+  min-width: 2.35rem;
+  min-height: 2.35rem;
+}
+
+.limen-studio__photo-inspector-status {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.limen-studio__photography--editing {
+  align-content: start;
+  gap: 1.1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photography .limen-studio__photo-editor-back {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: .4rem;
+  border-color: transparent;
+  padding-inline: .2rem;
+  background: transparent;
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__photo-editor-heading {
+  display: grid;
+  gap: .3rem;
+  padding-bottom: .9rem;
+  border-bottom: 1px solid var(--studio-line);
+}
+
+.limen-studio__photo-editor-heading h3,
+.limen-studio__photo-editor-heading p,
+.limen-studio__photo-editor-missing h3,
+.limen-studio__photo-editor-missing p {
+  margin: 0;
+}
+
+.limen-studio__photo-editor-heading h3,
+.limen-studio__photo-editor-missing h3 {
+  color: var(--studio-ink);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: -.025em;
+}
+
+.limen-studio__photo-editor-heading h3:focus-visible,
+.limen-studio__photo-editor-missing h3:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 3px;
+}
+
+.limen-studio__photo-editor-heading > p:last-child,
+.limen-studio__photo-editor-missing p {
+  color: var(--studio-muted);
+  font-size: .84rem;
+  line-height: 1.5;
+}
+
+.limen-studio__photo-editor-form {
+  display: grid;
+  gap: .85rem;
+  width: min(100%, 36rem);
+}
+
+.limen-studio__photo-editor-accessibility {
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photo-editor-accessibility > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  padding: .75rem .85rem;
+  color: var(--studio-ink-soft);
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.limen-studio__photo-editor-accessibility > summary small {
+  color: var(--studio-muted);
+  font-size: .68rem;
+  font-weight: 600;
+}
+
+.limen-studio__photo-editor-accessibility[open] > summary {
+  border-bottom: 1px solid var(--studio-line);
+}
+
+.limen-studio__photo-editor-accessibility > label {
+  display: grid;
+  gap: .4rem;
+  padding: .8rem .85rem;
+  color: var(--studio-ink-soft);
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.limen-studio__photo-editor-accessibility input {
+  width: 100%;
+  min-height: 2.8rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .65rem;
+  padding: .6rem .7rem;
+  background: #fff;
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 500;
+}
+
+.limen-studio__photo-editor-accessibility label small {
+  color: var(--studio-muted);
+  font-size: .7rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.limen-studio__photo-editor-framing {
+  display: grid;
+  gap: .9rem;
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  padding: .9rem;
+  background: var(--studio-paper-muted, #f5f4f0);
+}
+
+.limen-studio__photo-editor-framing legend {
+  padding-inline: .2rem;
+  color: var(--studio-ink-soft);
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+.limen-studio__photo-editor-framing label {
+  display: grid;
+  gap: .45rem;
+  color: var(--studio-muted);
+  font-size: .74rem;
+  font-weight: 700;
+}
+
+.limen-studio__photo-editor-framing label > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.limen-studio__photo-editor-framing output {
   color: var(--studio-ink);
   font-variant-numeric: tabular-nums;
 }
 
-.limen-studio__photo-fields input[type='range'] {
+.limen-studio__photo-editor-framing input[type='range'] {
   width: 100%;
   accent-color: var(--studio-accent);
+}
+
+.limen-studio__photo-editor-reset {
+  justify-self: start;
+}
+
+.limen-studio__photo-editor-missing {
+  display: grid;
+  gap: .35rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  padding: 1rem;
+  background: var(--studio-paper-muted, #f5f4f0);
 }
 
 .limen-studio__gallery-manager {
   display: grid;
   gap: .85rem;
-  margin-top: .5rem;
   border: 1px solid var(--studio-line);
   border-radius: 1rem;
-  padding: 1rem;
-  background: rgb(255 255 255 / 46%);
+  padding: .85rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photo-add-tile {
+  display: grid;
+  min-width: 0;
+  min-height: 100%;
+  place-content: center;
+  justify-items: center;
+  gap: .25rem;
+  border: 1px dashed var(--studio-line-strong);
+  border-radius: .95rem;
+  padding: .8rem;
+  background: color-mix(in srgb, var(--studio-paper) 72%, transparent);
+  color: var(--studio-accent-strong);
+  text-align: center;
+  cursor: pointer;
+}
+
+.limen-studio__photo-add-tile:hover {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent-soft);
+}
+
+.limen-studio__photo-add-tile:has(+ input:disabled) {
+  cursor: not-allowed;
+  opacity: .52;
+}
+
+.limen-studio__photo-add-tile:has(+ input:focus-visible) {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
+.limen-studio__photo-add-tile > span {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.limen-studio__photo-add-tile > strong {
+  font-size: .76rem;
+}
+
+.limen-studio__photo-add-tile > small {
+  color: var(--studio-muted);
+  font-size: .64rem;
 }
 
 .limen-studio__photo-status {
@@ -2761,56 +3266,11 @@
   line-height: 1.45;
 }
 
-@media (min-width: 42rem) {
-  .limen-studio__photo-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 72rem) {
-  .limen-studio__photo-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 41.99rem) {
-  .limen-studio__photography > header,
+  .limen-studio__media-section-heading,
   .limen-studio__gallery-manager > header {
     display: grid;
   }
-}
-
-/* Fase 2C.5: administración temporal de música. */
-.limen-studio__music {
-  display: grid;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  border-top: 1px solid var(--studio-line);
-  padding-top: 1.5rem;
-}
-
-.limen-studio__music > header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.limen-studio__music > header h3,
-.limen-studio__music > header p {
-  margin: 0;
-}
-
-.limen-studio__music > header h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.limen-studio__music > header p:last-child {
-  max-width: 42rem;
-  margin-top: .35rem;
-  color: var(--studio-muted);
-  line-height: 1.5;
 }
 
 .limen-studio__music button {
@@ -2885,8 +3345,9 @@
 }
 
 @media (max-width: 41.99rem) {
-  .limen-studio__music > header {
-    display: grid;
+  .limen-studio__photography,
+  .limen-studio__music {
+    padding: .85rem;
   }
 }
 
@@ -6163,5 +6624,39 @@
 
   .limen-studio__design-content .limen-studio__template-feature {
     width: 100%;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-grid {
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-preview {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+    border-radius: .85rem .85rem 0 0;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__photo-preview img {
+    position: absolute;
+    inset: 0;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-actions {
+    justify-content: flex-end;
+  }
+
+  .limen-studio__unified-workspace--media .limen-studio__music-card audio,
+  .limen-studio__unified-workspace--media .limen-studio__music-card > .limen-studio__field-error {
+    grid-column: 1 / -1;
   }
 }

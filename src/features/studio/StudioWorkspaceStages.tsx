@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { StudioMusicManager } from './StudioMusicManager'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
+import type { StudioPhotoTarget } from './StudioPhotographyManager'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
+import type { StudioSceneId } from './studioScenes'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
@@ -81,6 +83,7 @@ export function StudioMediaStage({
   onMediaChange,
   onGalleryCaptionsChange,
   onUploadMedia,
+  onPreviewFocusChange,
 }: {
   media: Origin01StudioMediaState
   initialMedia: Origin01StudioMediaState
@@ -89,18 +92,76 @@ export function StudioMediaStage({
   onMediaChange: (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
+  onPreviewFocusChange?: (focus?: StudioMediaPreviewFocus) => void
 }) {
-  return <section className="limen-studio__media-stage" aria-labelledby="studio-media-title">
-    <header className="limen-studio__stage-heading">
+  const [selectedPhoto, setSelectedPhoto] = useState<StudioPhotoTarget>()
+  const [editingPhoto, setEditingPhoto] = useState<StudioPhotoTarget>()
+  const [activeMediaPanel, setActiveMediaPanel] = useState<'photography' | 'music'>('photography')
+  const changeSelectedPhoto = (target?: StudioPhotoTarget) => {
+    setSelectedPhoto(target)
+    onPreviewFocusChange?.(target ? {
+      scene: target.previewScene,
+      item: target.previewScene === 'gallery' ? target.position : undefined,
+      label: target.position === undefined ? target.label : `${target.label} ${target.position + 1}`,
+    } : undefined)
+  }
+  const changeEditingPhoto = (target?: StudioPhotoTarget) => {
+    setEditingPhoto(target)
+    if (target) changeSelectedPhoto(target)
+  }
+  const changeMediaPanel = (panel: 'photography' | 'music') => {
+    setActiveMediaPanel(panel)
+    if (panel === 'music') {
+      setEditingPhoto(undefined)
+      changeSelectedPhoto(undefined)
+    }
+  }
+
+  return <section className={`limen-studio__media-stage${editingPhoto ? ' limen-studio__media-stage--editing' : ''}`}
+    aria-labelledby={editingPhoto ? 'studio-photo-editor-title' : 'studio-media-title'}>
+    {!editingPhoto && <header className="limen-studio__stage-heading">
       <p className="limen-studio__eyebrow">Fotos y música</p>
       <h2 id="studio-media-title">Completá la experiencia</h2>
-      <p>Administrá las imágenes y el audio que acompañan la invitación.</p>
-    </header>
-    <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
-      initialGalleryCaptions={initialGalleryCaptions}
-      onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
-      onUploadMedia={onUploadMedia} />
-    <StudioMusicManager state={media} initialState={initialMedia}
-      onMediaChange={onMediaChange} onUploadMedia={onUploadMedia} />
+      <p>Configurá las imágenes y, si corresponde, la música de la invitación.</p>
+    </header>}
+    {!editingPhoto && <div className="limen-studio__media-tabs" role="tablist" aria-label="Fotos y música"
+      onKeyDown={(event) => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+        event.preventDefault()
+        const nextPanel = event.key === 'ArrowLeft' || event.key === 'Home' ? 'photography' : 'music'
+        changeMediaPanel(nextPanel)
+        requestAnimationFrame(() => document.getElementById(`studio-media-${nextPanel}-tab`)?.focus())
+      }}>
+      <button id="studio-media-photography-tab" type="button" role="tab"
+        aria-selected={activeMediaPanel === 'photography'} aria-controls="studio-media-photography-panel"
+        tabIndex={activeMediaPanel === 'photography' ? 0 : -1}
+        onClick={() => changeMediaPanel('photography')}>Fotografías</button>
+      <button id="studio-media-music-tab" type="button" role="tab"
+        aria-selected={activeMediaPanel === 'music'} aria-controls="studio-media-music-panel"
+        tabIndex={activeMediaPanel === 'music' ? 0 : -1}
+        onClick={() => changeMediaPanel('music')}>Música</button>
+    </div>}
+    <div id="studio-media-photography-panel" role="tabpanel" aria-labelledby="studio-media-photography-tab"
+      className={`limen-studio__media-panel${editingPhoto ? ' limen-studio__media-panel--editing' : ''}`}
+      hidden={!editingPhoto && activeMediaPanel !== 'photography'}>
+      <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
+        initialGalleryCaptions={initialGalleryCaptions}
+        onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
+        onUploadMedia={onUploadMedia} selectedTarget={selectedPhoto}
+        onSelectedTargetChange={changeSelectedPhoto} editingTarget={editingPhoto}
+        onEditingTargetChange={changeEditingPhoto} />
+    </div>
+    {!editingPhoto && <div id="studio-media-music-panel" role="tabpanel"
+      aria-labelledby="studio-media-music-tab" className="limen-studio__media-panel"
+      hidden={activeMediaPanel !== 'music'}>
+      <StudioMusicManager state={media} initialState={initialMedia}
+        onMediaChange={onMediaChange} onUploadMedia={onUploadMedia} />
+    </div>}
   </section>
+}
+
+export type StudioMediaPreviewFocus = {
+  readonly scene: StudioSceneId
+  readonly item?: number
+  readonly label: string
 }

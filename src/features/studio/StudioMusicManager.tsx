@@ -61,9 +61,9 @@ export function StudioMusicManager({
   }
 
   return <section className="limen-studio__music" aria-labelledby="studio-music-title">
-    <header>
-      <div><h3 id="studio-music-title">Música</h3>
-        <p>Opcional · MP3, M4A, OGG o WAV · Hasta 20 MB.</p>
+    <header className="limen-studio__media-section-heading">
+      <div><h3 id="studio-music-title" className="limen-studio__visually-hidden">Música</h3>
+        <p>Opcional · MP3, M4A, OGG o WAV · hasta 20 MB.</p>
       </div>
       {changed && <button type="button" disabled={uploading} onClick={() => {
         if (initialAssignment) {
@@ -77,7 +77,7 @@ export function StudioMusicManager({
           onMediaChange(removeStudioMusicAssignment)
         }
         setError('')
-      }}>Restablecer música</button>}
+      }}>Restablecer</button>}
     </header>
     <div className="limen-studio__music-card">
       <div className="limen-studio__music-summary">
@@ -108,8 +108,8 @@ export function StudioMusicManager({
       </div>
       {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
     </div>
-    <p className={uploading || audio ? 'limen-studio__photo-status' : 'limen-studio__visually-hidden'} aria-live="polite">
-      {uploading ? 'Guardando audio…' : audio ? 'Audio privado hasta publicar.' : ''}
+    <p className={uploading ? 'limen-studio__photo-status' : 'limen-studio__visually-hidden'} aria-live="polite">
+      {uploading ? 'Guardando audio…' : ''}
     </p>
   </section>
 }
