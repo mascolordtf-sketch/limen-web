@@ -8,7 +8,7 @@ import type { StudioDomainId } from './studioNavigation'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { validateOrigin01Schedule } from './origin01StudioSchedule'
 import { validateOrigin01Community } from './studioCommunityValidation'
-import { getStudioMediaAssignments } from './studioMedia'
+import { getOrigin01StudioMusic, validateOrigin01StudioMedia } from './origin01StudioMedia'
 
 export type StudioIssueSeverity =
   | 'structural'
@@ -114,7 +114,7 @@ export function validateOrigin01StudioDraft(
   invitation: Origin01InvitationData,
   draft: Origin01StudioDraft,
 ): Origin01StudioValidation {
-  const hasMusic = getStudioMediaAssignments(draft.media.assignments, 'music.audio').length > 0
+  const hasMusic = Boolean(getOrigin01StudioMusic(draft.media))
   const start = fromDateTimeLocalValue(draft.event.start, invitation.event.timeZone)
   const end = fromDateTimeLocalValue(draft.event.end, invitation.event.timeZone)
   const moduleValidation = validateInvitationConfiguration({
@@ -122,6 +122,7 @@ export function validateOrigin01StudioDraft(
     themeVariant: draft.themeVariant,
     modules: draft.modules,
   }, findInvitationTemplate)
+  const mediaValidation = validateOrigin01StudioMedia(draft.media)
   const triviaValid = isTriviaContentValid(draft.trivia)
   const fieldErrors: Record<string, string | null> = {
     protagonistName: required(draft.protagonistName, 'Ingresá el nombre de la protagonista.'),
@@ -272,7 +273,18 @@ export function validateOrigin01StudioDraft(
     blocksPreview: true,
     relevant: true,
   }))
-  const structuralIssues: StudioIssue[] = [...identityIssues, ...configurationIssues]
+  const mediaIssues = mediaValidation.map((error, index): StudioIssue => ({
+    id: `media-${error.code}-${index}`,
+    message: error.slotId === 'music.audio'
+      ? 'La música asignada no es válida. Desactivala o elegí nuevamente el archivo desde Estética.'
+      : error.message,
+    editorId: 'review-errors',
+    domainId: 'review',
+    severity: 'structural',
+    blocksPreview: true,
+    relevant: true,
+  }))
+  const structuralIssues: StudioIssue[] = [...identityIssues, ...configurationIssues, ...mediaIssues]
   const fieldIssues = seeds.filter((seed) => seed.error).map((seed, index): StudioIssue => {
     const active = seed.sceneId ? sceneIsActive(draft, seed.sceneId) : true
     return {

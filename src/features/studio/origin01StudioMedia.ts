@@ -46,7 +46,9 @@ export function createOrigin01StudioMediaState(
     })),
     { slotId: 'gifts.image', mediaId: invitation.content.gifts.imageMediaId },
     { slotId: 'closing.image', mediaId: invitation.content.closing.imageMediaId },
-    { slotId: 'music.audio', mediaId: invitation.content.music.mediaId },
+    ...(invitation.content.music.mediaId.trim()
+      ? [{ slotId: 'music.audio' as const, mediaId: invitation.content.music.mediaId }]
+      : []),
   ]
   return {
     items: invitation.media.flatMap((media) => {
@@ -57,11 +59,12 @@ export function createOrigin01StudioMediaState(
   }
 }
 
-const singleMediaId = (
-  state: Origin01StudioMediaState,
-  slotId: Origin01MediaSlotId,
-  fallback: string,
-) => getStudioMediaAssignments(state.assignments, slotId)[0]?.mediaId ?? fallback
+export function getOrigin01StudioMusic(state: Origin01StudioMediaState) {
+  const assignment = getStudioMediaAssignments(state.assignments, 'music.audio')[0]
+  const media = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
+  return media?.kind === 'audio' && media.status === 'ready' && media.src.trim()
+    ? media : undefined
+}
 
 const projectedAssignment = (
   state: Origin01StudioMediaState,
@@ -91,6 +94,7 @@ export function deriveOrigin01MediaInvitation(
   invitation: Origin01InvitationData,
   state: Origin01StudioMediaState,
 ): Origin01InvitationData {
+  const music = getOrigin01StudioMusic(state)
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
   const hero = projectedAssignment(state, getStudioMediaAssignments(state.assignments, 'hero.image')[0],
     invitation.content.hero.imageMediaId)
@@ -132,7 +136,7 @@ export function deriveOrigin01MediaInvitation(
         imageMediaId: closing.mediaId,
       },
       music: {
-        mediaId: singleMediaId(state, 'music.audio', ''),
+        mediaId: music?.id ?? '',
       },
     },
   }

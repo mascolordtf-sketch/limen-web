@@ -11,6 +11,7 @@ import { StudioGalleryEditor } from './StudioGalleryEditor'
 import { StudioGiftsEditor } from './StudioGiftsEditor'
 import { StudioModuleList } from './StudioModuleList'
 import { StudioOpeningEditor } from './StudioOpeningEditor'
+import { getOrigin01StudioMusic } from './origin01StudioMedia'
 import { StudioRsvpEditor } from './StudioRsvpEditor'
 import { StudioScheduleEditor } from './StudioScheduleEditor'
 import { StudioShareEditor } from './StudioShareEditor'
@@ -84,7 +85,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const setStoryMessage = (message: string) => updateGroup('story', (current) => ({ ...current, message }))
   const { preludeEyebrow, preludeBody, preludeReveal, preludeQuestion, preludeActionLabel,
     preludeSoundHint, heroPhrase, heroScrollHint } = draft.opening
-  const hasMusic = draft.media.assignments.some(({ slotId }) => slotId === 'music.audio')
+  const hasMusic = Boolean(getOrigin01StudioMusic(draft.media))
   const setOpening = <K extends keyof typeof draft.opening>(key: K, value: (typeof draft.opening)[K]) =>
     updateGroup('opening', (current) => ({ ...current, [key]: value }))
   const { eyebrow: closingEyebrow, title: closingTitle, sharePrompt: closingSharePrompt,
