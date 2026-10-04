@@ -5876,13 +5876,13 @@
   .limen-studio__unified-workspace {
     min-height: 0;
     height: 100%;
-    grid-template-columns: 10.75rem minmax(0, 1fr) 27rem;
+    grid-template-columns: 12rem minmax(0, 1fr) 27rem;
     gap: .6rem;
     overflow: hidden;
   }
 
   .limen-studio__unified-workspace--preview-collapsed {
-    grid-template-columns: 10.75rem minmax(0, 1fr) 10rem;
+    grid-template-columns: 12rem minmax(0, 1fr) 10rem;
   }
 
   .limen-studio__workspace-navigation {
@@ -5901,18 +5901,27 @@
 
   .limen-studio__workspace-navigation .limen-studio__stage-nav {
     display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
     gap: .22rem;
     overflow: visible;
   }
 
   .limen-studio__workspace-navigation .limen-studio__stage-nav button {
     justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
     min-height: 2.75rem;
     border: 1px solid transparent;
     border-radius: .7rem;
     padding: .55rem .65rem;
     text-align: left;
     transform: none;
+  }
+
+  .limen-studio__workspace-navigation .limen-studio__stage-nav button > strong {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .limen-studio__workspace-navigation .limen-studio__stage-nav button:hover {

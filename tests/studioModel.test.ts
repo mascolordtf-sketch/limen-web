@@ -926,6 +926,8 @@ assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels
 assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
+assert(/\.limen-studio__workspace-navigation \.limen-studio__stage-nav\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/s.test(studioCss),
+  'la navegación lateral fuerza una única columna y no hereda la grilla horizontal anterior')
 const designStageElement = createElement(StudioDesignStage, {
   template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,
