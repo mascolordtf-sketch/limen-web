@@ -2747,15 +2747,15 @@
   background: var(--studio-paper);
 }
 
-.limen-studio__photo-editor-back {
+.limen-studio__photography .limen-studio__photo-editor-back {
   display: inline-flex;
   justify-self: start;
   align-items: center;
   gap: .4rem;
-  border-color: transparent !important;
-  padding-inline: .2rem !important;
-  background: transparent !important;
-  color: var(--studio-accent-strong) !important;
+  border-color: transparent;
+  padding-inline: .2rem;
+  background: transparent;
+  color: var(--studio-accent-strong);
 }
 
 .limen-studio__photo-editor-heading {
