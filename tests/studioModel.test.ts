@@ -31,7 +31,8 @@ import { StudioPreviewPane } from '../src/features/studio/StudioPreviewPane'
 import { StudioReviewStage } from '../src/features/studio/StudioReviewStage'
 import { StudioNavigationShell } from '../src/features/studio/StudioNavigationShell'
 import { StudioReviewPanel } from '../src/features/studio/StudioReviewPanel'
-import { StudioAestheticStage, StudioStageNavigation, StudioStagePresentation } from '../src/features/studio/StudioWorkspaceStages'
+import { StudioDesignStage, StudioMediaStage, StudioStageNavigation,
+  StudioUnifiedWorkspace } from '../src/features/studio/StudioWorkspaceStages'
 import { createStudioReturnToReview, studioWorkspaceStages } from '../src/features/studio/studioWorkspaceStages'
 import { StudioTemplateStage } from '../src/features/studio/StudioTemplateStage'
 import { StudioMusicManager } from '../src/features/studio/StudioMusicManager'
@@ -766,7 +767,7 @@ assert(getOrigin01StudioMusic(emptyHistoricalMusic.media) === undefined
   && emptyHistoricalMusicValidation.fieldErrors.preludeSoundHint === null
   && !emptyHistoricalMusicValidation.structurallyValid
   && emptyHistoricalMusicValidation.issues.some(({ id, message }) => id.startsWith('media-missing-media-')
-    && message.includes('desde Estética')),
+    && message.includes('desde Fotos y música')),
   'una asignación vacía histórica no activa música pero bloquea la publicación hasta corregirse')
 const inactiveAudioStates = [
   { ...initial.media, items: initial.media.items.filter(({ id }) => id !== 'music') },
@@ -893,8 +894,7 @@ assert(selectSceneAfterExclusion('gifts', giftsOff) === 'rsvp',
   'al excluir la escena seleccionada elige la siguiente escena incluida')
 const contentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
   draft: giftsOff, selectedScene: 'story', onSceneSelect: () => undefined,
-  editor: createElement('div', null, 'EDITOR_CONTEXTUAL'), preview: createElement('div', null, 'PREVIEW_REAL'),
-  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
+  editor: createElement('div', null, 'EDITOR_CONTEXTUAL'),
 }))
 assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Historia')
   && !contentMarkup.includes('>Regalos<') && !contentMarkup.includes('Agregar o quitar secciones')
@@ -904,58 +904,74 @@ assert(contentMarkup.includes('Editando ahora') && contentMarkup.includes('Escen
   && contentMarkup.includes('limen-studio__editor-scene-number')
   && contentMarkup.includes('limen-studio__editor-heading'),
   'el workspace editorial identifica la escena activa, su orden y su carácter narrativo')
+assert(contentMarkup.includes('<select') && contentMarkup.includes('01 · Datos generales')
+  && contentMarkup.includes('Anterior') && contentMarkup.includes('Siguiente')
+  && !contentMarkup.includes('limen-studio__scene-navigation-list'),
+  'Contenido navega las escenas desde una barra compacta sin sumar una segunda barra lateral')
 const generalContentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
   draft: initial, selectedScene: 'general', onSceneSelect: () => undefined,
-  editor: createElement('div', null, 'EDITOR_GENERAL'), preview: createElement('div', null, 'PREVIEW_GENERAL'),
-  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
+  editor: createElement('div', null, 'EDITOR_GENERAL'),
   editorTabs: [{ id: 'identity', label: 'Identidad' }], selectedEditorId: 'identity',
   onEditorSelect: () => undefined,
 }))
 assert(generalContentMarkup.includes('Base compartida') && generalContentMarkup.includes('Áreas de edición')
   && generalContentMarkup.includes('aria-label="Configuraciones de Datos generales"'),
   'Datos generales presenta su condición compartida y agrupa la navegación interna como áreas de edición')
-assert((contentMarkup.match(/PREVIEW_REAL/g) ?? []).length === 1 && !contentMarkup.includes('Ver invitación')
+assert(!contentMarkup.includes('PREVIEW_REAL') && !contentMarkup.includes('Ver invitación')
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
-  'Contenido mantiene una preview junto al editor sin duplicar su apertura y oculta la taxonomía técnica del motor')
+  'Contenido concentra escenas y editor sin duplicar el host global de preview ni exponer taxonomía técnica')
 const draftBeforeStageNavigation = JSON.stringify(initial)
-const stageLabels = ['Plantilla', 'Estética', 'Secciones', 'Contenido', 'Revisión']
+const stageLabels = ['Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: 'template', onStageChange: () => undefined }))
+  { activeStage: 'design', onStageChange: () => undefined }))
 assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
-  && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Diseño'),
-  'la navegación superior presenta las cinco etapas aprobadas en orden')
+  && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Estética'),
+  'la navegación lateral presenta las cinco etapas aprobadas en orden')
 assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
-const aestheticStageElement = createElement(StudioAestheticStage, {
-  media: initial.media,
-  initialMedia: initial.media,
+assert(/\.limen-studio__workspace-navigation \.limen-studio__stage-nav\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/s.test(studioCss),
+  'la navegación lateral fuerza una única columna y no hereda la grilla horizontal anterior')
+assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:\s*2/s.test(studioCss),
+  'el workspace ocupa siempre la fila flexible y mantiene estable la altura de la preview sin avisos de guardado')
+assert(/body:has\(\.limen-studio__workspace\)[^{]*\{[^}]*overflow:\s*hidden/s.test(studioCss),
+  'Studio bloquea el scroll del documento exterior para que el workspace no salte entre etapas')
+const designStageElement = createElement(StudioDesignStage, {
+  template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,
   initialThemeVariant: initial.themeVariant,
+  onThemeVariantChange: () => undefined,
+})
+const designMarkup = renderToStaticMarkup(designStageElement)
+assert(designMarkup.includes('Definí la identidad visual') && designMarkup.includes('Paleta de colores')
+  && designMarkup.includes('Origin 01') && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
+  && !designMarkup.includes('Fotos y música') && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Diseño reúne plantilla y paleta sin mezclar la administración de medios')
+const mediaStageElement = createElement(StudioMediaStage, {
+  media: initial.media,
+  initialMedia: initial.media,
   protagonistName: initial.protagonistName,
   initialGalleryCaptions: initial.gallery.captions,
   onMediaChange: () => undefined,
   onGalleryCaptionsChange: () => undefined,
-  onThemeVariantChange: () => undefined,
   onUploadMedia: async () => ({ storageKey: '', src: '' }),
 })
-const aestheticMarkup = renderToStaticMarkup(aestheticStageElement)
-assert(aestheticMarkup.includes('Colores, fotos y música') && aestheticMarkup.includes('Paleta de colores')
-  && origin01ThemeVariants.every(({ name }) => aestheticMarkup.includes(name))
-  && !aestheticMarkup.includes('Compará las doce voces')
-  && !aestheticMarkup.includes('Evaluación · sin persistencia')
-  && !aestheticMarkup.includes('Dirección visual')
-  && !aestheticMarkup.includes('font-face.css')
-  && aestheticMarkup.includes('Las imágenes que cuentan la historia')
-  && aestheticMarkup.includes('Zoom')
-  && (aestheticMarkup.match(/Cambiar foto/g) ?? []).length === 7
-  && aestheticMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
-  && aestheticMarkup.includes('Música asignada')
-  && aestheticMarkup.includes('Cambiar audio')
-  && aestheticMarkup.includes('Desactivar música')
-  && aestheticMarkup.includes('controls=""')
+const mediaMarkup = renderToStaticMarkup(mediaStageElement)
+assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes('Paleta de colores')
+  && !mediaMarkup.includes('Compará las doce voces')
+  && !mediaMarkup.includes('Evaluación · sin persistencia')
+  && !mediaMarkup.includes('Dirección visual')
+  && !mediaMarkup.includes('font-face.css')
+  && mediaMarkup.includes('Las imágenes que cuentan la historia')
+  && mediaMarkup.includes('Zoom')
+  && (mediaMarkup.match(/Cambiar foto/g) ?? []).length === 7
+  && mediaMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
+  && mediaMarkup.includes('Música asignada')
+  && mediaMarkup.includes('Cambiar audio')
+  && mediaMarkup.includes('Desactivar música')
+  && mediaMarkup.includes('controls=""')
   && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Estética conserva los controles reales sin laboratorio, carga de fuentes experimental ni explicación duplicada')
+  'Fotos y música conserva los controles reales sin laboratorio ni explicación duplicada')
 const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
   { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
 assert(templateMainMarkup.includes('Plantilla de la invitación') && templateMainMarkup.includes('Origin 01')
@@ -1474,8 +1490,9 @@ const returnedReviewMarkup = renderToStaticMarkup(createElement('div', null,
   }) : createElement('div', null, 'Contenido activo')))
 assert(returnDestination.activeStage === 'review' && reviewErrorsNavigation.domainId === 'review'
   && reviewErrorsNavigation.itemId === 'errors' && returnedReviewMarkup.includes('Problemas del borrador')
-  && returnedReviewMarkup.includes('aria-current="step">Revisión') && !returnedReviewMarkup.includes('Contenido activo'),
-  'Volver a Errores restaura Revisión, abre su panel de errores y deja Contenido inactivo')
+  && returnedReviewMarkup.includes('aria-current="step"')
+  && returnedReviewMarkup.includes('Revisar y publicar') && !returnedReviewMarkup.includes('Contenido activo'),
+  'Volver a Errores restaura Revisar y publicar, abre sus errores y deja Contenido inactivo')
 assert(resolveStudioIssueDestination(storyIssue, domains)?.editorId === 'story', 'una issue resuelve dominio, editor y campo por metadatos')
 const storyEditorMarkup = renderToStaticMarkup(createElement(StudioStoryEditor, { eyebrowValue: '', canonicalEyebrowValue: '',
   eyebrowError: null, messageValue: '', canonicalMessageValue: '', messageError: storyIssue.message,
@@ -1638,34 +1655,36 @@ const previewPaneElement = createElement(StudioPreviewPane, {
   publicInvitationUrl: '/demo/LMN-ORIGIN01', onClose: () => undefined, onCollapse: () => undefined,
   onOpen: () => undefined, onRestart: () => undefined,
 })
-const realContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
+const contentBoundaryElement = createElement(StudioScenesContent, {
   draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
-  editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: false, previewCollapsed: false, onShowPreview: () => undefined,
-}))
+  editor: createElement('div', null, 'Editor de Historia'),
+})
+const renderUnifiedContent = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(
+  createElement(StudioUnifiedWorkspace, {
+    activeStage: 'content', preview: previewPaneElement, previewCollapsed, previewDedicated,
+    onStageChange: () => undefined, onShowPreview: () => undefined, children: contentBoundaryElement,
+  }))
+const realContentBoundary = renderUnifiedContent(false, false)
 assert((realContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
-  && !realContentBoundary.includes('Ver invitación'),
-  'Contenido mantiene una única preview real visible junto al editor')
-const collapsedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
-  editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: false, previewCollapsed: true, onShowPreview: () => undefined,
-}))
+  && realContentBoundary.includes('Flujo de trabajo') && realContentBoundary.includes('Editor de Historia'),
+  'el workspace unificado mantiene una sola preview real junto a la navegación y el editor')
+const collapsedContentBoundary = renderUnifiedContent(true, false)
 assert(collapsedContentBoundary.includes('studio-preview-renderer-title')
-  && collapsedContentBoundary.includes('hidden=""'),
+  && collapsedContentBoundary.includes('hidden=""') && collapsedContentBoundary.includes('preview-collapsed'),
   'el estado contraído conserva una única preview montada y la retira de la interacción')
-const dedicatedContentBoundary = renderToStaticMarkup(createElement(StudioScenesContent, {
-  draft: initial, selectedScene: 'story', onSceneSelect: () => undefined,
-  editor: createElement('div', null, 'Editor de Historia'), preview: previewPaneElement,
-  previewDedicated: true, previewCollapsed: false, onShowPreview: () => undefined,
-}))
-assert((dedicatedContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
-  'Contenido monta exactamente una instancia del renderer real al abrir la preview dedicada')
-const realReviewBoundary = renderToStaticMarkup(createElement(StudioReviewStage, {
-  audience: 'protagonist', domains, preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
+const dedicatedContentBoundary = renderUnifiedContent(false, true)
+assert((dedicatedContentBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
+  && (dedicatedContentBoundary.match(/inert=""/g) ?? []).length === 2,
+  'la preview dedicada conserva un renderer y vuelve inertes navegación y editor')
+const reviewBoundaryElement = createElement(StudioReviewStage, {
+  audience: 'protagonist', domains,
   validation: validResult, onAudience: () => undefined, onIssue: () => undefined, onOpenPreview: () => undefined,
-  onShowPreview: () => undefined, publicationState: { status: 'idle' }, editoriallyConfirmed: false,
+  publicationState: { status: 'idle' }, editoriallyConfirmed: false,
   onEditorialConfirmation: () => undefined, onPublish: () => undefined,
+})
+const realReviewBoundary = renderToStaticMarkup(createElement(StudioUnifiedWorkspace, {
+  activeStage: 'review', preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
+  onStageChange: () => undefined, onShowPreview: () => undefined, children: reviewBoundaryElement,
 }))
 assert((realReviewBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
   && realReviewBoundary.includes('Revisá la invitación antes de compartirla')
@@ -1674,36 +1693,15 @@ assert((realReviewBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).l
   && !realReviewBoundary.includes('Dominio:')
   && !realReviewBoundary.includes('Datos canónicos')
   && !realReviewBoundary.includes('Proyecciones'),
-  'Revisión usa una frontera productiva, una preview real y no expone la taxonomía del motor')
-const renderStagePresentation = (galleryOpen: boolean, previewDedicated: boolean, activeStage: 'template' | 'aesthetic' = 'template') =>
-  renderToStaticMarkup(createElement('div', null,
-    createElement('header', null, 'LIMEN Studio'),
-    createElement(StudioStageNavigation, { activeStage, onStageChange: () => undefined }),
-    createElement(StudioStagePresentation, {
-      activeStage, previewDedicated, templateGalleryOpen: galleryOpen,
-      templateStage: createElement(StudioTemplateStage, { template: origin01Template }),
-      aestheticStage: aestheticStageElement,
-    }, createElement('div', null, 'Resumen de invitación', 'Estado del prototipo', 'Shell de edición', previewElement))))
-const independentGalleryPresentation = renderStagePresentation(true, false)
-assert(independentGalleryPresentation.includes('LIMEN Studio') && independentGalleryPresentation.includes('Etapas de edición')
-  && independentGalleryPresentation.includes('Plantilla de la invitación')
-  && !independentGalleryPresentation.includes('Exploraciones futuras')
-  && !independentGalleryPresentation.includes('Resumen de invitación')
-  && !independentGalleryPresentation.includes('Estado del prototipo')
-  && !independentGalleryPresentation.includes('Shell de edición')
-  && !independentGalleryPresentation.includes('studio-preview-renderer-title'),
-  'el boundary real presenta la galería independiente y retira el workspace existente')
-const restoredStagePresentation = renderStagePresentation(false, false)
-assert(restoredStagePresentation.includes('Resumen de invitación')
-  && (restoredStagePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
-  'cerrar la galería restaura el workspace con una única preview real')
-const protectedTemplatePresentation = renderStagePresentation(true, true)
-const protectedAestheticPresentation = renderStagePresentation(false, true, 'aesthetic')
-assert(protectedTemplatePresentation.includes('inert=""')
-  && protectedAestheticPresentation.includes('inert=""')
-  && protectedTemplatePresentation.includes('Resumen de invitación')
-  && (protectedTemplatePresentation.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
-  'la preview dedicada vuelve inertes Plantilla y Estética e impide que la galería retire el renderer activo')
+  'Revisar y publicar usa el mismo workspace, una preview real y no expone la taxonomía del motor')
+const realDesignBoundary = renderToStaticMarkup(createElement(StudioUnifiedWorkspace, {
+  activeStage: 'design', preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
+  onStageChange: () => undefined, onShowPreview: () => undefined, children: designStageElement,
+}))
+assert(realDesignBoundary.includes('Definí la identidad visual')
+  && realDesignBoundary.includes('Revisar y publicar')
+  && (realDesignBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'Diseño comparte la navegación lateral y el host persistente de preview con el resto del flujo')
 const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
   StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
     editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,

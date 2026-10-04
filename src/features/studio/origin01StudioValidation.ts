@@ -276,7 +276,7 @@ export function validateOrigin01StudioDraft(
   const mediaIssues = mediaValidation.map((error, index): StudioIssue => ({
     id: `media-${error.code}-${index}`,
     message: error.slotId === 'music.audio'
-      ? 'La música asignada no es válida. Desactivala o elegí nuevamente el archivo desde Estética.'
+      ? 'La música asignada no es válida. Desactivala o elegí nuevamente el archivo desde Fotos y música.'
       : error.message,
     editorId: 'review-errors',
     domainId: 'review',

@@ -15,12 +15,14 @@ function OriginPreview({ template }: { template: StudioTemplateOption }) {
   </div>
 }
 
-export function StudioTemplateStage({ template, demoPath, initialState, state: controlledState, onStateChange }: {
+export function StudioTemplateStage({ template, demoPath, initialState, state: controlledState, onStateChange,
+  showHeading = true }: {
   template: InvitationTemplateDefinition
   demoPath?: string
   initialState?: StudioTemplateGalleryState
   state?: StudioTemplateGalleryState
   onStateChange?: (state: StudioTemplateGalleryState) => void
+  showHeading?: boolean
 }) {
   const templates = useMemo(() => createStudioTemplateOptions(template, demoPath), [template, demoPath])
   const available = templates.find(({ selectable }) => selectable)!
@@ -34,10 +36,11 @@ export function StudioTemplateStage({ template, demoPath, initialState, state: c
     else dispatch(action)
   }
 
-  return <section className="limen-studio__template-stage" aria-labelledby="studio-template-title">
-    <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Plantilla</p>
+  return <section className="limen-studio__template-stage"
+    aria-labelledby={showHeading ? 'studio-template-title' : undefined} aria-label={showHeading ? undefined : 'Plantilla'}>
+    {showHeading && <div className="limen-studio__stage-heading"><p className="limen-studio__eyebrow">Plantilla</p>
       <h2 id="studio-template-title">Plantilla de la invitación</h2>
-      <p>Este es el diseño disponible. Personalizá sus colores y contenido en las siguientes etapas.</p></div>
+      <p>Este es el diseño disponible. Personalizá sus colores y contenido en las siguientes etapas.</p></div>}
 
     <article className={`limen-studio__template-feature${selected ? ' is-selected' : ''}`}
       aria-label={`${available.name}, ${selected ? 'seleccionada' : 'disponible'}`}>

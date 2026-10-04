@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react'
+import type { MouseEvent } from 'react'
 
 import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import type { Origin01StudioValidation, StudioIssue } from './origin01StudioValidation'
@@ -11,14 +11,10 @@ import type { StudioPublicationEquivalence } from './studioPublicationEquivalenc
 type Props = {
   audience: InvitationAudience
   domains: readonly StudioDomainDefinition[]
-  preview: ReactNode
-  previewCollapsed: boolean
-  previewDedicated: boolean
   validation: Origin01StudioValidation
   onAudience: (audience: InvitationAudience) => void
   onIssue: (issue: StudioIssue) => void
   onOpenPreview: (event: MouseEvent<HTMLButtonElement>) => void
-  onShowPreview: () => void
   publication?: StudioPublicationSnapshot
   publicationEquivalence?: StudioPublicationEquivalence
   publicationState: StudioPublicationState
@@ -31,8 +27,8 @@ type Props = {
 
 const visibleSeverities = new Set<StudioIssue['severity']>(['structural', 'active-error', 'warning'])
 
-export function StudioReviewStage({ audience, domains, preview, previewCollapsed, previewDedicated, validation,
-  onAudience, onIssue, onOpenPreview, onShowPreview, publication, publicationState, draftRevision,
+export function StudioReviewStage({ audience, domains, validation,
+  onAudience, onIssue, onOpenPreview, publication, publicationState, draftRevision,
   publicationEquivalence, publicationBlockReason, editoriallyConfirmed, onEditorialConfirmation, onPublish }: Props) {
   const actionableGroups = groupStudioIssues(validation.issues)
     .filter(({ severity }) => visibleSeverities.has(severity))
@@ -50,8 +46,8 @@ export function StudioReviewStage({ audience, domains, preview, previewCollapsed
       <h2 className="limen-studio__review-title" id="studio-review-title" tabIndex={-1}>Revisá la invitación antes de compartirla</h2>
       <p>Comprobá el contenido, recorré ambas audiencias y corregí únicamente lo que necesita atención.</p>
     </header>
-    <div className={`limen-studio__review-layout${previewCollapsed ? ' limen-studio__review-layout--preview-collapsed' : ''}`}>
-      <div className="limen-studio__review-main" inert={previewDedicated ? true : undefined}>
+    <div className="limen-studio__review-layout">
+      <div className="limen-studio__review-main">
         <section className="limen-studio__review-summary" aria-label="Estado de la invitación">
           <div><strong>{validation.structurallyValid ? 'Preview disponible' : 'Preview bloqueada'}</strong>
             <span>{validation.structurallyValid ? 'La experiencia puede recorrerse.' : 'Hay un problema que impide mostrar los últimos cambios.'}</span></div>
@@ -94,12 +90,6 @@ export function StudioReviewStage({ audience, domains, preview, previewCollapsed
           editoriallyConfirmed={editoriallyConfirmed}
           onEditorialConfirmation={onEditorialConfirmation} onPublish={onPublish} />
       </div>
-      <aside className={`limen-studio__desktop-preview${previewDedicated ? ' limen-studio__desktop-preview--dedicated' : ''}`}>
-        {previewCollapsed && !previewDedicated && <div className="limen-studio__preview-collapsed">
-          <span>La vista previa está contraída.</span><button type="button" onClick={onShowPreview}>Mostrar</button></div>}
-        <div hidden={previewCollapsed && !previewDedicated}
-          inert={previewCollapsed && !previewDedicated ? true : undefined}>{preview}</div>
-      </aside>
     </div>
   </section>
 }

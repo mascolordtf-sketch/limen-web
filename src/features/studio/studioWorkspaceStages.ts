@@ -1,9 +1,9 @@
 export const studioWorkspaceStages = [
-  { id: 'template', label: 'Plantilla' },
-  { id: 'aesthetic', label: 'Estética' },
+  { id: 'design', label: 'Diseño' },
   { id: 'sections', label: 'Secciones' },
   { id: 'content', label: 'Contenido' },
-  { id: 'review', label: 'Revisión' },
+  { id: 'media', label: 'Fotos y música' },
+  { id: 'review', label: 'Revisar y publicar' },
 ] as const
 
 export type StudioWorkspaceStage = (typeof studioWorkspaceStages)[number]['id']
