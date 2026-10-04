@@ -22,6 +22,7 @@ import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading,
   isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
 import { StudioDesignStage, StudioMediaStage, StudioUnifiedWorkspace } from './StudioWorkspaceStages'
+import type { StudioMediaPreviewFocus } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { createStudioReturnToReview } from './studioWorkspaceStages'
 import { StudioTemplateStage } from './StudioTemplateStage'
@@ -72,6 +73,7 @@ StudioInvitationPageProps) {
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('design')
+  const [mediaPreviewFocus, setMediaPreviewFocus] = useState<StudioMediaPreviewFocus>()
   const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
   const [selectedEditorByScene, setSelectedEditorByScene] = useState<Partial<Record<StudioSceneId, string>>>({
@@ -160,6 +162,10 @@ StudioInvitationPageProps) {
     if (!window.confirm(`Se creará una publicación inmutable desde el borrador ${revision}. ¿Querés continuar?`)) return
     void onPublish(revision)
   }
+  const changeActiveStage = (stage: StudioWorkspaceStage) => {
+    setMediaPreviewFocus(undefined)
+    setActiveStage(stage)
+  }
 
   const openPreview = (event?: React.MouseEvent<HTMLElement>) => {
     opener.current = event?.currentTarget ?? document.activeElement as HTMLElement
@@ -185,9 +191,9 @@ StudioInvitationPageProps) {
     if (issueScene) {
       setSelectedScene(issueScene.id)
       setSelectedEditorByScene((current) => ({ ...current, [issueScene.id]: destination.editorId }))
-      setActiveStage('content')
-    } else if (destination.editorId === 'scene-configuration') setActiveStage('sections')
-    else setActiveStage('review')
+      changeActiveStage('content')
+    } else if (destination.editorId === 'scene-configuration') changeActiveStage('sections')
+    else changeActiveStage('review')
     requestAnimationFrame(() => requestAnimationFrame(() => {
       focusStudioIssueDestination(issue)
     }))
@@ -200,7 +206,7 @@ StudioInvitationPageProps) {
       if (destination) {
         if (layerOpen) surfaceDispatch({ type: 'close' })
         navigate({ type: 'open-item', domainId: destination.domainId, item: destination.item })
-        setActiveStage(destination.domainId === 'review' ? 'review' : 'sections')
+        changeActiveStage(destination.domainId === 'review' ? 'review' : 'sections')
         requestAnimationFrame(() => requestAnimationFrame(() => focusStudioEditorHeading()))
       }
     }
@@ -209,7 +215,7 @@ StudioInvitationPageProps) {
     const errors = correctionContext ? resolveStudioCorrectionReturn(correctionContext, domains) : null
     if (errors) {
       const destination = createStudioReturnToReview(errors)
-      setActiveStage(destination.activeStage)
+      changeActiveStage(destination.activeStage)
       navigate(destination.navigation)
       setCorrectionContext(undefined)
       requestAnimationFrame(() => requestAnimationFrame(() => focusStudioReviewHeading()))
@@ -233,10 +239,18 @@ StudioInvitationPageProps) {
     media: 'Fotos y música',
     review: 'Revisión completa',
   }
+  const previewScene = activeStage === 'content'
+    ? visibleScene.id
+    : activeStage === 'media'
+      ? mediaPreviewFocus?.scene
+      : undefined
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
-    contextualLabel={previewContextLabels[activeStage]}
-    previewScene={activeStage === 'content' ? visibleScene.id : undefined}
+    contextualLabel={activeStage === 'media' && mediaPreviewFocus
+      ? `Editando: ${mediaPreviewFocus.label}`
+      : previewContextLabels[activeStage]}
+    previewScene={previewScene}
+    previewItem={activeStage === 'media' ? mediaPreviewFocus?.item : undefined}
     onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
   const previewPane = <StudioPreviewPane audienceLabel={audience.audience === 'guest' ? 'Invitado' : 'Protagonista'}
@@ -282,7 +296,7 @@ StudioInvitationPageProps) {
           Recargar versión guardada
         </button>}
       </div>}
-      <StudioUnifiedWorkspace activeStage={activeStage} onStageChange={setActiveStage}
+      <StudioUnifiedWorkspace activeStage={activeStage} onStageChange={changeActiveStage}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
         onShowPreview={() => surfaceDispatch({ type: 'show' })}>
         {activeStage === 'design' && <StudioDesignStage
@@ -331,7 +345,7 @@ StudioInvitationPageProps) {
             ...current,
             captions: updater(current.captions),
           }))}
-          onUploadMedia={onUploadMedia} />}
+          onUploadMedia={onUploadMedia} onPreviewFocusChange={setMediaPreviewFocus} />}
         {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
           validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
           onOpenPreview={openPreview}

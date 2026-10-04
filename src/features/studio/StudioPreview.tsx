@@ -4,7 +4,7 @@ import type { InvitationAudience } from '../invitations/engine/invitationTypes'
 import { Origin01Invitation } from '../invitations/origin01/Origin01Invitation'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import type { StudioSceneId } from './studioScenes'
-import { getStudioPreviewMode, studioPreviewSceneSelectors } from './studioPreviewScenes'
+import { getStudioPreviewMode, getStudioPreviewSelector } from './studioPreviewScenes'
 
 type Props = {
   invitation: Origin01InvitationData | null
@@ -14,6 +14,7 @@ type Props = {
   showing: 'current' | 'last-renderable' | 'unavailable'
   contextualLabel?: string
   previewScene?: StudioSceneId
+  previewItem?: number
   onAudienceChange: (audience: InvitationAudience) => void
   onRestart: () => void
   onStructuralIssue: () => void
@@ -28,12 +29,13 @@ export function StudioAudienceControls({ audience, onAudienceChange }: Pick<Prop
   </div><p>Cambiar la audiencia reinicia la experiencia desde el comienzo.</p></fieldset>
 }
 
-function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, previewKey, previewScene }: {
+function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, previewKey, previewScene, previewItem }: {
   invitation: Origin01InvitationData
   audience: InvitationAudience
   publicInvitationUrl: string
   previewKey: string
   previewScene?: StudioSceneId
+  previewItem?: number
 }) {
   const stageRef = useRef<HTMLDivElement>(null)
   const viewportRef = useRef<HTMLIFrameElement>(null)
@@ -66,10 +68,10 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
       return
     }
 
-    const target = document.querySelector<HTMLElement>(studioPreviewSceneSelectors[previewScene])
+    const target = document.querySelector<HTMLElement>(getStudioPreviewSelector(previewScene, previewItem))
     if (!target) return
-    target.scrollIntoView({ block: 'start' })
-  }, [previewDocument, previewScene, previewKey])
+    target.scrollIntoView({ block: previewItem === undefined ? 'start' : 'center' })
+  }, [previewDocument, previewScene, previewItem, previewKey])
 
   const preparePreviewDocument = () => {
     const iframe = viewportRef.current
@@ -94,7 +96,7 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
           srcDoc="<!doctype html><html lang='es'><head><meta name='viewport' content='width=device-width, initial-scale=1'></head><body class='limen-studio-preview-document'></body></html>"
           onLoad={preparePreviewDocument} allow="clipboard-write" />
         {previewDocument ? createPortal(<Origin01Invitation
-          key={`${previewKey}:${previewScene ?? mode}`} invitation={invitation} audience={audience}
+          key={`${previewKey}:${previewScene ?? mode}:${previewItem ?? ''}`} invitation={invitation} audience={audience}
           publicInvitationUrl={publicInvitationUrl} startAtInvitation={mode === 'contextual'} />, previewDocument.body) : null}
       </div>
     </div>
@@ -102,7 +104,7 @@ function StudioPreviewViewport({ invitation, audience, publicInvitationUrl, prev
 }
 
 export function StudioPreview({ invitation, audience, publicInvitationUrl, previewKey, showing,
-  contextualLabel, previewScene, onAudienceChange, onRestart, onStructuralIssue, headingRef }: Props) {
+  contextualLabel, previewScene, previewItem, onAudienceChange, onRestart, onStructuralIssue, headingRef }: Props) {
   return <section className="limen-studio__preview-content" aria-labelledby="studio-preview-renderer-title">
     <h2 id="studio-preview-renderer-title" ref={headingRef} tabIndex={-1}>Preview real</h2>
     {contextualLabel && <p><strong>{contextualLabel}</strong></p>}
@@ -112,7 +114,8 @@ export function StudioPreview({ invitation, audience, publicInvitationUrl, previ
       <strong>El cambio actual no puede renderizarse.</strong><p>Mostramos el último borrador renderizable; el cambio inválido no está representado.</p>
       <button type="button" onClick={onStructuralIssue}>Ir al problema estructural</button></div>}
     {invitation ? <StudioPreviewViewport invitation={invitation} audience={audience}
-      publicInvitationUrl={publicInvitationUrl} previewKey={previewKey} previewScene={previewScene} />
+      publicInvitationUrl={publicInvitationUrl} previewKey={previewKey}
+      previewScene={previewScene} previewItem={previewItem} />
       : <div className="limen-studio__preview-unavailable" role="status"><h3>Preview no disponible</h3>
         <p>No existe todavía un borrador estructuralmente renderizable en esta sesión.</p>
         <button type="button" onClick={onStructuralIssue}>Ir al problema estructural</button></div>}

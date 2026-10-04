@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useEffect, useId, useRef, useState, type RefObject } from 'react'
 
 import { findStudioMediaById, getStudioMediaAssignments } from './studioMedia'
 import type { StudioImageMedia } from './studioMedia'
@@ -16,6 +16,7 @@ import {
 import { createPendingStudioPhoto, processStudioPhoto, validateStudioPhotoFile } from './studioPhotoProcessing'
 import { createStudioMediaAssetId } from './studioMediaStorage'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
+import type { StudioSceneId } from './studioScenes'
 
 type MediaUpdater = (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
 
@@ -27,21 +28,24 @@ type StudioPhotographyManagerProps = {
   onMediaChange: MediaUpdater
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
+  editingTarget?: StudioPhotoTarget
+  onEditingTargetChange?: (target?: StudioPhotoTarget) => void
 }
 
-type PhotoTarget = {
+export type StudioPhotoTarget = {
   readonly key: string
   readonly slotId: Origin01MediaSlotId
   readonly label: string
   readonly position?: number
+  readonly previewScene: StudioSceneId
 }
 
 const singleTargets = [
-  { key: 'hero', slotId: 'hero.image', label: 'Portada' },
-  { key: 'dress', slotId: 'dressCode.image', label: 'Dress Code' },
-  { key: 'gifts', slotId: 'gifts.image', label: 'Regalos' },
-  { key: 'closing', slotId: 'closing.image', label: 'Cierre' },
-] as const satisfies readonly PhotoTarget[]
+  { key: 'hero', slotId: 'hero.image', label: 'Portada', previewScene: 'cover' },
+  { key: 'dress', slotId: 'dressCode.image', label: 'Dress Code', previewScene: 'dress-code' },
+  { key: 'gifts', slotId: 'gifts.image', label: 'Regalos', previewScene: 'gifts' },
+  { key: 'closing', slotId: 'closing.image', label: 'Cierre', previewScene: 'closing' },
+] as const satisfies readonly StudioPhotoTarget[]
 
 const defaultAlt = (label: string, name: string) =>
   `${label === 'Galería' ? 'Fotografía' : `Imagen de ${label.toLowerCase()}`} de ${name.trim() || 'la protagonista'}`
@@ -51,13 +55,15 @@ const photographyFingerprint = (state: Origin01StudioMediaState) => JSON.stringi
   assignments: state.assignments.filter(({ slotId }) => slotId !== 'music.audio'),
 })
 
+const targetLabel = (target: StudioPhotoTarget) =>
+  `${target.label}${target.position === undefined ? '' : ` ${target.position + 1}`}`
+
 function StudioPhotoCard({
-  target, media, alt, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
-  onChoose, onReset, onRemove, onMove, onAltChange, onFocalPoint, onZoom,
+  target, media, focalPoint, zoom = 1, canonical, canRemove, canMoveUp, canMoveDown, disabled, processing, error,
+  onChoose, onReset, onRemove, onMove, onEdit,
 }: {
-  target: PhotoTarget
+  target: StudioPhotoTarget
   media?: StudioImageMedia
-  alt: string
   focalPoint?: { readonly x: number; readonly y: number }
   zoom?: number
   canonical: boolean
@@ -71,12 +77,9 @@ function StudioPhotoCard({
   onReset: () => void
   onRemove: () => void
   onMove: (direction: -1 | 1) => void
-  onAltChange: (value: string) => void
-  onFocalPoint: (axis: 'x' | 'y', value: number) => void
-  onZoom: (value: number) => void
+  onEdit: () => void
 }) {
   const inputId = useId()
-  const [settingsOpen, setSettingsOpen] = useState(Boolean(error))
   const src = media?.status === 'ready' ? media.src : media?.previewSrc
   return <article className="limen-studio__photo-card">
     <div className="limen-studio__photo-preview">
@@ -85,7 +88,7 @@ function StudioPhotoCard({
         transform: `scale(${zoom})`,
         transformOrigin: `${focalPoint?.x ?? 50}% ${focalPoint?.y ?? 50}%`,
       }} /> : <span>Sin fotografía</span>}
-      <strong>{target.label}{target.position === undefined ? '' : ` ${target.position + 1}`}</strong>
+      <strong>{targetLabel(target)}</strong>
       {processing && <span className="limen-studio__photo-progress">Procesando…</span>}
     </div>
     <div className="limen-studio__photo-card-body">
@@ -103,60 +106,136 @@ function StudioPhotoCard({
         {!canonical && <button type="button" onClick={onReset} disabled={disabled}>Restablecer</button>}
         {canRemove && <button type="button" onClick={onRemove} disabled={disabled}>Quitar</button>}
       </div>
+      {media && <button id={`studio-photo-edit-${target.key}`} className="limen-studio__photo-edit-action"
+        type="button" disabled={disabled}
+        aria-label={`Detalles y encuadre de ${targetLabel(target)}: posición y Zoom`}
+        onClick={onEdit}>Editar encuadre</button>}
       {(canMoveUp || canMoveDown) && <div className="limen-studio__photo-order" aria-label={`Orden de ${target.label}`}>
         <button type="button" disabled={!canMoveUp || disabled} onClick={() => onMove(-1)}>Subir</button>
         <button type="button" disabled={!canMoveDown || disabled} onClick={() => onMove(1)}>Bajar</button>
       </div>}
-      {media && <details className="limen-studio__photo-settings" open={settingsOpen}
-        onToggle={(event) => setSettingsOpen(event.currentTarget.open)}>
-        <summary>
-          <span>Detalles y encuadre</span>
-          <small>Descripción, foco y zoom</small>
-        </summary>
-        <div className="limen-studio__photo-fields">
-          <label>Descripción accesible
-            <input type="text" value={alt} maxLength={180} onChange={(event) => onAltChange(event.target.value)} />
-          </label>
-          <fieldset className="limen-studio__photo-framing">
-            <legend>Encuadre</legend>
-            <label>Horizontal
-              <input type="range" min="0" max="100" value={focalPoint?.x ?? 50}
-                onChange={(event) => onFocalPoint('x', Number(event.target.value))} />
-            </label>
-            <label>Vertical
-              <input type="range" min="0" max="100" value={focalPoint?.y ?? 50}
-                onChange={(event) => onFocalPoint('y', Number(event.target.value))} />
-            </label>
-            <label>Zoom <output>{zoom.toLocaleString('es-AR', {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}×</output>
-              <input type="range" min="1" max="2" step=".05" value={zoom}
-                aria-valuetext={`${zoom.toLocaleString('es-AR', { maximumFractionDigits: 2 })} aumentos`}
-                onChange={(event) => onZoom(Number(event.target.value))} />
-            </label>
-          </fieldset>
-        </div>
-      </details>}
       {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
     </div>
   </article>
 }
 
+function StudioPhotoEditor({
+  target, alt, focalPoint, zoom = 1, canonical, disabled, error, headingRef,
+  onClose, onReset, onAltChange, onFocalPoint, onZoom,
+}: {
+  target: StudioPhotoTarget
+  alt: string
+  focalPoint?: { readonly x: number; readonly y: number }
+  zoom?: number
+  canonical: boolean
+  disabled: boolean
+  error?: string
+  headingRef: RefObject<HTMLHeadingElement | null>
+  onClose: () => void
+  onReset: () => void
+  onAltChange: (value: string) => void
+  onFocalPoint: (axis: 'x' | 'y', value: number) => void
+  onZoom: (value: number) => void
+}) {
+  const horizontal = focalPoint?.x ?? 50
+  const vertical = focalPoint?.y ?? 50
+  const formattedZoom = zoom.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+  return <>
+    <button className="limen-studio__photo-editor-back" type="button" onClick={onClose}>
+      <span aria-hidden="true">←</span> Volver a fotografías
+    </button>
+    <header className="limen-studio__photo-editor-heading">
+      <p className="limen-studio__eyebrow">Editando fotografía</p>
+      <h3 id="studio-photo-editor-title" ref={headingRef} tabIndex={-1}>{targetLabel(target)}</h3>
+      <p>Usá la preview para ajustar la foto dentro de su escena real.</p>
+    </header>
+    <div className="limen-studio__photo-editor-preview-note" role="status">
+      <span>Preview sincronizada</span>
+      <strong>{target.previewScene === 'gallery' ? `Galería · foto ${(target.position ?? 0) + 1}` : target.label}</strong>
+    </div>
+    <div className="limen-studio__photo-editor-form">
+      <label className="limen-studio__photo-editor-description">Descripción accesible
+        <input type="text" value={alt} maxLength={180} disabled={disabled}
+          onChange={(event) => onAltChange(event.target.value)} />
+        <small>Contá brevemente qué se ve para quienes usan lectores de pantalla.</small>
+      </label>
+      <fieldset className="limen-studio__photo-editor-framing">
+        <legend>Encuadre</legend>
+        <label><span>Posición horizontal <output>{horizontal}%</output></span>
+          <input type="range" min="0" max="100" value={horizontal} disabled={disabled}
+            onChange={(event) => onFocalPoint('x', Number(event.target.value))} />
+        </label>
+        <label><span>Posición vertical <output>{vertical}%</output></span>
+          <input type="range" min="0" max="100" value={vertical} disabled={disabled}
+            onChange={(event) => onFocalPoint('y', Number(event.target.value))} />
+        </label>
+        <label><span>Zoom <output>{formattedZoom}×</output></span>
+          <input type="range" min="1" max="2" step=".05" value={zoom} disabled={disabled}
+            aria-valuetext={`${zoom.toLocaleString('es-AR', { maximumFractionDigits: 2 })} aumentos`}
+            onChange={(event) => onZoom(Number(event.target.value))} />
+        </label>
+      </fieldset>
+      {!canonical && <button className="limen-studio__photo-editor-reset" type="button"
+        disabled={disabled} onClick={onReset}>Restablecer esta foto</button>}
+      {error && <p className="limen-studio__field-error" role="alert">{error}</p>}
+    </div>
+  </>
+}
+
 export function StudioPhotographyManager({
   state, initialState, protagonistName, initialGalleryCaptions,
-  onMediaChange, onGalleryCaptionsChange, onUploadMedia,
+  onMediaChange, onGalleryCaptionsChange, onUploadMedia, editingTarget, onEditingTargetChange,
 }: StudioPhotographyManagerProps) {
   const [busyTarget, setBusyTarget] = useState<string>()
   const [errors, setErrors] = useState<Readonly<Record<string, string>>>({})
+  const editorHeadingRef = useRef<HTMLHeadingElement>(null)
+  const editorOpenerKeyRef = useRef<string | undefined>(undefined)
 
   const galleryAssignments = getStudioMediaAssignments(state.assignments, 'gallery.images')
   const photographyChanged = photographyFingerprint(state) !== photographyFingerprint(initialState)
-  const assignmentFor = (target: PhotoTarget, source = state) =>
+  const assignmentFor = (target: StudioPhotoTarget, source = state) =>
     getStudioMediaAssignments(source.assignments, target.slotId)
       .find((assignment) => target.slotId !== 'gallery.images' || assignment.position === target.position)
 
-  const choosePhoto = async (target: PhotoTarget, file: File) => {
+  const resolveTarget = (target: StudioPhotoTarget) => {
+    const assignment = assignmentFor(target)
+    const initial = assignmentFor(target, initialState)
+    const found = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
+    const media = found?.kind === 'image' ? found : undefined
+    const accessibility = assignment?.accessibility ?? media?.accessibility
+    const alt = accessibility?.kind === 'informative' ? accessibility.alt : ''
+    const accessibilityError = accessibility?.kind === 'informative' && alt.trim().length === 0
+      ? 'Describí brevemente qué muestra esta fotografía.'
+      : undefined
+    return {
+      assignment,
+      initial,
+      media,
+      alt,
+      accessibilityError,
+      canonical: JSON.stringify(assignment) === JSON.stringify(initial),
+    }
+  }
+
+  useEffect(() => {
+    if (editingTarget) editorHeadingRef.current?.focus()
+  }, [editingTarget])
+
+  const closeEditor = () => {
+    onEditingTargetChange?.(undefined)
+    requestAnimationFrame(() => {
+      if (!editorOpenerKeyRef.current) return
+      document.getElementById(`studio-photo-edit-${editorOpenerKeyRef.current}`)?.focus()
+    })
+  }
+
+  const beginEditing = (target: StudioPhotoTarget) => {
+    editorOpenerKeyRef.current = target.key
+    onEditingTargetChange?.(target)
+  }
+
+  const choosePhoto = async (target: StudioPhotoTarget, file: File) => {
     const validationError = validateStudioPhotoFile(file)
     if (validationError) {
       setErrors((current) => ({ ...current, [target.key]: validationError }))
@@ -201,38 +280,42 @@ export function StudioPhotographyManager({
     }
   }
 
-  const resetTarget = (target: PhotoTarget) => {
+  const resetTarget = (target: StudioPhotoTarget) => {
     const initial = assignmentFor(target, initialState)
-    onMediaChange((current) => initial
-      ? assignStudioPhoto(current, target.slotId, initial.mediaId, target.position)
-      : removeStudioPhotoAssignment(current, target.slotId, target.position))
+    const initialMedia = initial ? findStudioMediaById(initialState.items, initial.mediaId) : undefined
+    onMediaChange((current) => {
+      if (!initial || !initialMedia) return removeStudioPhotoAssignment(current, target.slotId, target.position)
+      const withInitialMedia = current.items.some(({ id }) => id === initialMedia.id)
+        ? current
+        : { ...current, items: [...current.items, initialMedia] }
+      const restored = assignStudioPhoto(withInitialMedia, target.slotId, initial.mediaId, target.position)
+      return {
+        ...restored,
+        assignments: restored.assignments.map((assignment) => assignment.slotId === target.slotId
+          && (target.slotId !== 'gallery.images' || assignment.position === target.position)
+          ? { ...initial }
+          : assignment),
+      }
+    })
     setErrors((current) => ({ ...current, [target.key]: '' }))
+    if (!initial && editingTarget?.key === target.key) closeEditor()
   }
 
-  const renderCard = (target: PhotoTarget, index?: number) => {
-    const assignment = assignmentFor(target)
-    const initial = assignmentFor(target, initialState)
-    const found = assignment ? findStudioMediaById(state.items, assignment.mediaId) : undefined
-    const media = found?.kind === 'image' ? found : undefined
-    const accessibility = assignment?.accessibility ?? media?.accessibility
-    const alt = accessibility?.kind === 'informative' ? accessibility.alt : ''
-    const accessibilityError = accessibility?.kind === 'informative'
-      && alt.trim().length === 0
-      ? 'Describí brevemente qué muestra esta fotografía.'
-      : undefined
-    return <StudioPhotoCard key={target.key} target={target} media={media} alt={alt}
-      focalPoint={assignment?.focalPoint}
-      zoom={assignment?.zoom}
-      canonical={assignment?.mediaId === initial?.mediaId && !assignment?.accessibility
-        && !assignment?.focalPoint && assignment?.zoom === undefined}
+  const renderCard = (target: StudioPhotoTarget, index?: number) => {
+    const resolved = resolveTarget(target)
+    return <StudioPhotoCard key={target.key} target={target} media={resolved.media}
+      focalPoint={resolved.assignment?.focalPoint}
+      zoom={resolved.assignment?.zoom}
+      canonical={resolved.canonical}
       canRemove={(target.slotId === 'gallery.images' && galleryAssignments.length > 1)
         || target.slotId === 'dressCode.image' || target.slotId === 'gifts.image'}
       canMoveUp={target.slotId === 'gallery.images' && (index ?? 0) > 0}
       canMoveDown={target.slotId === 'gallery.images' && (index ?? 0) < galleryAssignments.length - 1}
       disabled={busyTarget !== undefined} processing={busyTarget === target.key}
-      error={errors[target.key] || accessibilityError}
+      error={errors[target.key] || resolved.accessibilityError}
       onChoose={(file) => void choosePhoto(target, file)}
       onReset={() => resetTarget(target)}
+      onEdit={() => beginEditing(target)}
       onRemove={() => {
         onMediaChange((current) => removeStudioPhotoAssignment(current, target.slotId, target.position))
         if (target.slotId === 'gallery.images' && target.position !== undefined) {
@@ -250,14 +333,36 @@ export function StudioPhotographyManager({
           return next
         })
       }}
-      onAltChange={(value) => assignment && onMediaChange((current) =>
-        updateStudioPhotoAccessibility(current, target.slotId, target.position,
-          { kind: 'informative', alt: value }))}
-      onFocalPoint={(axis, value) => onMediaChange((current) =>
-        updateStudioPhotoFocalPoint(current, target.slotId, target.position, axis, value))}
-      onZoom={(value) => onMediaChange((current) =>
-        updateStudioPhotoZoom(current, target.slotId, target.position, value))}
     />
+  }
+
+  if (editingTarget) {
+    const resolved = resolveTarget(editingTarget)
+    return <section className="limen-studio__photography limen-studio__photography--editing"
+      aria-labelledby="studio-photo-editor-title">
+      {resolved.assignment && resolved.media
+        ? <StudioPhotoEditor target={editingTarget} alt={resolved.alt}
+          focalPoint={resolved.assignment.focalPoint} zoom={resolved.assignment.zoom}
+          canonical={resolved.canonical} disabled={busyTarget !== undefined}
+          error={errors[editingTarget.key] || resolved.accessibilityError}
+          headingRef={editorHeadingRef} onClose={closeEditor}
+          onReset={() => resetTarget(editingTarget)}
+          onAltChange={(value) => onMediaChange((current) => updateStudioPhotoAccessibility(
+            current, editingTarget.slotId, editingTarget.position, { kind: 'informative', alt: value }))}
+          onFocalPoint={(axis, value) => onMediaChange((current) => updateStudioPhotoFocalPoint(
+            current, editingTarget.slotId, editingTarget.position, axis, value))}
+          onZoom={(value) => onMediaChange((current) => updateStudioPhotoZoom(
+            current, editingTarget.slotId, editingTarget.position, value))} />
+        : <>
+          <button className="limen-studio__photo-editor-back" type="button" onClick={closeEditor}>
+            <span aria-hidden="true">←</span> Volver a fotografías
+          </button>
+          <div className="limen-studio__photo-editor-missing" role="status">
+            <h3 id="studio-photo-editor-title" ref={editorHeadingRef} tabIndex={-1}>Foto no disponible</h3>
+            <p>Volvé a la lista y elegí nuevamente la fotografía.</p>
+          </div>
+        </>}
+    </section>
   }
 
   const addTargetKey = `gallery-new-${galleryAssignments.length}`
@@ -296,11 +401,13 @@ export function StudioPhotographyManager({
             event.currentTarget.value = ''
             if (file) void choosePhoto({
               key: addTargetKey, slotId: 'gallery.images', label: 'Galería', position: galleryAssignments.length,
+              previewScene: 'gallery',
             }, file)
           }} />
       </header>
       <div className="limen-studio__photo-grid">{galleryAssignments.map((_, index) => renderCard({
         key: `gallery-${index}`, slotId: 'gallery.images', label: 'Galería', position: index,
+        previewScene: 'gallery',
       }, index))}</div>
       {errors[addTargetKey] && <p className="limen-studio__field-error" role="alert">{errors[addTargetKey]}</p>}
     </div>

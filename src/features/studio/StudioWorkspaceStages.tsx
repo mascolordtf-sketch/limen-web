@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { StudioMusicManager } from './StudioMusicManager'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
+import type { StudioPhotoTarget } from './StudioPhotographyManager'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
+import type { StudioSceneId } from './studioScenes'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
@@ -81,6 +83,7 @@ export function StudioMediaStage({
   onMediaChange,
   onGalleryCaptionsChange,
   onUploadMedia,
+  onPreviewFocusChange,
 }: {
   media: Origin01StudioMediaState
   initialMedia: Origin01StudioMediaState
@@ -89,18 +92,38 @@ export function StudioMediaStage({
   onMediaChange: (updater: (current: Origin01StudioMediaState) => Origin01StudioMediaState) => void
   onGalleryCaptionsChange: (updater: (current: readonly string[]) => readonly string[]) => void
   onUploadMedia: (input: StudioMediaUploadInput) => Promise<{ readonly storageKey: string; readonly src: string }>
+  onPreviewFocusChange?: (focus?: StudioMediaPreviewFocus) => void
 }) {
-  return <section className="limen-studio__media-stage" aria-labelledby="studio-media-title">
-    <header className="limen-studio__stage-heading">
+  const [editingPhoto, setEditingPhoto] = useState<StudioPhotoTarget>()
+  const changeEditingPhoto = (target?: StudioPhotoTarget) => {
+    setEditingPhoto(target)
+    onPreviewFocusChange?.(target ? {
+      scene: target.previewScene,
+      item: target.previewScene === 'gallery' ? target.position : undefined,
+      label: target.position === undefined ? target.label : `${target.label} ${target.position + 1}`,
+    } : undefined)
+  }
+
+  return <section className={`limen-studio__media-stage${editingPhoto ? ' limen-studio__media-stage--editing' : ''}`}
+    aria-labelledby={editingPhoto ? 'studio-photo-editor-title' : 'studio-media-title'}>
+    {!editingPhoto && <header className="limen-studio__stage-heading">
       <p className="limen-studio__eyebrow">Fotos y música</p>
       <h2 id="studio-media-title">Completá la experiencia</h2>
       <p>Configurá las imágenes y, si corresponde, la música de la invitación.</p>
-    </header>
+    </header>}
     <StudioPhotographyManager state={media} initialState={initialMedia} protagonistName={protagonistName}
       initialGalleryCaptions={initialGalleryCaptions}
       onMediaChange={onMediaChange} onGalleryCaptionsChange={onGalleryCaptionsChange}
-      onUploadMedia={onUploadMedia} />
-    <StudioMusicManager state={media} initialState={initialMedia}
+      onUploadMedia={onUploadMedia} editingTarget={editingPhoto}
+      onEditingTargetChange={changeEditingPhoto} />
+    {!editingPhoto && <StudioMusicManager state={media} initialState={initialMedia}
       onMediaChange={onMediaChange} onUploadMedia={onUploadMedia} />
+    }
   </section>
+}
+
+export type StudioMediaPreviewFocus = {
+  readonly scene: StudioSceneId
+  readonly item?: number
+  readonly label: string
 }

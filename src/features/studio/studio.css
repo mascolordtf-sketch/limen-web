@@ -2713,8 +2713,7 @@
   transform: none;
 }
 
-.limen-studio__photo-card-body,
-.limen-studio__photo-fields {
+.limen-studio__photo-card-body {
   display: grid;
   gap: .7rem;
 }
@@ -2731,88 +2730,173 @@
   gap: .45rem;
 }
 
-.limen-studio__photo-settings {
-  border-top: 1px solid var(--studio-line);
-  padding-top: .75rem;
+.limen-studio__photo-card .limen-studio__photo-edit-action {
+  width: 100%;
+  border-color: var(--studio-accent);
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent-strong);
 }
 
-.limen-studio__photo-settings > summary {
-  cursor: pointer;
+.limen-studio__photo-card .limen-studio__photo-edit-action:hover {
+  background: color-mix(in srgb, var(--studio-accent-soft) 72%, var(--studio-accent) 28%);
+}
+
+.limen-studio__photography--editing {
+  align-content: start;
+  gap: 1.1rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photo-editor-back {
+  display: inline-flex;
+  justify-self: start;
+  align-items: center;
+  gap: .4rem;
+  border-color: transparent !important;
+  padding-inline: .2rem !important;
+  background: transparent !important;
+  color: var(--studio-accent-strong) !important;
+}
+
+.limen-studio__photo-editor-heading {
+  display: grid;
+  gap: .3rem;
+  padding-bottom: .9rem;
+  border-bottom: 1px solid var(--studio-line);
+}
+
+.limen-studio__photo-editor-heading h3,
+.limen-studio__photo-editor-heading p,
+.limen-studio__photo-editor-missing h3,
+.limen-studio__photo-editor-missing p {
+  margin: 0;
+}
+
+.limen-studio__photo-editor-heading h3,
+.limen-studio__photo-editor-missing h3 {
+  color: var(--studio-ink);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: -.025em;
+}
+
+.limen-studio__photo-editor-heading h3:focus,
+.limen-studio__photo-editor-missing h3:focus {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 3px;
+}
+
+.limen-studio__photo-editor-heading > p:last-child,
+.limen-studio__photo-editor-missing p {
+  color: var(--studio-muted);
+  font-size: .84rem;
+  line-height: 1.5;
+}
+
+.limen-studio__photo-editor-preview-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+  border: 1px solid color-mix(in srgb, var(--studio-accent) 34%, var(--studio-line));
+  border-radius: .75rem;
+  padding: .7rem .8rem;
+  background: var(--studio-accent-soft);
+  color: var(--studio-accent-strong);
+  font-size: .76rem;
+}
+
+.limen-studio__photo-editor-preview-note span {
+  color: var(--studio-muted);
+}
+
+.limen-studio__photo-editor-form {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 38rem);
+}
+
+.limen-studio__photo-editor-description {
+  display: grid;
+  gap: .4rem;
   color: var(--studio-ink-soft);
   font-size: .78rem;
   font-weight: 750;
 }
 
-.limen-studio__photo-settings > summary span,
-.limen-studio__photo-settings > summary small {
-  margin-left: .25rem;
-}
-
-.limen-studio__photo-settings > summary small {
-  display: block;
-  margin-top: .18rem;
-  color: var(--studio-muted);
-  font-size: .7rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.limen-studio__photo-settings[open] > summary {
-  margin-bottom: .7rem;
-}
-
-.limen-studio__photo-fields {
-  border-top: 1px solid var(--studio-line);
-  padding-top: .7rem;
-}
-
-.limen-studio__photo-fields label {
-  display: grid;
-  gap: .35rem;
-  color: var(--studio-muted);
-  font-size: .7rem;
-  font-weight: 700;
-}
-
-.limen-studio__photo-fields input[type='text'] {
+.limen-studio__photo-editor-description input {
   width: 100%;
-  min-height: 2.65rem;
+  min-height: 2.8rem;
   border: 1px solid var(--studio-line-strong);
-  border-radius: .6rem;
-  padding: .55rem .65rem;
+  border-radius: .65rem;
+  padding: .6rem .7rem;
   background: #fff;
   color: var(--studio-ink);
   font: inherit;
-  font-size: .8rem;
+  font-size: .84rem;
+  font-weight: 500;
 }
 
-.limen-studio__photo-framing {
+.limen-studio__photo-editor-description small {
+  color: var(--studio-muted);
+  font-size: .7rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.limen-studio__photo-editor-framing {
   display: grid;
-  gap: .65rem;
+  gap: .9rem;
   min-width: 0;
   margin: 0;
-  border: 0;
-  border-radius: .65rem;
-  padding: .65rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  padding: .9rem;
   background: var(--studio-paper-muted, #f5f4f0);
 }
 
-.limen-studio__photo-framing legend {
-  padding: 0;
+.limen-studio__photo-editor-framing legend {
+  padding-inline: .2rem;
   color: var(--studio-ink-soft);
-  font-size: .7rem;
-  font-weight: 750;
+  font-size: .78rem;
+  font-weight: 800;
 }
 
-.limen-studio__photo-fields output {
-  justify-self: end;
+.limen-studio__photo-editor-framing label {
+  display: grid;
+  gap: .45rem;
+  color: var(--studio-muted);
+  font-size: .74rem;
+  font-weight: 700;
+}
+
+.limen-studio__photo-editor-framing label > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.limen-studio__photo-editor-framing output {
   color: var(--studio-ink);
   font-variant-numeric: tabular-nums;
 }
 
-.limen-studio__photo-fields input[type='range'] {
+.limen-studio__photo-editor-framing input[type='range'] {
   width: 100%;
   accent-color: var(--studio-accent);
+}
+
+.limen-studio__photo-editor-reset {
+  justify-self: start;
+}
+
+.limen-studio__photo-editor-missing {
+  display: grid;
+  gap: .35rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  padding: 1rem;
+  background: var(--studio-paper-muted, #f5f4f0);
 }
 
 .limen-studio__gallery-manager {
