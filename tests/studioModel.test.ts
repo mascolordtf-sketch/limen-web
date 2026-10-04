@@ -934,6 +934,8 @@ assert(/\.limen-studio__workspace-navigation \.limen-studio__stage-nav\s*\{[^}]*
   'la navegación lateral fuerza una única columna y no hereda la grilla horizontal anterior')
 assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:\s*2/s.test(studioCss),
   'el workspace ocupa siempre la fila flexible y mantiene estable la altura de la preview sin avisos de guardado')
+assert(/body:has\(\.limen-studio__workspace\)[^{]*\{[^}]*overflow:\s*hidden/s.test(studioCss),
+  'Studio bloquea el scroll del documento exterior para que el workspace no salte entre etapas')
 const designStageElement = createElement(StudioDesignStage, {
   template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,

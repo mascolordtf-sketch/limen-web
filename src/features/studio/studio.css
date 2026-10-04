@@ -5952,6 +5952,13 @@
 }
 
 @media (min-width: 76rem) {
+  html:has(.limen-studio__workspace),
+  body:has(.limen-studio__workspace),
+  #root:has(.limen-studio__workspace) {
+    height: 100%;
+    overflow: hidden;
+  }
+
   .limen-studio__header {
     grid-template-columns: minmax(0, 1fr) auto;
   }
