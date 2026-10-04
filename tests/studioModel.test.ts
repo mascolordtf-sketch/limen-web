@@ -904,6 +904,10 @@ assert(contentMarkup.includes('Editando ahora') && contentMarkup.includes('Escen
   && contentMarkup.includes('limen-studio__editor-scene-number')
   && contentMarkup.includes('limen-studio__editor-heading'),
   'el workspace editorial identifica la escena activa, su orden y su carácter narrativo')
+assert(contentMarkup.includes('<select') && contentMarkup.includes('01 · Datos generales')
+  && contentMarkup.includes('Anterior') && contentMarkup.includes('Siguiente')
+  && !contentMarkup.includes('limen-studio__scene-navigation-list'),
+  'Contenido navega las escenas desde una barra compacta sin sumar una segunda barra lateral')
 const generalContentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
   draft: initial, selectedScene: 'general', onSceneSelect: () => undefined,
   editor: createElement('div', null, 'EDITOR_GENERAL'),

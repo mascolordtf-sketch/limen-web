@@ -5793,6 +5793,101 @@
 
 .limen-studio__community-group h3 { margin: 0; }
 
+/* Scene navigation belongs to the editor toolbar, avoiding a second sidebar. */
+.limen-studio__scene-navigation {
+  display: grid;
+  grid-template-columns: auto minmax(12rem, 1fr) auto auto;
+  align-items: center;
+  gap: .7rem;
+}
+
+.limen-studio__scene-navigation-heading {
+  min-width: 5rem;
+}
+
+.limen-studio__scene-navigation-heading .limen-studio__eyebrow,
+.limen-studio__scene-navigation-heading h2 {
+  margin: 0;
+}
+
+.limen-studio__scene-navigation-heading h2 {
+  font-size: 1rem;
+}
+
+.limen-studio__scene-picker {
+  min-width: 0;
+}
+
+.limen-studio__scene-picker select {
+  width: 100%;
+  min-height: 2.4rem;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .65rem;
+  padding: .4rem 2.1rem .4rem .7rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.limen-studio__scene-picker select:focus-visible,
+.limen-studio__scene-navigation-actions button:focus-visible {
+  outline: 3px solid var(--studio-focus, #315f81);
+  outline-offset: 2px;
+}
+
+.limen-studio__scene-progress {
+  color: var(--studio-muted);
+  font-size: .72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.limen-studio__scene-navigation-actions {
+  display: flex;
+  gap: .35rem;
+}
+
+.limen-studio__scene-navigation-actions button {
+  min-height: 2.4rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .65rem;
+  padding: .4rem .7rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+  font: inherit;
+  font-size: .76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.limen-studio__scene-navigation-actions button:disabled {
+  opacity: .38;
+  cursor: default;
+}
+
+@media (max-width: 47.99rem) {
+  .limen-studio__scene-navigation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: .6rem;
+  }
+
+  .limen-studio__scene-navigation-heading {
+    grid-column: 1 / -1;
+  }
+
+  .limen-studio__scene-progress {
+    align-self: center;
+  }
+
+  .limen-studio__scene-navigation-actions {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Unified Studio workspace: one workflow, one editor surface and one preview host. */
 .limen-studio__unified-workspace {
   display: grid;
@@ -6000,21 +6095,37 @@
   .limen-studio__unified-workspace--content .limen-studio__content-layout {
     min-height: 100%;
     height: auto;
-    grid-template-columns: 11.5rem minmax(0, 1fr);
-    gap: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: .6rem;
     align-items: start;
     overflow: visible;
   }
 
   .limen-studio__unified-workspace--content .limen-studio__scene-navigation {
     position: sticky;
+    z-index: 2;
     top: 0;
-    max-height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(12rem, 1fr) auto auto;
+    align-items: center;
+    gap: .7rem;
+    max-height: none;
+    border: 0;
+    border-bottom: 1px solid var(--studio-line);
+    border-radius: 0;
+    padding: .7rem .85rem;
+    background: rgb(244 241 233 / 96%);
+    box-shadow: 0 5px 12px rgb(31 42 34 / 4%);
+    backdrop-filter: blur(10px);
   }
 
   .limen-studio__unified-workspace--content .limen-studio__contextual-editor {
     display: block;
     overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: .85rem;
   }
 
   .limen-studio__unified-workspace--content .limen-studio__contextual-editor-body {

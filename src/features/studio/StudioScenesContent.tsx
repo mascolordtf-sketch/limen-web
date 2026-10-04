@@ -21,13 +21,31 @@ export function StudioScenesContent({ draft, selectedScene, onSceneSelect, edito
   const selectedKind = selected.id === 'general'
     ? 'Base compartida'
     : selected.required ? 'Escena esencial' : 'Escena opcional'
+  const previousScene = selectedIndex > 0 ? scenes[selectedIndex - 1] : undefined
+  const nextScene = selectedIndex < scenes.length - 1 ? scenes[selectedIndex + 1] : undefined
   return <section className="limen-studio__content-layout">
     <nav className="limen-studio__scene-navigation" aria-label="Escenas de contenido">
-      <header><p className="limen-studio__eyebrow">Contenido</p><h2>Escenas de la invitación</h2></header>
-      <div className="limen-studio__scene-navigation-list">{scenes.map((scene, index) =>
-        <button key={scene.id} type="button" aria-current={scene.id === selected.id ? 'page' : undefined}
-          onClick={() => onSceneSelect(scene.id)}><span aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-          <strong>{scene.label}</strong></button>)}</div>
+      <div className="limen-studio__scene-navigation-heading">
+        <p className="limen-studio__eyebrow">Contenido</p><h2>Escena</h2>
+      </div>
+      <label className="limen-studio__scene-picker">
+        <span className="limen-studio__visually-hidden">Escena de contenido</span>
+        <select value={selected.id}
+          onChange={(event) => onSceneSelect(event.currentTarget.value as StudioSceneId)}>
+          {scenes.map((scene, index) => <option key={scene.id} value={scene.id}>
+            {String(index + 1).padStart(2, '0')} · {scene.label}
+          </option>)}
+        </select>
+      </label>
+      <span className="limen-studio__scene-progress" aria-live="polite">
+        {selectedIndex + 1} de {scenes.length}
+      </span>
+      <div className="limen-studio__scene-navigation-actions">
+        <button type="button" disabled={!previousScene}
+          onClick={() => previousScene && onSceneSelect(previousScene.id)}>Anterior</button>
+        <button type="button" disabled={!nextScene}
+          onClick={() => nextScene && onSceneSelect(nextScene.id)}>Siguiente</button>
+      </div>
     </nav>
     <article className="limen-studio__contextual-editor" aria-labelledby="studio-contextual-editor-title">
       <header className="limen-studio__editor-heading">
