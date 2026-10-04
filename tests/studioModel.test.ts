@@ -1696,8 +1696,13 @@ const realReviewBoundary = renderToStaticMarkup(createElement(StudioUnifiedWorks
   onStageChange: () => undefined, onShowPreview: () => undefined, children: reviewBoundaryElement,
 }))
 assert((realReviewBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1
-  && realReviewBoundary.includes('Revisá la invitación antes de compartirla')
-  && realReviewBoundary.includes('Qué necesita atención')
+  && realReviewBoundary.includes('Revisar y publicar')
+  && realReviewBoundary.includes('La invitación está lista')
+  && realReviewBoundary.includes('Controles finales')
+  && realReviewBoundary.includes('Vista de protagonista')
+  && realReviewBoundary.includes('Vista de invitado')
+  && realReviewBoundary.includes('Publicar cambios')
+  && realReviewBoundary.includes('Ver detalles e historial de publicaciones')
   && !realReviewBoundary.includes('Índice general')
   && !realReviewBoundary.includes('Dominio:')
   && !realReviewBoundary.includes('Datos canónicos')
