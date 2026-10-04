@@ -2656,17 +2656,33 @@
 }
 
 .limen-studio__photo-card {
+  position: relative;
+  z-index: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--studio-line);
   border-radius: 1rem;
   background: var(--studio-paper);
+}
+
+.limen-studio__photo-card:has(.limen-studio__photo-actions-menu[open]) {
+  z-index: 10;
+}
+
+.limen-studio__photo-card--dragging {
+  opacity: .48;
+}
+
+.limen-studio__photo-card--drop-target {
+  border-color: var(--studio-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--studio-accent) 22%, transparent);
 }
 
 .limen-studio__photo-preview {
   position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  border-radius: .95rem .95rem 0 0;
   background: #e4e2dc;
 }
 
@@ -2713,6 +2729,59 @@
   transform: none;
 }
 
+.limen-studio__photo-card .limen-studio__photo-preview-edit {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: inherit;
+  padding: 0;
+  background: transparent;
+}
+
+.limen-studio__photo-preview-edit > span {
+  position: absolute;
+  right: .55rem;
+  bottom: .55rem;
+  border-radius: .4rem;
+  padding: .3rem .45rem;
+  background: rgb(24 29 26 / 76%);
+  color: #fff;
+  font-size: .66rem;
+  font-weight: 750;
+}
+
+.limen-studio__photo-card .limen-studio__photo-preview-edit:hover,
+.limen-studio__photo-card .limen-studio__photo-preview-edit:focus-visible {
+  background: rgb(255 255 255 / 9%);
+  outline: 3px solid var(--studio-focus);
+  outline-offset: -3px;
+}
+
+.limen-studio__photo-card .limen-studio__photo-drag-handle {
+  position: absolute;
+  z-index: 4;
+  top: .55rem;
+  right: .55rem;
+  display: grid;
+  width: 2.15rem;
+  min-height: 2.15rem;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: .5rem;
+  padding: 0;
+  background: rgb(24 29 26 / 82%);
+  color: #fff;
+  cursor: grab;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.limen-studio__photo-card .limen-studio__photo-drag-handle:active {
+  cursor: grabbing;
+}
+
 .limen-studio__photo-card-body {
   display: grid;
   gap: .7rem;
@@ -2723,22 +2792,71 @@
   padding: .75rem;
 }
 
-.limen-studio__photo-actions,
-.limen-studio__photo-order {
+.limen-studio__photo-actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: .45rem;
 }
 
-.limen-studio__photo-card .limen-studio__photo-edit-action {
-  width: 100%;
-  border-color: var(--studio-accent);
-  background: var(--studio-accent-soft);
-  color: var(--studio-accent-strong);
+.limen-studio__photo-actions-menu {
+  position: relative;
+  margin-left: auto;
 }
 
-.limen-studio__photo-card .limen-studio__photo-edit-action:hover {
-  background: color-mix(in srgb, var(--studio-accent-soft) 72%, var(--studio-accent) 28%);
+.limen-studio__photo-actions-menu > summary {
+  display: grid;
+  min-width: 2.65rem;
+  min-height: 2.65rem;
+  place-items: center;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: .7rem;
+  background: var(--studio-paper);
+  color: var(--studio-ink-soft);
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 800;
+  list-style: none;
+}
+
+.limen-studio__photo-actions-menu > summary::-webkit-details-marker {
+  display: none;
+}
+
+.limen-studio__photo-actions-menu > summary:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 2px;
+}
+
+.limen-studio__photo-actions-menu > div {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + .35rem);
+  right: 0;
+  display: grid;
+  min-width: 9.5rem;
+  overflow: hidden;
+  border: 1px solid var(--studio-line);
+  border-radius: .75rem;
+  padding: .3rem;
+  background: var(--studio-paper);
+  box-shadow: 0 12px 28px rgb(31 42 34 / 18%);
+}
+
+.limen-studio__photo-actions-menu > div > button {
+  min-height: 2.35rem;
+  border: 0;
+  padding: .5rem .6rem;
+  text-align: left;
+}
+
+.limen-studio__photo-actions-menu > div > button:hover,
+.limen-studio__photo-actions-menu > div > button:focus-visible {
+  background: var(--studio-accent-soft);
+}
+
+.limen-studio__photo-actions-menu > div > .limen-studio__photo-destructive-action {
+  color: #85483f;
 }
 
 .limen-studio__photography--editing {
@@ -2779,8 +2897,8 @@
   letter-spacing: -.025em;
 }
 
-.limen-studio__photo-editor-heading h3:focus,
-.limen-studio__photo-editor-missing h3:focus {
+.limen-studio__photo-editor-heading h3:focus-visible,
+.limen-studio__photo-editor-missing h3:focus-visible {
   outline: 3px solid var(--studio-focus);
   outline-offset: 3px;
 }
@@ -2792,38 +2910,50 @@
   line-height: 1.5;
 }
 
-.limen-studio__photo-editor-preview-note {
+.limen-studio__photo-editor-form {
+  display: grid;
+  gap: .85rem;
+  width: min(100%, 36rem);
+}
+
+.limen-studio__photo-editor-accessibility {
+  border: 1px solid var(--studio-line);
+  border-radius: .8rem;
+  background: var(--studio-paper);
+}
+
+.limen-studio__photo-editor-accessibility > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: .8rem;
-  border: 1px solid color-mix(in srgb, var(--studio-accent) 34%, var(--studio-line));
-  border-radius: .75rem;
-  padding: .7rem .8rem;
-  background: var(--studio-accent-soft);
-  color: var(--studio-accent-strong);
-  font-size: .76rem;
+  gap: .75rem;
+  padding: .75rem .85rem;
+  color: var(--studio-ink-soft);
+  cursor: pointer;
+  font-size: .78rem;
+  font-weight: 750;
 }
 
-.limen-studio__photo-editor-preview-note span {
+.limen-studio__photo-editor-accessibility > summary small {
   color: var(--studio-muted);
+  font-size: .68rem;
+  font-weight: 600;
 }
 
-.limen-studio__photo-editor-form {
-  display: grid;
-  gap: 1rem;
-  width: min(100%, 38rem);
+.limen-studio__photo-editor-accessibility[open] > summary {
+  border-bottom: 1px solid var(--studio-line);
 }
 
-.limen-studio__photo-editor-description {
+.limen-studio__photo-editor-accessibility > label {
   display: grid;
   gap: .4rem;
+  padding: .8rem .85rem;
   color: var(--studio-ink-soft);
   font-size: .78rem;
   font-weight: 750;
 }
 
-.limen-studio__photo-editor-description input {
+.limen-studio__photo-editor-accessibility input {
   width: 100%;
   min-height: 2.8rem;
   border: 1px solid var(--studio-line-strong);
@@ -2836,7 +2966,7 @@
   font-weight: 500;
 }
 
-.limen-studio__photo-editor-description small {
+.limen-studio__photo-editor-accessibility label small {
   color: var(--studio-muted);
   font-size: .7rem;
   font-weight: 500;
@@ -6290,6 +6420,7 @@
   .limen-studio__unified-workspace--media .limen-studio__photo-preview {
     min-height: 8.5rem;
     aspect-ratio: auto;
+    border-radius: .95rem 0 0 .95rem;
   }
 
   .limen-studio__unified-workspace--media .limen-studio__photo-preview img {
