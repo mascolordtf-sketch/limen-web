@@ -62,7 +62,7 @@ export function StudioMusicManager({
 
   return <section className="limen-studio__music" aria-labelledby="studio-music-title">
     <header className="limen-studio__media-section-heading">
-      <div><h3 id="studio-music-title">Música</h3>
+      <div><h3 id="studio-music-title" className="limen-studio__visually-hidden">Música</h3>
         <p>Opcional · MP3, M4A, OGG o WAV · hasta 20 MB.</p>
       </div>
       {changed && <button type="button" disabled={uploading} onClick={() => {
