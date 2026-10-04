@@ -932,6 +932,8 @@ assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElemen
   'cada etapa superior puede activarse, incluida Revisión')
 assert(/\.limen-studio__workspace-navigation \.limen-studio__stage-nav\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/s.test(studioCss),
   'la navegación lateral fuerza una única columna y no hereda la grilla horizontal anterior')
+assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:\s*2/s.test(studioCss),
+  'el workspace ocupa siempre la fila flexible y mantiene estable la altura de la preview sin avisos de guardado')
 const designStageElement = createElement(StudioDesignStage, {
   template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,

@@ -5971,6 +5971,7 @@
   .limen-studio__unified-workspace {
     min-height: 0;
     height: 100%;
+    grid-row: 2;
     grid-template-columns: 12rem minmax(0, 1fr) 27rem;
     gap: .6rem;
     overflow: hidden;
