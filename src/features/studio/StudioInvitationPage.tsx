@@ -21,7 +21,7 @@ import type { StudioIssueCorrectionContext } from './studioReviewIssues'
 import type { StudioIssue } from './origin01StudioValidation'
 import { focusStudioEditorHeading, focusStudioIssueDestination, focusStudioReviewHeading,
   isStudioPreviewCloseKey, restoreStudioPreviewOpener } from './studioFocus'
-import { StudioAestheticStage, StudioStageNavigation } from './StudioWorkspaceStages'
+import { StudioDesignStage, StudioMediaStage, StudioUnifiedWorkspace } from './StudioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { createStudioReturnToReview } from './studioWorkspaceStages'
 import { StudioTemplateStage } from './StudioTemplateStage'
@@ -71,7 +71,7 @@ StudioInvitationPageProps) {
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
-  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
+  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('design')
   const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
   const [selectedEditorByScene, setSelectedEditorByScene] = useState<Partial<Record<StudioSceneId, string>>>({
@@ -226,9 +226,16 @@ StudioInvitationPageProps) {
   const contextualEditor = <div className="limen-studio__contextual-editor-body">
     <StudioActiveEditor invitation={invitation} template={template} model={model} editorId={selectedEditorId} />
   </div>
+  const previewContextLabels: Record<StudioWorkspaceStage, string> = {
+    design: 'Diseño',
+    sections: 'Secciones',
+    content: visibleScene.label,
+    media: 'Fotos y música',
+    review: 'Revisión completa',
+  }
   const preview = <StudioPreview invitation={retained.invitation} audience={audience.audience}
     publicInvitationUrl={publicInvitationUrl} previewKey={audience.previewKey} showing={retained.showing}
-    contextualLabel={activeStage === 'content' ? visibleScene.label : 'Revisión completa'}
+    contextualLabel={previewContextLabels[activeStage]}
     previewScene={activeStage === 'content' ? visibleScene.id : undefined}
     onAudienceChange={audience.changeAudience} onRestart={audience.restartPreview}
     onStructuralIssue={structuralIssue} headingRef={layerTitle} />
@@ -237,9 +244,7 @@ StudioInvitationPageProps) {
     onClose={closePreview}
     onOpen={openPreview} onRestart={audience.restartPreview} />
 
-  const documentScroll = activeStage === 'template' || activeStage === 'aesthetic' || activeStage === 'sections'
-
-  return <div className={`limen-studio${documentScroll ? ' limen-studio--document-scroll' : ''}`}>
+  return <div className="limen-studio">
     <div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand">
@@ -247,9 +252,6 @@ StudioInvitationPageProps) {
         <div><span className="limen-studio__context-label">Invitación en edición</span>
           <strong>{model.draft.protagonistName}</strong>
           <small>{invitation.event.celebrationLabel} · {invitation.code}</small></div>
-      </div>
-      <div className="limen-studio__stage-nav-wrap">
-        <StudioStageNavigation activeStage={activeStage} onStageChange={setActiveStage} />
       </div>
       <div className="limen-studio__header-actions">
         <span className={`limen-studio__draft-status limen-studio__draft-status--${saveState.status}`}
@@ -280,65 +282,65 @@ StudioInvitationPageProps) {
           Recargar versión guardada
         </button>}
       </div>}
-      <div hidden={activeStage !== 'template'} inert={activeStage !== 'template' || layerOpen ? true : undefined}>
-        {template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
-          state={templateState} onStateChange={setTemplateState} />}
-      </div>
-      {activeStage === 'aesthetic' && <StudioAestheticStage
-        media={model.draft.media}
-        initialMedia={model.initialDraft.media}
-        themeVariant={model.draft.themeVariant}
-        initialThemeVariant={model.initialDraft.themeVariant}
-        protagonistName={model.draft.protagonistName}
-        initialGalleryCaptions={model.initialDraft.gallery.captions}
-        onMediaChange={(updater) => model.updateGroup('media', updater)}
-        onGalleryCaptionsChange={(updater) => model.updateGroup('gallery', (current) => ({
-          ...current,
-          captions: updater(current.captions),
-        }))}
-        onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)}
-        onUploadMedia={onUploadMedia} />}
-      {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
-        for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
-        if (!included && selectedScene === scene.id) {
-          const projected = { modules: model.draft.modules.map((module) => scene.moduleIds.includes(module.moduleId)
-            ? { ...module, enabled: false } : module) }
-          setSelectedScene(selectSceneAfterExclusion(scene.id, projected))
-        }
-      }} />}
-      {activeStage === 'content' && <>
-        <header className="limen-studio__stage-heading limen-studio__stage-heading--content">
-          <p className="limen-studio__eyebrow">Contenido</p><h2>Contá la historia, escena por escena</h2>
-          <p>Elegí una escena y editá una configuración por vez.</p>
-        </header>
-        <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={(scene) => {
-          setSelectedScene(scene)
-          const nextScene = studioScenes.find(({ id }) => id === scene)
-          if (nextScene && !selectedEditorByScene[scene]) {
-            setSelectedEditorByScene((current) => ({ ...current, [scene]: nextScene.editorIds[0] }))
-          }
-        }}
-          editor={contextualEditor} preview={previewPane}
-          previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
-          onShowPreview={() => surfaceDispatch({ type: 'show' })} correctionReturn={correctionContext !== undefined}
-          onReturnToErrors={returnToErrors}
-          editorTabs={visibleScene.editorIds.length > 1 ? visibleScene.editorIds.map((editorId) => ({
-            id: editorId, label: editorLabels[editorId] ?? editorId,
-          })) : undefined}
-          selectedEditorId={selectedEditorId}
-          onEditorSelect={(editorId) => setSelectedEditorByScene((current) => ({
-            ...current, [visibleScene.id]: editorId,
-          }))} />
-      </>}
-      {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
+      <StudioUnifiedWorkspace activeStage={activeStage} onStageChange={setActiveStage}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
-        validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
-        onOpenPreview={openPreview} onShowPreview={() => surfaceDispatch({ type: 'show' })}
-        publication={publication} publicationEquivalence={publicationEquivalence}
-        publicationState={publicationState} draftRevision={revision}
-        publicationBlockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
-        onEditorialConfirmation={(confirmed) => setEditoriallyConfirmedDraft(confirmed ? model.draft : undefined)}
-        onPublish={requestPublication} />}
+        onShowPreview={() => surfaceDispatch({ type: 'show' })}>
+        {activeStage === 'design' && <StudioDesignStage
+          template={template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
+            state={templateState} onStateChange={setTemplateState} showHeading={false} />}
+          themeVariant={model.draft.themeVariant}
+          initialThemeVariant={model.initialDraft.themeVariant}
+          onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)} />}
+        {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
+          for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
+          if (!included && selectedScene === scene.id) {
+            const projected = { modules: model.draft.modules.map((module) => scene.moduleIds.includes(module.moduleId)
+              ? { ...module, enabled: false } : module) }
+            setSelectedScene(selectSceneAfterExclusion(scene.id, projected))
+          }
+        }} />}
+        {activeStage === 'content' && <>
+          <header className="limen-studio__stage-heading limen-studio__stage-heading--content">
+            <p className="limen-studio__eyebrow">Contenido</p><h2>Contá la historia, escena por escena</h2>
+            <p>Elegí una escena y editá una configuración por vez.</p>
+          </header>
+          <StudioScenesContent draft={model.draft} selectedScene={selectedScene} onSceneSelect={(scene) => {
+            setSelectedScene(scene)
+            const nextScene = studioScenes.find(({ id }) => id === scene)
+            if (nextScene && !selectedEditorByScene[scene]) {
+              setSelectedEditorByScene((current) => ({ ...current, [scene]: nextScene.editorIds[0] }))
+            }
+          }}
+            editor={contextualEditor} correctionReturn={correctionContext !== undefined}
+            onReturnToErrors={returnToErrors}
+            editorTabs={visibleScene.editorIds.length > 1 ? visibleScene.editorIds.map((editorId) => ({
+              id: editorId, label: editorLabels[editorId] ?? editorId,
+            })) : undefined}
+            selectedEditorId={selectedEditorId}
+            onEditorSelect={(editorId) => setSelectedEditorByScene((current) => ({
+              ...current, [visibleScene.id]: editorId,
+            }))} />
+        </>}
+        {activeStage === 'media' && <StudioMediaStage
+          media={model.draft.media}
+          initialMedia={model.initialDraft.media}
+          protagonistName={model.draft.protagonistName}
+          initialGalleryCaptions={model.initialDraft.gallery.captions}
+          onMediaChange={(updater) => model.updateGroup('media', updater)}
+          onGalleryCaptionsChange={(updater) => model.updateGroup('gallery', (current) => ({
+            ...current,
+            captions: updater(current.captions),
+          }))}
+          onUploadMedia={onUploadMedia} />}
+        {activeStage === 'review' && <StudioReviewStage audience={audience.audience} domains={domains}
+          validation={model.validation} onAudience={audience.changeAudience} onIssue={openIssue}
+          onOpenPreview={openPreview}
+          publication={publication} publicationEquivalence={publicationEquivalence}
+          publicationState={publicationState} draftRevision={revision}
+          publicationBlockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
+          onEditorialConfirmation={(confirmed) => setEditoriallyConfirmedDraft(confirmed ? model.draft : undefined)}
+          onPublish={requestPublication} />}
+      </StudioUnifiedWorkspace>
     </main>
   </div></div>
 }
