@@ -20,6 +20,7 @@ type Props = {
   publicationState: StudioPublicationState
   draftRevision?: number
   publicationBlockReason?: string
+  currentDraftPublished?: boolean
   editoriallyConfirmed: boolean
   onEditorialConfirmation: (confirmed: boolean) => void
   onPublish: () => void
@@ -29,7 +30,8 @@ const visibleSeverities = new Set<StudioIssue['severity']>(['structural', 'activ
 
 export function StudioReviewStage({ audience, domains, validation,
   onAudience, onIssue, onOpenPreview, publication, publicationState, draftRevision,
-  publicationEquivalence, publicationBlockReason, editoriallyConfirmed, onEditorialConfirmation, onPublish }: Props) {
+  publicationEquivalence, publicationBlockReason, currentDraftPublished = false,
+  editoriallyConfirmed, onEditorialConfirmation, onPublish }: Props) {
   const actionableGroups = groupStudioIssues(validation.issues)
     .filter(({ severity }) => visibleSeverities.has(severity))
     .map((group) => ({ ...group, issues: group.issues.filter(({ relevant }) => relevant) }))
@@ -43,8 +45,10 @@ export function StudioReviewStage({ audience, domains, validation,
   const primaryCorrection = actionableGroups
     .filter(({ severity }) => severity === 'structural' || severity === 'active-error')
     .flatMap(({ issues }) => issues)[0]
-  const ready = validation.structurallyValid && correctionCount === 0
-  const completedChecks = (ready ? 1 : 0)
+  const publishing = publicationState.status === 'publishing'
+  const ready = validation.invitationValid && publicationBlockReason === undefined && !publishing
+  const publicationStepComplete = ready || currentDraftPublished
+  const completedChecks = (publicationStepComplete ? 1 : 0)
     + (reviewedAudiences.has('protagonist') ? 1 : 0)
     + (reviewedAudiences.has('guest') ? 1 : 0)
   const reviewAudience = (nextAudience: InvitationAudience, event: MouseEvent<HTMLButtonElement>) => {
@@ -63,17 +67,27 @@ export function StudioReviewStage({ audience, domains, validation,
     </header>
     <div className="limen-studio__review-layout">
       <div className="limen-studio__review-main">
-        <section className={`limen-studio__review-readiness${ready ? ' is-ready' : ' needs-attention'}`}
+        <section className={`limen-studio__review-readiness${publicationStepComplete ? ' is-ready' : ' needs-attention'}`}
           aria-label="Estado de la invitación">
-          <span className="limen-studio__review-readiness-icon" aria-hidden="true">{ready ? '✓' : '!'}</span>
-          <div><strong>{ready ? 'La invitación está lista' : 'La invitación necesita atención'}</strong>
-            <span>{ready
+          <span className="limen-studio__review-readiness-icon" aria-hidden="true">{publicationStepComplete ? '✓' : '!'}</span>
+          <div><strong>{currentDraftPublished
+            ? 'Esta revisión ya está publicada'
+            : ready
+              ? 'La invitación está lista para publicar'
+              : publishing
+                ? 'La publicación está en proceso'
+                : 'La invitación necesita atención'}</strong>
+            <span>{currentDraftPublished
+              ? 'Ya existe una publicación creada desde este borrador.'
+              : ready
               ? warningCount > 0
                 ? `No hay errores activos. Quedan ${warningCount} ${warningCount === 1 ? 'advertencia' : 'advertencias'} para revisar.`
-                : 'No hay errores de contenido ni archivos pendientes.'
-              : correctionCount === 1
-                ? 'Hay una corrección necesaria antes de publicar.'
-                : `Hay ${correctionCount} correcciones necesarias antes de publicar.`}</span></div>
+                : 'El borrador está guardado y no hay archivos pendientes.'
+              : publishing
+                ? 'Estamos creando una nueva versión inmutable.'
+                : publicationBlockReason ?? (correctionCount === 1
+                  ? 'Hay una corrección necesaria antes de publicar.'
+                  : `Hay ${correctionCount} correcciones necesarias antes de publicar.`)}</span></div>
           <span className="limen-studio__review-revision">
             {draftRevision ? `Borrador ${draftRevision} guardado` : 'Borrador pendiente de guardar'}
           </span>
@@ -84,14 +98,22 @@ export function StudioReviewStage({ audience, domains, validation,
             <h3 id="studio-review-checks-title">Controles finales</h3>
             <span>{completedChecks} de 3 completos</span>
           </div>
-          <div className={`limen-studio__review-check-row${ready ? ' is-complete' : ' needs-attention'}`}>
-            <span className="limen-studio__review-check-icon" aria-hidden="true">{ready ? '✓' : '!'}</span>
-            <div><strong>Contenido y archivos</strong><span>{ready
-              ? 'Sin correcciones activas.'
-              : correctionCount === 1 ? 'Hay una corrección activa.' : `Hay ${correctionCount} correcciones activas.`}</span></div>
+          <div className={`limen-studio__review-check-row${publicationStepComplete ? ' is-complete' : ' needs-attention'}`}>
+            <span className="limen-studio__review-check-icon" aria-hidden="true">{publicationStepComplete ? '✓' : '!'}</span>
+            <div><strong>Preparación para publicar</strong><span>{currentDraftPublished
+              ? 'Esta revisión ya tiene una publicación.'
+              : ready
+                ? 'Borrador guardado, contenido válido y archivos listos.'
+                : publishing
+                  ? 'Publicando la nueva versión…'
+                  : publicationBlockReason ?? (correctionCount === 1
+                    ? 'Hay una corrección activa.'
+                    : `Hay ${correctionCount} correcciones activas.`)}</span></div>
             {primaryCorrection
               ? <button type="button" onClick={() => onIssue(primaryCorrection)}>Corregir</button>
-              : <span className="limen-studio__review-check-status">Completo</span>}
+              : <span className="limen-studio__review-check-status">
+                {publicationStepComplete ? 'Completo' : 'Pendiente'}
+              </span>}
           </div>
           {(['protagonist', 'guest'] as const).map((reviewAudienceId) => {
             const reviewed = reviewedAudiences.has(reviewAudienceId)
