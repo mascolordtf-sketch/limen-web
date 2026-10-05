@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
+import type { Origin01TypographyCombinationId } from '../invitations/origin01/origin01Typography'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { StudioMusicManager } from './StudioMusicManager'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
@@ -8,6 +9,7 @@ import type { StudioPhotoTarget } from './StudioPhotographyManager'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
 import type { StudioSceneId } from './studioScenes'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
+import { StudioTypographySelector } from './StudioTypographySelector'
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 
@@ -55,22 +57,29 @@ export function StudioUnifiedWorkspace({ activeStage, preview, previewCollapsed,
   </section>
 }
 
-export function StudioDesignStage({ template, themeVariant, initialThemeVariant, onThemeVariantChange }: {
+export function StudioDesignStage({ template, themeVariant, initialThemeVariant, typographyId,
+  initialTypographyId, protagonistName, onThemeVariantChange, onTypographyChange }: {
   template: ReactNode
   themeVariant: Origin01ThemeVariantId
   initialThemeVariant: Origin01ThemeVariantId
+  typographyId: Origin01TypographyCombinationId
+  initialTypographyId: Origin01TypographyCombinationId
+  protagonistName: string
   onThemeVariantChange: (variant: Origin01ThemeVariantId) => void
+  onTypographyChange: (typographyId: Origin01TypographyCombinationId) => void
 }) {
   return <section className="limen-studio__design-stage" aria-labelledby="studio-design-title">
     <header className="limen-studio__stage-heading">
       <p className="limen-studio__eyebrow">Diseño</p>
       <h2 id="studio-design-title">Definí la identidad visual</h2>
-      <p>Elegí la plantilla y la paleta que van a ordenar toda la invitación.</p>
+      <p>Elegí la plantilla, los colores y la voz tipográfica de la invitación.</p>
     </header>
     <div className="limen-studio__design-content">
       {template}
       <StudioVisualVariantSelector value={themeVariant} initialValue={initialThemeVariant}
         onChange={onThemeVariantChange} />
+      <StudioTypographySelector value={typographyId} initialValue={initialTypographyId}
+        protagonistName={protagonistName} onChange={onTypographyChange} />
     </div>
   </section>
 }

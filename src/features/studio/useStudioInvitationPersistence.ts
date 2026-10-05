@@ -40,9 +40,12 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
           : undefined
         if (!active) return
         locationRef.current = location
+        const document = persisted?.document
+          ? { ...persisted.document, typographyId: persisted.document.typographyId ?? baseInvitation.typographyId }
+          : baseInvitation
         setLoadState({
           status: 'ready',
-          document: persisted?.document ?? baseInvitation,
+          document,
           location,
           persisted,
           publication,

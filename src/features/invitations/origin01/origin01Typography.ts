@@ -17,13 +17,13 @@ const font = (family: string, tier: 'principal' | 'tematica', slug: string): Ori
   stylesheet: `/fonts/limen/${tier}/${slug}/font-face.css`,
 })
 
-const combination = (
-  id: string,
+const combination = <const Id extends string>(
+  id: Id,
   name: string,
   protagonist: Origin01TypographyRole,
   editorial: Origin01TypographyRole,
   functional: Origin01TypographyRole,
-): Origin01TypographyCombination => ({
+): Origin01TypographyCombination & { readonly id: Id } => ({
   id,
   name,
   protagonist,
@@ -32,11 +32,11 @@ const combination = (
   functional,
 })
 
-export const origin01TypographyCombinations: readonly Origin01TypographyCombination[] = [
+export const origin01TypographyCombinations = [
   combination('noche-plateada', 'Noche plateada', font('Cormorant Garamond', 'principal', 'cormorantgaramond'), font('Prata', 'principal', 'prata'), font('Instrument Sans', 'principal', 'instrumentsans')),
   combination('gala-moderna', 'Gala moderna', font('Bodoni Moda', 'principal', 'bodonimoda'), font('Raleway', 'principal', 'raleway'), font('Montserrat', 'principal', 'montserrat')),
   combination('romantica-clasica', 'Romántica clásica', font('Pinyon Script', 'principal', 'pinyonscript'), font('Playfair Display', 'principal', 'playfairdisplay'), font('Jost', 'principal', 'jost')),
-  combination('garden-antigua', 'Garden antigua', font('WindSong', 'principal', 'windsong'), font('Fraunces', 'principal', 'fraunces'), font('Quicksand', 'principal', 'quicksand')),
+  combination('garden-antigua', 'Jardín antiguo', font('WindSong', 'principal', 'windsong'), font('Fraunces', 'principal', 'fraunces'), font('Quicksand', 'principal', 'quicksand')),
   combination('editorial-silenciosa', 'Editorial silenciosa', font('Mea Culpa', 'principal', 'meaculpa'), font('Ovo', 'principal', 'ovo'), font('Questrial', 'principal', 'questrial')),
   combination('boda-clasica', 'Boda clásica', font('Alex Brush', 'principal', 'alexbrush'), font('Bona Nova', 'principal', 'bonanova'), font('Montserrat', 'principal', 'montserrat')),
   combination('quince-moderno', 'Quince moderno', font('Euphoria Script', 'principal', 'euphoriascript'), font('DM Serif Display', 'principal', 'dmserifdisplay'), font('Poppins', 'principal', 'poppins')),
@@ -45,7 +45,9 @@ export const origin01TypographyCombinations: readonly Origin01TypographyCombinat
   combination('urbana', 'Urbana', font('Permanent Marker', 'tematica', 'permanentmarker'), font('Londrina Solid', 'tematica', 'londrinasolid'), font('Instrument Sans', 'principal', 'instrumentsans')),
   combination('fantasia-ceremonial', 'Fantasía ceremonial', font('Cinzel Decorative', 'tematica', 'cinzeldecorative'), font('Cormorant Garamond', 'principal', 'cormorantgaramond'), font('Raleway', 'principal', 'raleway')),
   combination('cercana-artesanal', 'Cercana artesanal', font('Beth Ellen', 'principal', 'bethellen'), font('Lora', 'principal', 'lora'), font('Nunito', 'principal', 'nunito')),
-] as const
+] as const satisfies readonly Origin01TypographyCombination[]
+
+export type Origin01TypographyCombinationId = (typeof origin01TypographyCombinations)[number]['id']
 
 export const defaultOrigin01TypographyCombination = origin01TypographyCombinations[0]
 

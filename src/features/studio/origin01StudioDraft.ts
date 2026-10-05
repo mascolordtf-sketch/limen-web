@@ -3,6 +3,8 @@ import type { InvitationModuleConfig, InvitationModuleId } from '../invitations/
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
 import type { Origin01InvitationData, Origin01TriviaContent } from '../invitations/origin01/origin01ContentTypes'
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
+import { defaultOrigin01TypographyCombination } from '../invitations/origin01/origin01Typography'
+import type { Origin01TypographyCombinationId } from '../invitations/origin01/origin01Typography'
 import { createOrigin01StudioMediaState } from './origin01StudioMedia'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { toDateTimeLocalValue } from './studioDateTime'
@@ -15,6 +17,7 @@ export type Origin01TriviaEditorialDraft = Omit<
 
 export type Origin01StudioDraft = {
   readonly themeVariant: Origin01ThemeVariantId
+  readonly typographyId: Origin01TypographyCombinationId
   readonly protagonistName: string
   readonly event: {
     readonly start: string
@@ -163,6 +166,7 @@ function createOrigin01StudioDraftBase(
   const eventDateTimes = getStudioDefaultEventDateTimes(invitation, now)
   return {
     themeVariant: invitation.themeVariant,
+    typographyId: invitation.typographyId ?? defaultOrigin01TypographyCombination.id,
     protagonistName,
     event: {
       start: eventDateTimes.start,
@@ -253,7 +257,7 @@ export function updateOrigin01StudioDraftGroup<K extends keyof Origin01StudioDra
   return { ...draft, [key]: updater(draft[key]) }
 }
 
-type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'protagonistName' | 'modules'>
+type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'typographyId' | 'protagonistName' | 'modules'>
 export type Origin01EditableSceneId =
   | 'prelude' | 'hero' | 'countdown' | 'story' | 'eventDetails' | 'dressCode'
   | 'schedule' | 'weather' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'

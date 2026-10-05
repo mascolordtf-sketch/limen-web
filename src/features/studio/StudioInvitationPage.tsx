@@ -310,7 +310,11 @@ StudioInvitationPageProps) {
             state={templateState} onStateChange={setTemplateState} showHeading={false} />}
           themeVariant={model.draft.themeVariant}
           initialThemeVariant={model.initialDraft.themeVariant}
-          onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)} />}
+          typographyId={model.draft.typographyId}
+          initialTypographyId={model.initialDraft.typographyId}
+          protagonistName={model.draft.protagonistName}
+          onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)}
+          onTypographyChange={(typographyId) => model.update('typographyId', typographyId)} />}
         {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
           for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
           if (!included && selectedScene === scene.id) {

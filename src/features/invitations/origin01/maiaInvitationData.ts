@@ -9,6 +9,7 @@ export const maiaInvitationData = {
   audience: 'protagonist',
   eventType: 'quince',
   themeVariant: 'origin01-ivory',
+  typographyId: 'romantica-clasica',
   event: {
     name: 'Maia',
     celebrationLabel: 'Mis 15 años',

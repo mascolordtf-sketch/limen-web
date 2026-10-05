@@ -11,6 +11,7 @@ export const origin01DemoData = {
   audience: 'protagonist',
   eventType: 'quince',
   themeVariant: 'origin01-wine',
+  typographyId: 'noche-plateada',
   event: {
     name: 'Valentina',
     celebrationLabel: 'Mis 15',

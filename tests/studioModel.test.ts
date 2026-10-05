@@ -263,6 +263,7 @@ const persistenceDocument = deriveOrigin01PreviewInvitation(origin01DemoData, pe
 const hydratedDraft = createOrigin01StudioDraftFromDocument(persistenceDocument)
 assert(hydratedDraft.event.start === '2027-03-20T21:00'
   && hydratedDraft.event.end === '2027-03-21T02:00'
+  && hydratedDraft.typographyId === 'noche-plateada'
   && hydratedDraft.share.mode === 'custom'
   && hydratedDraft.share.customMessage === 'Un mensaje guardado para compartir.',
   'un borrador persistido conserva fechas canónicas y el mensaje personalizado al reabrirse')
@@ -279,6 +280,7 @@ assert(isOrigin01StudioDraftDirty(renamedSuggestedDraft, rehydratedRenamedDraft)
   && !isOrigin01StudioDraftDirty(renamedSuggestedDraft, renamedSuggestedDraft),
   'el baseline limpio conserva el snapshot exacto guardado aunque una rehidratación normalice valores ocultos')
 assert(isOrigin01InvitationDocument(maiaInvitationData)
+  && !isOrigin01InvitationDocument({ ...maiaInvitationData, typographyId: 'desconocida' })
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
 assert(!hasUnpersistedStudioMedia(initial)
@@ -582,6 +584,15 @@ assert(gardenTypography?.coverName.family === 'WindSong'
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
   'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
+const persistedTypographyDraft = updateOrigin01StudioDraftField(initial, 'typographyId', 'garden-antigua')
+const persistedTypographyInvitation = deriveOrigin01PreviewInvitation(origin01DemoData, persistedTypographyDraft)
+const persistedTypographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: persistedTypographyInvitation,
+}))
+assert(persistedTypographyInvitation.typographyId === 'garden-antigua'
+  && createOrigin01StudioDraftFromDocument(persistedTypographyInvitation).typographyId === 'garden-antigua'
+  && persistedTypographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive'),
+  'la tipografía elegida persiste en el documento y el renderer la aplica sin parámetros auxiliares')
 const independentTypography = gardenTypography && {
   ...gardenTypography,
   protagonist: { ...gardenTypography.protagonist, family: 'Prata' },
@@ -940,11 +951,17 @@ const designStageElement = createElement(StudioDesignStage, {
   template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,
   initialThemeVariant: initial.themeVariant,
+  typographyId: initial.typographyId,
+  initialTypographyId: initial.typographyId,
+  protagonistName: initial.protagonistName,
   onThemeVariantChange: () => undefined,
+  onTypographyChange: () => undefined,
 })
 const designMarkup = renderToStaticMarkup(designStageElement)
 assert(designMarkup.includes('Definí la identidad visual') && designMarkup.includes('Paleta de colores')
-  && designMarkup.includes('Origin 01') && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
+  && designMarkup.includes('Origin 01') && designMarkup.includes('Tipografía')
+  && designMarkup.includes('Ver todas (12)') && designMarkup.includes('Romántica clásica')
+  && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
   && !designMarkup.includes('Fotos y música') && JSON.stringify(initial) === draftBeforeStageNavigation,
   'Diseño reúne plantilla y paleta sin mezclar la administración de medios')
 const mediaStageElement = createElement(StudioMediaStage, {

@@ -1,8 +1,8 @@
 # Sistema tipográfico LIMEN v1
 
-Esta carpeta documenta la biblioteca tipográfica curada de LIMEN. La fase establece los recursos,
-las licencias, el inventario y las combinaciones iniciales; todavía no incorpora el selector de
-tipografías en Studio ni cambia la tipografía pública de Origin 01.
+Esta carpeta documenta la biblioteca tipográfica curada de LIMEN. Además de los recursos,
+las licencias y el inventario, Studio incorpora un selector productivo de combinaciones completas
+para Origin 01. La elección forma parte del borrador y de sus publicaciones.
 
 ## Alcance versionado
 
@@ -83,7 +83,7 @@ Probar las doce combinaciones de `catalog/combinaciones_iniciales.csv` sobre esc
 Origin 01 en celular y escritorio. El selector tipográfico de Studio se diseña después de esa
 aprobación visual.
 
-## Laboratorio de evaluación
+## Laboratorio de evaluación histórico
 
 Studio incorpora una comparación temporal de las doce combinaciones dentro de la etapa `Estética`.
 Cada tarjeta muestra los roles nombre de portada, protagonista, editorial y funcional con texto real en español. La
@@ -99,8 +99,7 @@ expone fuentes de reemplazo y ofrece un reintento. Si la Font Loading API no est
 de forma segura después de cargar las hojas; si solo `fonts.ready` falla tras verificar las familias
 solicitadas, utiliza esas cargas verificadas para no dejar la interfaz bloqueada.
 
-Este laboratorio no forma parte del modelo persistente, no modifica el borrador canónico y no
-define todavía la tipografía aprobada de Origin 01. Su finalidad es comparar la misma composición
-en escritorio y celular antes de construir el selector definitivo. Una prueba carga solamente las
-dos o tres hojas `font-face.css` correspondientes; un identificador desconocido conserva la
-tipografía actual sin producir una configuración parcial.
+El laboratorio queda como evidencia del proceso de evaluación y no se monta en el flujo productivo.
+El selector definitivo vive en Diseño, muestra primero cuatro combinaciones recomendadas, permite
+abrir las doce y persiste `typographyId`. Cada combinación carga solamente sus dos o tres hojas
+`font-face.css`; los documentos históricos sin esa propiedad heredan la selección canónica.
