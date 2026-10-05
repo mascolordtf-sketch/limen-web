@@ -6386,11 +6386,6 @@
   gap: 1rem;
 }
 
-.limen-studio__design-content .limen-studio__template-stage {
-  width: 100%;
-  margin: 0;
-}
-
 .limen-studio__design-controls {
   min-width: 0;
 }
@@ -6838,10 +6833,6 @@
   .limen-studio__design-stage > .limen-studio__stage-heading,
   .limen-studio__media-stage > .limen-studio__stage-heading {
     margin-bottom: 1rem;
-  }
-
-  .limen-studio__design-content .limen-studio__template-feature {
-    width: 100%;
   }
 
   .limen-studio__unified-workspace--media .limen-studio__photo-grid {

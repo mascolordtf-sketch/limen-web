@@ -941,12 +941,12 @@ assert(!contentMarkup.includes('PREVIEW_REAL') && !contentMarkup.includes('Ver i
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
   'Contenido concentra escenas y editor sin duplicar el host global de preview ni exponer taxonomía técnica')
 const draftBeforeStageNavigation = JSON.stringify(initial)
-const stageLabels = ['Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
+const stageLabels = ['Plantilla', 'Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: 'design', onStageChange: () => undefined }))
+  { activeStage: 'template', onStageChange: () => undefined }))
 assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
   && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Estética'),
-  'la navegación lateral presenta las cinco etapas aprobadas en orden')
+  'la navegación lateral presenta las seis etapas aprobadas en orden')
 assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
@@ -957,7 +957,6 @@ assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:
 assert(/body:has\(\.limen-studio__workspace\)[^{]*\{[^}]*overflow:\s*hidden/s.test(studioCss),
   'Studio bloquea el scroll del documento exterior para que el workspace no salte entre etapas')
 const designStageElement = createElement(StudioDesignStage, {
-  template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,
   initialThemeVariant: initial.themeVariant,
   typographyId: initial.typographyId,
@@ -968,11 +967,16 @@ const designStageElement = createElement(StudioDesignStage, {
 })
 const designMarkup = renderToStaticMarkup(designStageElement)
 assert(designMarkup.includes('Definí la identidad visual') && designMarkup.includes('Paleta de colores')
-  && designMarkup.includes('Origin 01') && designMarkup.includes('Tipografía')
+  && !designMarkup.includes('Plantilla de la invitación') && designMarkup.includes('Tipografía')
   && designMarkup.includes('Ver todas (12)') && designMarkup.includes('Romántica clásica')
   && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
   && !designMarkup.includes('Fotos y música') && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Diseño reúne plantilla y paleta sin mezclar la administración de medios')
+  'Diseño reúne colores y tipografía sin mezclar plantilla ni administración de medios')
+const templateStageElement = createElement(StudioTemplateStage, { template: origin01Template })
+const templateMarkup = renderToStaticMarkup(templateStageElement)
+assert(templateMarkup.includes('Plantilla de la invitación') && templateMarkup.includes('Origin 01')
+  && !templateMarkup.includes('Paleta de colores') && !templateMarkup.includes('Tipografía'),
+  'Plantilla ocupa una etapa propia sin mezclar los controles de Diseño')
 const mediaStageElement = createElement(StudioMediaStage, {
   media: initial.media,
   initialMedia: initial.media,
@@ -1742,6 +1746,14 @@ assert(realDesignBoundary.includes('Definí la identidad visual')
   && realDesignBoundary.includes('Revisar y publicar')
   && (realDesignBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
   'Diseño comparte la navegación lateral y el host persistente de preview con el resto del flujo')
+const realTemplateBoundary = renderToStaticMarkup(createElement(StudioUnifiedWorkspace, {
+  activeStage: 'template', preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
+  onStageChange: () => undefined, onShowPreview: () => undefined, children: templateStageElement,
+}))
+assert(realTemplateBoundary.includes('Plantilla de la invitación')
+  && realTemplateBoundary.includes('Revisar y publicar')
+  && (realTemplateBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'Plantilla comparte la navegación lateral y el host persistente de preview con el resto del flujo')
 const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
   StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
     editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,

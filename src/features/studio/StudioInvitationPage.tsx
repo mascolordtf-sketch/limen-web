@@ -73,7 +73,7 @@ StudioInvitationPageProps) {
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
-  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('design')
+  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
   const [mediaPreviewFocus, setMediaPreviewFocus] = useState<StudioMediaPreviewFocus>()
   const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
@@ -241,6 +241,7 @@ StudioInvitationPageProps) {
     <StudioActiveEditor invitation={invitation} template={template} model={model} editorId={selectedEditorId} />
   </div>
   const previewContextLabels: Record<StudioWorkspaceStage, string> = {
+    template: 'Plantilla',
     design: 'Diseño',
     sections: 'Secciones',
     content: visibleScene.label,
@@ -307,9 +308,9 @@ StudioInvitationPageProps) {
       <StudioUnifiedWorkspace activeStage={activeStage} onStageChange={changeActiveStage}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
         onShowPreview={() => surfaceDispatch({ type: 'show' })}>
+        {activeStage === 'template' && template && <StudioTemplateStage template={template}
+          demoPath={`/demo/${invitation.code}`} state={templateState} onStateChange={setTemplateState} />}
         {activeStage === 'design' && <StudioDesignStage
-          template={template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
-            state={templateState} onStateChange={setTemplateState} showHeading={false} />}
           themeVariant={model.draft.themeVariant}
           initialThemeVariant={model.initialDraft.themeVariant}
           typographyId={model.draft.typographyId}

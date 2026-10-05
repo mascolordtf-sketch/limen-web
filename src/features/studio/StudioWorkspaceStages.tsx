@@ -57,9 +57,8 @@ export function StudioUnifiedWorkspace({ activeStage, preview, previewCollapsed,
   </section>
 }
 
-export function StudioDesignStage({ template, themeVariant, initialThemeVariant, typographyId,
+export function StudioDesignStage({ themeVariant, initialThemeVariant, typographyId,
   initialTypographyId, protagonistName, onThemeVariantChange, onTypographyChange }: {
-  template: ReactNode
   themeVariant: Origin01ThemeVariantId
   initialThemeVariant: Origin01ThemeVariantId
   typographyId: Origin01TypographyCombinationId
@@ -78,7 +77,6 @@ export function StudioDesignStage({ template, themeVariant, initialThemeVariant,
       <p>Elegí la plantilla, los colores y la voz tipográfica de la invitación.</p>
     </header>
     <div className="limen-studio__design-content">
-      {template}
       <div className="limen-studio__design-controls">
         <div className="limen-studio__design-tabs" role="tablist" aria-label="Opciones de diseño"
           onKeyDown={(event) => {
