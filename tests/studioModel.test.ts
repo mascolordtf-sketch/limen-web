@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 32902)
-Total output lines: 1829
-
 import { AppRoutes } from '../src/app/routes'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { createElement } from 'react'
@@ -906,7 +903,162 @@ assert(giftsOffSectionsMarkup.includes('8 de 9 opcionales')
   && giftsOffSectionsMarkup.includes('No incluida') && giftsOffSectionsMarkup.includes('Fuera del recorrido'),
   'Secciones actualiza el resumen y el estado editorial al excluir una escena opcional')
 const editedGifts = updateOrigin01StudioDraftGroup(initial, 'gifts', (gifts) => ({ ...gifts, accountValue: 'Alias.Editado' }))
-const editedGiftsOff = updateOrigin01StudioModule(origin01DemoData, edi…2902 tokens truncated…nterior se normaliza al identificador disponible sin acoplarse a un literal interno')
+const editedGiftsOff = updateOrigin01StudioModule(origin01DemoData, editedGifts, 'gifts', false)
+const editedGiftsOn = updateOrigin01StudioModule(origin01DemoData, editedGiftsOff, 'gifts', true)
+assert(!getVisibleStudioScenes(editedGiftsOff).some(({ id }) => id === 'gifts')
+  && getVisibleStudioScenes(editedGiftsOn).map(({ id }) => id).join('|') === getVisibleStudioScenes(initial).map(({ id }) => id).join('|')
+  && editedGiftsOn.gifts.accountValue === 'Alias.Editado',
+  'excluir y reactivar Regalos restaura su posición sin perder el valor temporal editado')
+const sceneEditors = Object.fromEntries(studioPublicScenes.map(({ id, editorIds }) => [id, editorIds]))
+assert(sceneEditors.story?.join() === 'story' && sceneEditors['event-details']?.join() === 'event-copy'
+  && sceneEditors.schedule?.join() === 'schedule'
+  && sceneEditors['dress-code']?.join() === 'dress-code'
+  && new Set([sceneEditors.story?.[0], sceneEditors['event-details']?.[0], sceneEditors.schedule?.[0],
+    sceneEditors['dress-code']?.[0]]).size === 4,
+  'Historia, Información del evento, Cronograma y Dress code resuelven grupos de editores distintos')
+const declaredEditorIds = studioScenes.flatMap(({ editorIds }) => [...editorIds])
+assert(findStudioSceneByEditorId('identity')?.id === 'general'
+  && findStudioSceneByEditorId('event-canonical')?.id === 'general'
+  && findStudioSceneByEditorId('event-operations')?.id === 'general'
+  && findStudioSceneByEditorId('share')?.id === 'general'
+  && findStudioSceneByEditorId('opening')?.id === 'cover'
+  && findStudioSceneByEditorId('story')?.id === 'story'
+  && new Set(declaredEditorIds).size === declaredEditorIds.length
+  && studioGeneralScene.editorIds.length === 4,
+  'cada editor visible resuelve de forma única hacia Datos generales o una escena pública')
+const inconsistentRequired = { ...initial, modules: initial.modules.map((module) =>
+  ['prelude', 'hero', 'eventDetails', 'rsvp', 'closing'].includes(module.moduleId) ? { ...module, enabled: false } : module) }
+assert(['cover', 'event-details', 'rsvp', 'closing'].every((id) =>
+  getVisibleStudioScenes(inconsistentRequired).some((scene) => scene.id === id)),
+  'la proyección visible normaliza las escenas obligatorias de un borrador inconsistente')
+assert(selectSceneAfterExclusion('gifts', giftsOff) === 'rsvp',
+  'al excluir la escena seleccionada elige la siguiente escena incluida')
+const contentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
+  draft: giftsOff, selectedScene: 'story', onSceneSelect: () => undefined,
+  editor: createElement('div', null, 'EDITOR_CONTEXTUAL'),
+}))
+assert(contentMarkup.includes('Datos generales') && contentMarkup.includes('Historia')
+  && !contentMarkup.includes('>Regalos<') && !contentMarkup.includes('Agregar o quitar secciones')
+  && (contentMarkup.match(/EDITOR_CONTEXTUAL/g) ?? []).length === 1,
+  'Contenido muestra solo escenas incluidas y una región editorial sin duplicar el acceso a Secciones')
+assert(contentMarkup.includes('Editando ahora') && contentMarkup.includes('Escena opcional')
+  && contentMarkup.includes('limen-studio__editor-scene-number')
+  && contentMarkup.includes('limen-studio__editor-heading'),
+  'el workspace editorial identifica la escena activa, su orden y su carácter narrativo')
+assert(contentMarkup.includes('<select') && contentMarkup.includes('01 · Datos generales')
+  && contentMarkup.includes('Anterior') && contentMarkup.includes('Siguiente')
+  && !contentMarkup.includes('limen-studio__scene-navigation-list'),
+  'Contenido navega las escenas desde una barra compacta sin sumar una segunda barra lateral')
+const generalContentMarkup = renderToStaticMarkup(createElement(StudioScenesContent, {
+  draft: initial, selectedScene: 'general', onSceneSelect: () => undefined,
+  editor: createElement('div', null, 'EDITOR_GENERAL'),
+  editorTabs: [{ id: 'identity', label: 'Identidad' }], selectedEditorId: 'identity',
+  onEditorSelect: () => undefined,
+}))
+assert(generalContentMarkup.includes('Base compartida') && generalContentMarkup.includes('Áreas de edición')
+  && generalContentMarkup.includes('aria-label="Configuraciones de Datos generales"'),
+  'Datos generales presenta su condición compartida y agrupa la navegación interna como áreas de edición')
+assert(!contentMarkup.includes('PREVIEW_REAL') && !contentMarkup.includes('Ver invitación')
+  && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
+  'Contenido concentra escenas y editor sin duplicar el host global de preview ni exponer taxonomía técnica')
+const draftBeforeStageNavigation = JSON.stringify(initial)
+const stageLabels = ['Plantilla', 'Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
+const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: 'template', onStageChange: () => undefined }))
+assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
+  && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Estética'),
+  'la navegación lateral presenta las seis etapas aprobadas en orden')
+assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
+  { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
+  'cada etapa superior puede activarse, incluida Revisión')
+assert(/\.limen-studio__workspace-navigation \.limen-studio__stage-nav\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/s.test(studioCss),
+  'la navegación lateral fuerza una única columna y no hereda la grilla horizontal anterior')
+assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:\s*2/s.test(studioCss),
+  'el workspace ocupa siempre la fila flexible y mantiene estable la altura de la preview sin avisos de guardado')
+assert(/body:has\(\.limen-studio__workspace\)[^{]*\{[^}]*overflow:\s*hidden/s.test(studioCss),
+  'Studio bloquea el scroll del documento exterior para que el workspace no salte entre etapas')
+const designStageElement = createElement(StudioDesignStage, {
+  themeVariant: initial.themeVariant,
+  initialThemeVariant: initial.themeVariant,
+  typographyId: initial.typographyId,
+  initialTypographyId: initial.typographyId,
+  protagonistName: initial.protagonistName,
+  onThemeVariantChange: () => undefined,
+  onTypographyChange: () => undefined,
+})
+const designMarkup = renderToStaticMarkup(designStageElement)
+assert(designMarkup.includes('Definí la identidad visual') && designMarkup.includes('Paleta de colores')
+  && !designMarkup.includes('Plantilla de la invitación') && designMarkup.includes('Tipografía')
+  && designMarkup.includes('Ver todas (12)') && designMarkup.includes('Romántica clásica')
+  && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
+  && !designMarkup.includes('Fotos y música') && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Diseño reúne colores y tipografía sin mezclar plantilla ni administración de medios')
+const templateStageElement = createElement(StudioTemplateStage, { template: origin01Template })
+const templateMarkup = renderToStaticMarkup(templateStageElement)
+assert(templateMarkup.includes('Plantilla de la invitación') && templateMarkup.includes('Origin 01')
+  && !templateMarkup.includes('Paleta de colores') && !templateMarkup.includes('Tipografía'),
+  'Plantilla ocupa una etapa propia sin mezclar los controles de Diseño')
+const mediaStageElement = createElement(StudioMediaStage, {
+  media: initial.media,
+  initialMedia: initial.media,
+  protagonistName: initial.protagonistName,
+  initialGalleryCaptions: initial.gallery.captions,
+  onMediaChange: () => undefined,
+  onGalleryCaptionsChange: () => undefined,
+  onUploadMedia: async () => ({ storageKey: '', src: '' }),
+})
+const mediaMarkup = renderToStaticMarkup(mediaStageElement)
+assert(mediaMarkup.includes('Completá la experiencia') && !mediaMarkup.includes('Paleta de colores')
+  && !mediaMarkup.includes('Compará las doce voces')
+  && !mediaMarkup.includes('Evaluación · sin persistencia')
+  && !mediaMarkup.includes('Dirección visual')
+  && !mediaMarkup.includes('font-face.css')
+  && mediaMarkup.includes('Escenas principales')
+  && mediaMarkup.includes('Seleccioná una imagen para trabajarla')
+  && (mediaMarkup.match(/Seleccionar (?:Portada|Dress Code|Regalos|Cierre|Foto \d)/g) ?? []).length === 7
+  && (mediaMarkup.match(/Reordenar Foto/g) ?? []).length === 3
+  && mediaMarkup.includes('Arrastrá desde el controlador para ordenar')
+  && !mediaMarkup.includes('Las imágenes que cuentan la historia')
+  && !mediaMarkup.includes('Mover antes')
+  && !mediaMarkup.includes('Mover después')
+  && mediaMarkup.includes('Opcional · MP3, M4A, OGG o WAV')
+  && mediaMarkup.includes('Música asignada')
+  && mediaMarkup.includes('Cambiar audio')
+  && mediaMarkup.includes('Desactivar música')
+  && mediaMarkup.includes('controls=""')
+  && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'Fotos y música conserva los controles reales sin laboratorio ni explicación duplicada')
+assert(/\.limen-studio__photo-grid--scenes\s*\{[^}]*repeat\(4,/s.test(studioCss)
+  && /\.limen-studio__sortable-photo\.is-dragging[^}]*opacity:\s*\.16/s.test(studioCss)
+  && /\.limen-studio__photo-drag-handle\s*\{[^}]*cursor:\s*grab/s.test(studioCss),
+  'Fotos y música prioriza imágenes limpias y un sortable con hueco visible durante el arrastre')
+const templateMainMarkup = renderToStaticMarkup(createElement(StudioTemplateStage,
+  { template: origin01Template, demoPath: '/demo/RUTA-DINAMICA' }))
+assert(templateMainMarkup.includes('Plantilla de la invitación') && templateMainMarkup.includes('Origin 01')
+  && templateMainMarkup.includes('Universo Origen') && templateMainMarkup.includes('Experiencia narrativa')
+  && templateMainMarkup.includes('Seleccionada') && templateMainMarkup.includes('Ver demostración')
+  && templateMainMarkup.includes('/demo/RUTA-DINAMICA')
+  && templateMainMarkup.includes('/images/origin-01/hero-valentina.webp'),
+  'Plantilla presenta Origin 01 con preview vertical, nomenclatura aprobada, estado y demo dinámica')
+assert(['Editorial', 'Esencial', 'Celebración', 'Próximamente', 'Exploraciones futuras']
+  .every((name) => !templateMainMarkup.includes(name))
+  && !templateMainMarkup.includes('Seleccionar plantilla')
+  && !templateMainMarkup.includes('/images/origin-01/dress-detail.webp')
+  && !templateMainMarkup.includes('/images/origin-01/gift-still-life.webp')
+  && !templateMainMarkup.includes('/images/origin-01/closing-valentina.webp'),
+  'Plantilla muestra solo el diseño disponible y no conceptos que todavía no pueden usarse')
+const options = createStudioTemplateOptions(origin01Template)
+assert(options.filter(({ selectable }) => selectable).map(({ id }) => id).join() === 'origin01'
+  && options.filter(({ availability }) => availability === 'coming-soon').length === 3
+  && options.every(({ demoPath }) => demoPath === undefined),
+  'el contrato distingue disponibilidad y no contiene un fallback de demostración específico')
+const initialTemplateGallery = createStudioTemplateGalleryState(origin01Template.id, origin01Template.id)
+const unavailableSelection = transitionStudioTemplateGallery(initialTemplateGallery,
+  { type: 'select', templateId: 'example-editorial', selectable: false })
+assert(unavailableSelection === initialTemplateGallery && JSON.stringify(initial) === draftBeforeStageNavigation,
+  'una exploración no seleccionable no cambia el estado ni el borrador')
+assert(createStudioTemplateGalleryState('example-editorial', origin01Template.id).selectedId === origin01Template.id,
+  'un identificador anterior se normaliza al identificador disponible sin acoplarse a un literal interno')
 
 const triviaProjectionKeys = ['protagonistName', 'accessibleTitle', 'title', 'revealSignature'] as const
 assert(triviaProjectionKeys.every((key) => !(key in initial.trivia)), 'el borrador de Trivia excluye todas las proyecciones identitarias')
