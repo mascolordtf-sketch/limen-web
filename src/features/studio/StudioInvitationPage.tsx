@@ -121,6 +121,12 @@ StudioInvitationPageProps) {
   const publicationEquivalence = publication?.document
     ? compareStudioPublicationToPublicBaseline(publicBaseline, publication.document)
     : undefined
+  const currentDraftPublished = publication?.draftRevision === revision
+    && !model.isDirty
+    && !hasTemporaryMedia
+    && saveState.status !== 'saving'
+    && saveState.status !== 'error'
+    && saveState.status !== 'conflict'
 
   useEffect(() => {
     if (observedDraft.current === model.draft) return
@@ -351,7 +357,8 @@ StudioInvitationPageProps) {
           onOpenPreview={openPreview}
           publication={publication} publicationEquivalence={publicationEquivalence}
           publicationState={publicationState} draftRevision={revision}
-          publicationBlockReason={publicationBlockReason} editoriallyConfirmed={editoriallyConfirmed}
+          publicationBlockReason={publicationBlockReason} currentDraftPublished={currentDraftPublished}
+          editoriallyConfirmed={editoriallyConfirmed}
           onEditorialConfirmation={(confirmed) => setEditoriallyConfirmedDraft(confirmed ? model.draft : undefined)}
           onPublish={requestPublication} />}
       </StudioUnifiedWorkspace>
