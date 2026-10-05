@@ -48,6 +48,7 @@ type StudioInvitationPageProps = {
   readonly invitation: Origin01InvitationData
   readonly publicBaseline: Origin01InvitationData
   readonly persisted: boolean
+  readonly requiresSave: boolean
   readonly revision?: number
   readonly updatedAt?: string
   readonly saveState: StudioSaveState
@@ -59,7 +60,7 @@ type StudioInvitationPageProps = {
   readonly onEdit: () => void
 }
 
-export function StudioInvitationPage({ invitation, publicBaseline, persisted, revision, updatedAt, saveState, publication,
+export function StudioInvitationPage({ invitation, publicBaseline, persisted, requiresSave, revision, updatedAt, saveState, publication,
   publicationState, onSave, onPublish, onUploadMedia, onEdit }:
 StudioInvitationPageProps) {
   const { signOut } = useStudioAuth()
@@ -72,7 +73,7 @@ StudioInvitationPageProps) {
   const retained = useStudioRenderablePreview(getOrigin01StudioDraftSessionId(invitation), model.previewInvitation,
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
-  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('design')
+  const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
   const [mediaPreviewFocus, setMediaPreviewFocus] = useState<StudioMediaPreviewFocus>()
   const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
@@ -94,8 +95,9 @@ StudioInvitationPageProps) {
   const currentDraft = model.draft
   const currentPreviewInvitation = model.previewInvitation
   const markCurrentDraftSaved = model.markSaved
+  const hasUnsavedChanges = model.isDirty || requiresSave
   const saveBlocked = saveState.status === 'saving' || saveState.status === 'conflict'
-  const canSave = !saveBlocked && (!persisted || model.isDirty) && !hasTemporaryMedia
+  const canSave = !saveBlocked && (!persisted || hasUnsavedChanges) && !hasTemporaryMedia
   const savedAtLabel = updatedAt ? studioSavedAtFormatter.format(new Date(updatedAt)) : undefined
   const saveStatusLabel = saveState.status === 'saving'
     ? 'Guardando…'
@@ -103,7 +105,7 @@ StudioInvitationPageProps) {
       ? 'Conflicto de edición'
       : saveState.status === 'error'
         ? 'Error al guardar'
-        : persisted && !model.isDirty
+        : persisted && !hasUnsavedChanges
           ? `Guardado${revision ? ` · revisión ${revision}` : ''}`
           : persisted
             ? 'Cambios sin guardar'
@@ -111,7 +113,7 @@ StudioInvitationPageProps) {
   const publicationBlockReason = getStudioPublicationBlockReason({
     persisted,
     draftRevision: revision,
-    dirty: model.isDirty,
+    dirty: hasUnsavedChanges,
     hasTemporaryMedia,
     invitationValid: model.validation.invitationValid,
     editoriallyConfirmed,
@@ -122,7 +124,7 @@ StudioInvitationPageProps) {
     ? compareStudioPublicationToPublicBaseline(publicBaseline, publication.document)
     : undefined
   const currentDraftPublished = publication?.draftRevision === revision
-    && !model.isDirty
+    && !hasUnsavedChanges
     && !hasTemporaryMedia
     && saveState.status !== 'saving'
     && saveState.status !== 'error'
@@ -134,11 +136,11 @@ StudioInvitationPageProps) {
     onEdit()
   }, [model.draft, onEdit])
   useEffect(() => {
-    if (!model.isDirty) return
+    if (!hasUnsavedChanges) return
     const warnBeforeLeaving = (event: BeforeUnloadEvent) => event.preventDefault()
     window.addEventListener('beforeunload', warnBeforeLeaving)
     return () => window.removeEventListener('beforeunload', warnBeforeLeaving)
-  }, [model.isDirty])
+  }, [hasUnsavedChanges])
 
   const saveDraft = useCallback(async () => {
     const saved = await onSave(currentPreviewInvitation)
@@ -146,21 +148,21 @@ StudioInvitationPageProps) {
   }, [currentDraft, currentPreviewInvitation, markCurrentDraftSaved, onSave])
   useEffect(() => {
     if (!shouldScheduleStudioAutosave({
-      dirty: model.isDirty,
+      dirty: hasUnsavedChanges,
       hasTemporaryMedia,
       saveStatus: saveState.status,
     })) return
 
     const timer = window.setTimeout(() => { void saveDraft() }, studioAutosaveDelayMs)
     return () => window.clearTimeout(timer)
-  }, [hasTemporaryMedia, model.draft, model.isDirty, saveDraft, saveState.status])
+  }, [hasTemporaryMedia, hasUnsavedChanges, model.draft, saveDraft, saveState.status])
 
   const reloadSavedDraft = () => {
     if (!window.confirm('Se van a descartar los cambios que ves en pantalla y se abrirá la última versión guardada. ¿Querés continuar?')) return
     window.location.reload()
   }
   const requestSignOut = () => {
-    if (model.isDirty && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
+    if (hasUnsavedChanges && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
     void signOut()
   }
   const requestPublication = () => {
@@ -239,6 +241,7 @@ StudioInvitationPageProps) {
     <StudioActiveEditor invitation={invitation} template={template} model={model} editorId={selectedEditorId} />
   </div>
   const previewContextLabels: Record<StudioWorkspaceStage, string> = {
+    template: 'Plantilla',
     design: 'Diseño',
     sections: 'Secciones',
     content: visibleScene.label,
@@ -305,12 +308,16 @@ StudioInvitationPageProps) {
       <StudioUnifiedWorkspace activeStage={activeStage} onStageChange={changeActiveStage}
         preview={previewPane} previewCollapsed={previewCollapsed} previewDedicated={layerOpen}
         onShowPreview={() => surfaceDispatch({ type: 'show' })}>
+        {activeStage === 'template' && template && <StudioTemplateStage template={template}
+          demoPath={`/demo/${invitation.code}`} state={templateState} onStateChange={setTemplateState} />}
         {activeStage === 'design' && <StudioDesignStage
-          template={template && <StudioTemplateStage template={template} demoPath={`/demo/${invitation.code}`}
-            state={templateState} onStateChange={setTemplateState} showHeading={false} />}
           themeVariant={model.draft.themeVariant}
           initialThemeVariant={model.initialDraft.themeVariant}
-          onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)} />}
+          typographyId={model.draft.typographyId}
+          initialTypographyId={model.initialDraft.typographyId}
+          protagonistName={model.draft.protagonistName}
+          onThemeVariantChange={(themeVariant) => model.update('themeVariant', themeVariant)}
+          onTypographyChange={(typographyId) => model.update('typographyId', typographyId)} />}
         {activeStage === 'sections' && <StudioSectionsStage draft={model.draft} onSceneChange={(scene, included) => {
           for (const moduleId of scene.moduleIds) model.setModuleEnabled(moduleId, included)
           if (!included && selectedScene === scene.id) {

@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react'
 
 import type { Origin01ThemeVariantId } from '../invitations/origin01/origin01ThemeVariants'
+import type { Origin01TypographyCombinationId } from '../invitations/origin01/origin01Typography'
 import type { Origin01StudioMediaState } from './origin01StudioMedia'
 import { StudioMusicManager } from './StudioMusicManager'
 import { StudioPhotographyManager } from './StudioPhotographyManager'
@@ -8,6 +9,7 @@ import type { StudioPhotoTarget } from './StudioPhotographyManager'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
 import type { StudioSceneId } from './studioScenes'
 import { StudioVisualVariantSelector } from './StudioVisualVariantSelector'
+import { StudioTypographySelector } from './StudioTypographySelector'
 import { studioWorkspaceStages } from './studioWorkspaceStages'
 import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 
@@ -55,22 +57,55 @@ export function StudioUnifiedWorkspace({ activeStage, preview, previewCollapsed,
   </section>
 }
 
-export function StudioDesignStage({ template, themeVariant, initialThemeVariant, onThemeVariantChange }: {
-  template: ReactNode
+export function StudioDesignStage({ themeVariant, initialThemeVariant, typographyId,
+  initialTypographyId, protagonistName, onThemeVariantChange, onTypographyChange }: {
   themeVariant: Origin01ThemeVariantId
   initialThemeVariant: Origin01ThemeVariantId
+  typographyId: Origin01TypographyCombinationId
+  initialTypographyId: Origin01TypographyCombinationId
+  protagonistName: string
   onThemeVariantChange: (variant: Origin01ThemeVariantId) => void
+  onTypographyChange: (typographyId: Origin01TypographyCombinationId) => void
 }) {
+  const [activeDesignPanel, setActiveDesignPanel] = useState<'colors' | 'typography'>('colors')
+  const changeDesignPanel = (panel: 'colors' | 'typography') => setActiveDesignPanel(panel)
+
   return <section className="limen-studio__design-stage" aria-labelledby="studio-design-title">
     <header className="limen-studio__stage-heading">
       <p className="limen-studio__eyebrow">Diseño</p>
       <h2 id="studio-design-title">Definí la identidad visual</h2>
-      <p>Elegí la plantilla y la paleta que van a ordenar toda la invitación.</p>
+      <p>Elegí la plantilla, los colores y la voz tipográfica de la invitación.</p>
     </header>
     <div className="limen-studio__design-content">
-      {template}
-      <StudioVisualVariantSelector value={themeVariant} initialValue={initialThemeVariant}
-        onChange={onThemeVariantChange} />
+      <div className="limen-studio__design-controls">
+        <div className="limen-studio__design-tabs" role="tablist" aria-label="Opciones de diseño"
+          onKeyDown={(event) => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+            event.preventDefault()
+            const nextPanel = event.key === 'ArrowLeft' || event.key === 'Home' ? 'colors' : 'typography'
+            changeDesignPanel(nextPanel)
+            requestAnimationFrame(() => document.getElementById(`studio-design-${nextPanel}-tab`)?.focus())
+          }}>
+          <button id="studio-design-colors-tab" type="button" role="tab"
+            aria-selected={activeDesignPanel === 'colors'} aria-controls="studio-design-colors-panel"
+            tabIndex={activeDesignPanel === 'colors' ? 0 : -1}
+            onClick={() => changeDesignPanel('colors')}>Colores</button>
+          <button id="studio-design-typography-tab" type="button" role="tab"
+            aria-selected={activeDesignPanel === 'typography'} aria-controls="studio-design-typography-panel"
+            tabIndex={activeDesignPanel === 'typography' ? 0 : -1}
+            onClick={() => changeDesignPanel('typography')}>Tipografía</button>
+        </div>
+        <div id="studio-design-colors-panel" role="tabpanel" aria-labelledby="studio-design-colors-tab"
+          className="limen-studio__design-panel" hidden={activeDesignPanel !== 'colors'}>
+          <StudioVisualVariantSelector value={themeVariant} initialValue={initialThemeVariant}
+            onChange={onThemeVariantChange} />
+        </div>
+        <div id="studio-design-typography-panel" role="tabpanel" aria-labelledby="studio-design-typography-tab"
+          className="limen-studio__design-panel" hidden={activeDesignPanel !== 'typography'}>
+          <StudioTypographySelector value={typographyId} initialValue={initialTypographyId}
+            protagonistName={protagonistName} onChange={onTypographyChange} />
+        </div>
+      </div>
     </div>
   </section>
 }

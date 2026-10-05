@@ -24,6 +24,7 @@ export function deriveOrigin01PreviewInvitation(
   const derivedInvitation: Origin01InvitationData = {
     ...invitation,
     themeVariant: draft.themeVariant,
+    typographyId: draft.typographyId,
     modules: draft.modules,
     identities: invitation.identities.map((identity) => identity.role === 'protagonist'
       ? { ...identity, displayName: name } : identity),

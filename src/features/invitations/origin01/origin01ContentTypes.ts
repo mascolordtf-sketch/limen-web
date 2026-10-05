@@ -147,6 +147,7 @@ export type Origin01Content = LimenInvitationContent & {
 export type Origin01InvitationData = LimenInvitation<Origin01Content> & {
   readonly templateId: 'origin01'
   readonly themeVariant: Origin01ThemeVariantId
+  readonly typographyId?: import('./origin01Typography').Origin01TypographyCombinationId
   readonly eventType: 'quince'
   readonly event: {
     readonly name: string

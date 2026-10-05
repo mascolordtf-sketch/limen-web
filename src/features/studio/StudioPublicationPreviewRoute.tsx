@@ -43,9 +43,10 @@ export function StudioPublicationPreviewRoute() {
   }
 
   const audience = searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist'
-  const typography = state.invitation.code === maiaInvitationData.code
-    ? findOrigin01TypographyCombination('romantica-clasica')
-    : undefined
+  const typography = findOrigin01TypographyCombination(state.invitation.typographyId)
+    ?? (state.invitation.code === maiaInvitationData.code
+      ? findOrigin01TypographyCombination('romantica-clasica')
+      : undefined)
   return <Origin01Invitation invitation={state.invitation} audience={audience} typography={typography}
     startAtInvitation={searchParams.get('inicio') === 'invitacion'} />
 }

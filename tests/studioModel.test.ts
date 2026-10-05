@@ -80,6 +80,7 @@ import {
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
+import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
 import { getStudioPublicationBlockReason } from '../src/features/studio/studioPublication'
 import { compareStudioPublicationToPublicBaseline } from '../src/features/studio/studioPublicationEquivalence'
@@ -263,6 +264,7 @@ const persistenceDocument = deriveOrigin01PreviewInvitation(origin01DemoData, pe
 const hydratedDraft = createOrigin01StudioDraftFromDocument(persistenceDocument)
 assert(hydratedDraft.event.start === '2027-03-20T21:00'
   && hydratedDraft.event.end === '2027-03-21T02:00'
+  && hydratedDraft.typographyId === 'noche-plateada'
   && hydratedDraft.share.mode === 'custom'
   && hydratedDraft.share.customMessage === 'Un mensaje guardado para compartir.',
   'un borrador persistido conserva fechas canónicas y el mensaje personalizado al reabrirse')
@@ -279,8 +281,17 @@ assert(isOrigin01StudioDraftDirty(renamedSuggestedDraft, rehydratedRenamedDraft)
   && !isOrigin01StudioDraftDirty(renamedSuggestedDraft, renamedSuggestedDraft),
   'el baseline limpio conserva el snapshot exacto guardado aunque una rehidratación normalice valores ocultos')
 assert(isOrigin01InvitationDocument(maiaInvitationData)
+  && !isOrigin01InvitationDocument({ ...maiaInvitationData, typographyId: 'desconocida' })
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
+const legacyTypographyDocument = { ...maiaInvitationData, typographyId: undefined }
+const normalizedLegacyTypography = normalizeStudioInvitationDocument(maiaInvitationData, legacyTypographyDocument)
+const normalizedCurrentTypography = normalizeStudioInvitationDocument(maiaInvitationData, maiaInvitationData)
+assert(normalizedLegacyTypography.requiresSave
+  && normalizedLegacyTypography.document.typographyId === maiaInvitationData.typographyId
+  && !normalizedCurrentTypography.requiresSave
+  && normalizedCurrentTypography.document === maiaInvitationData,
+  'un borrador histórico hereda la tipografía canónica y queda pendiente de guardado antes de publicarse')
 assert(!hasUnpersistedStudioMedia(initial)
   && hasUnpersistedStudioMedia({
     media: {
@@ -582,6 +593,15 @@ assert(gardenTypography?.coverName.family === 'WindSong'
   && typographyMarkup.includes('--origin-reading:&#x27;Quicksand&#x27;, sans-serif')
   && findOrigin01TypographyCombination('desconocida') === undefined,
   'la evaluación aplica las tres familias autoalojadas y rechaza identificadores desconocidos')
+const persistedTypographyDraft = updateOrigin01StudioDraftField(initial, 'typographyId', 'garden-antigua')
+const persistedTypographyInvitation = deriveOrigin01PreviewInvitation(origin01DemoData, persistedTypographyDraft)
+const persistedTypographyMarkup = renderToStaticMarkup(createElement(Origin01Invitation, {
+  invitation: persistedTypographyInvitation,
+}))
+assert(persistedTypographyInvitation.typographyId === 'garden-antigua'
+  && createOrigin01StudioDraftFromDocument(persistedTypographyInvitation).typographyId === 'garden-antigua'
+  && persistedTypographyMarkup.includes('--origin-cover-name:&#x27;WindSong&#x27;, cursive'),
+  'la tipografía elegida persiste en el documento y el renderer la aplica sin parámetros auxiliares')
 const independentTypography = gardenTypography && {
   ...gardenTypography,
   protagonist: { ...gardenTypography.protagonist, family: 'Prata' },
@@ -921,12 +941,12 @@ assert(!contentMarkup.includes('PREVIEW_REAL') && !contentMarkup.includes('Ver i
   && !contentMarkup.includes('Proyecciones') && !contentMarkup.includes('Datos canónicos'),
   'Contenido concentra escenas y editor sin duplicar el host global de preview ni exponer taxonomía técnica')
 const draftBeforeStageNavigation = JSON.stringify(initial)
-const stageLabels = ['Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
+const stageLabels = ['Plantilla', 'Diseño', 'Secciones', 'Contenido', 'Fotos y música', 'Revisar y publicar']
 const stageMarkup = renderToStaticMarkup(createElement(StudioStageNavigation,
-  { activeStage: 'design', onStageChange: () => undefined }))
+  { activeStage: 'template', onStageChange: () => undefined }))
 assert(studioWorkspaceStages.map(({ label }) => label).join('|') === stageLabels.join('|')
   && stageLabels.every((label) => stageMarkup.includes(label)) && !stageMarkup.includes('Estética'),
-  'la navegación lateral presenta las cinco etapas aprobadas en orden')
+  'la navegación lateral presenta las seis etapas aprobadas en orden')
 assert(studioWorkspaceStages.every(({ id }) => renderToStaticMarkup(createElement(StudioStageNavigation,
   { activeStage: id, onStageChange: () => undefined })).includes('aria-current="step"')),
   'cada etapa superior puede activarse, incluida Revisión')
@@ -937,16 +957,26 @@ assert(/\.limen-studio__unified-workspace\s*\{[^}]*height:\s*100%;[^}]*grid-row:
 assert(/body:has\(\.limen-studio__workspace\)[^{]*\{[^}]*overflow:\s*hidden/s.test(studioCss),
   'Studio bloquea el scroll del documento exterior para que el workspace no salte entre etapas')
 const designStageElement = createElement(StudioDesignStage, {
-  template: createElement(StudioTemplateStage, { template: origin01Template, showHeading: false }),
   themeVariant: initial.themeVariant,
   initialThemeVariant: initial.themeVariant,
+  typographyId: initial.typographyId,
+  initialTypographyId: initial.typographyId,
+  protagonistName: initial.protagonistName,
   onThemeVariantChange: () => undefined,
+  onTypographyChange: () => undefined,
 })
 const designMarkup = renderToStaticMarkup(designStageElement)
 assert(designMarkup.includes('Definí la identidad visual') && designMarkup.includes('Paleta de colores')
-  && designMarkup.includes('Origin 01') && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
+  && !designMarkup.includes('Plantilla de la invitación') && designMarkup.includes('Tipografía')
+  && designMarkup.includes('Ver todas (12)') && designMarkup.includes('Romántica clásica')
+  && origin01ThemeVariants.every(({ name }) => designMarkup.includes(name))
   && !designMarkup.includes('Fotos y música') && JSON.stringify(initial) === draftBeforeStageNavigation,
-  'Diseño reúne plantilla y paleta sin mezclar la administración de medios')
+  'Diseño reúne colores y tipografía sin mezclar plantilla ni administración de medios')
+const templateStageElement = createElement(StudioTemplateStage, { template: origin01Template })
+const templateMarkup = renderToStaticMarkup(templateStageElement)
+assert(templateMarkup.includes('Plantilla de la invitación') && templateMarkup.includes('Origin 01')
+  && !templateMarkup.includes('Paleta de colores') && !templateMarkup.includes('Tipografía'),
+  'Plantilla ocupa una etapa propia sin mezclar los controles de Diseño')
 const mediaStageElement = createElement(StudioMediaStage, {
   media: initial.media,
   initialMedia: initial.media,
@@ -1716,6 +1746,14 @@ assert(realDesignBoundary.includes('Definí la identidad visual')
   && realDesignBoundary.includes('Revisar y publicar')
   && (realDesignBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
   'Diseño comparte la navegación lateral y el host persistente de preview con el resto del flujo')
+const realTemplateBoundary = renderToStaticMarkup(createElement(StudioUnifiedWorkspace, {
+  activeStage: 'template', preview: previewPaneElement, previewCollapsed: false, previewDedicated: false,
+  onStageChange: () => undefined, onShowPreview: () => undefined, children: templateStageElement,
+}))
+assert(realTemplateBoundary.includes('Plantilla de la invitación')
+  && realTemplateBoundary.includes('Revisar y publicar')
+  && (realTemplateBoundary.match(/id="studio-preview-renderer-title"/g) ?? []).length === 1,
+  'Plantilla comparte la navegación lateral y el host persistente de preview con el resto del flujo')
 const shellMarkup = (previewCollapsed: boolean, previewDedicated: boolean) => renderToStaticMarkup(createElement(
   StudioNavigationShell, { domains, navigation: triviaNavigation, validation: validResult,
     editor: createElement('div'), editorResolvable: true, onNavigate: () => undefined, preview: previewElement,

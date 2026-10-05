@@ -12,6 +12,7 @@ const sectionLabels: Readonly<Record<string, string>> = {
   media: 'fotografías o música',
   content: 'contenido',
   themeVariant: 'estética',
+  typographyId: 'tipografía',
   code: 'código público',
   templateId: 'plantilla',
   eventType: 'tipo de evento',

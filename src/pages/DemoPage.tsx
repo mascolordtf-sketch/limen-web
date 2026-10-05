@@ -42,6 +42,7 @@ export function DemoPage() {
     const audience = matrixCase?.audience
       ?? (searchParams.get('vista') === 'invitado' ? 'guest' : 'protagonist')
     const typography = findOrigin01TypographyCombination(searchParams.get('tipografia'))
+      ?? findOrigin01TypographyCombination(renderedInvitation.typographyId)
       ?? (invitation.code === maiaInvitationData.code
         ? findOrigin01TypographyCombination('romantica-clasica')
         : undefined)

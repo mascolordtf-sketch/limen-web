@@ -249,7 +249,7 @@ Origin 01 distingue el nombre principal de portada mediante el rol tipográfico 
 
 El laboratorio de Studio carga las hojas de estilo requeridas por las doce combinaciones, solicita cada familia real mediante la Font Loading API y espera efectivamente a `document.fonts.ready` antes de habilitar la comparación o el acceso a la invitación completa. Durante la preparación no expone tarjetas renderizadas con fuentes de reemplazo; ante una falla de carga mantiene bloqueada la evaluación, informa el problema y permite reintentarla. Si la API no existe, continúa tras cargar las hojas de estilo; si únicamente rechaza `fonts.ready` después de verificar las familias solicitadas, usa esas cargas verificadas como salida segura.
 
-La fase conserva el carácter temporal del laboratorio: no aprueba una combinación definitiva, no modifica el borrador canónico, no persiste la selección y no altera la invitación pública sin el parámetro interno de evaluación.
+En esta fase histórica el laboratorio fue temporal y no persistía la selección. El flujo productivo posterior reemplaza esa superficie por un selector compacto en Diseño y guarda `typographyId` en el documento.
 
 Como resguardo de composición, el nombre de portada conserva el tamaño definido por Origin 01 mientras entra en el ancho disponible y se reduce automáticamente solo cuando sus métricas tipográficas reales producirían un corte horizontal. El ajuste se recalcula al completar la carga de fuentes y ante cambios de viewport; no modifica los demás roles tipográficos.
 

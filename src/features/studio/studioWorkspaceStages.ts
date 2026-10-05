@@ -1,4 +1,5 @@
 export const studioWorkspaceStages = [
+  { id: 'template', label: 'Plantilla' },
   { id: 'design', label: 'Diseño' },
   { id: 'sections', label: 'Secciones' },
   { id: 'content', label: 'Contenido' },

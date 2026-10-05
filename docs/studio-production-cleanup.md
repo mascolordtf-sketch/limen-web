@@ -11,9 +11,9 @@ publicaciones o la invitación pública de Maia.
 
 - Plantilla presenta únicamente Origin 01, con su estado y el enlace de demostración.
   Los conceptos futuros siguen en `studioTemplateGallery.ts`, pero no aparecen en el editor.
-- Estética conserva la selección de colores, fotografías y música. El laboratorio tipográfico
-  y el tablero explicativo no se montan en el flujo productivo. El código del laboratorio,
-  las doce combinaciones y sus pruebas se conservan: no se inventa persistencia tipográfica.
+- El antiguo laboratorio tipográfico y el tablero explicativo no se montan en el flujo productivo.
+  Diseño incorpora ahora un selector compacto de combinaciones curadas; la elección se guarda
+  en el documento y se refleja en la preview y en las publicaciones.
 - Los textos de las etapas y la selección de colores son más directos. La tarjeta de plantilla
   reduce su preview en escritorio y el tamaño del nombre; no se rehace el diseño global.
 - Música es opcional. El selector usa un botón operable con teclado, muestra el estado sin
@@ -36,8 +36,8 @@ imagen, una referencia faltante o una fuente vacía como audio.
 ## Verificación manual del Preview
 
 1. Abrir Maia: Plantilla no debe mostrar tarjetas «Próximamente».
-2. Entrar a Estética: debe conservar colores, fotos y música, sin laboratorio tipográfico ni
-   tablero de dirección visual.
+2. Entrar a Diseño: debe mostrar plantilla, paleta y selector tipográfico productivo, sin el
+   antiguo laboratorio ni el tablero de dirección visual.
 3. Sin música, Revisión no debe exigir una indicación de sonido y el editor de apertura no
    debe mostrar ese campo.
 4. En una invitación de prueba, agregar audio: debe aparecer el reproductor y el campo de
@@ -52,9 +52,9 @@ replantear Revisión y resolver el responsive general quedan para los siguientes
 
 - Pruebas de regresión para Maia sin audio, asignaciones vacías históricas, audio faltante,
   incompatible o no listo, bloqueo estructural, derivación segura, guardado y reapertura,
-  y el editor productivo de apertura.
+  el editor productivo de apertura y persistencia tipográfica.
 - Render de componentes para verificar que los controles reales siguen presentes y que
-  laboratorio y conceptos futuros no se montan en el flujo productivo.
+  el laboratorio y los conceptos futuros no se montan en el flujo productivo.
 - Lint, typecheck, build y control estructural de la matriz visual.
 
 La revisión visual en navegador queda pendiente en el Preview: la descarga del navegador

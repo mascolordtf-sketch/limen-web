@@ -29,6 +29,7 @@ function PersistedStudioInvitationRoute({ invitation }: { invitation: NonNullabl
     invitation={persistence.loadState.document}
     publicBaseline={invitation}
     persisted={Boolean(persistence.loadState.persisted)}
+    requiresSave={persistence.loadState.requiresSave}
     revision={persistence.loadState.persisted?.revision}
     updatedAt={persistence.loadState.persisted?.updatedAt}
     saveState={persistence.saveState}

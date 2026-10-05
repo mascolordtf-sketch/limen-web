@@ -8,6 +8,7 @@ import { Origin01Community } from './Origin01Community'
 import { calculateCoverNameFittedSize } from './origin01CoverNameFit'
 import type { Origin01InvitationData } from './origin01ContentTypes'
 import { Origin01TypographyAssets } from './Origin01TypographyAssets'
+import { findOrigin01TypographyCombination } from './origin01Typography'
 import type { Origin01TypographyCombination } from './origin01Typography'
 import { fetchOrigin01WeatherForecast, formatOrigin01WeatherLocation,
   getOrigin01WeatherAvailability } from './origin01Weather'
@@ -397,7 +398,7 @@ export function Origin01Invitation({
   publicInvitationUrl,
   startAtInvitation = false,
   startAtPrelude = false,
-  typography,
+  typography: typographyOverride,
 }: {
   invitation: Origin01InvitationData
   audience?: InvitationAudience
@@ -406,6 +407,7 @@ export function Origin01Invitation({
   startAtPrelude?: boolean
   typography?: Origin01TypographyCombination
 }) {
+  const typography = typographyOverride ?? findOrigin01TypographyCombination(invitation.typographyId)
   const [phase, setPhase] = useState<EntryPhase>(
     startAtInvitation ? 'invitation' : startAtPrelude ? 'prelude' : audience === 'guest' ? 'envelope' : 'prelude',
   )
