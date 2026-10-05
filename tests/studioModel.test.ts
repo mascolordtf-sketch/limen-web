@@ -80,6 +80,7 @@ import {
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
+import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
 import { getStudioPublicationBlockReason } from '../src/features/studio/studioPublication'
 import { compareStudioPublicationToPublicBaseline } from '../src/features/studio/studioPublicationEquivalence'
@@ -283,6 +284,14 @@ assert(isOrigin01InvitationDocument(maiaInvitationData)
   && !isOrigin01InvitationDocument({ ...maiaInvitationData, typographyId: 'desconocida' })
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
+const legacyTypographyDocument = { ...maiaInvitationData, typographyId: undefined }
+const normalizedLegacyTypography = normalizeStudioInvitationDocument(maiaInvitationData, legacyTypographyDocument)
+const normalizedCurrentTypography = normalizeStudioInvitationDocument(maiaInvitationData, maiaInvitationData)
+assert(normalizedLegacyTypography.requiresSave
+  && normalizedLegacyTypography.document.typographyId === maiaInvitationData.typographyId
+  && !normalizedCurrentTypography.requiresSave
+  && normalizedCurrentTypography.document === maiaInvitationData,
+  'un borrador histórico hereda la tipografía canónica y queda pendiente de guardado antes de publicarse')
 assert(!hasUnpersistedStudioMedia(initial)
   && hasUnpersistedStudioMedia({
     media: {

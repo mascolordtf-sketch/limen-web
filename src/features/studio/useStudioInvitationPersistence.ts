@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { defaultOrigin01TypographyCombination } from '../invitations/origin01/origin01Typography'
 import { ensureStudioProject, loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
 import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
 import type { StudioSaveState } from './studioAutosave'
@@ -19,7 +20,23 @@ type LoadState =
       readonly location?: StudioDraftLocation
       readonly persisted?: PersistedStudioDraft
       readonly publication?: StudioPublicationSnapshot
+      readonly requiresSave: boolean
     }
+
+export function normalizeStudioInvitationDocument(
+  baseInvitation: Origin01InvitationData,
+  persistedDocument?: Origin01InvitationData,
+) {
+  if (!persistedDocument) return { document: baseInvitation, requiresSave: false } as const
+  if (persistedDocument.typographyId) return { document: persistedDocument, requiresSave: false } as const
+  return {
+    document: {
+      ...persistedDocument,
+      typographyId: baseInvitation.typographyId ?? defaultOrigin01TypographyCombination.id,
+    },
+    requiresSave: true,
+  } as const
+}
 
 export function useStudioInvitationPersistence(baseInvitation: Origin01InvitationData) {
   const { userId } = useStudioAuth()
@@ -40,15 +57,14 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
           : undefined
         if (!active) return
         locationRef.current = location
-        const document = persisted?.document
-          ? { ...persisted.document, typographyId: persisted.document.typographyId ?? baseInvitation.typographyId }
-          : baseInvitation
+        const normalized = normalizeStudioInvitationDocument(baseInvitation, persisted?.document)
         setLoadState({
           status: 'ready',
-          document,
+          document: normalized.document,
           location,
           persisted,
           publication,
+          requiresSave: normalized.requiresSave,
         })
       })
       .catch((error: unknown) => {
@@ -104,6 +120,7 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
           location: persisted,
           persisted,
           publication: current.status === 'ready' ? current.publication : undefined,
+          requiresSave: false,
         }))
         setSaveState({ status: 'saved' })
         return true
