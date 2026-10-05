@@ -1,5 +1,4 @@
 import {
-  findOrigin01ThemeVariant,
   origin01ThemeVariants,
   type Origin01ThemeVariantId,
 } from '../invitations/origin01/origin01ThemeVariants'
@@ -13,14 +12,9 @@ export function StudioVisualVariantSelector({
   initialValue: Origin01ThemeVariantId
   onChange: (value: Origin01ThemeVariantId) => void
 }) {
-  const selected = findOrigin01ThemeVariant(value) ?? origin01ThemeVariants[0]
-
   return <section className="limen-studio__visual-variants" aria-labelledby="studio-visual-variants-title">
     <header>
-      <div>
-        <h3 id="studio-visual-variants-title">Paleta de colores</h3>
-        <p>Elegí una combinación para toda la invitación.</p>
-      </div>
+      <h3 id="studio-visual-variants-title">Paleta de colores</h3>
       <button type="button" className="limen-studio__reset-button"
         disabled={value === initialValue} onClick={() => onChange(initialValue)}>
         Restablecer colores
@@ -34,17 +28,14 @@ export function StudioVisualVariantSelector({
           <input type="radio" name="studio-origin01-variant" value={variant.id} checked={checked}
             onChange={() => onChange(variant.id)} />
           <span className="limen-studio__variant-card-topline">
-            <strong>{variant.name}</strong><span>{checked ? 'Seleccionada' : 'Elegir'}</span>
+            <strong>{variant.name}</strong>
+            <span className="limen-studio__variant-check" aria-hidden="true">{checked ? '✓' : ''}</span>
           </span>
           <span className="limen-studio__variant-swatches" aria-hidden="true">
             {variant.palette.map((color) => <i key={color.role} style={{ background: color.value }} />)}
           </span>
-          <small>{variant.description}</small>
         </label>
       })}
     </div>
-    <p className="limen-studio__variant-summary" aria-live="polite">
-      <strong>{selected.name}</strong><span>{selected.character}</span>
-    </p>
   </section>
 }

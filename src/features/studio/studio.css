@@ -206,11 +206,7 @@
 }
 
 .limen-studio__visual-variants {
-  margin: 1.5rem 0 .85rem;
-  border: 1px solid var(--studio-line);
-  border-radius: 1.15rem;
-  padding: 1.1rem;
-  background: var(--studio-paper);
+  padding: 1rem;
 }
 
 .limen-studio__visual-variants > header {
@@ -218,20 +214,12 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: .8rem;
 }
 
 .limen-studio__visual-variants h3 {
-  margin: 0 0 .35rem;
-  font-size: 1.05rem;
-}
-
-.limen-studio__visual-variants header p:last-child {
-  max-width: 44rem;
   margin: 0;
-  color: var(--studio-muted);
-  font-size: .82rem;
-  line-height: 1.5;
+  font-size: 1rem;
 }
 
 .limen-studio__visual-variants .limen-studio__reset-button {
@@ -520,17 +508,18 @@
 
 .limen-studio__variant-grid {
   display: grid;
-  gap: .7rem;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: .55rem;
 }
 
 .limen-studio__variant-card {
   position: relative;
   display: grid;
-  gap: .65rem;
+  gap: .5rem;
   min-width: 0;
   border: 1px solid var(--studio-line-strong);
-  border-radius: .95rem;
-  padding: .85rem;
+  border-radius: .8rem;
+  padding: .65rem;
   background: #fff;
   cursor: pointer;
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
@@ -569,17 +558,30 @@
 }
 
 .limen-studio__variant-card-topline strong {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1rem;
-  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  font-size: .72rem;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.limen-studio__variant-card-topline > span {
-  color: var(--studio-accent-strong);
-  font-size: .62rem;
+.limen-studio__variant-check {
+  display: grid;
+  width: 1.15rem;
+  height: 1.15rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--studio-line-strong);
+  border-radius: 50%;
+  color: #fff;
+  font-size: .68rem;
   font-weight: 800;
-  letter-spacing: .04em;
-  text-transform: uppercase;
+}
+
+.limen-studio__variant-card--selected .limen-studio__variant-check {
+  border-color: var(--studio-accent);
+  background: var(--studio-accent);
 }
 
 .limen-studio__variant-swatches {
@@ -591,26 +593,7 @@
 }
 
 .limen-studio__variant-swatches i {
-  min-height: 2.5rem;
-}
-
-.limen-studio__variant-card small {
-  color: var(--studio-muted);
-  font-size: .72rem;
-  line-height: 1.45;
-}
-
-.limen-studio__variant-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem .75rem;
-  margin: .85rem 0 0;
-  color: var(--studio-muted);
-  font-size: .72rem;
-}
-
-.limen-studio__variant-summary strong {
-  color: var(--studio-ink);
+  min-height: 1.75rem;
 }
 
 .limen-studio__aesthetic-board {
@@ -945,10 +928,6 @@
 }
 
 @media (min-width: 48rem) {
-  .limen-studio__variant-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .limen-studio__template-card {
     min-height: 16rem;
     grid-template-rows: 8.25rem minmax(0, 1fr);
@@ -6404,7 +6383,7 @@
 
 .limen-studio__design-content {
   display: grid;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .limen-studio__design-content .limen-studio__template-stage {
@@ -6412,11 +6391,55 @@
   margin: 0;
 }
 
+.limen-studio__design-controls {
+  min-width: 0;
+}
+
+.limen-studio__design-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem 1rem 0 0;
+  padding: .35rem .35rem 0;
+  background: var(--studio-paper);
+}
+
+.limen-studio__design-tabs button {
+  min-height: 2.75rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: .65rem .8rem;
+  background: transparent;
+  color: var(--studio-muted);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.limen-studio__design-tabs button[aria-selected='true'] {
+  border-bottom-color: var(--studio-accent);
+  color: var(--studio-accent-strong);
+}
+
+.limen-studio__design-tabs button:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: -3px;
+}
+
+.limen-studio__design-panel {
+  min-width: 0;
+  border: 1px solid var(--studio-line);
+  border-top: 0;
+  border-radius: 0 0 1rem 1rem;
+  background: rgb(255 255 255 / 46%);
+}
+
 .limen-studio__typography-selector {
   display: grid;
   gap: .8rem;
-  border: 1px solid var(--studio-line);
-  border-radius: 1rem;
+  border: 0;
+  border-radius: 0;
   padding: 1rem;
   background: var(--studio-paper);
 }
