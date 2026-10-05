@@ -2,9 +2,9 @@ import type { PublicationStatus } from '../platform/dataModel'
 import { currentProjectSchemaVersion, publicationStatuses } from '../platform/dataModel'
 import { supabase } from '../auth/supabaseClient'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
+import { isOrigin01InvitationDocument } from '../invitations/origin01/origin01Document'
 import type { StudioSaveStatus } from './studioAutosave'
 import { hydrateStudioDocument } from './studioMediaStorage'
-import { isOrigin01InvitationDocument } from './studioPersistence'
 
 export type StudioPublicationSummary = {
   readonly id: string

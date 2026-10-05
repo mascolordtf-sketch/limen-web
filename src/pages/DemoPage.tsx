@@ -1,11 +1,13 @@
-import { useEffect } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
+import type { Origin01InvitationData } from '../features/invitations/origin01/origin01ContentTypes'
 import { maiaInvitationData } from '../features/invitations/origin01/maiaInvitationData'
 import { origin01DemoData } from '../features/invitations/origin01/origin01DemoData'
 import { findOrigin01TypographyCombination } from '../features/invitations/origin01/origin01Typography'
 import { resolveOrigin01VisualMatrixCase } from '../features/invitations/origin01/origin01VisualMatrix'
+import { loadPublicInvitationPublication } from '../features/invitations/publicInvitationPublication'
 
 const demoInvitations = {
   [origin01DemoData.code]: origin01DemoData,
@@ -14,14 +16,46 @@ const demoInvitations = {
 
 export function DemoPage() {
   const { code } = useParams()
+  const { pathname } = useLocation()
   const [searchParams] = useSearchParams()
+  const [publishedInvitation, setPublishedInvitation] = useState<{
+    readonly code: string
+    readonly invitation?: Origin01InvitationData
+  }>()
+  const publicRoute = pathname.startsWith('/invitacion/')
 
-  const invitation = code && Object.hasOwn(demoInvitations, code)
+  const bundledInvitation = code && Object.hasOwn(demoInvitations, code)
     ? demoInvitations[code as keyof typeof demoInvitations]
     : undefined
+  const loadedPublication = publicRoute && publishedInvitation && publishedInvitation.code === code
+    ? publishedInvitation.invitation
+    : undefined
+  const invitation = loadedPublication ?? bundledInvitation
   const matrixCase = invitation
     ? resolveOrigin01VisualMatrixCase(searchParams.get('matriz'), invitation)
     : undefined
+
+  useEffect(() => {
+    if (!publicRoute || !code) return
+    let active = true
+    let releasePublication: (() => void) | undefined
+    void loadPublicInvitationPublication(code)
+      .then((publication) => {
+        if (!active) {
+          publication?.release()
+          return
+        }
+        releasePublication = publication?.release
+        setPublishedInvitation({ code, invitation: publication?.invitation })
+      })
+      .catch(() => {
+        if (active) setPublishedInvitation({ code })
+      })
+    return () => {
+      active = false
+      releasePublication?.()
+    }
+  }, [code, publicRoute])
 
   useEffect(() => {
     if (!matrixCase || matrixCase.scene === 'prelude') return
