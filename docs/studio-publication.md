@@ -25,9 +25,14 @@ La ruta pública consulta una publicación activa solamente cuando el proyecto t
 el registro estático actual. La selección se cambia mediante una operación administradora explícita; una
 publicación nueva no modifica por sí sola el enlace público.
 
-Los archivos publicados permanecen en el bucket privado. La audiencia puede descargar únicamente los
-archivos listos que estén referenciados por la publicación activa y habilitada; el navegador los convierte
-en URLs temporales locales durante esa visita.
+Los archivos publicados permanecen en el bucket privado. La audiencia recibe URLs firmadas únicamente
+para los archivos listos que estén referenciados por la publicación activa y habilitada. Fotos y audio se
+cargan después mediante el comportamiento nativo del navegador, sin descargar todos los archivos antes
+de mostrar la invitación.
+
+Si la consulta pública o la firma de archivos falla, la ruta muestra un estado de error con reintento. El
+fixture se usa solamente cuando Supabase responde correctamente que ese proyecto no eligió una publicación;
+una falla transitoria nunca sustituye contenido vigente por datos estáticos potencialmente antiguos.
 
 Studio recupera el último snapshot autorizado, compara automáticamente sus campos renderizables con
 el fixture público actual y muestra las secciones distintas. También ofrece una ruta privada y

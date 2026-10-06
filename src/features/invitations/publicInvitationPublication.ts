@@ -4,10 +4,10 @@ import type { Origin01InvitationData } from './origin01/origin01ContentTypes'
 import { isOrigin01InvitationDocument } from './origin01/origin01Document'
 
 const publicMediaBucket = 'invitation-media'
+const publicMediaSignedUrlLifetimeSeconds = 12 * 60 * 60
 
 export type LoadedPublicInvitation = {
   readonly invitation: Origin01InvitationData
-  readonly release: () => void
 }
 
 export class PublicInvitationPublicationError extends Error {
@@ -37,7 +37,7 @@ export function parsePublicInvitationPublication(
 export async function loadPublicInvitationPublication(
   publicCode: string,
 ): Promise<LoadedPublicInvitation | undefined> {
-  if (!supabase) return undefined
+  if (!supabase) throw new PublicInvitationPublicationError()
   const client = supabase
   const { data, error } = await client
     .rpc('get_public_invitation', { p_public_code: publicCode })
@@ -47,25 +47,30 @@ export async function loadPublicInvitationPublication(
   if (!data) return undefined
 
   const { projectId, document } = parsePublicInvitationPublication(data, publicCode)
-  const objectUrls: string[] = []
-  try {
-    const media = await Promise.all(document.media.map(async (item) => {
-      if (!item.storageKey) return item
-      if (!item.storageKey.startsWith(`${projectId}/`)) throw new PublicInvitationPublicationError()
-      const { data: file, error: fileError } = await client.storage
-        .from(publicMediaBucket)
-        .download(item.storageKey)
-      if (fileError || !file) throw new PublicInvitationPublicationError()
-      const src = URL.createObjectURL(file)
-      objectUrls.push(src)
-      return { ...item, src }
-    }))
-    return {
-      invitation: { ...document, media },
-      release: () => objectUrls.forEach((src) => URL.revokeObjectURL(src)),
-    }
-  } catch (error) {
-    objectUrls.forEach((src) => URL.revokeObjectURL(src))
-    throw error
+  const storageKeys = [...new Set(document.media.flatMap((item) => {
+    if (!item.storageKey) return []
+    if (!item.storageKey.startsWith(`${projectId}/`)) throw new PublicInvitationPublicationError()
+    return [item.storageKey]
+  }))]
+  if (storageKeys.length === 0) return { invitation: document }
+
+  const { data: signedMedia, error: signedMediaError } = await client.storage
+    .from(publicMediaBucket)
+    .createSignedUrls(storageKeys, publicMediaSignedUrlLifetimeSeconds)
+  if (signedMediaError || !signedMedia) throw new PublicInvitationPublicationError()
+
+  const signedUrlByStorageKey = new Map<string, string>()
+  signedMedia.forEach(({ error: mediaError, path, signedUrl }) => {
+    if (mediaError || !path || !signedUrl) throw new PublicInvitationPublicationError()
+    signedUrlByStorageKey.set(path, signedUrl)
+  })
+  const media = document.media.map((item) => {
+    if (!item.storageKey) return item
+    const src = signedUrlByStorageKey.get(item.storageKey)
+    if (!src) throw new PublicInvitationPublicationError()
+    return { ...item, src }
+  })
+  return {
+    invitation: { ...document, media },
   }
 }
