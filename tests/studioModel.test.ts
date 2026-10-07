@@ -180,13 +180,23 @@ const invitationIndexProjects = [{
   event_type: 'quince', plan_code: 'essential', plan_version: 1, status: 'published', public_source: 'publication',
   created_by: 'member-1', created_at: '2026-10-01T12:00:00.000Z', updated_at: '2026-10-05T17:30:00.000Z',
 }]
+const persistedMaiaIndexDocument = {
+  ...maiaInvitationData,
+  internalName: 'Maia — borrador actualizado',
+  event: { ...maiaInvitationData.event, startsAt: '2026-11-21T21:30:00-03:00' },
+  media: maiaInvitationData.media.map((media) => media.id === maiaInvitationData.content.hero.imageMediaId
+    ? { ...media, src: '/images/maia/portada-actualizada.webp' }
+    : media),
+}
 const invitationIndex = buildStudioInvitationSummaries(invitationIndexProjects, [{
-  project_id: 'project-maia', revision: 3, updated_at: '2026-10-07T03:42:00.000Z',
+  project_id: 'project-maia', revision: 3, document: persistedMaiaIndexDocument,
+  updated_at: '2026-10-07T03:42:00.000Z',
 }, {
-  project_id: 'project-demo', revision: 4, updated_at: '2026-10-05T17:30:00.000Z',
+  project_id: 'project-demo', revision: 4, document: origin01DemoData,
+  updated_at: '2026-10-05T17:30:00.000Z',
 }], [{
   project_id: 'project-demo', revision: 1, draft_revision: 4, status: 'active',
-  published_at: '2026-10-05T17:30:00.000Z',
+  document: origin01DemoData, published_at: '2026-10-05T17:30:00.000Z',
 }])
 const maiaIndexEntry = invitationIndex.find(({ code }) => code === maiaInvitationData.code)
 const demoIndexEntry = invitationIndex.find(({ code }) => code === origin01DemoData.code)
@@ -194,10 +204,29 @@ assert(invitationIndex.length === 2
   && maiaIndexEntry?.availability === 'online'
   && maiaIndexEntry.sourceLabel === 'Ficha estable'
   && maiaIndexEntry.hasUnpublishedChanges
+  && maiaIndexEntry.internalName === persistedMaiaIndexDocument.internalName
+  && maiaIndexEntry.eventLabel?.includes('21 de noviembre de 2026')
+  && maiaIndexEntry.thumbnailSrc === '/images/maia/portada-actualizada.webp'
   && demoIndexEntry?.availability === 'online'
   && demoIndexEntry.sourceLabel === 'Publicación dinámica'
   && !demoIndexEntry.hasUnpublishedChanges,
   'el índice separa disponibilidad pública, fuente y cambios editoriales sin confundir fixture con publicación')
+const deliveryPredicateIndex = buildStudioInvitationSummaries([{
+  ...invitationIndexProjects[1], status: 'draft',
+}], [], [{
+  project_id: 'project-demo', revision: 2, draft_revision: 1, status: 'active',
+  document: origin01DemoData, published_at: '2026-10-05T17:30:00.000Z',
+}, {
+  project_id: 'project-demo', revision: 1, draft_revision: 1, status: 'superseded',
+  document: origin01DemoData, published_at: '2026-10-04T17:30:00.000Z',
+}])
+const archivedFixtureIndex = buildStudioInvitationSummaries([{
+  ...invitationIndexProjects[0], status: 'archived',
+}], [{ project_id: 'project-maia', revision: 3, document: maiaInvitationData,
+  updated_at: '2026-10-07T03:42:00.000Z' }], [])
+assert(deliveryPredicateIndex[0]?.availability === 'offline'
+  && archivedFixtureIndex[0]?.availability === 'online',
+  'la disponibilidad del índice replica la entrega pública: publicación exige proyecto publicado y el fixture conocido sigue accesible')
 assert(filterStudioInvitationSummaries(invitationIndex, 'all', 'maía').length === 1
   && filterStudioInvitationSummaries(invitationIndex, 'online', '').length === 2
   && filterStudioInvitationSummaries(invitationIndex, 'paused', '').length === 0,

@@ -1,12 +1,15 @@
 import type { Database } from '../platform/database.types'
 import { supabase } from '../auth/supabaseClient'
+import { isOrigin01InvitationDocument } from '../invitations/origin01/origin01Document'
+import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { findStudioInvitation } from './studioInvitationRegistry'
+import { studioMediaBucket, studioMediaSignedUrlLifetimeSeconds } from './studioMediaStorage'
 
 type ProjectRow = Database['public']['Tables']['invitation_projects']['Row']
 type DraftRow = Pick<Database['public']['Tables']['invitation_drafts']['Row'],
-  'project_id' | 'revision' | 'updated_at'>
+  'document' | 'project_id' | 'revision' | 'updated_at'>
 type PublicationRow = Pick<Database['public']['Tables']['invitation_publications']['Row'],
-  'draft_revision' | 'project_id' | 'published_at' | 'revision' | 'status'>
+  'document' | 'draft_revision' | 'project_id' | 'published_at' | 'revision' | 'status'>
 
 export type StudioInvitationAvailability = 'online' | 'paused' | 'offline' | 'archived'
 export type StudioInvitationFilter = 'all' | StudioInvitationAvailability
@@ -17,6 +20,7 @@ export type StudioInvitationSummary = {
   readonly internalName: string
   readonly eventLabel?: string
   readonly thumbnailSrc?: string
+  readonly thumbnailStorageKey?: string
   readonly availability: StudioInvitationAvailability
   readonly sourceLabel: 'Ficha estable' | 'Publicación dinámica'
   readonly projectStatus: string
@@ -58,13 +62,25 @@ function selectLatestPublication(publications: readonly PublicationRow[]): Publi
   return [...publications].sort((left, right) => right.revision - left.revision)[0]
 }
 
-function resolveAvailability(project: ProjectRow, latestPublication: PublicationRow | undefined,
-  hasBundledInvitation: boolean): StudioInvitationAvailability {
-  if (project.status === 'archived') return 'archived'
+function resolveAvailability(project: ProjectRow, activePublication: PublicationRow | undefined,
+  latestPublication: PublicationRow | undefined, hasBundledInvitation: boolean): StudioInvitationAvailability {
   if (project.public_source === 'fixture') return hasBundledInvitation ? 'online' : 'offline'
-  if (latestPublication?.status === 'active') return 'online'
+  if (project.status === 'archived') return 'archived'
   if (latestPublication?.status === 'paused' || project.status === 'paused') return 'paused'
+  if (project.status === 'published' && activePublication) return 'online'
   return 'offline'
+}
+
+function selectCardDocument(draft: DraftRow | undefined, activePublication: PublicationRow | undefined,
+  bundledInvitation: Origin01InvitationData | undefined): Origin01InvitationData | undefined {
+  if (draft && isOrigin01InvitationDocument(draft.document)) return draft.document
+  if (activePublication && isOrigin01InvitationDocument(activePublication.document)) return activePublication.document
+  return bundledInvitation
+}
+
+function formatEventDate(document: Origin01InvitationData | undefined): string | undefined {
+  if (!document || !Number.isFinite(Date.parse(document.event.startsAt))) return undefined
+  return eventDateFormatter.format(new Date(document.event.startsAt))
 }
 
 function resolveUpdatedAt(project: ProjectRow, draft: DraftRow | undefined,
@@ -88,11 +104,17 @@ export function buildStudioInvitationSummaries(
   }
 
   return projects.map((project) => {
-    const invitation = findStudioInvitation(project.public_code)
+    const bundledInvitation = findStudioInvitation(project.public_code)
     const draft = draftByProject.get(project.id)
-    const latestPublication = selectLatestPublication(publicationsByProject.get(project.id) ?? [])
-    const heroMediaId = invitation?.content.hero.imageMediaId
-    const thumbnail = invitation?.media.find(({ id, kind }) => id === heroMediaId && kind === 'image')
+    const projectPublications = publicationsByProject.get(project.id) ?? []
+    const latestPublication = selectLatestPublication(projectPublications)
+    const activePublication = projectPublications.find(({ status }) => status === 'active')
+    const cardDocument = selectCardDocument(draft, activePublication, bundledInvitation)
+    const heroMediaId = cardDocument?.content.hero.imageMediaId
+    const thumbnail = cardDocument?.media.find(({ id, kind }) => id === heroMediaId && kind === 'image')
+    const thumbnailStorageKey = thumbnail?.storageKey?.startsWith(`${project.id}/`)
+      ? thumbnail.storageKey
+      : undefined
     const sourceLabel: StudioInvitationSummary['sourceLabel'] = project.public_source === 'publication'
       ? 'Publicación dinámica'
       : 'Ficha estable'
@@ -100,10 +122,11 @@ export function buildStudioInvitationSummaries(
     return {
       projectId: project.id,
       code: project.public_code,
-      internalName: project.internal_name,
-      eventLabel: invitation ? eventDateFormatter.format(new Date(invitation.event.startsAt)) : undefined,
-      thumbnailSrc: thumbnail?.src,
-      availability: resolveAvailability(project, latestPublication, Boolean(invitation)),
+      internalName: cardDocument?.internalName ?? project.internal_name,
+      eventLabel: formatEventDate(cardDocument),
+      thumbnailSrc: thumbnailStorageKey ? undefined : thumbnail?.src,
+      thumbnailStorageKey,
+      availability: resolveAvailability(project, activePublication, latestPublication, Boolean(bundledInvitation)),
       sourceLabel,
       projectStatus: project.status,
       projectStatusLabel: projectStatusLabels[project.status] ?? 'En preparación',
@@ -112,7 +135,7 @@ export function buildStudioInvitationSummaries(
       hasUnpublishedChanges: Boolean(draft && (!latestPublication
         || draft.revision > latestPublication.draft_revision)),
       updatedAt: resolveUpdatedAt(project, draft, latestPublication),
-      editable: Boolean(invitation),
+      editable: Boolean(bundledInvitation),
     }
   }).sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt))
 }
@@ -146,14 +169,27 @@ export async function loadStudioInvitationSummaries(): Promise<readonly StudioIn
   const projectIds = projects.map(({ id }) => id)
   const [draftsResult, publicationsResult] = await Promise.all([
     supabase.from('invitation_drafts')
-      .select('project_id, revision, updated_at')
+      .select('project_id, revision, document, updated_at')
       .in('project_id', projectIds),
     supabase.from('invitation_publications')
-      .select('project_id, revision, draft_revision, status, published_at')
+      .select('project_id, revision, draft_revision, document, status, published_at')
       .in('project_id', projectIds)
       .order('revision', { ascending: false }),
   ])
 
   if (draftsResult.error || publicationsResult.error) throw new StudioInvitationIndexError()
-  return buildStudioInvitationSummaries(projects, draftsResult.data, publicationsResult.data)
+  const summaries = buildStudioInvitationSummaries(projects, draftsResult.data, publicationsResult.data)
+  const thumbnailKeys = [...new Set(summaries.flatMap(({ thumbnailStorageKey }) =>
+    thumbnailStorageKey ? [thumbnailStorageKey] : []))]
+  if (thumbnailKeys.length === 0) return summaries
+
+  const { data: signedThumbnails, error: thumbnailError } = await supabase.storage
+    .from(studioMediaBucket)
+    .createSignedUrls(thumbnailKeys, studioMediaSignedUrlLifetimeSeconds)
+  if (thumbnailError || !signedThumbnails) return summaries
+  const signedUrlByKey = new Map(signedThumbnails.flatMap(({ path, signedUrl, error }) =>
+    !error && path && signedUrl ? [[path, signedUrl] as const] : []))
+  return summaries.map((summary) => summary.thumbnailStorageKey
+    ? { ...summary, thumbnailSrc: signedUrlByKey.get(summary.thumbnailStorageKey) }
+    : summary)
 }
