@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
@@ -165,6 +166,12 @@ StudioInvitationPageProps) {
     if (hasUnsavedChanges && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
     void signOut()
   }
+  const requestIndexNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (hasUnsavedChanges
+      && !window.confirm('Hay cambios sin guardar. Si volvés a Invitaciones, se van a perder. ¿Querés continuar?')) {
+      event.preventDefault()
+    }
+  }
   const requestPublication = () => {
     if (revision === undefined || publicationBlockReason) return
     if (!window.confirm(`Se creará una publicación inmutable desde el borrador ${revision}. ¿Querés continuar?`)) return
@@ -271,8 +278,11 @@ StudioInvitationPageProps) {
     <div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand">
-        <h1><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></h1>
-        <div><span className="limen-studio__context-label">Invitación en edición</span>
+        <h1><Link className="limen-studio__brand-home" to="/studio" onClick={requestIndexNavigation}
+          aria-label="Volver a Invitaciones"><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></Link></h1>
+        <div><span className="limen-studio__context-label">
+          <Link to="/studio" onClick={requestIndexNavigation}>Invitaciones</Link><span aria-hidden="true"> / </span>En edición
+        </span>
           <strong>{model.draft.protagonistName}</strong>
           <small>{invitation.event.celebrationLabel} · {invitation.code}</small></div>
       </div>
