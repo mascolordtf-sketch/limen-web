@@ -8,6 +8,7 @@ import origin01Css from '../src/features/invitations/origin01/origin01.css?raw'
 import { calculateCoverNameFittedSize } from '../src/features/invitations/origin01/origin01CoverNameFit'
 import { origin01DemoData } from '../src/features/invitations/origin01/origin01DemoData'
 import { maiaInvitationData } from '../src/features/invitations/origin01/maiaInvitationData'
+import { isOrigin01InvitationDocument } from '../src/features/invitations/origin01/origin01Document'
 import { origin01Template } from '../src/features/invitations/origin01/origin01Template'
 import { origin01ThemeVariants } from '../src/features/invitations/origin01/origin01ThemeVariants'
 import { origin01VisualMatrixViewports,
@@ -79,7 +80,8 @@ import {
   updateOrigin01StudioDraftGroup,
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
-import { hasUnpersistedStudioMedia, isOrigin01InvitationDocument } from '../src/features/studio/studioPersistence'
+import { hasUnpersistedStudioMedia } from '../src/features/studio/studioPersistence'
+import { parsePublicInvitationPublication } from '../src/features/invitations/publicInvitationPublication'
 import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
 import { getStudioPublicationBlockReason } from '../src/features/studio/studioPublication'
@@ -284,6 +286,25 @@ assert(isOrigin01InvitationDocument(maiaInvitationData)
   && !isOrigin01InvitationDocument({ ...maiaInvitationData, typographyId: 'desconocida' })
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
+const parsedPublicPublication = parsePublicInvitationPublication({
+  project_id: 'project-maia',
+  schema_version: 1,
+  document: maiaInvitationData,
+}, maiaInvitationData.code)
+let rejectsMismatchedPublicPublication = false
+try {
+  parsePublicInvitationPublication({
+    project_id: 'project-maia',
+    schema_version: 1,
+    document: maiaInvitationData,
+  }, origin01DemoData.code)
+} catch {
+  rejectsMismatchedPublicPublication = true
+}
+assert(parsedPublicPublication.document === maiaInvitationData
+  && parsedPublicPublication.projectId === 'project-maia'
+  && rejectsMismatchedPublicPublication,
+  'la entrega pública acepta el snapshot compatible y rechaza un código inconsistente')
 const legacyTypographyDocument = { ...maiaInvitationData, typographyId: undefined }
 const normalizedLegacyTypography = normalizeStudioInvitationDocument(maiaInvitationData, legacyTypographyDocument)
 const normalizedCurrentTypography = normalizeStudioInvitationDocument(maiaInvitationData, maiaInvitationData)

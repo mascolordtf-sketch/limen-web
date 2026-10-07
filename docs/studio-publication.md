@@ -18,10 +18,21 @@ documento a `invitation_publications`; los guardados posteriores continúan modi
 - El navegador no posee permisos directos para insertar publicaciones ni cambiar el estado del
   proyecto. Sólo puede ejecutar la operación validada.
 
-## Alcance de esta fase
+## Entrega pública opt-in
 
-La publicación queda preparada y versionada en Supabase, pero la ruta pública todavía lee el registro
-estático. En particular, `/invitacion/LMN-015-002` no cambia de fuente.
+La ruta pública consulta una publicación activa solamente cuando el proyecto tiene `public_source =
+'publication'`. Si la fuente sigue en `fixture`, Supabase no devuelve ningún documento y la ruta conserva
+el registro estático actual. La selección se cambia mediante una operación administradora explícita; una
+publicación nueva no modifica por sí sola el enlace público.
+
+Los archivos publicados permanecen en el bucket privado. La audiencia recibe URLs firmadas únicamente
+para los archivos listos que estén referenciados por la publicación activa y habilitada. Fotos y audio se
+cargan después mediante el comportamiento nativo del navegador, sin descargar todos los archivos antes
+de mostrar la invitación.
+
+Si la consulta pública o la firma de archivos falla, la ruta muestra un estado de error con reintento. El
+fixture se usa solamente cuando Supabase responde correctamente que ese proyecto no eligió una publicación;
+una falla transitoria nunca sustituye contenido vigente por datos estáticos potencialmente antiguos.
 
 Studio recupera el último snapshot autorizado, compara automáticamente sus campos renderizables con
 el fixture público actual y muestra las secciones distintas. También ofrece una ruta privada y
@@ -34,6 +45,5 @@ interpretar, se conserva su resumen e historial sin intentar renderizarla. Esa i
 deshabilita la comparación y la vista privada del snapshot: nunca impide abrir ni editar un borrador
 actual compatible.
 
-La activación de lectura pública queda deliberadamente fuera de esta fase: primero se debe confirmar
-equivalencia automática y visual. El paso siguiente será incorporar una selección explícita de fuente
-con fallback al fixture estático, sin cambiar el código ni el enlace público de Maia.
+Antes de activar una invitación real, se debe comprobar equivalencia visual y funcional entre el snapshot
+publicado y su ficha estática. Maia permanece en `fixture` hasta completar esa comprobación.

@@ -3,7 +3,7 @@ import type { PostgrestError } from '@supabase/supabase-js'
 import { currentProjectSchemaVersion } from '../platform/dataModel'
 import type { Json } from '../platform/database.types'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
-import { findOrigin01TypographyCombination } from '../invitations/origin01/origin01Typography'
+import { isOrigin01InvitationDocument } from '../invitations/origin01/origin01Document'
 import { supabase } from '../auth/supabaseClient'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
 import { hydrateStudioDocument, serializeStudioDocument } from './studioMediaStorage'
@@ -32,18 +32,6 @@ export class StudioPersistenceError extends Error {
     super(message)
     this.name = 'StudioPersistenceError'
   }
-}
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-
-export function isOrigin01InvitationDocument(value: Json): value is Json & Origin01InvitationData {
-  if (!isRecord(value) || value.templateId !== 'origin01' || value.eventType !== 'quince') return false
-  if (typeof value.id !== 'string' || typeof value.code !== 'string' || typeof value.internalName !== 'string') return false
-  if (value.typographyId !== undefined
-    && (typeof value.typographyId !== 'string' || !findOrigin01TypographyCombination(value.typographyId))) return false
-  return isRecord(value.event) && isRecord(value.content) && Array.isArray(value.identities)
-    && Array.isArray(value.modules) && Array.isArray(value.media)
 }
 
 export function hasUnpersistedStudioMedia(draft: Pick<Origin01StudioDraft, 'media'>): boolean {

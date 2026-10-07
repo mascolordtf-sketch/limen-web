@@ -30,6 +30,7 @@ export type Database = {
           plan_code: string
           plan_version: number
           status: string
+          public_source: string
           created_by: string
           created_at: string
           updated_at: string
@@ -42,6 +43,7 @@ export type Database = {
           plan_code: string
           plan_version?: number
           status?: string
+          public_source?: string
           created_by: string
           created_at?: string
           updated_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           plan_code?: string
           plan_version?: number
           status?: string
+          public_source?: string
           updated_at?: string
         }
       >
@@ -148,6 +151,21 @@ export type Database = {
       publish_invitation_draft: {
         Args: { p_project_id: string; p_expected_draft_revision: number }
         Returns: Json
+      }
+      get_public_invitation: {
+        Args: { p_public_code: string }
+        Returns: {
+          project_id: string
+          publication_id: string
+          schema_version: number
+          revision: number
+          document: Json
+          published_at: string
+        }[]
+      }
+      set_invitation_public_source: {
+        Args: { p_project_id: string; p_public_source: string }
+        Returns: undefined
       }
     }
     Enums: Record<never, never>
