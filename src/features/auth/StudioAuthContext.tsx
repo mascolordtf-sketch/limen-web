@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 
 import type { StudioRole } from '../platform/dataModel'
 import { StudioAuthContext } from './studioAuthContextValue'
 import type { StudioAuthContextValue } from './studioAuthContextValue'
+import { resolveStudioAuthEventAction } from './studioAuthLifecycle'
 import { isSupabaseConfigured, supabase } from './supabaseClient'
 
-async function resolveStudioAccess(): Promise<Pick<StudioAuthContextValue, 'email' | 'role' | 'status' | 'userId'>> {
+type StudioAccessState = Pick<StudioAuthContextValue, 'email' | 'role' | 'status' | 'userId'>
+
+async function resolveStudioAccess(): Promise<StudioAccessState> {
   if (!supabase) return { status: 'configuration_error' }
 
   const { data: userData, error: userError } = await supabase.auth.getUser()
@@ -31,28 +34,55 @@ async function resolveStudioAccess(): Promise<Pick<StudioAuthContextValue, 'emai
 }
 
 export function StudioAuthProvider() {
-  const [authState, setAuthState] = useState<Pick<StudioAuthContextValue, 'email' | 'role' | 'status' | 'userId'>>({
+  const initialAuthState: StudioAccessState = {
     status: isSupabaseConfigured ? 'loading' : 'configuration_error',
-  })
+  }
+  const [authState, setAuthState] = useState<StudioAccessState>(initialAuthState)
+  const authStateRef = useRef(initialAuthState)
+  const accessRequestRef = useRef(0)
 
-  const refreshAccess = useCallback(async () => {
-    setAuthState((current) => ({ ...current, status: 'loading' }))
-    setAuthState(await resolveStudioAccess())
+  const commitAuthState = useCallback((nextState: StudioAccessState) => {
+    authStateRef.current = nextState
+    setAuthState(nextState)
   }, [])
 
+  const refreshAccess = useCallback(async ({ showLoading = false }: { showLoading?: boolean } = {}) => {
+    const requestId = ++accessRequestRef.current
+
+    if (showLoading) {
+      commitAuthState({ ...authStateRef.current, status: 'loading' })
+    }
+
+    const nextState = await resolveStudioAccess()
+    if (requestId === accessRequestRef.current) commitAuthState(nextState)
+  }, [commitAuthState])
+
   useEffect(() => {
-    const initialCheck = window.setTimeout(() => void refreshAccess(), 0)
+    const initialCheck = window.setTimeout(() => void refreshAccess({ showLoading: true }), 0)
     if (!supabase) return () => window.clearTimeout(initialCheck)
 
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      window.setTimeout(() => void refreshAccess(), 0)
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      const action = resolveStudioAuthEventAction({
+        currentStatus: authStateRef.current.status,
+        currentUserId: authStateRef.current.userId,
+        event,
+        sessionUserId: session?.user.id,
+      })
+
+      if (action === 'signed-out') {
+        accessRequestRef.current += 1
+        commitAuthState({ status: 'unauthenticated' })
+      } else if (action === 'refresh-silently') {
+        window.setTimeout(() => void refreshAccess(), 0)
+      }
     })
 
     return () => {
+      accessRequestRef.current += 1
       window.clearTimeout(initialCheck)
       listener.subscription.unsubscribe()
     }
-  }, [refreshAccess])
+  }, [commitAuthState, refreshAccess])
 
   const signIn = useCallback(async (email: string, password: string) => {
     if (!supabase) return 'Supabase todavía no está configurado.'
@@ -63,9 +93,10 @@ export function StudioAuthProvider() {
   }, [refreshAccess])
 
   const signOut = useCallback(async () => {
+    accessRequestRef.current += 1
     if (supabase) await supabase.auth.signOut()
-    setAuthState({ status: 'unauthenticated' })
-  }, [])
+    commitAuthState({ status: 'unauthenticated' })
+  }, [commitAuthState])
 
   const value = useMemo<StudioAuthContextValue>(() => ({
     ...authState,
