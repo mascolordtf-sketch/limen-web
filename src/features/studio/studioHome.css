@@ -152,17 +152,6 @@
   width: 1.1rem;
 }
 
-.limen-studio-home__soon {
-  border-radius: 999px;
-  padding: .28rem .55rem;
-  color: var(--studio-muted);
-  background: var(--studio-paper);
-  font-size: .62rem;
-  font-weight: 750;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-}
-
 .limen-studio-home__action > strong {
   margin-top: 1.3rem;
   font-size: 1.1rem;

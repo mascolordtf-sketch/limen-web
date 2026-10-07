@@ -11,6 +11,7 @@ import { StudioAuthProvider } from '../features/auth/StudioAuthContext'
 import { StudioLoginPage } from '../features/auth/StudioLoginPage'
 import { StudioProtectedRoute } from '../features/auth/StudioProtectedRoute'
 import { StudioInvitationRoute } from '../features/studio/StudioInvitationRoute'
+import { StudioNewInvitationRoute } from '../features/studio/StudioNewInvitationRoute'
 import { StudioHomePage } from '../features/studio/StudioHomePage'
 import { StudioInvitationsPage } from '../features/studio/StudioInvitationsPage'
 import { StudioPublicationPreviewRoute } from '../features/studio/StudioPublicationPreviewRoute'
@@ -27,6 +28,7 @@ export function AppRoutes() {
           <Route path="acceso" element={<StudioLoginPage />} />
           <Route element={<StudioProtectedRoute />}>
             <Route index element={<StudioHomePage />} />
+            <Route path="nueva" element={<StudioNewInvitationRoute />} />
             <Route path="invitaciones" element={<StudioInvitationsPage />} />
             <Route path="invitaciones/:code" element={<StudioInvitationRoute />} />
             <Route path="publicaciones/:publicationId" element={<StudioPublicationPreviewRoute />} />

@@ -31,15 +31,14 @@ export function StudioHomePage() {
         </p>
 
         <div className="limen-studio-home__actions">
-          <button className="limen-studio-home__action limen-studio-home__action--primary" type="button" disabled
-            title="La creación desde cero se incorporará en la próxima etapa.">
+          <Link className="limen-studio-home__action limen-studio-home__action--primary" to="/studio/nueva">
             <span className="limen-studio-home__action-top">
               <span className="limen-studio-home__action-icon"><StudioIcon name="plus" /></span>
-              <span className="limen-studio-home__soon">Próximamente</span>
+              <span className="limen-studio-home__action-arrow"><StudioIcon name="forward" /></span>
             </span>
             <strong>Crear invitación</strong>
             <small>Elegí una plantilla y empezá a personalizarla.</small>
-          </button>
+          </Link>
 
           <Link className="limen-studio-home__action" to="/studio/invitaciones">
             <span className="limen-studio-home__action-top">

@@ -135,7 +135,7 @@ export function buildStudioInvitationSummaries(
       hasUnpublishedChanges: Boolean(draft && (!latestPublication
         || draft.revision > latestPublication.draft_revision)),
       updatedAt: resolveUpdatedAt(project, draft, latestPublication),
-      editable: Boolean(bundledInvitation),
+      editable: Boolean(bundledInvitation || (draft && isOrigin01InvitationDocument(draft.document))),
     }
   }).sort((left, right) => Date.parse(right.updatedAt) - Date.parse(left.updatedAt))
 }

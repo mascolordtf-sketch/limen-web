@@ -107,6 +107,7 @@ async function createProject(baseInvitation: Origin01InvitationData, userId: str
       plan_code: 'essential',
       plan_version: 1,
       status: 'draft',
+      public_source: 'publication',
       created_by: userId,
     })
     .select('id')
@@ -169,6 +170,10 @@ export async function saveStudioDraft({ baseInvitation, document, location, user
       )
     }
     if (error || !data) throw new StudioPersistenceError('save', 'No pudimos guardar el primer borrador.')
+    await supabase
+      .from('invitation_projects')
+      .update({ internal_name: document.internalName, updated_at: updatedAt })
+      .eq('id', projectId)
     return {
       projectId: data.project_id,
       draftId: data.id,
@@ -203,7 +208,7 @@ export async function saveStudioDraft({ baseInvitation, document, location, user
 
   await supabase
     .from('invitation_projects')
-    .update({ updated_at: updatedAt })
+    .update({ internal_name: document.internalName, updated_at: updatedAt })
     .eq('id', projectId)
 
   return {

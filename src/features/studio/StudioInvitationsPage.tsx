@@ -134,10 +134,9 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
         <header className="limen-studio-index__heading">
           <div><p className="limen-studio__eyebrow">Studio</p><h1>Invitaciones</h1>
             <p>Gestioná el trabajo y la disponibilidad pública desde un solo lugar.</p></div>
-          <button className="limen-studio-index__new" type="button" disabled
-            title="La creación desde cero se incorporará en una próxima etapa.">
-            <span aria-hidden="true">＋</span>Nueva invitación <small>Próximamente</small>
-          </button>
+          <Link className="limen-studio-index__new" to="/studio/nueva">
+            <span aria-hidden="true">＋</span>Nueva invitación
+          </Link>
         </header>
 
         <section className="limen-studio-index__panel" aria-labelledby="invitations-summary">
