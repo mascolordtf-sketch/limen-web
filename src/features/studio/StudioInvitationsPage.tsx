@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { StudioIcon } from './StudioIcon'
-import { filterStudioInvitationSummaries, loadStudioInvitationSummaries } from './studioInvitationIndex'
-import type { StudioInvitationFilter, StudioInvitationSummary } from './studioInvitationIndex'
+import { filterStudioInvitationSummaries, loadStudioInvitationSummaries,
+  sortStudioInvitationSummaries } from './studioInvitationIndex'
+import type { StudioInvitationFilter, StudioInvitationSort,
+  StudioInvitationSummary } from './studioInvitationIndex'
 import './studio.css'
 import './studioInvitationIndex.css'
 
@@ -57,6 +59,7 @@ function InvitationRow({ invitation }: { invitation: StudioInvitationSummary }) 
     <div className="limen-studio-index__identity">
       <InvitationThumbnail invitation={invitation} />
       <div>
+        <span className="limen-studio-index__management-label">Nombre de gestión</span>
         <h2>{invitation.internalName}</h2>
         {invitation.eventLabel && <p>{invitation.eventLabel}</p>}
         <span className="limen-studio-index__code">{invitation.code}</span>
@@ -107,10 +110,13 @@ type StudioInvitationsViewProps = {
 
 export function StudioInvitationsView({ email, invitations, onSignOut }: StudioInvitationsViewProps) {
   const [filter, setFilter] = useState<StudioInvitationFilter>('all')
+  const [sort, setSort] = useState<StudioInvitationSort>('updated-desc')
   const [query, setQuery] = useState('')
   const visibleInvitations = useMemo(
-    () => filterStudioInvitationSummaries(invitations, filter, query),
-    [filter, invitations, query],
+    () => sortStudioInvitationSummaries(
+      filterStudioInvitationSummaries(invitations, filter, query), sort,
+    ),
+    [filter, invitations, query, sort],
   )
   const onlineCount = invitations.filter(({ availability }) => availability === 'online').length
   const pendingCount = invitations.filter(({ hasUnpublishedChanges }) => hasUnpublishedChanges).length
@@ -133,38 +139,46 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
       <main className="limen-studio-index__main">
         <header className="limen-studio-index__heading">
           <div><p className="limen-studio__eyebrow">Studio</p><h1>Invitaciones</h1>
-            <p>Gestioná el trabajo y la disponibilidad pública desde un solo lugar.</p></div>
+            <p>Creá, encontrá y administrá tus invitaciones.</p></div>
           <Link className="limen-studio-index__new" to="/studio/nueva">
             <span aria-hidden="true">＋</span>Nueva invitación
           </Link>
         </header>
 
         <section className="limen-studio-index__panel" aria-labelledby="invitations-summary">
-          <div className="limen-studio-index__summary" id="invitations-summary">
-            <strong>{invitations.length} {invitations.length === 1 ? 'invitación' : 'invitaciones'}</strong>
-            <span aria-hidden="true">•</span><span>{onlineCount} en línea</span>
-            {pendingCount > 0 && <><span aria-hidden="true">•</span>
-              <span className="limen-studio-index__pending">{pendingCount} con cambios en edición</span></>}
-          </div>
+          <div className="limen-studio-index__controls">
+            <div className="limen-studio-index__summary" id="invitations-summary">
+              <strong>{invitations.length} {invitations.length === 1 ? 'invitación' : 'invitaciones'}</strong>
+              <span>{onlineCount} en línea{pendingCount > 0 ? ` · ${pendingCount} con cambios` : ''}</span>
+            </div>
 
-          <div className="limen-studio-index__toolbar">
-            <label className="limen-studio-index__search">
-              <span className="sr-only">Buscar invitaciones</span>
-              <span aria-hidden="true">⌕</span>
-              <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
-                placeholder="Buscar por nombre o código" />
-            </label>
-            <div className="limen-studio-index__filters" aria-label="Filtrar invitaciones">
-              {filters.map(({ id, label }) => <button key={id} type="button" aria-pressed={filter === id}
-                onClick={() => setFilter(id)}>{label}
-                {id !== 'all' && <small>{invitations.filter(({ availability }) => availability === id).length}</small>}
-              </button>)}
+            <div className="limen-studio-index__toolbar">
+              <label className="limen-studio-index__search">
+                <span className="sr-only">Buscar invitaciones</span>
+                <span aria-hidden="true">⌕</span>
+                <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Buscar por nombre o código" />
+              </label>
+              <label className="limen-studio-index__sort">
+                <span>Ordenar:</span>
+                <select value={sort} onChange={(event) => setSort(event.target.value as StudioInvitationSort)}>
+                  <option value="updated-desc">Más recientes</option>
+                  <option value="name-asc">Nombre</option>
+                  <option value="event-asc">Fecha del evento</option>
+                </select>
+              </label>
+              <div className="limen-studio-index__filters" aria-label="Filtrar invitaciones">
+                {filters.map(({ id, label }) => <button key={id} type="button" aria-pressed={filter === id}
+                  onClick={() => setFilter(id)}>{label}
+                  {id !== 'all' && <small>{invitations.filter(({ availability }) => availability === id).length}</small>}
+                </button>)}
+              </div>
             </div>
           </div>
 
           {visibleInvitations.length > 0 ? <>
             <div className="limen-studio-index__columns" aria-hidden="true">
-              <span>Invitación</span><span>Publicación</span><span>Trabajo</span><span>Actualizada</span><span />
+              <span>Nombre de gestión / código</span><span>Publicación</span><span>Trabajo</span><span>Actualizada</span><span />
             </div>
             <ul className="limen-studio-index__list">
               {visibleInvitations.map((invitation) => <InvitationRow key={invitation.projectId} invitation={invitation} />)}
@@ -176,7 +190,7 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
         </section>
 
         <p className="limen-studio-index__footnote">
-          <span aria-hidden="true">✓</span>Las fichas estables siguen protegidas; no se modifica su entrega pública desde este panel.
+          <span aria-hidden="true">✓</span>El nombre de gestión es privado y editable: sirve para organizar Studio y no aparece públicamente.
         </p>
       </main>
     </div>

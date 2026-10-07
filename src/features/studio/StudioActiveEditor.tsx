@@ -39,9 +39,12 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
     resetConfiguration, setModuleEnabled } = model
   const errors = studioValidation.fieldErrors
 
+  const internalName = draft.internalName
+  const canonicalInternalName = initialDraft.internalName
   const protagonistName = draft.protagonistName
   const canonicalProtagonistName = initialDraft.protagonistName
   const canonicalProtagonistIdentity = invitation.identities.find(({ role }) => role === 'protagonist')
+  const setInternalName = (value: string) => update('internalName', value)
   const setProtagonistName = (value: string) => update('protagonistName', value)
   const shareMode = draft.share.mode
   const customShareMessage = draft.share.customMessage
@@ -151,6 +154,7 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const canonicalWeather = initialDraft.weather
   const canonicalCommunity = initialDraft.community
 
+  const internalNameError = errors.internalName
   const protagonistNameError = errors.protagonistName
   const shareMessageError = errors.shareMessage
   const eventStartError = errors.eventStart
@@ -208,9 +212,14 @@ export function StudioActiveEditor({ invitation, template, model, editorId, revi
   const editorSlots = {
     'identity': <div className="limen-studio__panel-grid">          {canonicalProtagonistIdentity ? (
             <StudioContentEditor
+              managementName={internalName}
+              canonicalManagementName={canonicalInternalName}
+              managementNameError={internalNameError}
               value={protagonistName}
               canonicalValue={canonicalProtagonistName}
               error={protagonistNameError}
+              onManagementNameChange={setInternalName}
+              onManagementNameReset={() => resetValue('internalName')}
               onChange={setProtagonistName}
               onReset={() => resetValue('protagonistName')}
             />

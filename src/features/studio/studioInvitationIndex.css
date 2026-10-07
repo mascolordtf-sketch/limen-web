@@ -1,5 +1,8 @@
-.limen-studio--index {
+.limen-studio.limen-studio--index {
+  height: auto;
   min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 0 1rem 2.5rem;
 }
 
@@ -59,14 +62,14 @@
 }
 
 .limen-studio-index__main {
-  width: min(100% - 2rem, 76rem);
+  width: min(100% - 2rem, 80rem);
   margin: 0 auto;
-  padding: 3.5rem 0 0;
+  padding: 1.6rem 0 0;
 }
 
 .limen-studio-index__heading {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 2rem;
 }
@@ -74,20 +77,20 @@
 .limen-studio-index__heading h1 {
   max-width: none;
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2.5rem, 5vw, 3.35rem);
+  font-size: clamp(2.35rem, 4vw, 2.85rem);
   font-weight: 500;
   letter-spacing: -.035em;
 }
 
 .limen-studio-index__heading > div > p:last-child {
   max-width: 38rem;
-  margin: .7rem 0 0;
+  margin: .35rem 0 0;
   color: var(--studio-muted);
 }
 
 .limen-studio-index__new {
   display: inline-flex;
-  min-height: 3rem;
+  min-height: 2.8rem;
   align-items: center;
   gap: .55rem;
   border: 0;
@@ -115,29 +118,29 @@
 }
 
 .limen-studio-index__panel {
-  margin-top: 2.8rem;
+  margin-top: 1.35rem;
+}
+
+.limen-studio-index__controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   border: 1px solid var(--studio-line);
-  border-radius: 1.45rem;
-  padding: 1.8rem 1.5rem 2rem;
+  border-radius: 1rem;
+  padding: .75rem 1rem;
   background: var(--studio-paper);
-  box-shadow: var(--studio-shadow-soft);
 }
 
 .limen-studio-index__summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .5rem;
+  display: grid;
+  min-width: 10rem;
+  gap: .2rem;
   color: var(--studio-muted);
-  font-size: .86rem;
+  font-size: .7rem;
 }
 
 .limen-studio-index__summary strong {
   color: var(--studio-ink);
-}
-
-.limen-studio-index__summary > span[aria-hidden='true'] {
-  color: #b8b7b0;
 }
 
 .limen-studio-index__pending {
@@ -146,20 +149,21 @@
 
 .limen-studio-index__toolbar {
   display: flex;
+  min-width: 0;
+  flex: 1;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.35rem;
+  justify-content: flex-end;
+  gap: .65rem;
 }
 
 .limen-studio-index__search {
   display: flex;
-  width: min(20rem, 100%);
-  min-height: 2.85rem;
+  width: min(19rem, 100%);
+  min-height: 2.4rem;
   align-items: center;
   gap: .65rem;
   border: 1px solid var(--studio-line);
-  border-radius: .85rem;
+  border-radius: .7rem;
   padding: 0 .9rem;
   color: var(--studio-muted);
   background: #f5f3ed;
@@ -182,24 +186,45 @@
   font-size: .86rem;
 }
 
+.limen-studio-index__sort {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: .45rem;
+  color: var(--studio-muted);
+  font-size: .68rem;
+}
+
+.limen-studio-index__sort select {
+  min-height: 2.4rem;
+  border: 1px solid var(--studio-line);
+  border-radius: .7rem;
+  padding: 0 1.8rem 0 .7rem;
+  color: var(--studio-ink);
+  background: var(--studio-paper);
+  font: inherit;
+  font-weight: 720;
+  cursor: pointer;
+}
+
 .limen-studio-index__filters {
   display: flex;
   align-items: center;
   gap: .2rem;
   border: 1px solid var(--studio-line);
-  border-radius: .85rem;
-  padding: .3rem;
+  border-radius: .7rem;
+  padding: .2rem;
   background: #f5f3ed;
 }
 
 .limen-studio-index__filters button {
   display: inline-flex;
-  min-height: 2.2rem;
+  min-height: 2rem;
   align-items: center;
   gap: .4rem;
   border: 1px solid transparent;
   border-radius: .6rem;
-  padding: .45rem .8rem;
+  padding: .35rem .65rem;
   color: var(--studio-muted);
   background: transparent;
   font: inherit;
@@ -233,7 +258,7 @@
 }
 
 .limen-studio-index__columns {
-  margin-top: 1.75rem;
+  margin-top: 1.2rem;
   border-bottom: 1px solid var(--studio-line);
   padding: 0 1rem .7rem;
   color: var(--studio-muted);
@@ -245,17 +270,17 @@
 
 .limen-studio-index__list {
   display: grid;
-  gap: .75rem;
-  margin: .75rem 0 0;
+  gap: .65rem;
+  margin: .65rem 0 0;
   padding: 0;
   list-style: none;
 }
 
 .limen-studio-index__row {
-  min-height: 7.4rem;
+  min-height: 6.15rem;
   border: 1px solid var(--studio-line);
   border-radius: 1.05rem;
-  padding: .9rem 1rem;
+  padding: .65rem 1rem;
   background: #fbfaf6;
 }
 
@@ -263,12 +288,12 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 1rem;
+  gap: .85rem;
 }
 
 .limen-studio-index__thumbnail {
-  width: 5rem;
-  height: 5.6rem;
+  width: 3.8rem;
+  height: 4.65rem;
   flex: 0 0 auto;
   border-radius: .75rem;
   object-fit: cover;
@@ -296,8 +321,19 @@
   white-space: nowrap;
 }
 
+.limen-studio-index__management-label {
+  display: block;
+  margin-bottom: .28rem;
+  color: var(--studio-bronze);
+  font-size: .57rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
 .limen-studio-index__identity p {
-  margin: .38rem 0 .6rem;
+  display: inline;
+  margin: .3rem .5rem 0 0;
   color: var(--studio-muted);
   font-size: .77rem;
 }
@@ -305,7 +341,7 @@
 .limen-studio-index__code {
   display: inline-flex;
   border-radius: .42rem;
-  padding: .3rem .55rem;
+  padding: .25rem .48rem;
   color: var(--studio-muted);
   background: #eeece6;
   font-size: .61rem;
@@ -482,7 +518,12 @@
   display: flex;
   align-items: center;
   gap: .55rem;
-  margin: 1.4rem 0 0;
+  width: fit-content;
+  margin: 1rem 0 0;
+  border: 1px solid #cbd9ce;
+  border-radius: .8rem;
+  padding: .65rem .85rem;
+  background: #eef3ee;
   color: var(--studio-muted);
   font-size: .76rem;
 }
@@ -523,6 +564,20 @@
 }
 
 @media (max-width: 70rem) {
+  .limen-studio-index__controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .limen-studio-index__summary {
+    display: flex;
+    gap: .45rem;
+  }
+
+  .limen-studio-index__toolbar {
+    justify-content: space-between;
+  }
+
   .limen-studio-index__columns {
     display: none;
   }
@@ -562,6 +617,10 @@
     overflow-x: auto;
   }
 
+  .limen-studio-index__sort {
+    justify-content: space-between;
+  }
+
   .limen-studio-index__row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -582,7 +641,7 @@
 }
 
 @media (max-width: 36rem) {
-  .limen-studio--index {
+  .limen-studio.limen-studio--index {
     padding-inline: 0;
   }
 

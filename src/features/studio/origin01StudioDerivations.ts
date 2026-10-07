@@ -23,9 +23,7 @@ export function deriveOrigin01PreviewInvitation(
   const recipientDigits = draft.rsvp.recipientPhone.replace(/\D/g, '')
   const derivedInvitation: Origin01InvitationData = {
     ...invitation,
-    internalName: invitation.internalName === 'Nueva invitación' && name
-      ? `Invitación de ${name}`
-      : invitation.internalName,
+    internalName: draft.internalName.trim(),
     themeVariant: draft.themeVariant,
     typographyId: draft.typographyId,
     modules: draft.modules,

@@ -13,12 +13,14 @@ type PublicationRow = Pick<Database['public']['Tables']['invitation_publications
 
 export type StudioInvitationAvailability = 'online' | 'paused' | 'offline' | 'archived'
 export type StudioInvitationFilter = 'all' | StudioInvitationAvailability
+export type StudioInvitationSort = 'updated-desc' | 'name-asc' | 'event-asc'
 
 export type StudioInvitationSummary = {
   readonly projectId: string
   readonly code: string
   readonly internalName: string
   readonly eventLabel?: string
+  readonly eventAt?: string
   readonly thumbnailSrc?: string
   readonly thumbnailStorageKey?: string
   readonly availability: StudioInvitationAvailability
@@ -124,6 +126,7 @@ export function buildStudioInvitationSummaries(
       code: project.public_code,
       internalName: cardDocument?.internalName ?? project.internal_name,
       eventLabel: formatEventDate(cardDocument),
+      eventAt: cardDocument?.event.startsAt,
       thumbnailSrc: thumbnailStorageKey ? undefined : thumbnail?.src,
       thumbnailStorageKey,
       availability: resolveAvailability(project, activePublication, latestPublication, Boolean(bundledInvitation)),
@@ -152,6 +155,25 @@ export function filterStudioInvitationSummaries(
     const searchable = `${invitation.internalName} ${invitation.code}`
       .normalize('NFD').replace(/\p{Diacritic}/gu, '').toLocaleLowerCase('es-AR')
     return searchable.includes(normalizedQuery)
+  })
+}
+
+export function sortStudioInvitationSummaries(
+  invitations: readonly StudioInvitationSummary[],
+  sort: StudioInvitationSort,
+): readonly StudioInvitationSummary[] {
+  return [...invitations].sort((left, right) => {
+    if (sort === 'name-asc') {
+      return left.internalName.localeCompare(right.internalName, 'es-AR', { numeric: true, sensitivity: 'base' })
+    }
+    if (sort === 'event-asc') {
+      const parsedLeftDate = left.eventAt ? Date.parse(left.eventAt) : Number.NaN
+      const parsedRightDate = right.eventAt ? Date.parse(right.eventAt) : Number.NaN
+      const leftDate = Number.isFinite(parsedLeftDate) ? parsedLeftDate : Number.POSITIVE_INFINITY
+      const rightDate = Number.isFinite(parsedRightDate) ? parsedRightDate : Number.POSITIVE_INFINITY
+      return leftDate - rightDate || left.internalName.localeCompare(right.internalName, 'es-AR')
+    }
+    return Date.parse(right.updatedAt) - Date.parse(left.updatedAt)
   })
 }
 
