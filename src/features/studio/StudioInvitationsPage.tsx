@@ -37,7 +37,9 @@ const filters: readonly { readonly id: StudioInvitationFilter; readonly label: s
 
 function StudioBrand() {
   return <div className="limen-studio__brand limen-studio-index__brand">
-    <h1><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></h1>
+    <h1><Link className="limen-studio__brand-home" to="/studio" aria-label="Volver al inicio de Studio">
+      <span className="limen-studio__brand-name">LIMEN</span><span>Studio</span>
+    </Link></h1>
   </div>
 }
 
@@ -117,6 +119,9 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
     <div className="limen-studio-index">
       <header className="limen-studio__header limen-studio-index__app-header">
         <StudioBrand />
+        <Link className="limen-studio-index__home-link" to="/studio">
+          <StudioIcon name="home" />Inicio
+        </Link>
         <div className="limen-studio-index__account">
           {email && <span>{email}</span>}
           <button className="limen-studio__back-link" type="button" onClick={onSignOut}>

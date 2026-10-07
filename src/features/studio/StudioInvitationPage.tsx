@@ -166,9 +166,9 @@ StudioInvitationPageProps) {
     if (hasUnsavedChanges && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
     void signOut()
   }
-  const requestIndexNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const requestStudioNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (hasUnsavedChanges
-      && !window.confirm('Hay cambios sin guardar. Si volvés a Invitaciones, se van a perder. ¿Querés continuar?')) {
+      && !window.confirm('Hay cambios sin guardar. Si salís del editor, se van a perder. ¿Querés continuar?')) {
       event.preventDefault()
     }
   }
@@ -278,10 +278,13 @@ StudioInvitationPageProps) {
     <div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand">
-        <h1><Link className="limen-studio__brand-home" to="/studio" onClick={requestIndexNavigation}
-          aria-label="Volver a Invitaciones"><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></Link></h1>
+        <h1><Link className="limen-studio__brand-home" to="/studio" onClick={requestStudioNavigation}
+          aria-label="Volver al inicio de Studio"><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></Link></h1>
+        <Link className="limen-studio__invitations-back" to="/studio/invitaciones" onClick={requestStudioNavigation}>
+          <StudioIcon name="back" />Volver a invitaciones
+        </Link>
         <div><span className="limen-studio__context-label">
-          <Link to="/studio" onClick={requestIndexNavigation}>Invitaciones</Link><span aria-hidden="true"> / </span>En edición
+          Invitación en edición
         </span>
           <strong>{model.draft.protagonistName}</strong>
           <small>{invitation.event.celebrationLabel} · {invitation.code}</small></div>

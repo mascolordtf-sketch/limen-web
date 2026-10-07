@@ -7,6 +7,11 @@ export type StudioIconName =
   | 'content'
   | 'review'
   | 'temporary'
+  | 'back'
+  | 'home'
+  | 'invitations'
+  | 'plus'
+  | 'forward'
   | 'exit'
 
 const iconPaths: Record<StudioIconName, ReactNode> = {
@@ -34,6 +39,24 @@ const iconPaths: Record<StudioIconName, ReactNode> = {
   temporary: <>
     <circle cx="12" cy="12" r="8.75" />
     <path d="M12 7.25v5.25l3.25 1.75" />
+  </>,
+  back: <>
+    <path d="m14.5 6-6 6 6 6" />
+    <path d="M9 12h10" />
+  </>,
+  home: <>
+    <path d="m4 10 8-6.5 8 6.5" />
+    <path d="M6.5 9v10.5h11V9M10 19.5v-6h4v6" />
+  </>,
+  invitations: <>
+    <rect x="3.5" y="4" width="17" height="16" rx="3" />
+    <path d="M7.5 8h9M7.5 12h9M7.5 16h5" />
+  </>,
+  plus: <>
+    <path d="M12 5v14M5 12h14" />
+  </>,
+  forward: <>
+    <path d="m9.5 6 6 6-6 6" />
   </>,
   exit: <>
     <path d="M10 4H5.75A1.75 1.75 0 0 0 4 5.75v12.5A1.75 1.75 0 0 0 5.75 20H10" />

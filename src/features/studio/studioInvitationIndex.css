@@ -12,9 +12,30 @@
 }
 
 .limen-studio-index__app-header {
+  display: flex;
   position: sticky;
   z-index: 20;
   top: 0;
+}
+
+.limen-studio-index__home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .42rem;
+  color: var(--studio-accent-strong);
+  font-size: .78rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.limen-studio-index__home-link svg {
+  width: 1rem;
+}
+
+.limen-studio-index__home-link:focus-visible {
+  border-radius: .25rem;
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 3px;
 }
 
 .limen-studio-index__account {
@@ -24,6 +45,7 @@
   gap: .8rem;
   color: var(--studio-muted);
   font-size: .78rem;
+  margin-left: auto;
 }
 
 .limen-studio-index__account .limen-studio__back-link {
