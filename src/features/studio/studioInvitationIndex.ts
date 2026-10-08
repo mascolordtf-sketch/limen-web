@@ -66,9 +66,10 @@ function selectLatestPublication(publications: readonly PublicationRow[]): Publi
 
 function resolveAvailability(project: ProjectRow, activePublication: PublicationRow | undefined,
   latestPublication: PublicationRow | undefined, hasBundledInvitation: boolean): StudioInvitationAvailability {
-  if (project.public_source === 'fixture') return hasBundledInvitation ? 'online' : 'offline'
   if (project.status === 'archived') return 'archived'
   if (latestPublication?.status === 'paused' || project.status === 'paused') return 'paused'
+  if (project.status === 'expired') return 'offline'
+  if (project.public_source === 'fixture') return hasBundledInvitation ? 'online' : 'offline'
   if (project.status === 'published' && activePublication) return 'online'
   return 'offline'
 }

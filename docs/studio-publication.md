@@ -55,7 +55,16 @@ La pantalla distingue el estado editorial del proyecto, la revisión guardada, l
 fuente que realmente atiende el enlace público. Abrir una invitación conocida conduce al editor y el
 encabezado permite volver al índice sin perder silenciosamente cambios pendientes.
 
-El índice es deliberadamente informativo en esta fase. No simula pausa ni archivo: con la compatibilidad
-actual, una ruta conocida que deja de recibir una publicación dinámica puede volver a su ficha estática.
-Las operaciones públicas requieren primero un contrato que represente explícitamente la indisponibilidad y
-evite que una acción administrativa aparente ocultar una invitación que todavía continúa accesible.
+## Ciclo de vida público
+
+El índice permite pausar, reactivar, archivar y restaurar mediante una única operación administradora.
+El navegador no modifica directamente el estado del proyecto. Una pausa o un archivo deshabilitan el
+enlace tanto para publicaciones dinámicas como para fichas estables; la consulta pública devuelve un estado
+explícito de indisponibilidad y nunca cae silenciosamente en un fixture.
+
+Archivar es recuperable. Restaurar deja la invitación fuera de línea: si posee una entrega vigente vuelve
+como pausada y necesita una reactivación explícita; un proyecto que nunca se publicó vuelve a borrador.
+Reactivar una fuente dinámica requiere conservar una publicación activa. Estas operaciones no sobrescriben
+snapshots, borradores ni medios y no afectan el código público estable.
+
+La selección y recuperación de una publicación histórica continúa reservada para la etapa de rollback.

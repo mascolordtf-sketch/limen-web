@@ -6,9 +6,15 @@ import { isOrigin01InvitationDocument } from './origin01/origin01Document'
 const publicMediaBucket = 'invitation-media'
 const publicMediaSignedUrlLifetimeSeconds = 12 * 60 * 60
 
-export type LoadedPublicInvitation = {
-  readonly invitation: Origin01InvitationData
-}
+export type PublicInvitationDelivery =
+  | { readonly mode: 'fixture' }
+  | { readonly mode: 'unavailable' }
+  | { readonly mode: 'publication'; readonly projectId: string; readonly document: Origin01InvitationData }
+
+export type LoadedPublicInvitation =
+  | { readonly mode: 'fixture' }
+  | { readonly mode: 'unavailable' }
+  | { readonly mode: 'published'; readonly invitation: Origin01InvitationData }
 
 export class PublicInvitationPublicationError extends Error {
   constructor() {
@@ -23,15 +29,19 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 export function parsePublicInvitationPublication(
   value: unknown,
   requestedCode: string,
-): { readonly projectId: string; readonly document: Origin01InvitationData } {
-  if (!isRecord(value)
-    || typeof value.project_id !== 'string'
+): PublicInvitationDelivery {
+  if (!isRecord(value) || typeof value.project_id !== 'string') {
+    throw new PublicInvitationPublicationError()
+  }
+  if (value.delivery_state === 'fixture') return { mode: 'fixture' }
+  if (value.delivery_state === 'unavailable') return { mode: 'unavailable' }
+  if ((value.delivery_state !== undefined && value.delivery_state !== 'publication')
     || value.schema_version !== currentProjectSchemaVersion
     || !isOrigin01InvitationDocument(value.document)
     || value.document.code !== requestedCode) {
     throw new PublicInvitationPublicationError()
   }
-  return { projectId: value.project_id, document: value.document }
+  return { mode: 'publication', projectId: value.project_id, document: value.document }
 }
 
 export async function loadPublicInvitationPublication(
@@ -46,13 +56,15 @@ export async function loadPublicInvitationPublication(
   if (error) throw new PublicInvitationPublicationError()
   if (!data) return undefined
 
-  const { projectId, document } = parsePublicInvitationPublication(data, publicCode)
+  const delivery = parsePublicInvitationPublication(data, publicCode)
+  if (delivery.mode !== 'publication') return delivery
+  const { projectId, document } = delivery
   const storageKeys = [...new Set(document.media.flatMap((item) => {
     if (!item.storageKey) return []
     if (!item.storageKey.startsWith(`${projectId}/`)) throw new PublicInvitationPublicationError()
     return [item.storageKey]
   }))]
-  if (storageKeys.length === 0) return { invitation: document }
+  if (storageKeys.length === 0) return { mode: 'published', invitation: document }
 
   const { data: signedMedia, error: signedMediaError } = await client.storage
     .from(publicMediaBucket)
@@ -71,6 +83,7 @@ export async function loadPublicInvitationPublication(
     return { ...item, src }
   })
   return {
+    mode: 'published',
     invitation: { ...document, media },
   }
 }

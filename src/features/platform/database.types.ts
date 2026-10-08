@@ -155,13 +155,18 @@ export type Database = {
       get_public_invitation: {
         Args: { p_public_code: string }
         Returns: {
+          delivery_state: string
           project_id: string
-          publication_id: string
-          schema_version: number
-          revision: number
-          document: Json
-          published_at: string
+          publication_id: string | null
+          schema_version: number | null
+          revision: number | null
+          document: Json | null
+          published_at: string | null
         }[]
+      }
+      set_invitation_lifecycle: {
+        Args: { p_project_id: string; p_action: string }
+        Returns: Json
       }
       set_invitation_public_source: {
         Args: { p_project_id: string; p_public_source: string }

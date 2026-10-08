@@ -82,6 +82,8 @@ import {
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia } from '../src/features/studio/studioPersistence'
 import { buildStudioInvitationSummaries, filterStudioInvitationSummaries } from '../src/features/studio/studioInvitationIndex'
+import { applyStudioInvitationLifecycleResult,
+  getStudioInvitationLifecycleOptions } from '../src/features/studio/studioInvitationLifecycle'
 import { parsePublicInvitationPublication } from '../src/features/invitations/publicInvitationPublication'
 import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
@@ -225,12 +227,34 @@ const archivedFixtureIndex = buildStudioInvitationSummaries([{
 }], [{ project_id: 'project-maia', revision: 3, document: maiaInvitationData,
   updated_at: '2026-10-07T03:42:00.000Z' }], [])
 assert(deliveryPredicateIndex[0]?.availability === 'offline'
-  && archivedFixtureIndex[0]?.availability === 'online',
-  'la disponibilidad del índice replica la entrega pública: publicación exige proyecto publicado y el fixture conocido sigue accesible')
+  && archivedFixtureIndex[0]?.availability === 'archived',
+  'la disponibilidad del índice replica la entrega pública: una publicación exige proyecto publicado y un fixture archivado deja de estar accesible')
 assert(filterStudioInvitationSummaries(invitationIndex, 'all', 'maía').length === 1
   && filterStudioInvitationSummaries(invitationIndex, 'online', '').length === 2
   && filterStudioInvitationSummaries(invitationIndex, 'paused', '').length === 0,
   'el índice filtra por estado y busca nombre o código ignorando tildes')
+assert(getStudioInvitationLifecycleOptions({ availability: 'online' }).map(({ action }) => action).join(',') === 'pause,archive'
+  && getStudioInvitationLifecycleOptions({ availability: 'paused' }).map(({ action }) => action).join(',') === 'reactivate,archive'
+  && getStudioInvitationLifecycleOptions({ availability: 'archived' }).map(({ action }) => action).join(',') === 'restore'
+  && getStudioInvitationLifecycleOptions({ availability: 'offline' }).map(({ action }) => action).join(',') === 'archive',
+  'el menú ofrece únicamente las transiciones válidas para cada disponibilidad')
+const locallyPausedInvitation = applyStudioInvitationLifecycleResult(invitationIndex[0], {
+  projectId: invitationIndex[0].projectId,
+  status: 'paused',
+  updatedAt: '2026-10-08T15:00:00.000Z',
+})
+const unrelatedLifecycleResult = applyStudioInvitationLifecycleResult(invitationIndex[1], {
+  projectId: invitationIndex[0].projectId,
+  status: 'archived',
+  updatedAt: '2026-10-08T15:01:00.000Z',
+})
+assert(locallyPausedInvitation.availability === 'paused'
+  && locallyPausedInvitation.projectStatus === 'paused'
+  && locallyPausedInvitation.projectStatusLabel === 'Pausada'
+  && locallyPausedInvitation.updatedAt === '2026-10-08T15:00:00.000Z',
+  'una transición confirmada actualiza el resumen local aunque falle la recarga posterior')
+assert(unrelatedLifecycleResult === invitationIndex[1],
+  'una transición local no modifica invitaciones ajenas al resultado del servidor')
 
 assert(studioAutosaveDelayMs === 2_000
   && shouldScheduleStudioAutosave({ dirty: true, hasTemporaryMedia: false, saveStatus: 'idle' })
@@ -349,13 +373,28 @@ assert(isOrigin01InvitationDocument(maiaInvitationData)
   && !isOrigin01InvitationDocument({ templateId: 'origin01' }),
   'la lectura persistente admite documentos Origin 01 completos y rechaza estructuras incompletas')
 const parsedPublicPublication = parsePublicInvitationPublication({
+  delivery_state: 'publication',
   project_id: 'project-maia',
   schema_version: 1,
   document: maiaInvitationData,
 }, maiaInvitationData.code)
+const parsedLegacyPublicPublication = parsePublicInvitationPublication({
+  project_id: 'project-maia',
+  schema_version: 1,
+  document: maiaInvitationData,
+}, maiaInvitationData.code)
+const parsedFixtureDelivery = parsePublicInvitationPublication({
+  delivery_state: 'fixture',
+  project_id: 'project-maia',
+}, maiaInvitationData.code)
+const parsedUnavailableDelivery = parsePublicInvitationPublication({
+  delivery_state: 'unavailable',
+  project_id: 'project-maia',
+}, maiaInvitationData.code)
 let rejectsMismatchedPublicPublication = false
 try {
   parsePublicInvitationPublication({
+    delivery_state: 'publication',
     project_id: 'project-maia',
     schema_version: 1,
     document: maiaInvitationData,
@@ -363,10 +402,14 @@ try {
 } catch {
   rejectsMismatchedPublicPublication = true
 }
-assert(parsedPublicPublication.document === maiaInvitationData
+assert(parsedPublicPublication.mode === 'publication'
+  && parsedPublicPublication.document === maiaInvitationData
   && parsedPublicPublication.projectId === 'project-maia'
+  && parsedLegacyPublicPublication.mode === 'publication'
+  && parsedFixtureDelivery.mode === 'fixture'
+  && parsedUnavailableDelivery.mode === 'unavailable'
   && rejectsMismatchedPublicPublication,
-  'la entrega pública acepta el snapshot compatible y rechaza un código inconsistente')
+  'la entrega pública distingue publicación, ficha y enlace desactivado, conserva compatibilidad durante el despliegue y rechaza snapshots inconsistentes')
 const legacyTypographyDocument = { ...maiaInvitationData, typographyId: undefined }
 const normalizedLegacyTypography = normalizeStudioInvitationDocument(maiaInvitationData, legacyTypographyDocument)
 const normalizedCurrentTypography = normalizeStudioInvitationDocument(maiaInvitationData, maiaInvitationData)

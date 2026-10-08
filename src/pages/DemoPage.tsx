@@ -17,6 +17,7 @@ const demoInvitations = {
 type PublicInvitationLookup =
   | { readonly code: string; readonly status: 'fixture' }
   | { readonly code: string; readonly status: 'published'; readonly invitation: Origin01InvitationData }
+  | { readonly code: string; readonly status: 'unavailable' }
   | { readonly code: string; readonly status: 'error' }
 
 export function DemoPage() {
@@ -49,9 +50,13 @@ export function DemoPage() {
     void loadPublicInvitationPublication(code)
       .then((publication) => {
         if (!active) return
-        setPublicInvitationLookup(publication
-          ? { code, status: 'published', invitation: publication.invitation }
-          : { code, status: 'fixture' })
+        if (!publication || publication.mode === 'fixture') {
+          setPublicInvitationLookup({ code, status: 'fixture' })
+        } else if (publication.mode === 'unavailable') {
+          setPublicInvitationLookup({ code, status: 'unavailable' })
+        } else {
+          setPublicInvitationLookup({ code, status: 'published', invitation: publication.invitation })
+        }
       })
       .catch(() => {
         if (active) setPublicInvitationLookup({ code, status: 'error' })
@@ -93,6 +98,7 @@ export function DemoPage() {
 
   const publicLookupFailed = publicRoute && currentLookup?.status === 'error'
   const publicLookupPending = publicRoute && !currentLookup
+  const publicInvitationUnavailable = publicRoute && currentLookup?.status === 'unavailable'
 
   return (
     <main className="min-h-dvh bg-stone-50 px-5 py-6 text-stone-950 antialiased">
@@ -104,14 +110,18 @@ export function DemoPage() {
               ? 'No pudimos abrir la invitación'
               : publicLookupPending
                 ? 'Abriendo la invitación'
-                : 'Demostración no disponible'}
+                : publicInvitationUnavailable
+                  ? 'Invitación no disponible'
+                  : 'Demostración no disponible'}
           </h1>
           <p className="mt-5 text-lg leading-8 text-stone-600">
             {publicLookupFailed
               ? 'Hubo un problema de conexión. Para evitar mostrar información desactualizada, intentá nuevamente.'
               : publicLookupPending
                 ? 'Estamos preparando el contenido y sus archivos.'
-                : 'El código solicitado no corresponde a una demostración activa.'}
+                : publicInvitationUnavailable
+                  ? 'El anfitrión desactivó temporalmente este enlace.'
+                  : 'El código solicitado no corresponde a una demostración activa.'}
           </p>
           {code && !publicLookupPending ? (
             <p className="mt-6 rounded-2xl bg-stone-100 px-4 py-3 text-sm text-stone-600">
