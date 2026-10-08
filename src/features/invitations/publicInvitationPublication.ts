@@ -35,7 +35,7 @@ export function parsePublicInvitationPublication(
   }
   if (value.delivery_state === 'fixture') return { mode: 'fixture' }
   if (value.delivery_state === 'unavailable') return { mode: 'unavailable' }
-  if (value.delivery_state !== 'publication'
+  if ((value.delivery_state !== undefined && value.delivery_state !== 'publication')
     || value.schema_version !== currentProjectSchemaVersion
     || !isOrigin01InvitationDocument(value.document)
     || value.document.code !== requestedCode) {

@@ -360,6 +360,11 @@ const parsedPublicPublication = parsePublicInvitationPublication({
   schema_version: 1,
   document: maiaInvitationData,
 }, maiaInvitationData.code)
+const parsedLegacyPublicPublication = parsePublicInvitationPublication({
+  project_id: 'project-maia',
+  schema_version: 1,
+  document: maiaInvitationData,
+}, maiaInvitationData.code)
 const parsedFixtureDelivery = parsePublicInvitationPublication({
   delivery_state: 'fixture',
   project_id: 'project-maia',
@@ -382,10 +387,11 @@ try {
 assert(parsedPublicPublication.mode === 'publication'
   && parsedPublicPublication.document === maiaInvitationData
   && parsedPublicPublication.projectId === 'project-maia'
+  && parsedLegacyPublicPublication.mode === 'publication'
   && parsedFixtureDelivery.mode === 'fixture'
   && parsedUnavailableDelivery.mode === 'unavailable'
   && rejectsMismatchedPublicPublication,
-  'la entrega pública distingue publicación, ficha y enlace desactivado sin aceptar snapshots inconsistentes')
+  'la entrega pública distingue publicación, ficha y enlace desactivado, conserva compatibilidad durante el despliegue y rechaza snapshots inconsistentes')
 const legacyTypographyDocument = { ...maiaInvitationData, typographyId: undefined }
 const normalizedLegacyTypography = normalizeStudioInvitationDocument(maiaInvitationData, legacyTypographyDocument)
 const normalizedCurrentTypography = normalizeStudioInvitationDocument(maiaInvitationData, maiaInvitationData)
