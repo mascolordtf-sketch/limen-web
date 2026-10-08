@@ -9,6 +9,7 @@ export default defineConfig({
       entry: {
         studioAuthLifecycle: resolve(import.meta.dirname, 'studioAuthLifecycle.test.ts'),
         studioModel: resolve(import.meta.dirname, 'studioModel.test.ts'),
+        studioNewInvitation: resolve(import.meta.dirname, 'studioNewInvitation.test.ts'),
       },
       formats: ['es'],
       fileName: (_format, entryName) => `${entryName}.test.mjs`,

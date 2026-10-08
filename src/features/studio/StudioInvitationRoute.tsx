@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
@@ -22,19 +22,11 @@ function StudioPersistenceMessage({ title, detail }: { title: string; detail: st
 type PersistedStudioInvitationRouteProps = {
   readonly invitation: Origin01InvitationData
   readonly initialLoad?: LoadedStudioDraft
-  readonly onFirstPersist?: (code: string) => void
 }
 
-export function PersistedStudioInvitationRoute({ invitation, initialLoad, onFirstPersist }:
+export function PersistedStudioInvitationRoute({ invitation, initialLoad }:
 PersistedStudioInvitationRouteProps) {
   const persistence = useStudioInvitationPersistence(invitation, initialLoad)
-  const persistInvitation = persistence.save
-  const hasPersistedDraft = persistence.loadState.status === 'ready' && Boolean(persistence.loadState.persisted)
-  const save = useCallback(async (document: Origin01InvitationData) => {
-    const saved = await persistInvitation(document)
-    if (saved && !hasPersistedDraft) onFirstPersist?.(document.code)
-    return saved
-  }, [hasPersistedDraft, onFirstPersist, persistInvitation])
   if (persistence.loadState.status === 'loading') {
     return <StudioPersistenceMessage title="Abriendo invitación…" detail="Estamos recuperando el último borrador guardado." />
   }
@@ -53,7 +45,7 @@ PersistedStudioInvitationRouteProps) {
     saveState={persistence.saveState}
     publication={persistence.loadState.publication}
     publicationState={persistence.publicationState}
-    onSave={save}
+    onSave={persistence.save}
     onPublish={persistence.publish}
     onUploadMedia={persistence.uploadMedia}
     onEdit={persistence.clearSaveFeedback}

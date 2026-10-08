@@ -83,7 +83,7 @@ type IssueSeed = Omit<StudioIssue, 'id' | 'severity' | 'blocksPreview' | 'releva
 }
 
 const studioFieldTargetIds: Readonly<Record<string, string>> = {
-  internalName: 'studio-management-name', protagonistName: 'studio-protagonist-name',
+  internalName: 'studio-invitation-name-control', protagonistName: 'studio-protagonist-name',
   shareMessage: 'studio-custom-share-message',
   eventStart: 'studio-event-start', eventEnd: 'studio-event-end', venue: 'studio-event-venue', address: 'studio-event-address',
   dressCodeTitle: 'studio-dress-code-title', dressCodeDescription: 'studio-dress-code-description', dressCodeNote: 'studio-dress-code-note',
@@ -126,7 +126,7 @@ export function validateOrigin01StudioDraft(
   const mediaValidation = validateOrigin01StudioMedia(draft.media)
   const triviaValid = isTriviaContentValid(draft.trivia)
   const fieldErrors: Record<string, string | null> = {
-    internalName: required(draft.internalName, 'Ingresá un nombre de gestión para identificar la invitación.'),
+    internalName: required(draft.internalName, 'Asigná un nombre para identificar la invitación en Studio.'),
     protagonistName: required(draft.protagonistName, 'Ingresá el nombre de la protagonista.'),
     shareMessage: draft.share.mode === 'custom'
       ? required(draft.share.customMessage, 'Ingresá un mensaje para compartir.') : null,

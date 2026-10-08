@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "test": "vite build --config tests/vite.config.ts && node node_modules/.tmp/studio-tests/studioModel.test.mjs && node node_modules/.tmp/studio-tests/studioAuthLifecycle.test.mjs",
+    "test": "vite build --config tests/vite.config.ts && node node_modules/.tmp/studio-tests/studioModel.test.mjs && node node_modules/.tmp/studio-tests/studioAuthLifecycle.test.mjs && node node_modules/.tmp/studio-tests/studioNewInvitation.test.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "visual:matrix:check": "node scripts/origin01-visual-matrix.mjs",

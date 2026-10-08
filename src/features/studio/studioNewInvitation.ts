@@ -21,7 +21,7 @@ function createStudioInvitationCode(now: Date): string {
   return `LMN-${date}-${suffix}`
 }
 
-export function createNewStudioInvitation(now = new Date()): Origin01InvitationData {
+export function createNewStudioInvitation(internalName: string, now = new Date()): Origin01InvitationData {
   const code = createStudioInvitationCode(now)
   const eventDay = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000)
   const endingDay = new Date(eventDay.getTime() + 24 * 60 * 60 * 1000)
@@ -34,7 +34,7 @@ export function createNewStudioInvitation(now = new Date()): Origin01InvitationD
     ...origin01DemoData,
     id: `origin01-${code.toLocaleLowerCase('es-AR')}`,
     code,
-    internalName: 'Nueva invitación',
+    internalName: internalName.trim(),
     lifecycleStatus: 'draft',
     event: {
       ...origin01DemoData.event,

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { StudioIcon } from './StudioIcon'
@@ -7,6 +7,7 @@ import './studioHome.css'
 
 export function StudioHomePage() {
   const { email, signOut } = useStudioAuth()
+  const location = useLocation()
 
   return <div className="limen-studio limen-studio--home">
     <div className="limen-studio-home">
@@ -31,7 +32,8 @@ export function StudioHomePage() {
         </p>
 
         <div className="limen-studio-home__actions">
-          <Link className="limen-studio-home__action limen-studio-home__action--primary" to="/studio/nueva">
+          <Link className="limen-studio-home__action limen-studio-home__action--primary" to="/studio/nueva"
+            state={{ returnTo: location.pathname }}>
             <span className="limen-studio-home__action-top">
               <span className="limen-studio-home__action-icon"><StudioIcon name="plus" /></span>
               <span className="limen-studio-home__action-arrow"><StudioIcon name="forward" /></span>

@@ -12,6 +12,7 @@ export type StudioIconName =
   | 'invitations'
   | 'plus'
   | 'forward'
+  | 'edit'
   | 'exit'
 
 const iconPaths: Record<StudioIconName, ReactNode> = {
@@ -57,6 +58,10 @@ const iconPaths: Record<StudioIconName, ReactNode> = {
   </>,
   forward: <>
     <path d="m9.5 6 6 6-6 6" />
+  </>,
+  edit: <>
+    <path d="M4 20h4l11-11a2.1 2.1 0 0 0-4-4L4 16v4Z" />
+    <path d="m13.5 6.5 4 4" />
   </>,
   exit: <>
     <path d="M10 4H5.75A1.75 1.75 0 0 0 4 5.75v12.5A1.75 1.75 0 0 0 5.75 20H10" />

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { StudioIcon } from './StudioIcon'
@@ -59,7 +59,7 @@ function InvitationRow({ invitation }: { invitation: StudioInvitationSummary }) 
     <div className="limen-studio-index__identity">
       <InvitationThumbnail invitation={invitation} />
       <div>
-        <span className="limen-studio-index__management-label">Nombre de gestión</span>
+        <span className="limen-studio-index__management-label">Nombre de la invitación</span>
         <h2>{invitation.internalName}</h2>
         {invitation.eventLabel && <p>{invitation.eventLabel}</p>}
         <span className="limen-studio-index__code">{invitation.code}</span>
@@ -109,6 +109,7 @@ type StudioInvitationsViewProps = {
 }
 
 export function StudioInvitationsView({ email, invitations, onSignOut }: StudioInvitationsViewProps) {
+  const location = useLocation()
   const [filter, setFilter] = useState<StudioInvitationFilter>('all')
   const [sort, setSort] = useState<StudioInvitationSort>('updated-desc')
   const [query, setQuery] = useState('')
@@ -140,7 +141,7 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
         <header className="limen-studio-index__heading">
           <div><p className="limen-studio__eyebrow">Studio</p><h1>Invitaciones</h1>
             <p>Creá, encontrá y administrá tus invitaciones.</p></div>
-          <Link className="limen-studio-index__new" to="/studio/nueva">
+          <Link className="limen-studio-index__new" to="/studio/nueva" state={{ returnTo: location.pathname }}>
             <span aria-hidden="true">＋</span>Nueva invitación
           </Link>
         </header>
@@ -178,7 +179,7 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
 
           {visibleInvitations.length > 0 ? <>
             <div className="limen-studio-index__columns" aria-hidden="true">
-              <span>Nombre de gestión / código</span><span>Publicación</span><span>Trabajo</span><span>Actualizada</span><span />
+              <span>Nombre de la invitación / código</span><span>Publicación</span><span>Trabajo</span><span>Actualizada</span><span />
             </div>
             <ul className="limen-studio-index__list">
               {visibleInvitations.map((invitation) => <InvitationRow key={invitation.projectId} invitation={invitation} />)}
@@ -190,7 +191,7 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
         </section>
 
         <p className="limen-studio-index__footnote">
-          <span aria-hidden="true">✓</span>El nombre de gestión es privado y editable: sirve para organizar Studio y no aparece públicamente.
+          <span aria-hidden="true">✓</span>El nombre de la invitación es privado: sirve para organizar Studio y no aparece públicamente.
         </p>
       </main>
     </div>
