@@ -83,6 +83,7 @@ guardado manual y automático de proyectos y borradores con revisión optimista,
 de conflictos, Storage privado y publicación inmutable mediante una operación validada.
 
 1. Verificar la equivalencia del snapshot de Maia y migrar su lectura conservando el enlace.
-2. Incorporar el panel de invitaciones y operaciones de pausa, reactivación, archivo y rollback.
+2. Completado parcialmente: panel de invitaciones y operaciones seguras de pausa, reactivación, archivo y
+   restauración. Resta incorporar el rollback de publicaciones.
 3. Incorporar formulario del cliente, entregas, RSVP y panel del anfitrión.
 4. Añadir QR y recepción únicamente después de validar el modelo de entregas en eventos reales.

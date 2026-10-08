@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
@@ -7,6 +7,9 @@ import { filterStudioInvitationSummaries, loadStudioInvitationSummaries,
   sortStudioInvitationSummaries } from './studioInvitationIndex'
 import type { StudioInvitationFilter, StudioInvitationSort,
   StudioInvitationSummary } from './studioInvitationIndex'
+import { getStudioInvitationLifecycleOptions, updateStudioInvitationLifecycle } from './studioInvitationLifecycle'
+import type { StudioInvitationLifecycleAction,
+  StudioInvitationLifecycleOption } from './studioInvitationLifecycle'
 import './studio.css'
 import './studioInvitationIndex.css'
 
@@ -54,7 +57,33 @@ function InvitationThumbnail({ invitation }: { invitation: StudioInvitationSumma
   </span>
 }
 
-function InvitationRow({ invitation }: { invitation: StudioInvitationSummary }) {
+type InvitationRowProps = {
+  readonly invitation: StudioInvitationSummary
+  readonly onLifecycleAction: (projectId: string, action: StudioInvitationLifecycleAction) => Promise<void>
+}
+
+function InvitationRow({ invitation, onLifecycleAction }: InvitationRowProps) {
+  const menuRef = useRef<HTMLDetailsElement>(null)
+  const [confirmation, setConfirmation] = useState<StudioInvitationLifecycleOption>()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string>()
+  const lifecycleOptions = getStudioInvitationLifecycleOptions(invitation)
+
+  const confirmLifecycleAction = async () => {
+    if (!confirmation || busy) return
+    setBusy(true)
+    setError(undefined)
+    try {
+      await onLifecycleAction(invitation.projectId, confirmation.action)
+      setConfirmation(undefined)
+      menuRef.current?.removeAttribute('open')
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : 'No pudimos actualizar la invitación.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return <li className="limen-studio-index__row">
     <div className="limen-studio-index__identity">
       <InvitationThumbnail invitation={invitation} />
@@ -89,13 +118,33 @@ function InvitationRow({ invitation }: { invitation: StudioInvitationSummary }) 
       {invitation.editable
         ? <Link className="limen-studio-index__open" to={`/studio/invitaciones/${invitation.code}`}>Abrir Studio</Link>
         : <button className="limen-studio-index__open" type="button" disabled>Editor no disponible</button>}
-      <details className="limen-studio-index__menu">
+      <details className="limen-studio-index__menu" ref={menuRef}
+        onToggle={(event) => {
+          if (!event.currentTarget.open && !busy) {
+            setConfirmation(undefined)
+            setError(undefined)
+          }
+        }}>
         <summary aria-label={`Más acciones para ${invitation.internalName}`}>•••</summary>
         <div>
           <a href={`/invitacion/${invitation.code}`} target="_blank" rel="noreferrer">Ver invitación</a>
-          <p>{invitation.sourceLabel === 'Ficha estable'
-            ? 'Esta invitación continúa protegida por su ficha estable.'
-            : 'Las operaciones públicas se incorporarán en la siguiente etapa.'}</p>
+          <div className="limen-studio-index__menu-divider" />
+          {lifecycleOptions.map((option) => <button key={option.action} type="button"
+            className={option.destructive ? 'limen-studio-index__menu-action--destructive' : undefined}
+            disabled={busy} onClick={() => { setConfirmation(option); setError(undefined) }}>
+            {option.label}
+          </button>)}
+          {confirmation && <div className="limen-studio-index__confirmation" role="group"
+            aria-label={`Confirmar: ${confirmation.label}`}>
+            <strong>{confirmation.label}</strong>
+            <p>{confirmation.confirmation}</p>
+            {error && <p className="limen-studio-index__action-error" role="alert">{error}</p>}
+            <div>
+              <button type="button" disabled={busy} onClick={() => setConfirmation(undefined)}>Cancelar</button>
+              <button type="button" disabled={busy} data-emphasis={confirmation.destructive ? 'danger' : 'primary'}
+                onClick={() => void confirmLifecycleAction()}>{busy ? 'Actualizando…' : 'Confirmar'}</button>
+            </div>
+          </div>}
         </div>
       </details>
     </div>
@@ -106,9 +155,11 @@ type StudioInvitationsViewProps = {
   readonly email?: string
   readonly invitations: readonly StudioInvitationSummary[]
   readonly onSignOut: () => void
+  readonly onLifecycleAction: (projectId: string, action: StudioInvitationLifecycleAction) => Promise<void>
 }
 
-export function StudioInvitationsView({ email, invitations, onSignOut }: StudioInvitationsViewProps) {
+export function StudioInvitationsView({ email, invitations, onSignOut,
+  onLifecycleAction }: StudioInvitationsViewProps) {
   const location = useLocation()
   const [filter, setFilter] = useState<StudioInvitationFilter>('all')
   const [sort, setSort] = useState<StudioInvitationSort>('updated-desc')
@@ -182,7 +233,8 @@ export function StudioInvitationsView({ email, invitations, onSignOut }: StudioI
               <span>Nombre de la invitación / código</span><span>Publicación</span><span>Trabajo</span><span>Actualizada</span><span />
             </div>
             <ul className="limen-studio-index__list">
-              {visibleInvitations.map((invitation) => <InvitationRow key={invitation.projectId} invitation={invitation} />)}
+              {visibleInvitations.map((invitation) => <InvitationRow key={invitation.projectId}
+                invitation={invitation} onLifecycleAction={onLifecycleAction} />)}
             </ul>
           </> : <div className="limen-studio-index__empty">
             <h2>No encontramos invitaciones</h2>
@@ -223,6 +275,12 @@ export function StudioInvitationsPage() {
     setRequestKey((current) => current + 1)
   }
 
+  const handleLifecycleAction = async (projectId: string, action: StudioInvitationLifecycleAction) => {
+    await updateStudioInvitationLifecycle(projectId, action)
+    const invitations = await loadStudioInvitationSummaries()
+    setState({ status: 'ready', invitations })
+  }
+
   if (state.status === 'loading') {
     return <main className="limen-studio limen-studio-index__state" aria-live="polite">
       <p className="limen-studio__eyebrow">LIMEN Studio</p><h1>Abriendo invitaciones…</h1>
@@ -235,5 +293,6 @@ export function StudioInvitationsPage() {
       <p>{state.message}</p><button type="button" onClick={retry}>Reintentar</button>
     </main>
   }
-  return <StudioInvitationsView email={email} invitations={state.invitations} onSignOut={() => void signOut()} />
+  return <StudioInvitationsView email={email} invitations={state.invitations}
+    onSignOut={() => void signOut()} onLifecycleAction={handleLifecycleAction} />
 }
