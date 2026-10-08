@@ -5,6 +5,7 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { fromDateTimeLocalValue } from './studioDateTime'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
 import type { StudioDomainId } from './studioNavigation'
+import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { validateOrigin01Schedule } from './origin01StudioSchedule'
 import { validateOrigin01Community } from './studioCommunityValidation'
@@ -25,6 +26,7 @@ export type StudioIssue = {
   readonly editorId: string
   readonly domainId: StudioDomainId
   readonly sceneId?: InvitationModuleId
+  readonly correctionStage?: StudioWorkspaceStage
   readonly severity: StudioIssueSeverity
   readonly blocksPreview: boolean
   readonly relevant: boolean
@@ -290,6 +292,10 @@ export function validateOrigin01StudioDraft(
         : missingMediaMessage,
       editorId: 'review-errors',
       domainId: 'review',
+      correctionStage: missingRequiredMedia ? 'media' : undefined,
+      fieldTargetId: missingRequiredMedia
+        ? `studio-photo-select-${error.slotId === 'hero.image' ? 'hero' : 'closing'}`
+        : undefined,
       severity: missingRequiredMedia ? 'active-error' : 'structural',
       blocksPreview: !missingRequiredMedia,
       relevant: true,

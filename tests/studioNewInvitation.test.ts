@@ -23,6 +23,8 @@ const assertions = [
     && !serializedInvitation.includes('/audio/'),
   draft.media.items.length === 0 && draft.media.assignments.length === 0,
   missingRequiredMediaIssues.length === 2,
+  missingRequiredMediaIssues.every(({ correctionStage, fieldTargetId }) => correctionStage === 'media'
+    && (fieldTargetId === 'studio-photo-select-hero' || fieldTargetId === 'studio-photo-select-closing')),
   validation.previewBlocked === false && validation.invitationValid === false,
   invitation.modules.find(({ moduleId }) => moduleId === 'schedule')?.enabled === false
     && invitation.modules.find(({ moduleId }) => moduleId === 'weather')?.enabled === false
