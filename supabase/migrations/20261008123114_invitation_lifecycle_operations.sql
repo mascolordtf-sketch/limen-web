@@ -39,6 +39,8 @@ as $$
     from public.invitation_publications candidate
     where candidate.project_id = project.id
       and candidate.status = 'active'
+      and project.public_source = 'publication'
+      and project.status = 'published'
     limit 1
   ) publication on true
   where p_public_code is not null
@@ -55,6 +57,152 @@ revoke all on function public.get_public_invitation(text)
 grant execute on function public.get_public_invitation(text)
   to anon, authenticated;
 
+-- Publishing creates a new immutable snapshot, but it must not bypass an
+-- explicit pause, expiry, or archive decision made for the public link.
+create or replace function public.publish_invitation_draft(
+  p_project_id uuid,
+  p_expected_draft_revision integer
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  caller_id uuid := (select auth.uid());
+  project_row public.invitation_projects%rowtype;
+  draft_row public.invitation_drafts%rowtype;
+  next_publication_revision integer;
+  publication_row public.invitation_publications%rowtype;
+begin
+  if caller_id is null then
+    raise exception using errcode = 'P0001', message = 'Tu sesión no está disponible.';
+  end if;
+
+  if not exists (
+    select 1
+    from public.platform_members member
+    where member.id = caller_id
+      and member.active
+      and member.role = 'administrator'
+  ) then
+    raise exception using errcode = 'P0001', message = 'Tu cuenta no puede publicar invitaciones.';
+  end if;
+
+  select project.*
+  into project_row
+  from public.invitation_projects project
+  where project.id = p_project_id
+  for update;
+
+  if not found then
+    raise exception using errcode = 'P0001', message = 'No encontramos el proyecto que querés publicar.';
+  end if;
+
+  select draft.*
+  into draft_row
+  from public.invitation_drafts draft
+  where draft.project_id = p_project_id
+  for update;
+
+  if not found then
+    raise exception using errcode = 'P0001', message = 'Guardá el borrador antes de publicarlo.';
+  end if;
+
+  if p_expected_draft_revision is null or draft_row.revision <> p_expected_draft_revision then
+    raise exception using errcode = 'P0001', message = 'El borrador cambió. Esperá a que termine de guardarse y volvé a intentar.';
+  end if;
+
+  if exists (
+    select 1
+    from public.invitation_publications publication
+    where publication.project_id = p_project_id
+      and publication.draft_revision = draft_row.revision
+  ) then
+    raise exception using errcode = 'P0001', message = 'Esta revisión del borrador ya tiene una publicación.';
+  end if;
+
+  if draft_row.schema_version <> 1
+    or jsonb_typeof(draft_row.document) <> 'object'
+    or draft_row.document->>'templateId' <> 'origin01'
+    or draft_row.document->>'eventType' <> project_row.event_type
+    or draft_row.document->>'code' <> project_row.public_code
+    or jsonb_typeof(draft_row.document->'event') <> 'object'
+    or jsonb_typeof(draft_row.document->'content') <> 'object'
+    or jsonb_typeof(draft_row.document->'identities') <> 'array'
+    or jsonb_typeof(draft_row.document->'modules') <> 'array'
+    or jsonb_typeof(draft_row.document->'media') <> 'array'
+  then
+    raise exception using errcode = 'P0001', message = 'La invitación no supera la validación estructural para publicar.';
+  end if;
+
+  if exists (
+    select 1
+    from jsonb_array_elements(draft_row.document->'media') media
+    where media ? 'storageKey'
+      and not exists (
+        select 1
+        from public.project_media_assets asset
+        where asset.project_id = p_project_id
+          and asset.storage_key = media->>'storageKey'
+          and asset.status = 'ready'
+      )
+  ) then
+    raise exception using errcode = 'P0001', message = 'Hay archivos privados que no están listos para publicar.';
+  end if;
+
+  select coalesce(max(publication.revision), 0) + 1
+  into next_publication_revision
+  from public.invitation_publications publication
+  where publication.project_id = p_project_id;
+
+  update public.invitation_publications
+  set status = 'superseded'
+  where project_id = p_project_id
+    and status = 'active';
+
+  insert into public.invitation_publications (
+    project_id,
+    public_code,
+    schema_version,
+    revision,
+    draft_revision,
+    document,
+    status,
+    published_by
+  ) values (
+    p_project_id,
+    project_row.public_code,
+    draft_row.schema_version,
+    next_publication_revision,
+    draft_row.revision,
+    draft_row.document,
+    'active',
+    caller_id
+  )
+  returning * into publication_row;
+
+  update public.invitation_projects
+  set status = case
+        when project_row.status in ('paused', 'expired', 'archived') then project_row.status
+        else 'published'
+      end,
+      updated_at = now()
+  where id = p_project_id;
+
+  return jsonb_build_object(
+    'id', publication_row.id,
+    'revision', publication_row.revision,
+    'draftRevision', publication_row.draft_revision,
+    'status', publication_row.status,
+    'publishedAt', publication_row.published_at
+  );
+end;
+$$;
+
+comment on function public.publish_invitation_draft(uuid, integer) is
+  'Creates an immutable publication while preserving paused, expired, and archived public lifecycle states.';
+
 create function public.set_invitation_lifecycle(
   p_project_id uuid,
   p_action text
@@ -69,6 +217,7 @@ declare
   project_row public.invitation_projects%rowtype;
   has_active_publication boolean;
   next_status text;
+  changed_at timestamptz := now();
 begin
   if caller_id is null or not exists (
     select 1
@@ -140,12 +289,13 @@ begin
 
   update public.invitation_projects
   set status = next_status,
-      updated_at = now()
+      updated_at = changed_at
   where id = p_project_id;
 
   return jsonb_build_object(
     'projectId', p_project_id,
-    'status', next_status
+    'status', next_status,
+    'updatedAt', changed_at
   );
 end;
 $$;

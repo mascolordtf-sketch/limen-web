@@ -82,7 +82,8 @@ import {
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia } from '../src/features/studio/studioPersistence'
 import { buildStudioInvitationSummaries, filterStudioInvitationSummaries } from '../src/features/studio/studioInvitationIndex'
-import { getStudioInvitationLifecycleOptions } from '../src/features/studio/studioInvitationLifecycle'
+import { applyStudioInvitationLifecycleResult,
+  getStudioInvitationLifecycleOptions } from '../src/features/studio/studioInvitationLifecycle'
 import { parsePublicInvitationPublication } from '../src/features/invitations/publicInvitationPublication'
 import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
@@ -237,6 +238,23 @@ assert(getStudioInvitationLifecycleOptions({ availability: 'online' }).map(({ ac
   && getStudioInvitationLifecycleOptions({ availability: 'archived' }).map(({ action }) => action).join(',') === 'restore'
   && getStudioInvitationLifecycleOptions({ availability: 'offline' }).map(({ action }) => action).join(',') === 'archive',
   'el menú ofrece únicamente las transiciones válidas para cada disponibilidad')
+const locallyPausedInvitation = applyStudioInvitationLifecycleResult(invitationIndex[0], {
+  projectId: invitationIndex[0].projectId,
+  status: 'paused',
+  updatedAt: '2026-10-08T15:00:00.000Z',
+})
+const unrelatedLifecycleResult = applyStudioInvitationLifecycleResult(invitationIndex[1], {
+  projectId: invitationIndex[0].projectId,
+  status: 'archived',
+  updatedAt: '2026-10-08T15:01:00.000Z',
+})
+assert(locallyPausedInvitation.availability === 'paused'
+  && locallyPausedInvitation.projectStatus === 'paused'
+  && locallyPausedInvitation.projectStatusLabel === 'Pausada'
+  && locallyPausedInvitation.updatedAt === '2026-10-08T15:00:00.000Z',
+  'una transición confirmada actualiza el resumen local aunque falle la recarga posterior')
+assert(unrelatedLifecycleResult === invitationIndex[1],
+  'una transición local no modifica invitaciones ajenas al resultado del servidor')
 
 assert(studioAutosaveDelayMs === 2_000
   && shouldScheduleStudioAutosave({ dirty: true, hasTemporaryMedia: false, saveStatus: 'idle' })

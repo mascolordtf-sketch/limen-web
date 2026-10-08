@@ -7,7 +7,8 @@ import { filterStudioInvitationSummaries, loadStudioInvitationSummaries,
   sortStudioInvitationSummaries } from './studioInvitationIndex'
 import type { StudioInvitationFilter, StudioInvitationSort,
   StudioInvitationSummary } from './studioInvitationIndex'
-import { getStudioInvitationLifecycleOptions, updateStudioInvitationLifecycle } from './studioInvitationLifecycle'
+import { applyStudioInvitationLifecycleResult, getStudioInvitationLifecycleOptions,
+  updateStudioInvitationLifecycle } from './studioInvitationLifecycle'
 import type { StudioInvitationLifecycleAction,
   StudioInvitationLifecycleOption } from './studioInvitationLifecycle'
 import './studio.css'
@@ -156,10 +157,11 @@ type StudioInvitationsViewProps = {
   readonly invitations: readonly StudioInvitationSummary[]
   readonly onSignOut: () => void
   readonly onLifecycleAction: (projectId: string, action: StudioInvitationLifecycleAction) => Promise<void>
+  readonly refreshNotice?: string
 }
 
 export function StudioInvitationsView({ email, invitations, onSignOut,
-  onLifecycleAction }: StudioInvitationsViewProps) {
+  onLifecycleAction, refreshNotice }: StudioInvitationsViewProps) {
   const location = useLocation()
   const [filter, setFilter] = useState<StudioInvitationFilter>('all')
   const [sort, setSort] = useState<StudioInvitationSort>('updated-desc')
@@ -198,6 +200,7 @@ export function StudioInvitationsView({ email, invitations, onSignOut,
         </header>
 
         <section className="limen-studio-index__panel" aria-labelledby="invitations-summary">
+          {refreshNotice && <p className="limen-studio-index__refresh-notice" role="status">{refreshNotice}</p>}
           <div className="limen-studio-index__controls">
             <div className="limen-studio-index__summary" id="invitations-summary">
               <strong>{invitations.length} {invitations.length === 1 ? 'invitación' : 'invitaciones'}</strong>
@@ -254,12 +257,16 @@ export function StudioInvitationsPage() {
   const { email, signOut } = useStudioAuth()
   const [state, setState] = useState<InvitationIndexState>({ status: 'loading' })
   const [requestKey, setRequestKey] = useState(0)
+  const [refreshNotice, setRefreshNotice] = useState<string>()
 
   useEffect(() => {
     let active = true
     void loadStudioInvitationSummaries()
       .then((invitations) => {
-        if (active) setState({ status: 'ready', invitations })
+        if (active) {
+          setState({ status: 'ready', invitations })
+          setRefreshNotice(undefined)
+        }
       })
       .catch((error: unknown) => {
         if (active) setState({
@@ -276,9 +283,18 @@ export function StudioInvitationsPage() {
   }
 
   const handleLifecycleAction = async (projectId: string, action: StudioInvitationLifecycleAction) => {
-    await updateStudioInvitationLifecycle(projectId, action)
-    const invitations = await loadStudioInvitationSummaries()
-    setState({ status: 'ready', invitations })
+    const result = await updateStudioInvitationLifecycle(projectId, action)
+    setState((current) => current.status === 'ready'
+      ? { status: 'ready', invitations: current.invitations.map((invitation) =>
+        applyStudioInvitationLifecycleResult(invitation, result)) }
+      : current)
+    setRefreshNotice(undefined)
+    try {
+      const invitations = await loadStudioInvitationSummaries()
+      setState({ status: 'ready', invitations })
+    } catch {
+      setRefreshNotice('El estado se actualizó correctamente, pero no pudimos refrescar todos los datos.')
+    }
   }
 
   if (state.status === 'loading') {
@@ -294,5 +310,5 @@ export function StudioInvitationsPage() {
     </main>
   }
   return <StudioInvitationsView email={email} invitations={state.invitations}
-    onSignOut={() => void signOut()} onLifecycleAction={handleLifecycleAction} />
+    onSignOut={() => void signOut()} onLifecycleAction={handleLifecycleAction} refreshNotice={refreshNotice} />
 }

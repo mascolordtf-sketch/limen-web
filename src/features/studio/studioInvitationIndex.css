@@ -121,6 +121,16 @@
   margin-top: 1.35rem;
 }
 
+.limen-studio-index__refresh-notice {
+  margin: 0 0 .65rem;
+  border: 1px solid color-mix(in srgb, var(--studio-bronze) 32%, var(--studio-line));
+  border-radius: .75rem;
+  padding: .65rem .8rem;
+  color: var(--studio-ink-soft);
+  background: color-mix(in srgb, var(--studio-bronze) 7%, var(--studio-paper));
+  font-size: .76rem;
+}
+
 .limen-studio-index__controls {
   display: flex;
   align-items: center;

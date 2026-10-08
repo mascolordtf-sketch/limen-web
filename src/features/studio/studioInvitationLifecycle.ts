@@ -2,6 +2,13 @@ import { supabase } from '../auth/supabaseClient'
 import type { StudioInvitationSummary } from './studioInvitationIndex'
 
 export type StudioInvitationLifecycleAction = 'pause' | 'reactivate' | 'archive' | 'restore'
+export type StudioInvitationLifecycleStatus = 'draft' | 'published' | 'paused' | 'archived'
+
+export type StudioInvitationLifecycleResult = {
+  readonly projectId: string
+  readonly status: StudioInvitationLifecycleStatus
+  readonly updatedAt: string
+}
 
 export type StudioInvitationLifecycleOption = {
   readonly action: StudioInvitationLifecycleAction
@@ -50,14 +57,49 @@ export class StudioInvitationLifecycleError extends Error {
   }
 }
 
+const lifecycleStatusPresentation: Readonly<Record<StudioInvitationLifecycleStatus, Pick<StudioInvitationSummary,
+  'availability' | 'projectStatusLabel'>>> = {
+  draft: { availability: 'offline', projectStatusLabel: 'Borrador' },
+  published: { availability: 'online', projectStatusLabel: 'Publicada' },
+  paused: { availability: 'paused', projectStatusLabel: 'Pausada' },
+  archived: { availability: 'archived', projectStatusLabel: 'Archivada' },
+}
+
+function isLifecycleResult(value: unknown): value is StudioInvitationLifecycleResult {
+  if (!value || typeof value !== 'object') return false
+  const candidate = value as Record<string, unknown>
+  return typeof candidate.projectId === 'string'
+    && typeof candidate.updatedAt === 'string'
+    && Number.isFinite(Date.parse(candidate.updatedAt))
+    && typeof candidate.status === 'string'
+    && candidate.status in lifecycleStatusPresentation
+}
+
+export function applyStudioInvitationLifecycleResult(
+  invitation: StudioInvitationSummary,
+  result: StudioInvitationLifecycleResult,
+): StudioInvitationSummary {
+  if (invitation.projectId !== result.projectId) return invitation
+  const presentation = lifecycleStatusPresentation[result.status]
+  return {
+    ...invitation,
+    availability: presentation.availability,
+    projectStatus: result.status,
+    projectStatusLabel: presentation.projectStatusLabel,
+    updatedAt: result.updatedAt,
+  }
+}
+
 export async function updateStudioInvitationLifecycle(
   projectId: string,
   action: StudioInvitationLifecycleAction,
-): Promise<void> {
+): Promise<StudioInvitationLifecycleResult> {
   if (!supabase) throw new StudioInvitationLifecycleError('Supabase no está configurado.')
-  const { error } = await supabase.rpc('set_invitation_lifecycle', {
+  const { data, error } = await supabase.rpc('set_invitation_lifecycle', {
     p_project_id: projectId,
     p_action: action,
   })
   if (error) throw new StudioInvitationLifecycleError(error.message)
+  if (!isLifecycleResult(data) || data.projectId !== projectId) throw new StudioInvitationLifecycleError()
+  return data
 }
