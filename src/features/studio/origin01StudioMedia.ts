@@ -37,15 +37,23 @@ export function createOrigin01StudioMediaState(
   invitation: Origin01InvitationData,
 ): Origin01StudioMediaState {
   const assignments: StudioMediaAssignment<Origin01MediaSlotId>[] = [
-    { slotId: 'hero.image', mediaId: invitation.content.hero.imageMediaId },
-    { slotId: 'dressCode.image', mediaId: invitation.content.dressCode.imageMediaId },
-    ...invitation.content.gallery.images.map(({ mediaId }, position) => ({
+    ...(invitation.content.hero.imageMediaId.trim()
+      ? [{ slotId: 'hero.image' as const, mediaId: invitation.content.hero.imageMediaId }]
+      : []),
+    ...(invitation.content.dressCode.imageMediaId.trim()
+      ? [{ slotId: 'dressCode.image' as const, mediaId: invitation.content.dressCode.imageMediaId }]
+      : []),
+    ...invitation.content.gallery.images.filter(({ mediaId }) => mediaId.trim()).map(({ mediaId }, position) => ({
       slotId: 'gallery.images' as const,
       mediaId,
       position,
     })),
-    { slotId: 'gifts.image', mediaId: invitation.content.gifts.imageMediaId },
-    { slotId: 'closing.image', mediaId: invitation.content.closing.imageMediaId },
+    ...(invitation.content.gifts.imageMediaId.trim()
+      ? [{ slotId: 'gifts.image' as const, mediaId: invitation.content.gifts.imageMediaId }]
+      : []),
+    ...(invitation.content.closing.imageMediaId.trim()
+      ? [{ slotId: 'closing.image' as const, mediaId: invitation.content.closing.imageMediaId }]
+      : []),
     ...(invitation.content.music.mediaId.trim()
       ? [{ slotId: 'music.audio' as const, mediaId: invitation.content.music.mediaId }]
       : []),
