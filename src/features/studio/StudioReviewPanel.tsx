@@ -26,6 +26,8 @@ export function StudioReviewPanel({ kind, validation, domains, showing, audience
       <h3>{group.label} ({group.issues.length})</h3>{group.issues.length === 0 ? <p>Sin elementos.</p> : <ul>{group.issues.map((issue) => {
         const destination = resolveStudioIssueDestination(issue, domains)
         return <li key={issue.id}><p>{issue.message}</p><small>Dominio: {issue.domainId}{issue.sceneId ? ` · Escena: ${issue.sceneId}` : ''}{issue.fieldId ? ` · Campo: ${issue.fieldId}` : ''}</small>
-          {destination ? <button type="button" onClick={() => onIssue(issue)}>Corregir en {destination.label}</button> : <span>Destino no disponible</span>}</li>
+          {destination ? <button type="button" onClick={() => onIssue(issue)}>
+            {issue.correctionStage === 'media' ? 'Corregir en Fotos y música' : `Corregir en ${destination.label}`}
+          </button> : <span>Destino no disponible</span>}</li>
       })}</ul>}</section>)}</section>
 }

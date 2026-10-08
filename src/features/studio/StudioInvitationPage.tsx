@@ -211,6 +211,13 @@ StudioInvitationPageProps) {
     setCorrectionContext(issueNeedsCorrectionReturn(issue, destination)
       ? createStudioIssueCorrectionContext(issue) : undefined)
     if (layerOpen) surfaceDispatch({ type: 'close' })
+    if (issue.correctionStage) {
+      changeActiveStage(issue.correctionStage)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        focusStudioIssueDestination(issue)
+      }))
+      return
+    }
     navigate({ type: 'open-item', domainId: issue.domainId, item: destination })
     const issueScene = findStudioSceneByEditorId(destination.editorId)
     if (issueScene) {

@@ -66,6 +66,7 @@ export type StudioMediaState<TSlotId extends string = string> = {
 export type StudioMediaValidationErrorCode =
   | 'duplicate-media-id'
   | 'unknown-slot'
+  | 'missing-required-media'
   | 'missing-media'
   | 'incompatible-media-kind'
   | 'invalid-cardinality'
@@ -332,6 +333,13 @@ export function validateStudioMediaContract<TSlotId extends string>(
 
   for (const slot of slots) {
     const assignments = state.assignments.filter((assignment) => assignment.slotId === slot.id)
+    if (!slot.optional && assignments.length === 0) {
+      errors.push({
+        code: 'missing-required-media',
+        slotId: slot.id,
+        message: `El slot obligatorio "${slot.id}" no tiene un medio asignado.`,
+      })
+    }
     if (slot.cardinality === 'single' && assignments.length > 1) {
       errors.push({
         code: 'invalid-cardinality',

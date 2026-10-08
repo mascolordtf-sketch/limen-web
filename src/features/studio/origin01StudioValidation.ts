@@ -5,6 +5,7 @@ import type { Origin01InvitationData } from '../invitations/origin01/origin01Con
 import { fromDateTimeLocalValue } from './studioDateTime'
 import type { Origin01StudioDraft } from './origin01StudioDraft'
 import type { StudioDomainId } from './studioNavigation'
+import type { StudioWorkspaceStage } from './studioWorkspaceStages'
 import { isTriviaContentValid } from './studioTriviaValidation'
 import { validateOrigin01Schedule } from './origin01StudioSchedule'
 import { validateOrigin01Community } from './studioCommunityValidation'
@@ -25,6 +26,7 @@ export type StudioIssue = {
   readonly editorId: string
   readonly domainId: StudioDomainId
   readonly sceneId?: InvitationModuleId
+  readonly correctionStage?: StudioWorkspaceStage
   readonly severity: StudioIssueSeverity
   readonly blocksPreview: boolean
   readonly relevant: boolean
@@ -276,17 +278,29 @@ export function validateOrigin01StudioDraft(
     blocksPreview: true,
     relevant: true,
   }))
-  const mediaIssues = mediaValidation.map((error, index): StudioIssue => ({
-    id: `media-${error.code}-${index}`,
-    message: error.slotId === 'music.audio'
-      ? 'La música asignada no es válida. Desactivala o elegí nuevamente el archivo desde Fotos y música.'
-      : error.message,
-    editorId: 'review-errors',
-    domainId: 'review',
-    severity: 'structural',
-    blocksPreview: true,
-    relevant: true,
-  }))
+  const mediaIssues = mediaValidation.map((error, index): StudioIssue => {
+    const missingRequiredMedia = error.code === 'missing-required-media'
+    const missingMediaMessage = error.slotId === 'hero.image'
+      ? 'Agregá una fotografía de portada.'
+      : error.slotId === 'closing.image'
+        ? 'Agregá una fotografía de cierre.'
+        : error.message
+    return {
+      id: `media-${error.code}-${index}`,
+      message: error.slotId === 'music.audio'
+        ? 'La música asignada no es válida. Desactivala o elegí nuevamente el archivo desde Fotos y música.'
+        : missingMediaMessage,
+      editorId: 'review-errors',
+      domainId: 'review',
+      correctionStage: missingRequiredMedia ? 'media' : undefined,
+      fieldTargetId: missingRequiredMedia
+        ? `studio-photo-select-${error.slotId === 'hero.image' ? 'hero' : 'closing'}`
+        : undefined,
+      severity: missingRequiredMedia ? 'active-error' : 'structural',
+      blocksPreview: !missingRequiredMedia,
+      relevant: true,
+    }
+  })
   const structuralIssues: StudioIssue[] = [...identityIssues, ...configurationIssues, ...mediaIssues]
   const fieldIssues = seeds.filter((seed) => seed.error).map((seed, index): StudioIssue => {
     const active = seed.sceneId ? sceneIsActive(draft, seed.sceneId) : true

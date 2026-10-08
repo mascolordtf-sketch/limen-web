@@ -1,5 +1,6 @@
+import type { InvitationModuleId } from '../invitations/engine/moduleTypes'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
-import { origin01DemoData } from '../invitations/origin01/origin01DemoData'
+import { origin01Template } from '../invitations/origin01/origin01Template'
 
 const studioTimeZone = 'America/Argentina/Buenos_Aires'
 const dateKeyFormatter = new Intl.DateTimeFormat('en-CA', {
@@ -14,6 +15,16 @@ const dateLabelFormatter = new Intl.DateTimeFormat('es-AR', {
   year: 'numeric',
   timeZone: studioTimeZone,
 })
+
+const initiallyEnabledModules = new Set<InvitationModuleId>([
+  ...origin01Template.requiredModules,
+  'countdown',
+  'story',
+  'dressCode',
+  'gallery',
+  'gifts',
+  'rsvp',
+])
 
 function createStudioInvitationCode(now: Date): string {
   const date = dateKeyFormatter.format(now).replaceAll('-', '').slice(2)
@@ -31,13 +42,16 @@ export function createNewStudioInvitation(internalName: string, now = new Date()
   const timestamp = now.toISOString()
 
   return {
-    ...origin01DemoData,
     id: `origin01-${code.toLocaleLowerCase('es-AR')}`,
     code,
     internalName: internalName.trim(),
+    templateId: 'origin01',
     lifecycleStatus: 'draft',
+    audience: 'protagonist',
+    eventType: 'quince',
+    themeVariant: origin01Template.defaultThemeVariant,
+    typographyId: 'noche-plateada',
     event: {
-      ...origin01DemoData.event,
       name: 'Nombre',
       celebrationLabel: 'Mis 15',
       startsAt: `${eventDate}T21:00:00-03:00`,
@@ -47,43 +61,154 @@ export function createNewStudioInvitation(internalName: string, now = new Date()
       address: 'Dirección del evento',
     },
     identities: [{ displayName: 'Nombre', role: 'protagonist' }],
+    presentation: { showTemplateBranding: true },
+    modules: origin01Template.canonicalOrder.map((moduleId) => ({
+      moduleId,
+      enabled: initiallyEnabledModules.has(moduleId),
+    })),
+    media: [],
     content: {
-      ...origin01DemoData.content,
-      prelude: { ...origin01DemoData.content.prelude, title: 'Hola, Nombre.' },
-      envelope: { ...origin01DemoData.content.envelope, monogram: 'N' },
-      hero: { ...origin01DemoData.content.hero, dateLabel },
-      story: { ...origin01DemoData.content.story, signature: 'Nombre' },
+      prelude: {
+        eyebrow: 'Un mensaje para vos',
+        title: 'Hola, Nombre.',
+        body: 'Hay momentos que merecen ser compartidos con las personas que más queremos.',
+        reveal: 'Esta invitación es para vos.',
+        question: '¿Querés descubrirla?',
+        actionLabel: 'Abrir invitación',
+        soundHint: '',
+      },
+      envelope: {
+        eyebrow: 'Una invitación especial',
+        heading: 'Hay momentos que comienzan mucho antes de llegar.',
+        monogram: 'N',
+        instruction: 'Tocá el sello para abrir',
+      },
+      hero: {
+        dateLabel,
+        phrase: 'Una noche para recordar.',
+        scrollHint: 'Deslizá para descubrir ↓',
+        imageMediaId: '',
+      },
+      countdown: {
+        eyebrow: 'El tiempo se acerca',
+        heading: 'Falta menos para compartir este momento.',
+        completedMessage: 'El gran día llegó.',
+      },
+      story: {
+        eyebrow: 'Una invitación',
+        message: 'Quiero compartir con vos una noche muy especial.',
+        signature: 'Nombre',
+      },
       eventDetails: {
-        ...origin01DemoData.content.eventDetails,
+        eyebrow: 'Cuándo y dónde',
+        heading: 'Guardá este momento.',
         dateLabel,
         timeLabel: '21:00',
+        venueLabel: 'Lugar',
+        mapActionLabel: 'Ver ubicación',
+        calendarActionLabel: 'Agendar fecha',
         calendarDescription: 'Invitación creada con LIMEN',
       },
+      schedule: {
+        eyebrow: 'El recorrido de la noche',
+        heading: 'Cada momento tiene su hora.',
+        introduction: 'Una guía para disfrutar juntos la celebración.',
+        moments: [
+          { id: 'reception', time: '21:00', title: 'Recepción' },
+          { id: 'celebration', time: '22:00', title: 'Celebración' },
+        ],
+      },
+      weather: {
+        eyebrow: 'El clima de ese día',
+        heading: 'Para que llegues preparado.',
+        introduction: 'Cuando se acerque la fecha, vas a encontrar acá el pronóstico.',
+        location: {
+          name: 'Buenos Aires',
+          country: 'Argentina',
+          latitude: -34.61315,
+          longitude: -58.37723,
+          timezone: studioTimeZone,
+        },
+      },
+      dressCode: {
+        eyebrow: 'Dress code',
+        title: 'Elegante',
+        description: 'Elegí un look que te haga sentir bien para disfrutar esta noche.',
+        note: 'La elegancia también es sentirse uno mismo.',
+        imageMediaId: '',
+      },
+      gallery: {
+        eyebrow: 'Nuestra historia',
+        heading: 'Momentos para recordar.',
+        images: [],
+      },
       community: {
-        ...origin01DemoData.content.community,
-        instagram: { ...origin01DemoData.content.community.instagram, enabled: false, handle: '' },
-        hashtag: { ...origin01DemoData.content.community.hashtag, enabled: false, value: '' },
-        album: { ...origin01DemoData.content.community.album, enabled: false, url: '' },
+        eyebrow: 'Compartamos cada instante',
+        heading: 'La noche también la hacemos entre todos.',
+        introduction: 'Sumá tus recuerdos de la celebración.',
+        instagram: { enabled: false, handle: '', actionLabel: 'Ver en Instagram' },
+        hashtag: { enabled: false, value: '', actionLabel: 'Copiar hashtag', copiedLabel: 'Hashtag copiado' },
+        album: { enabled: false, url: '', invitation: 'Compartí tus fotos y videos.', actionLabel: 'Abrir álbum' },
       },
       trivia: {
-        ...origin01DemoData.content.trivia,
         protagonistName: 'Nombre',
         accessibleTitle: 'Trivia sobre la protagonista',
+        introEyebrow: 'Entre nosotros…',
+        title: '¿Cuánto conocés a Nombre?',
+        description: 'Un pequeño desafío antes de la fiesta.',
+        primaryActionLabel: 'Comenzar',
+        questionMetaLabel: 'Pregunta',
+        nextLabel: 'Siguiente',
+        resultLabel: 'Ver resultado',
+        replayLabel: 'Volver a jugar',
+        scoreTotalLabel: '/ 1 respuesta correcta',
+        questions: [{
+          id: 'q1',
+          prompt: '¿Cuál es su plan favorito?',
+          options: [{ id: 'a', label: 'Opción A' }, { id: 'b', label: 'Opción B' }],
+          correctOptionId: 'a',
+          correctFeedback: '¡La conocés muy bien!',
+          incorrectFeedback: 'Casi. Esta vez era la otra opción.',
+        }],
+        resultTiers: [
+          { minScore: 1, title: '¡Excelente!', message: 'La conocés muy bien.' },
+          { minScore: 0, title: 'Hay mucho por descubrir', message: 'La fiesta será una gran oportunidad.' },
+        ],
+        revealTitle: 'Gracias por jugar',
+        revealMessage: 'Espero que estés ahí para compartir esta noche conmigo.',
         revealSignature: 'Nombre',
       },
       gifts: {
-        ...origin01DemoData.content.gifts,
+        eyebrow: 'Un detalle',
+        title: 'Regalos',
+        description: 'Si querés acompañar este momento con un regalo, podés hacerlo el día del evento o usar estos datos.',
         accountHolder: '',
         bankName: '',
+        accountLabel: 'Alias o CVU',
         accountValue: '',
         demoNote: '',
+        imageMediaId: '',
       },
       rsvp: {
-        ...origin01DemoData.content.rsvp,
+        eyebrow: 'Nos encantaría que estés',
+        title: '¿Compartimos esta noche?',
+        description: 'Confirmá tu asistencia para que podamos esperarte.',
+        actionLabel: 'Confirmar por WhatsApp',
         recipientPhone: undefined,
+        message: 'Hola, confirmo mi asistencia al evento.',
         demoNote: undefined,
       },
-      closing: { ...origin01DemoData.content.closing, signature: 'Nombre' },
+      closing: {
+        eyebrow: 'Nos vemos pronto',
+        title: 'Gracias por ser parte de este momento.',
+        signature: 'Nombre',
+        imageMediaId: '',
+        sharePrompt: 'Compartí la invitación con quienes querés cerca.',
+        shareActionLabel: 'Compartir invitación',
+        shareTitle: 'Una invitación especial',
+        shareText: 'Quiero compartir con vos una noche muy especial.',
+      },
+      music: { mediaId: '' },
     },
     createdAt: timestamp,
     updatedAt: timestamp,
