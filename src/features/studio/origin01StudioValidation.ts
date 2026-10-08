@@ -83,7 +83,8 @@ type IssueSeed = Omit<StudioIssue, 'id' | 'severity' | 'blocksPreview' | 'releva
 }
 
 const studioFieldTargetIds: Readonly<Record<string, string>> = {
-  protagonistName: 'studio-protagonist-name', shareMessage: 'studio-custom-share-message',
+  internalName: 'studio-invitation-name-control', protagonistName: 'studio-protagonist-name',
+  shareMessage: 'studio-custom-share-message',
   eventStart: 'studio-event-start', eventEnd: 'studio-event-end', venue: 'studio-event-venue', address: 'studio-event-address',
   dressCodeTitle: 'studio-dress-code-title', dressCodeDescription: 'studio-dress-code-description', dressCodeNote: 'studio-dress-code-note',
   rsvpTitle: 'studio-rsvp-title', rsvpDescription: 'studio-rsvp-description', rsvpActionLabel: 'studio-rsvp-action-label', rsvpRecipientPhone: 'studio-rsvp-recipient-phone',
@@ -125,6 +126,7 @@ export function validateOrigin01StudioDraft(
   const mediaValidation = validateOrigin01StudioMedia(draft.media)
   const triviaValid = isTriviaContentValid(draft.trivia)
   const fieldErrors: Record<string, string | null> = {
+    internalName: required(draft.internalName, 'Asigná un nombre para identificar la invitación en Studio.'),
     protagonistName: required(draft.protagonistName, 'Ingresá el nombre de la protagonista.'),
     shareMessage: draft.share.mode === 'custom'
       ? required(draft.share.customMessage, 'Ingresá un mensaje para compartir.') : null,
@@ -194,6 +196,7 @@ export function validateOrigin01StudioDraft(
   }
 
   const seeds: readonly IssueSeed[] = [
+    { fieldId: 'internalName', error: fieldErrors.internalName, message: fieldErrors.internalName ?? '', editorId: 'identity', domainId: 'identity' },
     { fieldId: 'protagonistName', error: fieldErrors.protagonistName, message: fieldErrors.protagonistName ?? '', editorId: 'identity', domainId: 'identity' },
     { fieldId: 'shareMessage', error: fieldErrors.shareMessage, message: fieldErrors.shareMessage ?? '', editorId: 'share', domainId: 'review' },
     ...(['eventStart', 'eventEnd', 'venue', 'address'] as const).map((fieldId) => ({

@@ -1,0 +1,190 @@
+.limen-studio--home {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+  padding: 0 1rem 2.5rem;
+}
+
+.limen-studio-home {
+  width: 100%;
+  max-width: 92rem;
+  min-height: calc(100dvh - 2.5rem);
+  margin: 0 auto;
+  background: var(--studio-surface);
+}
+
+.limen-studio-home__app-header {
+  display: flex;
+  position: sticky;
+  z-index: 20;
+  top: 0;
+}
+
+.limen-studio-home__location {
+  display: inline-flex;
+  align-items: center;
+  gap: .42rem;
+  color: var(--studio-accent-strong);
+  font-size: .78rem;
+  font-weight: 750;
+}
+
+.limen-studio-home__location svg,
+.limen-studio-home__account svg,
+.limen-studio-home__footnote svg {
+  width: 1rem;
+}
+
+.limen-studio-home__account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .8rem;
+  margin-left: auto;
+  color: var(--studio-muted);
+  font-size: .78rem;
+}
+
+.limen-studio-home__account .limen-studio__back-link {
+  gap: .4rem;
+  font: inherit;
+}
+
+.limen-studio-home__main {
+  display: flex;
+  width: min(100% - 2rem, 55rem);
+  min-height: calc(100dvh - var(--studio-header-height) - 2.5rem);
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 3.5rem 0 4rem;
+}
+
+.limen-studio-home__main > h2 {
+  max-width: none;
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.25rem, 5vw, 3.15rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1.08;
+}
+
+.limen-studio-home__intro {
+  max-width: 38rem;
+  margin: .8rem 0 0;
+  color: var(--studio-muted);
+}
+
+.limen-studio-home__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.limen-studio-home__action {
+  display: flex;
+  min-height: 11rem;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  padding: 1.35rem;
+  color: var(--studio-ink);
+  background: var(--studio-paper);
+  box-shadow: var(--studio-shadow-soft);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.limen-studio-home__action--primary {
+  border-color: #bdc9c0;
+  background: #f0f3ef;
+}
+
+.limen-studio-home__action:not(:disabled):hover {
+  border-color: var(--studio-accent);
+  box-shadow: 0 12px 28px rgb(44 48 40 / 9%);
+  transform: translateY(-1px);
+}
+
+.limen-studio-home__action:focus-visible {
+  outline: 3px solid var(--studio-focus);
+  outline-offset: 3px;
+}
+
+.limen-studio-home__action:disabled {
+  cursor: not-allowed;
+}
+
+.limen-studio-home__action-top {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.limen-studio-home__action-icon,
+.limen-studio-home__action-arrow {
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  place-items: center;
+  border-radius: .7rem;
+}
+
+.limen-studio-home__action-icon {
+  color: var(--studio-accent-strong);
+  background: #e4eae5;
+}
+
+.limen-studio-home__action-arrow {
+  color: #fff;
+  background: var(--studio-accent-strong);
+}
+
+.limen-studio-home__action-icon svg,
+.limen-studio-home__action-arrow svg {
+  width: 1.1rem;
+}
+
+.limen-studio-home__action > strong {
+  margin-top: 1.3rem;
+  font-size: 1.1rem;
+}
+
+.limen-studio-home__action > small {
+  margin-top: .4rem;
+  color: var(--studio-muted);
+  font-size: .77rem;
+  line-height: 1.5;
+}
+
+.limen-studio-home__footnote {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 1.25rem 0 0;
+  color: var(--studio-muted);
+  font-size: .7rem;
+}
+
+@media (max-width: 44rem) {
+  .limen-studio-home__location,
+  .limen-studio-home__account > span {
+    display: none;
+  }
+
+  .limen-studio-home__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .limen-studio-home__main {
+    justify-content: flex-start;
+    padding-top: 3rem;
+  }
+}

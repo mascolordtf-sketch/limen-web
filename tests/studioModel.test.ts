@@ -81,6 +81,7 @@ import {
   updateOrigin01StudioModule,
 } from '../src/features/studio/origin01StudioDraft'
 import { hasUnpersistedStudioMedia } from '../src/features/studio/studioPersistence'
+import { buildStudioInvitationSummaries, filterStudioInvitationSummaries } from '../src/features/studio/studioInvitationIndex'
 import { parsePublicInvitationPublication } from '../src/features/invitations/publicInvitationPublication'
 import { normalizeStudioInvitationDocument } from '../src/features/studio/useStudioInvitationPersistence'
 import { shouldScheduleStudioAutosave, studioAutosaveDelayMs } from '../src/features/studio/studioAutosave'
@@ -169,6 +170,67 @@ assert(resolveStudioAvailability({ dev: true })
   && !resolveStudioAvailability({ dev: false })
   && !resolveStudioAvailability({ dev: false, explicitFlag: 'false' }),
   'Studio queda habilitado en desarrollo o mediante una bandera explícita, pero no en producción por defecto')
+
+const invitationIndexProjects = [{
+  id: 'project-maia', public_code: maiaInvitationData.code, internal_name: maiaInvitationData.internalName,
+  event_type: 'quince', plan_code: 'essential', plan_version: 1, status: 'draft', public_source: 'fixture',
+  created_by: 'member-1', created_at: '2026-10-02T12:00:00.000Z', updated_at: '2026-10-07T03:42:00.000Z',
+}, {
+  id: 'project-demo', public_code: origin01DemoData.code, internal_name: origin01DemoData.internalName,
+  event_type: 'quince', plan_code: 'essential', plan_version: 1, status: 'published', public_source: 'publication',
+  created_by: 'member-1', created_at: '2026-10-01T12:00:00.000Z', updated_at: '2026-10-05T17:30:00.000Z',
+}]
+const persistedMaiaIndexDocument = {
+  ...maiaInvitationData,
+  internalName: 'Maia — borrador actualizado',
+  event: { ...maiaInvitationData.event, startsAt: '2026-11-21T21:30:00-03:00' },
+  media: maiaInvitationData.media.map((media) => media.id === maiaInvitationData.content.hero.imageMediaId
+    ? { ...media, src: '/images/maia/portada-actualizada.webp' }
+    : media),
+}
+const invitationIndex = buildStudioInvitationSummaries(invitationIndexProjects, [{
+  project_id: 'project-maia', revision: 3, document: persistedMaiaIndexDocument,
+  updated_at: '2026-10-07T03:42:00.000Z',
+}, {
+  project_id: 'project-demo', revision: 4, document: origin01DemoData,
+  updated_at: '2026-10-05T17:30:00.000Z',
+}], [{
+  project_id: 'project-demo', revision: 1, draft_revision: 4, status: 'active',
+  document: origin01DemoData, published_at: '2026-10-05T17:30:00.000Z',
+}])
+const maiaIndexEntry = invitationIndex.find(({ code }) => code === maiaInvitationData.code)
+const demoIndexEntry = invitationIndex.find(({ code }) => code === origin01DemoData.code)
+assert(invitationIndex.length === 2
+  && maiaIndexEntry?.availability === 'online'
+  && maiaIndexEntry.sourceLabel === 'Ficha estable'
+  && maiaIndexEntry.hasUnpublishedChanges
+  && maiaIndexEntry.internalName === persistedMaiaIndexDocument.internalName
+  && maiaIndexEntry.eventLabel?.includes('21 de noviembre de 2026')
+  && maiaIndexEntry.thumbnailSrc === '/images/maia/portada-actualizada.webp'
+  && demoIndexEntry?.availability === 'online'
+  && demoIndexEntry.sourceLabel === 'Publicación dinámica'
+  && !demoIndexEntry.hasUnpublishedChanges,
+  'el índice separa disponibilidad pública, fuente y cambios editoriales sin confundir fixture con publicación')
+const deliveryPredicateIndex = buildStudioInvitationSummaries([{
+  ...invitationIndexProjects[1], status: 'draft',
+}], [], [{
+  project_id: 'project-demo', revision: 2, draft_revision: 1, status: 'active',
+  document: origin01DemoData, published_at: '2026-10-05T17:30:00.000Z',
+}, {
+  project_id: 'project-demo', revision: 1, draft_revision: 1, status: 'superseded',
+  document: origin01DemoData, published_at: '2026-10-04T17:30:00.000Z',
+}])
+const archivedFixtureIndex = buildStudioInvitationSummaries([{
+  ...invitationIndexProjects[0], status: 'archived',
+}], [{ project_id: 'project-maia', revision: 3, document: maiaInvitationData,
+  updated_at: '2026-10-07T03:42:00.000Z' }], [])
+assert(deliveryPredicateIndex[0]?.availability === 'offline'
+  && archivedFixtureIndex[0]?.availability === 'online',
+  'la disponibilidad del índice replica la entrega pública: publicación exige proyecto publicado y el fixture conocido sigue accesible')
+assert(filterStudioInvitationSummaries(invitationIndex, 'all', 'maía').length === 1
+  && filterStudioInvitationSummaries(invitationIndex, 'online', '').length === 2
+  && filterStudioInvitationSummaries(invitationIndex, 'paused', '').length === 0,
+  'el índice filtra por estado y busca nombre o código ignorando tildes')
 
 assert(studioAutosaveDelayMs === 2_000
   && shouldScheduleStudioAutosave({ dirty: true, hasTemporaryMedia: false, saveStatus: 'idle' })

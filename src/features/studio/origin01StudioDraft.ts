@@ -18,6 +18,7 @@ export type Origin01TriviaEditorialDraft = Omit<
 export type Origin01StudioDraft = {
   readonly themeVariant: Origin01ThemeVariantId
   readonly typographyId: Origin01TypographyCombinationId
+  readonly internalName: string
   readonly protagonistName: string
   readonly event: {
     readonly start: string
@@ -167,6 +168,7 @@ function createOrigin01StudioDraftBase(
   return {
     themeVariant: invitation.themeVariant,
     typographyId: invitation.typographyId ?? defaultOrigin01TypographyCombination.id,
+    internalName: invitation.internalName,
     protagonistName,
     event: {
       start: eventDateTimes.start,
@@ -257,7 +259,8 @@ export function updateOrigin01StudioDraftGroup<K extends keyof Origin01StudioDra
   return { ...draft, [key]: updater(draft[key]) }
 }
 
-type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'typographyId' | 'protagonistName' | 'modules'>
+type Origin01StudioGroupKey = Exclude<keyof Origin01StudioDraft,
+  'themeVariant' | 'typographyId' | 'internalName' | 'protagonistName' | 'modules'>
 export type Origin01EditableSceneId =
   | 'prelude' | 'hero' | 'countdown' | 'story' | 'eventDetails' | 'dressCode'
   | 'schedule' | 'weather' | 'gallery' | 'trivia' | 'gifts' | 'rsvp' | 'closing'

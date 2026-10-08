@@ -1,10 +1,14 @@
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { findStudioInvitation } from './studioInvitationRegistry'
 import { StudioInvitationPage } from './StudioInvitationPage'
 import { StudioUnavailablePage } from './StudioUnavailablePage'
 import { getOrigin01StudioDraftSessionId } from './origin01StudioDraft'
 import { useStudioInvitationPersistence } from './useStudioInvitationPersistence'
+import { loadStudioDraft } from './studioPersistence'
+import type { LoadedStudioDraft } from './studioPersistence'
 
 function StudioPersistenceMessage({ title, detail }: { title: string; detail: string }) {
   return <main className="limen-studio"><div className="limen-studio__workspace">
@@ -15,8 +19,14 @@ function StudioPersistenceMessage({ title, detail }: { title: string; detail: st
   </div></main>
 }
 
-function PersistedStudioInvitationRoute({ invitation }: { invitation: NonNullable<ReturnType<typeof findStudioInvitation>> }) {
-  const persistence = useStudioInvitationPersistence(invitation)
+type PersistedStudioInvitationRouteProps = {
+  readonly invitation: Origin01InvitationData
+  readonly initialLoad?: LoadedStudioDraft
+}
+
+export function PersistedStudioInvitationRoute({ invitation, initialLoad }:
+PersistedStudioInvitationRouteProps) {
+  const persistence = useStudioInvitationPersistence(invitation, initialLoad)
   if (persistence.loadState.status === 'loading') {
     return <StudioPersistenceMessage title="Abriendo invitación…" detail="Estamos recuperando el último borrador guardado." />
   }
@@ -42,11 +52,48 @@ function PersistedStudioInvitationRoute({ invitation }: { invitation: NonNullabl
   />
 }
 
+type DynamicInvitationState =
+  | { readonly status: 'loading' }
+  | { readonly status: 'unavailable' }
+  | { readonly status: 'error'; readonly message: string }
+  | { readonly status: 'ready'; readonly invitation: Origin01InvitationData; readonly loaded: LoadedStudioDraft }
+
+function DynamicStudioInvitationRoute({ code }: { readonly code: string }) {
+  const [state, setState] = useState<DynamicInvitationState>({ status: 'loading' })
+
+  useEffect(() => {
+    let active = true
+    void loadStudioDraft(code)
+      .then((loaded) => {
+        if (!active) return
+        if (!loaded.persisted) setState({ status: 'unavailable' })
+        else setState({ status: 'ready', invitation: loaded.persisted.document, loaded })
+      })
+      .catch((error: unknown) => {
+        if (active) setState({
+          status: 'error',
+          message: error instanceof Error ? error.message : 'No pudimos abrir esta invitación en Studio.',
+        })
+      })
+    return () => { active = false }
+  }, [code])
+
+  if (state.status === 'loading') {
+    return <StudioPersistenceMessage title="Abriendo invitación…" detail="Estamos recuperando el último borrador guardado." />
+  }
+  if (state.status === 'error') {
+    return <StudioPersistenceMessage title="No pudimos abrir el borrador" detail={state.message} />
+  }
+  if (state.status === 'unavailable') return <StudioUnavailablePage code={code} />
+  return <PersistedStudioInvitationRoute invitation={state.invitation} initialLoad={state.loaded} />
+}
+
 export function StudioInvitationRoute() {
   const { code } = useParams()
   const invitation = code ? findStudioInvitation(code) : undefined
 
-  if (!invitation) return <StudioUnavailablePage code={code} />
+  if (!code) return <StudioUnavailablePage />
+  if (!invitation) return <DynamicStudioInvitationRoute code={code} />
 
   return <PersistedStudioInvitationRoute invitation={invitation} />
 }

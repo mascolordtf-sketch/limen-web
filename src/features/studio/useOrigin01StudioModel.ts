@@ -46,10 +46,12 @@ export function useOrigin01StudioModel(invitation: Origin01InvitationData, persi
   const resetValue = <K extends keyof Origin01StudioDraft>(key: K) =>
     setDraft((current) => resetOrigin01StudioValue(current, initialDraft, key))
   const resetField = <
-    G extends Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'typographyId' | 'protagonistName' | 'modules'>,
+    G extends Exclude<keyof Origin01StudioDraft,
+      'themeVariant' | 'typographyId' | 'internalName' | 'protagonistName' | 'modules'>,
     F extends keyof Origin01StudioDraft[G],
   >(group: G, field: F) => setDraft((current) => resetOrigin01StudioField(current, initialDraft, group, field))
-  const resetGroup = <G extends Exclude<keyof Origin01StudioDraft, 'themeVariant' | 'typographyId' | 'protagonistName' | 'modules'>>(group: G) =>
+  const resetGroup = <G extends Exclude<keyof Origin01StudioDraft,
+    'themeVariant' | 'typographyId' | 'internalName' | 'protagonistName' | 'modules'>>(group: G) =>
     setDraft((current) => resetOrigin01StudioGroup(current, initialDraft, group))
   const resetScene = (sceneId: Origin01EditableSceneId) =>
     setDraft((current) => resetOrigin01StudioScene(current, initialDraft, sceneId))

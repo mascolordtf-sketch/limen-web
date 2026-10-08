@@ -47,3 +47,15 @@ actual compatible.
 
 Antes de activar una invitación real, se debe comprobar equivalencia visual y funcional entre el snapshot
 publicado y su ficha estática. Maia permanece en `fixture` hasta completar esa comprobación.
+
+## Índice de invitaciones
+
+La entrada de `/studio` lista los proyectos visibles para la cuenta según las políticas RLS existentes.
+La pantalla distingue el estado editorial del proyecto, la revisión guardada, la última publicación y la
+fuente que realmente atiende el enlace público. Abrir una invitación conocida conduce al editor y el
+encabezado permite volver al índice sin perder silenciosamente cambios pendientes.
+
+El índice es deliberadamente informativo en esta fase. No simula pausa ni archivo: con la compatibilidad
+actual, una ruta conocida que deja de recibir una publicación dinámica puede volver a su ficha estática.
+Las operaciones públicas requieren primero un contrato que represente explícitamente la indisponibilidad y
+evite que una acción administrativa aparente ocultar una invitación que todavía continúa accesible.

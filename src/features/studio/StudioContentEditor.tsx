@@ -6,9 +6,7 @@ type StudioContentEditorProps = {
   onReset: () => void
 }
 
-const inputId = 'studio-protagonist-name'
-const helpId = 'studio-protagonist-name-help'
-const errorId = 'studio-protagonist-name-error'
+const protagonistInputId = 'studio-protagonist-name'
 
 export function StudioContentEditor({
   value,
@@ -19,25 +17,27 @@ export function StudioContentEditor({
 }: StudioContentEditorProps) {
   return (
     <section className="limen-studio__content-editor" aria-labelledby="studio-content-title">
-      <h2 id="studio-content-title">Contenido principal</h2>
+      <h2 id="studio-content-title">Identidad pública</h2>
       <div className="limen-studio__field-group">
-        <label className="limen-studio__field-label" htmlFor={inputId}>
+        <label className="limen-studio__field-label" htmlFor={protagonistInputId}>
           Nombre de la protagonista
         </label>
-        <p className="limen-studio__field-help" id={helpId}>
-          Este cambio es temporal y solo afecta la vista previa.
+        <p className="limen-studio__field-help" id={`${protagonistInputId}-help`}>
+          Es público y se reutiliza en los textos principales de la invitación.
         </p>
         <input
           className="limen-studio__text-input"
-          id={inputId}
+          id={protagonistInputId}
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={error ? true : undefined}
-          aria-describedby={error ? `${helpId} ${errorId}` : helpId}
+          aria-describedby={error
+            ? `${protagonistInputId}-help ${protagonistInputId}-error`
+            : `${protagonistInputId}-help`}
         />
         {error ? (
-          <p className="limen-studio__field-error" id={errorId}>
+          <p className="limen-studio__field-error" id={`${protagonistInputId}-error`} role="alert">
             {error}
           </p>
         ) : null}

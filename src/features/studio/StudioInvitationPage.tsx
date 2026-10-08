@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { useStudioAuth } from '../auth/studioAuthContextValue'
 import { findInvitationTemplate } from '../invitations/engine/templateRegistry'
@@ -41,6 +42,7 @@ import { getStudioPublicationBlockReason } from './studioPublication'
 import type { StudioPublicationSnapshot, StudioPublicationState } from './studioPublication'
 import { compareStudioPublicationToPublicBaseline } from './studioPublicationEquivalence'
 import './studio.css'
+import './studioInvitationIdentity.css'
 
 const studioSavedAtFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'short', timeStyle: 'short' })
 
@@ -74,6 +76,8 @@ StudioInvitationPageProps) {
     model.validation.structurallyValid)
   const [correctionContext, setCorrectionContext] = useState<StudioIssueCorrectionContext>()
   const [activeStage, setActiveStage] = useState<StudioWorkspaceStage>('template')
+  const [editingInvitationName, setEditingInvitationName] = useState(false)
+  const [invitationNameDraft, setInvitationNameDraft] = useState(model.draft.internalName)
   const [mediaPreviewFocus, setMediaPreviewFocus] = useState<StudioMediaPreviewFocus>()
   const [editoriallyConfirmedDraft, setEditoriallyConfirmedDraft] = useState<typeof model.draft>()
   const [selectedScene, setSelectedScene] = useState<StudioSceneId>('general')
@@ -165,10 +169,23 @@ StudioInvitationPageProps) {
     if (hasUnsavedChanges && !window.confirm('Hay cambios sin guardar. Si cerrás sesión, se van a perder. ¿Querés continuar?')) return
     void signOut()
   }
+  const requestStudioNavigation = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (hasUnsavedChanges
+      && !window.confirm('Hay cambios sin guardar. Si salís del editor, se van a perder. ¿Querés continuar?')) {
+      event.preventDefault()
+    }
+  }
   const requestPublication = () => {
     if (revision === undefined || publicationBlockReason) return
     if (!window.confirm(`Se creará una publicación inmutable desde el borrador ${revision}. ¿Querés continuar?`)) return
     void onPublish(revision)
+  }
+  const saveInvitationName = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const nextName = invitationNameDraft.trim()
+    if (!nextName) return
+    model.update('internalName', nextName)
+    setEditingInvitationName(false)
   }
   const changeActiveStage = (stage: StudioWorkspaceStage) => {
     setMediaPreviewFocus(undefined)
@@ -271,9 +288,31 @@ StudioInvitationPageProps) {
     <div className="limen-studio__workspace">
     <header className="limen-studio__header" inert={layerOpen ? true : undefined}>
       <div className="limen-studio__brand">
-        <h1><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></h1>
-        <div><span className="limen-studio__context-label">Invitación en edición</span>
-          <strong>{model.draft.protagonistName}</strong>
+        <h1><Link className="limen-studio__brand-home" to="/studio" onClick={requestStudioNavigation}
+          aria-label="Volver al inicio de Studio"><span className="limen-studio__brand-name">LIMEN</span><span>Studio</span></Link></h1>
+        <Link className="limen-studio__invitations-back" to="/studio/invitaciones" onClick={requestStudioNavigation}>
+          <StudioIcon name="back" />Volver a invitaciones
+        </Link>
+        <div className="limen-studio__invitation-identity"><span className="limen-studio__context-label">Invitación</span>
+          {editingInvitationName ? <form className="limen-studio__invitation-name-form" onSubmit={saveInvitationName}>
+            <input id="studio-invitation-name" type="text" autoFocus maxLength={120}
+              value={invitationNameDraft} onChange={(event) => setInvitationNameDraft(event.target.value)}
+              aria-label="Nombre de la invitación" />
+            <button type="submit" disabled={!invitationNameDraft.trim()}>Guardar</button>
+            <button type="button" onClick={() => {
+              setInvitationNameDraft(model.draft.internalName)
+              setEditingInvitationName(false)
+            }}>Cancelar</button>
+          </form> : <span className="limen-studio__invitation-name-line">
+            <strong>{model.draft.internalName}</strong>
+            <button id="studio-invitation-name-control" type="button" onClick={() => {
+              setInvitationNameDraft(model.draft.internalName)
+              setEditingInvitationName(true)
+            }}
+              aria-label="Cambiar nombre de la invitación" title="Cambiar nombre">
+              <StudioIcon name="edit" />
+            </button>
+          </span>}
           <small>{invitation.event.celebrationLabel} · {invitation.code}</small></div>
       </div>
       <div className="limen-studio__header-actions">

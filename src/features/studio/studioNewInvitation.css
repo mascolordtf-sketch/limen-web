@@ -1,0 +1,147 @@
+.limen-studio-new {
+  min-height: 100dvh;
+}
+
+.limen-studio-new__background {
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.limen-studio-new__backdrop {
+  position: fixed;
+  z-index: 200;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  padding: 1.5rem;
+  background: rgb(28 30 25 / 58%);
+}
+
+.limen-studio-new__dialog {
+  position: relative;
+  width: min(100%, 36rem);
+  border: 1px solid #d8d4c9;
+  border-radius: 1rem;
+  padding: 2.35rem 2.5rem 2.15rem;
+  background: #fffdf9;
+  box-shadow: 0 24px 70px rgb(22 25 20 / 24%);
+  color: #232821;
+}
+
+.limen-studio-new__dialog h1 {
+  max-width: 31rem;
+  margin: .55rem 0 .35rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(1.8rem, 4vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  line-height: 1.08;
+}
+
+.limen-studio-new__dialog > p:not(.limen-studio__eyebrow) {
+  margin: 0;
+  color: #66675f;
+  line-height: 1.5;
+}
+
+.limen-studio-new__close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: 50%;
+  color: #343a32;
+  background: transparent;
+  font: 300 1.65rem/1 sans-serif;
+  cursor: pointer;
+}
+
+.limen-studio-new__close:hover {
+  background: #f1efe8;
+}
+
+.limen-studio-new__dialog form {
+  display: grid;
+  margin-top: 1.7rem;
+}
+
+.limen-studio-new__dialog label {
+  margin-bottom: .45rem;
+  font-size: .8rem;
+  font-weight: 800;
+}
+
+.limen-studio-new__dialog input {
+  width: 100%;
+  min-height: 3.15rem;
+  border: 1px solid #c9c5b9;
+  border-radius: .75rem;
+  padding: .75rem .9rem;
+  color: #232821;
+  background: #fffefa;
+  font: inherit;
+}
+
+.limen-studio-new__dialog input:focus {
+  border-color: #28513e;
+  outline: 3px solid rgb(40 81 62 / 14%);
+}
+
+.limen-studio-new__dialog form > small {
+  margin-top: .45rem;
+  color: #74756d;
+  font-size: .7rem;
+}
+
+.limen-studio-new__error {
+  margin: .65rem 0 0;
+  color: #9a3f35;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.limen-studio-new__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .65rem;
+  margin-top: 1.8rem;
+}
+
+.limen-studio-new__actions button {
+  min-height: 2.8rem;
+  border: 1px solid #c9c5b9;
+  border-radius: .7rem;
+  padding: .65rem 1rem;
+  color: #273029;
+  background: #fffdf9;
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.limen-studio-new__actions button[type='submit'] {
+  border-color: #28513e;
+  color: #fff;
+  background: #28513e;
+}
+
+.limen-studio-new__actions button:disabled,
+.limen-studio-new__close:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+@media (max-width: 40rem) {
+  .limen-studio-new__backdrop {
+    align-items: end;
+    padding: .75rem;
+  }
+
+  .limen-studio-new__dialog {
+    padding: 2.2rem 1.25rem 1.25rem;
+  }
+}

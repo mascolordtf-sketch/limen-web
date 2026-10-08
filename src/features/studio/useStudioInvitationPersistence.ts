@@ -4,7 +4,7 @@ import { useStudioAuth } from '../auth/studioAuthContextValue'
 import type { Origin01InvitationData } from '../invitations/origin01/origin01ContentTypes'
 import { defaultOrigin01TypographyCombination } from '../invitations/origin01/origin01Typography'
 import { ensureStudioProject, loadStudioDraft, saveStudioDraft, StudioPersistenceError } from './studioPersistence'
-import type { PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
+import type { LoadedStudioDraft, PersistedStudioDraft, StudioDraftLocation } from './studioPersistence'
 import type { StudioSaveState } from './studioAutosave'
 import { serializeStudioDocument, uploadStudioMedia } from './studioMediaStorage'
 import type { StudioMediaUploadInput } from './studioMediaStorage'
@@ -38,7 +38,10 @@ export function normalizeStudioInvitationDocument(
   } as const
 }
 
-export function useStudioInvitationPersistence(baseInvitation: Origin01InvitationData) {
+export function useStudioInvitationPersistence(
+  baseInvitation: Origin01InvitationData,
+  initialLoad?: LoadedStudioDraft,
+) {
   const { userId } = useStudioAuth()
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' })
   const [saveState, setSaveState] = useState<StudioSaveState>({ status: 'idle' })
@@ -50,7 +53,8 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
 
   useEffect(() => {
     let active = true
-    void loadStudioDraft(baseInvitation.code)
+    const draftRequest = initialLoad ? Promise.resolve(initialLoad) : loadStudioDraft(baseInvitation.code)
+    void draftRequest
       .then(async ({ location, persisted }) => {
         const publication = location?.projectId
           ? await loadLatestStudioPublication(location.projectId)
@@ -77,7 +81,7 @@ export function useStudioInvitationPersistence(baseInvitation: Origin01Invitatio
         })
       })
     return () => { active = false }
-  }, [baseInvitation])
+  }, [baseInvitation, initialLoad])
 
   const ensureProject = useCallback(async () => {
     if (locationRef.current?.projectId) return locationRef.current.projectId
