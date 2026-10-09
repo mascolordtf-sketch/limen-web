@@ -1,0 +1,30 @@
+import type { InvitationTemplateDefinition } from '../engine/templateTypes'
+
+export const garden01Template = {
+  id: 'garden01',
+  internalName: 'Garden 01',
+  description: 'Un recorrido luminoso y natural donde los recuerdos florecen entre fotografías.',
+  schemaVersion: 1,
+  modules: [
+    { moduleId: 'prelude', internalLabel: 'Preludio de papel' },
+    { moduleId: 'hero', internalLabel: 'Umbral del jardín' },
+    { moduleId: 'story', internalLabel: 'Relato' },
+    { moduleId: 'gallery', internalLabel: 'Recuerdos colgantes' },
+    { moduleId: 'countdown', internalLabel: 'Cuenta regresiva' },
+    { moduleId: 'eventDetails', internalLabel: 'La celebración' },
+    { moduleId: 'schedule', internalLabel: 'Cronograma' },
+    { moduleId: 'weather', internalLabel: 'Clima' },
+    { moduleId: 'dressCode', internalLabel: 'Código de vestimenta' },
+    { moduleId: 'instagram', internalLabel: 'Recuerdos compartidos' },
+    { moduleId: 'trivia', internalLabel: 'Trivia' },
+    { moduleId: 'gifts', internalLabel: 'Regalos' },
+    { moduleId: 'rsvp', internalLabel: 'Confirmación' },
+    { moduleId: 'closing', internalLabel: 'Cierre' },
+  ],
+  supportedModules: ['prelude', 'hero', 'story', 'gallery', 'countdown', 'eventDetails', 'schedule', 'weather', 'dressCode', 'instagram', 'trivia', 'gifts', 'rsvp', 'closing'],
+  requiredModules: ['hero', 'eventDetails', 'closing'],
+  optionalModules: ['prelude', 'story', 'gallery', 'countdown', 'schedule', 'weather', 'dressCode', 'instagram', 'trivia', 'gifts', 'rsvp'],
+  canonicalOrder: ['hero', 'prelude', 'countdown', 'story', 'gallery', 'eventDetails', 'schedule', 'weather', 'dressCode', 'gifts', 'instagram', 'trivia', 'rsvp', 'closing'],
+  defaultThemeVariant: 'garden01-sunlit',
+  supportedThemeVariants: ['garden01-sunlit'],
+} satisfies InvitationTemplateDefinition

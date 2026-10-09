@@ -1,9 +1,11 @@
 import { origin01Template } from '../origin01/origin01Template'
+import { garden01Template } from '../garden01/garden01Template'
 import { assertValidTemplateDefinition } from './invitationValidation'
 import type { InvitationTemplateDefinition, InvitationTemplateId } from './templateTypes'
 
 const templateRegistry = {
   origin01: origin01Template,
+  garden01: garden01Template,
 } satisfies Record<InvitationTemplateId, InvitationTemplateDefinition>
 
 Object.values(templateRegistry).forEach(assertValidTemplateDefinition)

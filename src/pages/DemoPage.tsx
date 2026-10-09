@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom'
 
 import { Origin01Invitation } from '../features/invitations/origin01/Origin01Invitation'
+import { Garden01Invitation } from '../features/invitations/garden01/Garden01Invitation'
+import { garden01DemoData } from '../features/invitations/garden01/garden01DemoData'
 import type { Origin01InvitationData } from '../features/invitations/origin01/origin01ContentTypes'
 import { maiaInvitationData } from '../features/invitations/origin01/maiaInvitationData'
 import { origin01DemoData } from '../features/invitations/origin01/origin01DemoData'
@@ -26,6 +28,9 @@ export function DemoPage() {
   const [searchParams] = useSearchParams()
   const [publicInvitationLookup, setPublicInvitationLookup] = useState<PublicInvitationLookup>()
   const publicRoute = pathname.startsWith('/invitacion/')
+  const gardenInvitation = !publicRoute && code === garden01DemoData.code
+    ? garden01DemoData
+    : undefined
 
   const bundledInvitation = code && Object.hasOwn(demoInvitations, code)
     ? demoInvitations[code as keyof typeof demoInvitations]
@@ -79,6 +84,8 @@ export function DemoPage() {
       window.cancelAnimationFrame(secondFrame)
     }
   }, [matrixCase])
+
+  if (gardenInvitation) return <Garden01Invitation invitation={gardenInvitation} />
 
   if (invitation) {
     const renderedInvitation = matrixCase?.invitation ?? invitation
