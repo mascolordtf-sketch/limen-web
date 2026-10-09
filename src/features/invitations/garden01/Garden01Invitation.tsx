@@ -39,8 +39,8 @@ function GardenMaterial({ name, className = '' }: { name: string; className?: st
 
 function GardenJourneyLine() {
   return <svg className="garden01-journey-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    <path className="garden01-journey-line__shadow" d="M8 15C4 21 18 23 9 29S7 38 17 42 94 43 85 50 91 59 82 64 8 68 16 74 6 82 13 91" />
-    <path className="garden01-journey-line__cord" pathLength="1" d="M8 15C4 21 18 23 9 29S7 38 17 42 94 43 85 50 91 59 82 64 8 68 16 74 6 82 13 91" />
+    <path className="garden01-journey-line__shadow" d="M8 15C4 21 18 23 9 29S7 38 17 42 8 49 14 55 6 62 15 67 8 73 14 79 6 85 13 91" />
+    <path className="garden01-journey-line__cord" pathLength="1" d="M8 15C4 21 18 23 9 29S7 38 17 42 8 49 14 55 6 62 15 67 8 73 14 79 6 85 13 91" />
   </svg>
 }
 
