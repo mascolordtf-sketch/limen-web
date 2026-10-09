@@ -37,6 +37,21 @@ function GardenMaterial({ name, className = '' }: { name: string; className?: st
   return <img className={`garden01-material ${className}`} src={`${materialPath}${name}.webp`} alt="" aria-hidden="true" />
 }
 
+function GardenJourneyLine() {
+  return <svg className="garden01-journey-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <path className="garden01-journey-line__shadow" d="M8 15C4 21 18 23 9 29S7 38 17 42 94 43 85 50 91 59 82 64 8 68 16 74 6 82 13 91" />
+    <path className="garden01-journey-line__cord" pathLength="1" d="M8 15C4 21 18 23 9 29S7 38 17 42 94 43 85 50 91 59 82 64 8 68 16 74 6 82 13 91" />
+  </svg>
+}
+
+function GardenTree({ side }: { side: 'left' | 'right' }) {
+  return <div className={`garden01-tree garden01-tree--${side}`} aria-hidden="true">
+    <i className="garden01-tree__trunk" />
+    <GardenMaterial name="jasmine-sprig-a" className="garden01-tree__crown garden01-tree__crown--a" />
+    <GardenMaterial name="jasmine-sprig-b" className="garden01-tree__crown garden01-tree__crown--b" />
+  </div>
+}
+
 function GardenPhoto({ media, crop, className = '' }: {
   media?: InvitationMediaReference
   crop: number
@@ -148,13 +163,14 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
   const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${invitation.event.venue}, ${invitation.event.address}`)}`
   const whatsappUrl = invitation.content.rsvp.recipientPhone
     ? `https://wa.me/${invitation.content.rsvp.recipientPhone}?text=${encodeURIComponent(invitation.content.rsvp.message)}` : undefined
-  const gallery = invitation.content.gallery.images.slice(0, 4)
+  const gallery = invitation.content.gallery.images.slice(0, 6)
   const heroMedia = media(invitation.content.hero.imageMediaId)
 
   return <main className="garden01">
     <link rel="stylesheet" href="/fonts/limen/fonts.css" precedence="limen-garden-fonts" />
     {heroMedia?.src ? <link rel="preload" as="image" href={heroMedia.src} /> : null}
     <div className="garden01-frame">
+      <GardenJourneyLine />
       <section className="garden01-hero" aria-labelledby="garden01-title">
         <GardenPhoto media={heroMedia} crop={1} className="garden01-hero__photo" />
         <div className="garden01-hero__wash" />
@@ -171,40 +187,43 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
           <p>{invitation.content.prelude.body}</p><strong>{invitation.content.prelude.reveal}</strong>
           <GardenMaterial name="botanical-seal" className="garden01-prelude__seal" />
         </section> : null}
-        {enabled.has('countdown') ? <section className="garden01-countdown-section garden01-paper" aria-labelledby="garden01-countdown-title">
+        {enabled.has('countdown') ? <section className="garden01-countdown-section garden01-paper garden01-paper--sage" aria-labelledby="garden01-countdown-title">
           <p className="garden01-kicker" id="garden01-countdown-title">{invitation.content.countdown.eyebrow}</p>
           <GardenCountdown startsAt={invitation.event.startsAt} completedMessage={invitation.content.countdown.completedMessage} />
           <p>Nos encontramos en</p>
         </section> : null}
-        {enabled.has('story') ? <section className="garden01-story garden01-paper" aria-labelledby="garden01-story-title">
+        {enabled.has('story') ? <section className="garden01-story garden01-paper garden01-paper--warm" aria-labelledby="garden01-story-title">
           <p className="garden01-kicker">{invitation.content.story.eyebrow}</p><h2 id="garden01-story-title">{invitation.content.story.heading}</h2>
           <p>{invitation.content.story.introduction}</p></section> : null}
         <GardenMaterial name="jasmine-sprig-a" className="garden01-opening-sprig" />
+        <GardenMaterial name="jasmine-sprig-b" className="garden01-opening-sprig garden01-opening-sprig--small" />
       </div>
 
       {enabled.has('gallery') ? <section className="garden01-gallery" aria-labelledby="garden01-gallery-title">
         <div className="garden01-gallery__heading"><p className="garden01-kicker">Recuerdos que florecen</p>
           <h2 id="garden01-gallery-title">Momentos para guardar</h2></div>
-        <div className="garden01-hanging-gallery">{gallery.map((item, index) => <figure key={item.mediaId} className={`garden01-hanging-photo garden01-hanging-photo--${index + 1}`}>
+        <GardenTree side="left" /><GardenTree side="right" />
+        <div className="garden01-hanging-gallery"><span className="garden01-gallery-rope garden01-gallery-rope--3" aria-hidden="true" />
+          {gallery.map((item, index) => <figure key={`${item.mediaId}-${index}`} className={`garden01-hanging-photo garden01-hanging-photo--${index + 1}`}>
           <span className="garden01-clip" aria-hidden="true" /><GardenPhoto media={media(item.mediaId)} crop={index + 1} />
           <figcaption>{item.caption}</figcaption></figure>)}</div>
         <GardenMaterial name="jasmine-sprig-b" className="garden01-gallery-sprig" />
       </section> : null}
 
       <div className="garden01-celebration">
-        {enabled.has('eventDetails') ? <section className="garden01-event garden01-paper" aria-labelledby="garden01-event-title">
+        {enabled.has('eventDetails') ? <section className="garden01-event garden01-paper garden01-paper--ivory" aria-labelledby="garden01-event-title">
           <p className="garden01-kicker">{invitation.content.eventDetails.eyebrow}</p><h2 id="garden01-event-title">{invitation.content.eventDetails.heading}</h2>
           <div className="garden01-event__facts"><div><span aria-hidden="true">▣</span><strong>{invitation.content.eventDetails.dateLabel}</strong></div>
             <div><span aria-hidden="true">◷</span><strong>{invitation.content.eventDetails.timeLabel}</strong></div>
             <div><span aria-hidden="true">⌖</span><strong>{invitation.content.eventDetails.venueLabel}</strong><small>{invitation.event.address}</small></div></div>
           <a href={mapsUrl} target="_blank" rel="noreferrer">{invitation.content.eventDetails.mapActionLabel}<span aria-hidden="true">›</span></a>
         </section> : null}
-        {enabled.has('schedule') ? <section className="garden01-schedule garden01-paper" aria-labelledby="garden01-schedule-title">
+        {enabled.has('schedule') ? <section className="garden01-schedule garden01-paper garden01-paper--sage" aria-labelledby="garden01-schedule-title">
           <p className="garden01-kicker" id="garden01-schedule-title">{invitation.content.schedule.eyebrow}</p>
           <ol>{invitation.content.schedule.moments.map((moment) => <li key={moment.id}><time>{moment.time}</time><strong>{moment.title}</strong></li>)}</ol>
         </section> : null}
         {enabled.has('weather') ? <GardenWeather invitation={invitation} /> : null}
-        {enabled.has('dressCode') ? <section className="garden01-dress garden01-paper" aria-labelledby="garden01-dress-title">
+        {enabled.has('dressCode') ? <section className="garden01-dress garden01-paper garden01-paper--warm" aria-labelledby="garden01-dress-title">
           <div className="garden01-fabric" aria-hidden="true"><i /><i /></div><p className="garden01-kicker">{invitation.content.dressCode.eyebrow}</p>
           <h2 id="garden01-dress-title">{invitation.content.dressCode.title}</h2><p>{invitation.content.dressCode.description}</p>
           <strong>{invitation.content.dressCode.note}</strong><div className="garden01-swatches" aria-hidden="true"><i /><i /><i /><i /><i /></div>
@@ -212,14 +231,14 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
       </div>
 
       <div className="garden01-participation">
-        {enabled.has('gifts') ? <section className="garden01-gifts garden01-paper" aria-labelledby="garden01-gifts-title">
+        {enabled.has('gifts') ? <section className="garden01-gifts garden01-paper garden01-paper--rose" aria-labelledby="garden01-gifts-title">
           <GardenMaterial name="sage-envelope" className="garden01-gifts__envelope" /><GardenMaterial name="botanical-seal" className="garden01-gifts__seal" />
           <div><p className="garden01-kicker">{invitation.content.gifts.eyebrow}</p><h2 id="garden01-gifts-title">{invitation.content.gifts.title}</h2>
             <p>{invitation.content.gifts.description}</p><details><summary>{invitation.content.gifts.actionLabel}<span aria-hidden="true">›</span></summary>
               <dl><div><dt>Titular</dt><dd>{invitation.content.gifts.accountHolder}</dd></div><div><dt>{invitation.content.gifts.accountLabel}</dt><dd>{invitation.content.gifts.accountValue}</dd></div><div><dt>Banco o billetera</dt><dd>{invitation.content.gifts.bankName}</dd></div></dl>
               <small>{invitation.content.gifts.demoNote}</small></details></div>
         </section> : null}
-        {enabled.has('instagram') ? <section className="garden01-community garden01-paper" aria-labelledby="garden01-community-title">
+        {enabled.has('instagram') ? <section className="garden01-community garden01-paper garden01-paper--sage" aria-labelledby="garden01-community-title">
           <div><p className="garden01-kicker">{invitation.content.community.eyebrow}</p><h2 id="garden01-community-title">{invitation.content.community.heading}</h2>
             <p>{invitation.content.community.introduction}</p>{invitation.content.community.albumUrl
               ? <a href={invitation.content.community.albumUrl} target="_blank" rel="noreferrer">{invitation.content.community.albumActionLabel}<span aria-hidden="true">›</span></a>

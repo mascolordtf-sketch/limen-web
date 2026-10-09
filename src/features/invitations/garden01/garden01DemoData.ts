@@ -45,6 +45,8 @@ export const garden01DemoData = {
     { id: 'garden-emilia-2', kind: 'image', src: sessionSrc, alt: 'Emilia entre ramas y flores blancas' },
     { id: 'garden-emilia-3', kind: 'image', src: sessionSrc, alt: 'Emilia sentada en las escalinatas del jardín' },
     { id: 'garden-emilia-4', kind: 'image', src: sessionSrc, alt: 'Retrato de Emilia con pequeñas flores blancas' },
+    { id: 'garden-emilia-5', kind: 'image', src: sessionSrc, alt: 'Detalle de Emilia en el jardín' },
+    { id: 'garden-emilia-6', kind: 'image', src: sessionSrc, alt: 'Emilia sonriendo entre flores' },
   ],
   content: {
     prelude: {
@@ -67,6 +69,8 @@ export const garden01DemoData = {
         { mediaId: 'garden-emilia-2', caption: 'La alegría' },
         { mediaId: 'garden-emilia-3', caption: 'El camino' },
         { mediaId: 'garden-emilia-4', caption: 'Este momento' },
+        { mediaId: 'garden-emilia-5', caption: 'Lo vivido' },
+        { mediaId: 'garden-emilia-6', caption: 'Lo que comienza' },
       ],
     },
     countdown: { eyebrow: 'Faltan', completedMessage: 'El jardín ya está listo para recibirte.' },

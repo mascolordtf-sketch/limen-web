@@ -19,9 +19,9 @@ const assertions = [
   validation.valid && validation.errors.length === 0,
   garden01Template.requiredModules.every((moduleId) =>
     garden01DemoData.modules.some((module) => module.moduleId === moduleId && module.enabled)),
-  garden01DemoData.media.length === 4
+  garden01DemoData.media.length === 6
     && garden01DemoData.media.every(({ src }) => src === '/images/garden-01/emilia-session.webp'),
-  hangingPhotoCount === 4,
+  hangingPhotoCount === 6,
   garden01Template.supportedModules.length === 14 && enabledModuleIds.length === 14,
   ['prelude', 'schedule', 'weather', 'instagram', 'trivia', 'gifts'].every((moduleId) =>
     enabledModuleIds.includes(moduleId as (typeof enabledModuleIds)[number])),
