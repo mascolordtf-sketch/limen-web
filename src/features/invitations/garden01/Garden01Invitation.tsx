@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useSyncExternalStore, type CSSProperties } from 'react'
+import { useCallback, useMemo, useSyncExternalStore } from 'react'
 
 import type { InvitationMediaReference } from '../engine/invitationTypes'
 import { getEnabledInvitationModuleIds } from '../engine/moduleRuntime'
@@ -34,14 +34,23 @@ function GardenLeaf({ className = '' }: { className?: string }) {
   </svg>
 }
 
+function GardenBranch({ className = '' }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 240 170" fill="none" aria-hidden="true">
+    <path d="M4 157C54 145 79 116 103 84c25-34 56-58 128-73" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+    <path d="M69 127C47 125 33 115 26 98c22-2 38 7 43 29Zm25-32C75 88 65 74 65 57c21 5 32 18 29 38Zm28-30c-10-18-9-34 2-47 16 14 18 30-2 47Zm35-25c-2-19 5-32 20-41 9 19 4 33-20 41Zm29-14c8-16 20-25 38-25-1 20-13 29-38 25ZM86 108c18 0 32 8 42 25-21 7-36-1-42-25Zm33-39c20-2 35 5 46 21-21 9-37 2-46-21Zm47-28c18-4 33 0 46 14-18 12-34 7-46-14Z" fill="currentColor" opacity=".86" />
+  </svg>
+}
+
 function GardenPhoto({ media, crop, className = '' }: {
   media?: InvitationMediaReference
   crop: number
   className?: string
 }) {
-  const style = media?.src ? { '--garden-photo': `url("${media.src}")` } as CSSProperties : undefined
-  return <div className={`garden01-photo garden01-photo--crop-${crop} ${className}`} style={style}
-    role="img" aria-label={media?.alt || 'Fotografía editorial'} />
+  return <div className={`garden01-photo garden01-photo--crop-${crop} ${className}`}>
+    {media?.src
+      ? <img src={media.src} alt={media.alt || 'Fotografía editorial'} />
+      : <span aria-hidden="true" />}
+  </div>
 }
 
 function GardenCountdown({ startsAt, completedMessage }: { startsAt: string; completedMessage: string }) {
@@ -79,12 +88,13 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
     {heroMedia?.src ? <link rel="preload" as="image" href={heroMedia.src} /> : null}
     <div className="garden01-frame">
       <section className="garden01-hero" aria-labelledby="garden01-title">
-        <div className="garden01-hero__photo" aria-hidden="true">
+        <div className="garden01-hero__photo">
           <GardenPhoto media={heroMedia} crop={1} />
         </div>
         <div className="garden01-hero__wash" />
-        <div className="garden01-hero__top"><span>LIMEN · GARDEN 01</span><GardenLeaf /></div>
-        <div className="garden01-hero__threshold" aria-hidden="true"><span>15</span></div>
+        <GardenBranch className="garden01-hero__branch garden01-hero__branch--left" />
+        <GardenBranch className="garden01-hero__branch garden01-hero__branch--right" />
+        <div className="garden01-hero__top"><span>LIMEN · GARDEN 01</span><span>UNA HISTORIA QUE FLORECE</span></div>
         <div className="garden01-hero__copy">
           <p>{invitation.content.hero.eyebrow}</p>
           <h1 id="garden01-title">{invitation.content.hero.name}</h1>
@@ -96,10 +106,16 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
 
       {(enabled.has('story') || enabled.has('gallery')) && <section className="garden01-memories"
         id="garden01-memories" aria-labelledby="garden01-memories-title">
-        <GardenLeaf className="garden01-memories__leaf" />
-        <p className="garden01-kicker">{invitation.content.story.eyebrow}</p>
-        <h2 id="garden01-memories-title">{invitation.content.story.heading}</h2>
-        <p className="garden01-introduction">{invitation.content.story.introduction}</p>
+        <div className="garden01-memories__backdrop" aria-hidden="true">
+          <GardenPhoto media={media(invitation.content.gallery.images[1]?.mediaId || '')} crop={2} />
+        </div>
+        <GardenBranch className="garden01-memories__branch garden01-memories__branch--left" />
+        <GardenBranch className="garden01-memories__branch garden01-memories__branch--right" />
+        <header className="garden01-memories__heading">
+          <p className="garden01-kicker">{invitation.content.story.eyebrow}</p>
+          <h2 id="garden01-memories-title">{invitation.content.story.heading}</h2>
+          <p className="garden01-introduction">{invitation.content.story.introduction}</p>
+        </header>
         {enabled.has('gallery') && <div className="garden01-hanging-gallery">
           {gallery.map((item, index) => <figure key={item.mediaId} className={`garden01-hanging-photo garden01-hanging-photo--${index + 1}`}>
             <span className="garden01-clip" aria-hidden="true" />
@@ -110,6 +126,7 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
       </section>}
 
       {enabled.has('countdown') && <section className="garden01-countdown-section" aria-labelledby="garden01-countdown-title">
+        <GardenBranch className="garden01-paper-branch garden01-paper-branch--countdown" />
         <div className="garden01-paper garden01-paper--countdown">
           <GardenLeaf />
           <p className="garden01-kicker" id="garden01-countdown-title">{invitation.content.countdown.eyebrow}</p>
@@ -120,6 +137,7 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
       </section>}
 
       {enabled.has('eventDetails') && <section className="garden01-event" aria-labelledby="garden01-event-title">
+        <GardenBranch className="garden01-paper-branch garden01-paper-branch--event" />
         <div className="garden01-paper garden01-paper--event">
           <p className="garden01-kicker">{invitation.content.eventDetails.eyebrow}</p>
           <GardenLeaf />
@@ -139,6 +157,8 @@ export function Garden01Invitation({ invitation }: { invitation: Garden01Invitat
       </section>}
 
       {enabled.has('rsvp') && <section className="garden01-rsvp" aria-labelledby="garden01-rsvp-title">
+        <GardenBranch className="garden01-rsvp__branch garden01-rsvp__branch--left" />
+        <GardenBranch className="garden01-rsvp__branch garden01-rsvp__branch--right" />
         <div className="garden01-rsvp__arch" aria-hidden="true" />
         <GardenLeaf />
         <p className="garden01-kicker">{invitation.content.rsvp.eyebrow}</p>
