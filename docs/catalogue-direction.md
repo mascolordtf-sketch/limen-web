@@ -38,3 +38,14 @@ Garden debe evitar:
 Antes de implementarla se reconstruirá el boceto visual aprobado o una referencia equivalente para
 confirmar la dirección artística. La base de datos no condicionará su composición: persistirá un
 contrato de plantilla versionado, mientras Garden conservará el control de su propio renderer.
+
+## Garden 01 aprobado
+
+La dirección visual aprobada el 8 de octubre de 2026 combina marfil luminoso, verde salvia y acentos
+dorado mate. Las fotografías colgantes son el gesto principal: funcionan como parte del relato y no
+como una galería añadida. El número 15 se integra como elemento arquitectónico, mientras la
+información práctica se resuelve con papel claro, jerarquía editorial y ornamentación contenida.
+
+La primera entrega incorpora el contrato versionado, una demostración pública independiente y su
+acceso desde el catálogo. La edición de Garden dentro de Studio queda para la siguiente etapa, una
+vez validado el renderer real, para no acoplar el nuevo universo al modelo específico de Origin 01.
