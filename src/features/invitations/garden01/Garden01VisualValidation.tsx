@@ -44,6 +44,14 @@ function EventIcon({ kind }: { kind: 'calendar' | 'location' | 'dress' }) {
   return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12 5c1.2 2.5 2.5 3.7 4 3.7S18.8 7.5 20 5l3 4-2.2 5.2L24 27H8l3.2-12.8L9 9l3-4Z" /></svg>
 }
 
+function GardenRope() {
+  return (
+    <svg className="garden-validation__rope" viewBox="0 0 100 18" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-4 8 Q50 15 104 8" />
+    </svg>
+  )
+}
+
 export function Garden01VisualValidation() {
   return (
     <main className="garden-validation">
@@ -70,7 +78,8 @@ export function Garden01VisualValidation() {
         <section className="garden-validation__gallery" id="garden-validation-gallery" aria-labelledby="garden-validation-gallery-title">
           <GardenPhoto index={1} className="garden-validation__gallery-atmosphere" />
           <div className="garden-validation__gallery-shade" />
-          <img className="garden-validation__garden-sprig garden-validation__garden-sprig--gallery" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
+          <img className="garden-validation__garden-sprig garden-validation__garden-sprig--gallery-top" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
+          <img className="garden-validation__garden-sprig garden-validation__garden-sprig--gallery-side" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
           <div className="garden-validation__gallery-heading">
             <p>PEQUEÑAS HISTORIAS DE UNA GRAN AVENTURA</p>
             <h2 id="garden-validation-gallery-title">Momentos que florecen</h2>
@@ -79,6 +88,7 @@ export function Garden01VisualValidation() {
           <div className="garden-validation__photo-rows">
             {[0, 1, 2].map((row) => (
               <div className={`garden-validation__photo-row garden-validation__photo-row--${row + 1}`} key={row}>
+                <GardenRope />
                 {photos.slice(row * 2, row * 2 + 2).map((photo, column) => {
                   const index = row * 2 + column
                   return (
@@ -98,7 +108,8 @@ export function Garden01VisualValidation() {
         <section className="garden-validation__event-wrap" aria-labelledby="garden-validation-event-title">
           <div className="garden-validation__event-paper">
             <BotanicalLine mirrored />
-            <img className="garden-validation__garden-sprig garden-validation__garden-sprig--paper" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
+            <img className="garden-validation__garden-sprig garden-validation__garden-sprig--paper-left" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
+            <img className="garden-validation__garden-sprig garden-validation__garden-sprig--paper-right" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
             <p className="garden-validation__eyebrow">LA CELEBRACIÓN</p>
             <h2 id="garden-validation-event-title">Nos encontramos<br />en el jardín.</h2>
             <div className="garden-validation__event-facts">
@@ -107,7 +118,8 @@ export function Garden01VisualValidation() {
               <div><span className="garden-validation__fact-icon"><EventIcon kind="dress" /></span><span className="garden-validation__fact-copy"><em>DRESS CODE</em><strong>Elegante natural</strong><small>Tonos claros y tierra</small></span></div>
             </div>
             <a href="https://www.google.com/maps/search/?api=1&query=Sal%C3%B3n%20del%20Jard%C3%ADn" target="_blank" rel="noreferrer">
-              Ver ubicación <span aria-hidden="true">↗</span>
+              Ver ubicación
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
             </a>
           </div>
         </section>
