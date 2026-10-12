@@ -34,6 +34,16 @@ function BotanicalLine({ mirrored = false }: { mirrored?: boolean }) {
   )
 }
 
+function EventIcon({ kind }: { kind: 'calendar' | 'location' | 'dress' }) {
+  if (kind === 'calendar') {
+    return <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="7" width="22" height="20" rx="2" /><path d="M10 4v6M22 4v6M5 13h22" /></svg>
+  }
+  if (kind === 'location') {
+    return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 28S7 20.5 7 13a9 9 0 0 1 18 0c0 7.5-9 15-9 15Z" /><circle cx="16" cy="13" r="3" /></svg>
+  }
+  return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M12 5c1.2 2.5 2.5 3.7 4 3.7S18.8 7.5 20 5l3 4-2.2 5.2L24 27H8l3.2-12.8L9 9l3-4Z" /></svg>
+}
+
 export function Garden01VisualValidation() {
   return (
     <main className="garden-validation">
@@ -60,6 +70,7 @@ export function Garden01VisualValidation() {
         <section className="garden-validation__gallery" id="garden-validation-gallery" aria-labelledby="garden-validation-gallery-title">
           <GardenPhoto index={1} className="garden-validation__gallery-atmosphere" />
           <div className="garden-validation__gallery-shade" />
+          <img className="garden-validation__garden-sprig garden-validation__garden-sprig--gallery" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
           <div className="garden-validation__gallery-heading">
             <p>PEQUEÑAS HISTORIAS DE UNA GRAN AVENTURA</p>
             <h2 id="garden-validation-gallery-title">Momentos que florecen</h2>
@@ -87,18 +98,18 @@ export function Garden01VisualValidation() {
         <section className="garden-validation__event-wrap" aria-labelledby="garden-validation-event-title">
           <div className="garden-validation__event-paper">
             <BotanicalLine mirrored />
+            <img className="garden-validation__garden-sprig garden-validation__garden-sprig--paper" src="/images/garden-01/materials/garden-sprig.webp" alt="" loading="lazy" aria-hidden="true" />
             <p className="garden-validation__eyebrow">LA CELEBRACIÓN</p>
             <h2 id="garden-validation-event-title">Nos encontramos<br />en el jardín.</h2>
             <div className="garden-validation__event-facts">
-              <div><span>CUÁNDO</span><strong>17 de octubre</strong><small>21:30 h</small></div>
-              <div><span>DÓNDE</span><strong>Salón del Jardín</strong><small>Av. del Parque 1280</small></div>
-              <div><span>DRESS CODE</span><strong>Elegante natural</strong><small>Tonos claros y tierra</small></div>
+              <div><span className="garden-validation__fact-icon"><EventIcon kind="calendar" /></span><span className="garden-validation__fact-copy"><em>CUÁNDO</em><strong>17 de octubre</strong><small>21:30 h</small></span></div>
+              <div><span className="garden-validation__fact-icon"><EventIcon kind="location" /></span><span className="garden-validation__fact-copy"><em>DÓNDE</em><strong>Salón del Jardín</strong><small>Av. del Parque 1280</small></span></div>
+              <div><span className="garden-validation__fact-icon"><EventIcon kind="dress" /></span><span className="garden-validation__fact-copy"><em>DRESS CODE</em><strong>Elegante natural</strong><small>Tonos claros y tierra</small></span></div>
             </div>
             <a href="https://www.google.com/maps/search/?api=1&query=Sal%C3%B3n%20del%20Jard%C3%ADn" target="_blank" rel="noreferrer">
               Ver ubicación <span aria-hidden="true">↗</span>
             </a>
           </div>
-          <p className="garden-validation__validation-note">Prototipo visual · portada, galería y evento</p>
         </section>
       </div>
     </main>

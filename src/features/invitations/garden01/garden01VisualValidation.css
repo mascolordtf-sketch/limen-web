@@ -35,6 +35,9 @@
 
 .garden-validation__botanical { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
 .garden-validation__botanical.is-mirrored { transform: scaleX(-1); }
+.garden-validation__garden-sprig { position: absolute; pointer-events: none; user-select: none; }
+.garden-validation__garden-sprig--gallery { top: 27rem; left: -4rem; width: 12rem; opacity: .3; transform: rotate(8deg); }
+.garden-validation__garden-sprig--paper { bottom: -2.4rem; left: -2.8rem; width: 11rem; opacity: .24; transform: rotate(5deg); }
 
 .garden-validation__gallery { position: relative; min-height: 100svh; padding: 5.2rem 1rem 7rem; overflow: hidden; color: #f7efdf; background: var(--garden-forest-deep); isolation: isolate; }
 .garden-validation__gallery-atmosphere { position: absolute; z-index: -3; inset: 0; width: 115%; height: 115%; filter: blur(13px) saturate(.8); opacity: .48; transform: scale(1.08); }
@@ -45,33 +48,36 @@
 .garden-validation__gallery-heading h2 { max-width: 21rem; margin: .75rem auto 1rem; font-family: Fraunces, Georgia, serif; font-size: clamp(3rem, 13vw, 4.5rem); font-weight: 320; letter-spacing: -.055em; line-height: .94; }
 .garden-validation__gallery-heading span { color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .85rem; font-style: italic; }
 .garden-validation__photo-rows { display: grid; gap: 4.7rem; max-width: 33rem; margin: 0 auto; }
-.garden-validation__photo-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; padding-top: 1.5rem; }
+.garden-validation__photo-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; padding-top: 1.5rem; }
 .garden-validation__photo-row::before { position: absolute; top: 0; right: -16%; left: -16%; height: 3.8rem; border-top: 2px solid rgb(185 147 91 / 78%); border-radius: 50%; filter: drop-shadow(0 2px 2px rgb(0 0 0 / 45%)); content: ''; transform: rotate(-1.2deg); }
 .garden-validation__photo-row--2::before { transform: rotate(1.4deg); }
 .garden-validation__photo-row--3::before { transform: rotate(-.6deg); }
-.garden-validation__polaroid { --tilt: -2.8deg; position: relative; z-index: 1; padding: .45rem .45rem 1.35rem; color: #443f35; background: #f5ead5 url('/images/garden-01/materials/paper-fibre.webp') center / 24rem; box-shadow: 0 1.5rem 2.7rem rgb(1 12 6 / 42%); transform: rotate(var(--tilt)); transform-origin: 50% -1.2rem; }
+.garden-validation__polaroid { --tilt: -2.8deg; position: relative; z-index: 1; display: grid; grid-template-rows: auto minmax(2.5rem, auto); padding: .45rem; color: #443f35; background: #f5ead5 url('/images/garden-01/materials/paper-fibre.webp') center / 24rem; box-shadow: 0 1.5rem 2.7rem rgb(1 12 6 / 42%); transform: rotate(var(--tilt)); transform-origin: 50% -1.2rem; }
 .garden-validation__polaroid:nth-child(even) { --tilt: 3deg; margin-top: .8rem; }
 .garden-validation__polaroid .garden-validation__photo { aspect-ratio: 4 / 5; }
-.garden-validation__polaroid figcaption { margin-top: .55rem; font-family: Beth Ellen, cursive; font-size: clamp(.68rem, 3.5vw, 1rem); text-align: center; }
+.garden-validation__polaroid figcaption { display: grid; min-width: 0; align-items: center; margin: 0; padding: .35rem .1rem .05rem; overflow-wrap: anywhere; font-family: Beth Ellen, cursive; font-size: clamp(.6rem, 2.8vw, .82rem); line-height: 1.2; text-align: center; }
 .garden-validation__clip { position: absolute; z-index: 2; top: -1.15rem; left: calc(50% - .28rem); width: .56rem; height: 1.55rem; border-radius: .12rem; background: linear-gradient(90deg, #705238, #d5ad74 46%, #6c4b31); box-shadow: 0 .2rem .35rem rgb(0 0 0 / 40%); }
-.garden-validation .garden-validation__gallery-foot { margin: 8.6rem auto 0; color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; text-align: center; }
+.garden-validation .garden-validation__gallery-foot { max-width: 19rem; margin: 6rem auto 0; color: rgb(247 239 223 / 76%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; line-height: 1.6; text-align: center; }
 
-.garden-validation__event-wrap { position: relative; z-index: 2; margin-top: -3.6rem; padding: 0 .8rem 5rem; background: #d8ccb5 url('/images/garden-01/materials/paper-fibre.webp') center / 30rem; }
-.garden-validation__event-paper { position: relative; max-width: 40rem; margin: 0 auto; padding: 4.6rem 1.25rem 3rem; background: #f7eedc url('/images/garden-01/materials/paper-fibre.webp') center / 26rem; box-shadow: 0 1.7rem 3.4rem rgb(71 50 27 / 20%); }
+.garden-validation__event-wrap { position: relative; z-index: 2; margin-top: -1.35rem; padding: 0 .8rem 4rem; background: #d8ccb5 url('/images/garden-01/materials/paper-fibre.webp') center / 30rem; }
+.garden-validation__event-paper { position: relative; max-width: 40rem; margin: 0 auto; padding: 4.35rem 1.25rem 3.3rem; background: #f7eedc url('/images/garden-01/materials/paper-fibre.webp') center / 26rem; box-shadow: 0 1.7rem 3.4rem rgb(71 50 27 / 20%); }
 .garden-validation__event-paper::before,
 .garden-validation__event-paper::after { position: absolute; right: 0; left: 0; height: .9rem; background: #f7eedc url('/images/garden-01/materials/paper-fibre.webp') center / 26rem; content: ''; }
-.garden-validation__event-paper::before { top: -.65rem; clip-path: polygon(0 70%, 7% 14%, 14% 62%, 22% 8%, 31% 58%, 40% 3%, 50% 66%, 61% 10%, 70% 55%, 79% 0, 88% 64%, 95% 12%, 100% 60%, 100% 100%, 0 100%); }
-.garden-validation__event-paper::after { bottom: -.65rem; clip-path: polygon(0 0, 100% 0, 100% 42%, 93% 94%, 84% 38%, 74% 100%, 64% 44%, 54% 96%, 44% 36%, 34% 100%, 23% 42%, 12% 92%, 0 40%); }
+.garden-validation__event-paper::before { top: -.62rem; clip-path: polygon(0 65%, 6% 46%, 13% 61%, 21% 42%, 29% 58%, 38% 39%, 48% 63%, 59% 44%, 69% 58%, 80% 41%, 90% 62%, 96% 45%, 100% 57%, 100% 100%, 0 100%); }
+.garden-validation__event-paper::after { bottom: -.62rem; clip-path: polygon(0 0, 100% 0, 100% 48%, 94% 64%, 86% 45%, 76% 67%, 66% 48%, 55% 63%, 44% 46%, 34% 66%, 23% 47%, 12% 64%, 0 49%); }
 .garden-validation__event-paper > .garden-validation__botanical { position: absolute; top: 1.1rem; right: .6rem; width: 5rem; color: #70816c; opacity: .65; }
 .garden-validation__event-paper > .garden-validation__eyebrow { text-align: center; }
-.garden-validation__event-paper h2 { margin: .75rem auto 2.8rem; font-family: Fraunces, Georgia, serif; font-size: clamp(3rem, 13vw, 4.8rem); font-weight: 320; letter-spacing: -.06em; line-height: .92; text-align: center; }
-.garden-validation__event-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 2.5rem; }
-.garden-validation__event-facts > div { display: grid; align-content: start; gap: .35rem; min-width: 0; border-right: 1px solid rgb(61 73 61 / 16%); padding: 0 .55rem; text-align: center; }
-.garden-validation__event-facts > div:last-child { border-right: 0; }
-.garden-validation__event-facts span { color: #73806e; font-size: .42rem; font-weight: 700; letter-spacing: .16em; }
-.garden-validation__event-facts strong { font-family: Lora, Georgia, serif; font-size: .72rem; font-weight: 500; line-height: 1.35; }
-.garden-validation__event-facts small { color: #707568; font-size: .5rem; line-height: 1.4; }
-.garden-validation__event-paper > a { display: flex; min-height: 3.2rem; width: min(100%, 17rem); align-items: center; justify-content: space-between; margin: 0 auto; border-radius: .2rem; padding: .8rem 1.15rem; color: #f9f0de; background: var(--garden-forest); box-shadow: 0 .8rem 1.6rem rgb(33 50 37 / 18%); font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-decoration: none; }
+.garden-validation__event-paper h2 { max-width: 28rem; margin: .75rem auto 2.3rem; font-family: Fraunces, Georgia, serif; font-size: clamp(2.5rem, 10.5vw, 4.25rem); font-weight: 320; letter-spacing: -.055em; line-height: .98; text-align: center; }
+.garden-validation__event-facts { display: grid; max-width: 27rem; margin: 0 auto 2.5rem; }
+.garden-validation__event-facts > div { display: grid; grid-template-columns: 3.3rem minmax(0, 1fr); gap: .85rem; align-items: center; min-width: 0; border-bottom: 1px solid rgb(61 73 61 / 16%); padding: 1rem .2rem; text-align: left; }
+.garden-validation__event-facts > div:last-child { border-bottom: 0; }
+.garden-validation__fact-icon { display: grid; width: 3rem; height: 3rem; place-items: center; border-radius: 50%; color: var(--garden-forest); background: rgb(124 140 112 / 13%); }
+.garden-validation__fact-icon svg { width: 1.45rem; height: 1.45rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.garden-validation__fact-copy { display: grid; gap: .18rem; min-width: 0; }
+.garden-validation__fact-copy em { color: #73806e; font-size: .48rem; font-style: normal; font-weight: 750; letter-spacing: .18em; }
+.garden-validation__event-facts strong { font-family: Lora, Georgia, serif; font-size: 1rem; font-weight: 500; line-height: 1.3; }
+.garden-validation__event-facts small { color: #707568; font-size: .62rem; line-height: 1.4; }
+.garden-validation__event-paper > a { position: relative; z-index: 1; display: flex; min-height: 3.25rem; width: min(100%, 15rem); align-items: center; justify-content: space-between; margin: 0 auto; border-radius: .28rem; padding: .8rem 1.15rem; color: #f9f0de; background: var(--garden-forest); box-shadow: 0 .8rem 1.6rem rgb(33 50 37 / 18%); font-family: Lora, Georgia, serif; font-size: .72rem; font-weight: 600; letter-spacing: .02em; text-decoration: none; }
 .garden-validation__event-paper > a span { font-size: 1.1rem; }
 .garden-validation .garden-validation__validation-note { margin-top: 2.2rem; color: #716c61; font-size: .47rem; font-weight: 650; letter-spacing: .18em; text-align: center; text-transform: uppercase; }
 
@@ -82,7 +88,7 @@
   .garden-validation__photo-row { gap: 1.8rem; }
   .garden-validation__event-wrap { padding-right: 2rem; padding-left: 2rem; }
   .garden-validation__event-paper { padding-right: 2rem; padding-left: 2rem; }
-  .garden-validation__event-facts strong { font-size: .9rem; }
+  .garden-validation__event-facts strong { font-size: 1.05rem; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
