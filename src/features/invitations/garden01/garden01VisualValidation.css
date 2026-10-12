@@ -54,7 +54,7 @@
 .garden-validation__polaroid .garden-validation__photo { aspect-ratio: 4 / 5; }
 .garden-validation__polaroid figcaption { margin-top: .55rem; font-family: Beth Ellen, cursive; font-size: clamp(.68rem, 3.5vw, 1rem); text-align: center; }
 .garden-validation__clip { position: absolute; z-index: 2; top: -1.15rem; left: calc(50% - .28rem); width: .56rem; height: 1.55rem; border-radius: .12rem; background: linear-gradient(90deg, #705238, #d5ad74 46%, #6c4b31); box-shadow: 0 .2rem .35rem rgb(0 0 0 / 40%); }
-.garden-validation__gallery-foot { margin: 8.6rem auto 0; color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; text-align: center; }
+.garden-validation .garden-validation__gallery-foot { margin: 8.6rem auto 0; color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; text-align: center; }
 
 .garden-validation__event-wrap { position: relative; z-index: 2; margin-top: -3.6rem; padding: 0 .8rem 5rem; background: #d8ccb5 url('/images/garden-01/materials/paper-fibre.webp') center / 30rem; }
 .garden-validation__event-paper { position: relative; max-width: 40rem; margin: 0 auto; padding: 4.6rem 1.25rem 3rem; background: #f7eedc url('/images/garden-01/materials/paper-fibre.webp') center / 26rem; box-shadow: 0 1.7rem 3.4rem rgb(71 50 27 / 20%); }
@@ -73,7 +73,7 @@
 .garden-validation__event-facts small { color: #707568; font-size: .5rem; line-height: 1.4; }
 .garden-validation__event-paper > a { display: flex; min-height: 3.2rem; width: min(100%, 17rem); align-items: center; justify-content: space-between; margin: 0 auto; border-radius: .2rem; padding: .8rem 1.15rem; color: #f9f0de; background: var(--garden-forest); box-shadow: 0 .8rem 1.6rem rgb(33 50 37 / 18%); font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-decoration: none; }
 .garden-validation__event-paper > a span { font-size: 1.1rem; }
-.garden-validation__validation-note { margin-top: 2.2rem; color: #716c61; font-size: .47rem; font-weight: 650; letter-spacing: .18em; text-align: center; text-transform: uppercase; }
+.garden-validation .garden-validation__validation-note { margin-top: 2.2rem; color: #716c61; font-size: .47rem; font-weight: 650; letter-spacing: .18em; text-align: center; text-transform: uppercase; }
 
 @media (min-width: 36rem) {
   .garden-validation__hero-copy { right: 2.2rem; left: 2.2rem; }
