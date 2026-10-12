@@ -1,28 +1,24 @@
 import './garden01VisualValidation.css'
 
-const photoSheet = '/images/garden-01/emilia-session.webp'
-
 const photos = [
-  { alt: 'Emilia junto a una pérgola del jardín', caption: 'La espera', viewBox: '0 0 627 627' },
-  { alt: 'Emilia entre flores blancas', caption: 'La alegría', viewBox: '627 0 627 627' },
-  { alt: 'Emilia sentada en las escalinatas', caption: 'El camino', viewBox: '0 627 627 627' },
-  { alt: 'Retrato de Emilia con flores', caption: 'Este momento', viewBox: '627 627 627 627' },
-  { alt: 'Detalle del vestido de Emilia', caption: 'Lo vivido', viewBox: '70 130 455 455' },
-  { alt: 'Emilia sonriendo con un ramo', caption: 'Lo que comienza', viewBox: '720 710 430 430' },
+  { alt: 'Emilia junto a una pérgola del jardín', caption: 'La espera', src: '/images/garden-01/emilia-01.webp' },
+  { alt: 'Emilia entre flores blancas', caption: 'La alegría', src: '/images/garden-01/emilia-02.webp' },
+  { alt: 'Emilia sentada en las escalinatas', caption: 'El camino', src: '/images/garden-01/emilia-03.webp' },
+  { alt: 'Retrato de Emilia con flores', caption: 'Este momento', src: '/images/garden-01/emilia-04.webp' },
+  { alt: 'Detalle del vestido de Emilia', caption: 'Lo vivido', src: '/images/garden-01/emilia-05.webp' },
+  { alt: 'Emilia sonriendo con un ramo', caption: 'Lo que comienza', src: '/images/garden-01/emilia-06.webp' },
 ] as const
 
 function GardenPhoto({ index, className = '' }: { index: number; className?: string }) {
   const photo = photos[index]
   return (
-    <svg
+    <img
       className={`garden-validation__photo ${className}`}
-      viewBox={photo.viewBox}
-      preserveAspectRatio="xMidYMid slice"
-      role="img"
-      aria-label={photo.alt}
-    >
-      <image href={photoSheet} width="1254" height="1254" />
-    </svg>
+      src={photo.src}
+      alt={photo.alt}
+      loading={index === 0 ? 'eager' : 'lazy'}
+      decoding="async"
+    />
   )
 }
 
