@@ -17,12 +17,14 @@ import { StudioInvitationsPage } from '../features/studio/StudioInvitationsPage'
 import { StudioPublicationPreviewRoute } from '../features/studio/StudioPublicationPreviewRoute'
 import { StudioVisualMatrixCase } from '../features/studio/StudioVisualMatrixCase'
 import { studioRoutesEnabled } from '../features/studio/studioAvailability'
+import { Garden01VisualValidation } from '../features/invitations/garden01/Garden01VisualValidation'
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="demo/:code" element={<DemoPage />} />
       <Route path="invitacion/:code" element={<DemoPage />} />
+      <Route path="garden-validacion" element={<Garden01VisualValidation />} />
       {studioRoutesEnabled ? (
         <Route path="studio" element={<StudioAuthProvider />}>
           <Route path="acceso" element={<StudioLoginPage />} />

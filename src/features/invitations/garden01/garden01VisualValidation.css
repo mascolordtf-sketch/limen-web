@@ -1,0 +1,92 @@
+.garden-validation {
+  --garden-forest: #1f392c;
+  --garden-forest-deep: #15291f;
+  --garden-ink: #26362b;
+  --garden-paper: #f3ead7;
+  --garden-gold: #a78455;
+  min-height: 100svh;
+  overflow-x: clip;
+  color: var(--garden-ink);
+  background: #d8c9b1;
+  font-family: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.garden-validation *, .garden-validation *::before, .garden-validation *::after { box-sizing: border-box; }
+.garden-validation h1, .garden-validation h2, .garden-validation p, .garden-validation figure { margin: 0; }
+.garden-validation__frame { width: min(100%, 45rem); margin: 0 auto; overflow: hidden; background: var(--garden-paper); box-shadow: 0 0 4rem rgb(44 36 23 / 20%); }
+.garden-validation__photo { display: block; width: 100%; height: 100%; overflow: hidden; }
+
+.garden-validation__hero { position: relative; min-height: 100svh; overflow: hidden; background: #d9cfbd; isolation: isolate; }
+.garden-validation__hero-photo { position: absolute; z-index: -3; inset: 0; }
+.garden-validation__hero-photo image { transform: translateX(-40px); }
+.garden-validation__hero-shade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(180deg, rgb(250 243 225 / 4%) 0%, transparent 42%, rgb(241 228 201 / 18%) 58%, rgb(238 224 197 / 89%) 100%); }
+.garden-validation__hero::after { position: absolute; z-index: -1; inset: auto 0 0; height: 28%; background: linear-gradient(0deg, rgb(244 232 207 / 94%), transparent); content: ''; }
+.garden-validation__hero-header { position: absolute; top: 1.7rem; right: 1.25rem; left: 1.25rem; display: flex; justify-content: space-between; gap: 1rem; font-size: .46rem; font-weight: 650; letter-spacing: .22em; line-height: 1.5; text-transform: uppercase; }
+.garden-validation__hero-header span:last-child { max-width: 9rem; text-align: right; }
+.garden-validation__hero-copy { position: absolute; right: 1.4rem; bottom: 7.2rem; left: 1.4rem; }
+.garden-validation__hero-copy p { margin-left: .2rem; font-size: .62rem; font-weight: 700; letter-spacing: .42em; }
+.garden-validation__hero-copy h1 { margin: .25rem 0 .55rem; font-family: Fraunces, Georgia, serif; font-size: clamp(4.8rem, 24vw, 7rem); font-weight: 350; letter-spacing: -.075em; line-height: .88; }
+.garden-validation__hero-copy time { margin-left: .25rem; font-family: Lora, Georgia, serif; font-size: .72rem; font-weight: 600; letter-spacing: .3em; }
+.garden-validation__enter { position: absolute; right: 1.35rem; bottom: 1.5rem; display: grid; min-height: 3rem; align-content: end; justify-items: end; color: var(--garden-ink); text-decoration: none; }
+.garden-validation__enter span { font-size: .48rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.garden-validation__enter i { font-size: 1.45rem; font-style: normal; line-height: 1; }
+.garden-validation__hero > .garden-validation__botanical { position: absolute; bottom: 1.3rem; left: 1rem; width: 4.2rem; opacity: .72; }
+
+.garden-validation__botanical { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.garden-validation__botanical.is-mirrored { transform: scaleX(-1); }
+
+.garden-validation__gallery { position: relative; min-height: 100svh; padding: 5.2rem 1rem 7rem; overflow: hidden; color: #f7efdf; background: var(--garden-forest-deep); isolation: isolate; }
+.garden-validation__gallery-atmosphere { position: absolute; z-index: -3; inset: 0; width: 115%; height: 115%; filter: blur(13px) saturate(.8); opacity: .48; transform: scale(1.08); }
+.garden-validation__gallery-shade { position: absolute; z-index: -2; inset: 0; background: linear-gradient(180deg, rgb(17 39 28 / 86%), rgb(21 44 31 / 88%) 42%, rgb(15 32 23 / 96%)), radial-gradient(circle at 50% 25%, transparent, rgb(5 17 10 / 44%)); }
+.garden-validation__gallery::after { position: absolute; z-index: -1; inset: 0; background: url('/images/garden-01/materials/paper-fibre.webp') center / 31rem; content: ''; opacity: .11; mix-blend-mode: screen; }
+.garden-validation__gallery-heading { max-width: 29rem; margin: 0 auto 4rem; text-align: center; }
+.garden-validation__gallery-heading > p, .garden-validation__eyebrow { font-size: .5rem; font-weight: 700; letter-spacing: .24em; line-height: 1.6; text-transform: uppercase; }
+.garden-validation__gallery-heading h2 { max-width: 21rem; margin: .75rem auto 1rem; font-family: Fraunces, Georgia, serif; font-size: clamp(3rem, 13vw, 4.5rem); font-weight: 320; letter-spacing: -.055em; line-height: .94; }
+.garden-validation__gallery-heading span { color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .85rem; font-style: italic; }
+.garden-validation__photo-rows { display: grid; gap: 4.7rem; max-width: 33rem; margin: 0 auto; }
+.garden-validation__photo-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; padding-top: 1.5rem; }
+.garden-validation__photo-row::before { position: absolute; top: 0; right: -16%; left: -16%; height: 3.8rem; border-top: 2px solid rgb(185 147 91 / 78%); border-radius: 50%; filter: drop-shadow(0 2px 2px rgb(0 0 0 / 45%)); content: ''; transform: rotate(-1.2deg); }
+.garden-validation__photo-row--2::before { transform: rotate(1.4deg); }
+.garden-validation__photo-row--3::before { transform: rotate(-.6deg); }
+.garden-validation__polaroid { --tilt: -2.8deg; position: relative; z-index: 1; padding: .45rem .45rem 1.35rem; color: #443f35; background: #f5ead5 url('/images/garden-01/materials/paper-fibre.webp') center / 24rem; box-shadow: 0 1.5rem 2.7rem rgb(1 12 6 / 42%); transform: rotate(var(--tilt)); transform-origin: 50% -1.2rem; }
+.garden-validation__polaroid:nth-child(even) { --tilt: 3deg; margin-top: .8rem; }
+.garden-validation__polaroid .garden-validation__photo { aspect-ratio: 4 / 5; }
+.garden-validation__polaroid figcaption { margin-top: .55rem; font-family: Beth Ellen, cursive; font-size: clamp(.68rem, 3.5vw, 1rem); text-align: center; }
+.garden-validation__clip { position: absolute; z-index: 2; top: -1.15rem; left: calc(50% - .28rem); width: .56rem; height: 1.55rem; border-radius: .12rem; background: linear-gradient(90deg, #705238, #d5ad74 46%, #6c4b31); box-shadow: 0 .2rem .35rem rgb(0 0 0 / 40%); }
+.garden-validation__gallery-foot { margin: 4.3rem auto 0; color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; text-align: center; }
+
+.garden-validation__event-wrap { position: relative; z-index: 2; margin-top: -3.6rem; padding: 0 .8rem 5rem; background: #d8ccb5 url('/images/garden-01/materials/paper-fibre.webp') center / 30rem; }
+.garden-validation__event-paper { position: relative; max-width: 40rem; margin: 0 auto; padding: 4.6rem 1.25rem 3rem; overflow: hidden; background: #f7eedc url('/images/garden-01/materials/paper-fibre.webp') center / 26rem; box-shadow: 0 1.7rem 3.4rem rgb(71 50 27 / 20%); clip-path: polygon(0 2%, 7% .5%, 14% 2%, 22% .5%, 31% 1.8%, 40% .3%, 50% 2%, 61% .4%, 70% 1.7%, 79% .2%, 88% 2%, 95% .5%, 100% 2%, 100% 98%, 91% 99.6%, 81% 98%, 70% 99.4%, 60% 98%, 50% 99.7%, 39% 98%, 29% 99.5%, 18% 98%, 8% 99.6%, 0 98%); }
+.garden-validation__event-paper > .garden-validation__botanical { position: absolute; top: 1.1rem; right: .6rem; width: 5rem; color: #70816c; opacity: .65; }
+.garden-validation__event-paper > .garden-validation__eyebrow { text-align: center; }
+.garden-validation__event-paper h2 { margin: .75rem auto 2.8rem; font-family: Fraunces, Georgia, serif; font-size: clamp(3rem, 13vw, 4.8rem); font-weight: 320; letter-spacing: -.06em; line-height: .92; text-align: center; }
+.garden-validation__event-facts { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 2.5rem; }
+.garden-validation__event-facts > div { display: grid; align-content: start; gap: .35rem; min-width: 0; border-right: 1px solid rgb(61 73 61 / 16%); padding: 0 .55rem; text-align: center; }
+.garden-validation__event-facts > div:last-child { border-right: 0; }
+.garden-validation__event-facts span { color: #73806e; font-size: .42rem; font-weight: 700; letter-spacing: .16em; }
+.garden-validation__event-facts strong { font-family: Lora, Georgia, serif; font-size: .72rem; font-weight: 500; line-height: 1.35; }
+.garden-validation__event-facts small { color: #707568; font-size: .5rem; line-height: 1.4; }
+.garden-validation__event-paper > a { display: flex; min-height: 3.2rem; width: min(100%, 17rem); align-items: center; justify-content: space-between; margin: 0 auto; border-radius: .2rem; padding: .8rem 1.15rem; color: #f9f0de; background: var(--garden-forest); box-shadow: 0 .8rem 1.6rem rgb(33 50 37 / 18%); font-size: .62rem; font-weight: 700; letter-spacing: .05em; text-decoration: none; }
+.garden-validation__event-paper > a span { font-size: 1.1rem; }
+.garden-validation__validation-note { margin-top: 2.2rem; color: #716c61; font-size: .47rem; font-weight: 650; letter-spacing: .18em; text-align: center; text-transform: uppercase; }
+
+@media (min-width: 36rem) {
+  .garden-validation__hero-copy { right: 2.2rem; left: 2.2rem; }
+  .garden-validation__hero-photo image { transform: translateX(-55px); }
+  .garden-validation__gallery { padding-right: 2.8rem; padding-left: 2.8rem; }
+  .garden-validation__photo-row { gap: 1.8rem; }
+  .garden-validation__event-wrap { padding-right: 2rem; padding-left: 2rem; }
+  .garden-validation__event-paper { padding-right: 2rem; padding-left: 2rem; }
+  .garden-validation__event-facts strong { font-size: .9rem; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .garden-validation__polaroid { animation: garden-validation-sway 8s ease-in-out infinite alternate; }
+  .garden-validation__polaroid:nth-child(even) { animation-delay: -4s; animation-duration: 9.2s; }
+}
+
+@keyframes garden-validation-sway {
+  from { transform: rotate(calc(var(--tilt) - .45deg)); }
+  to { transform: rotate(calc(var(--tilt) + .55deg)); }
+}
