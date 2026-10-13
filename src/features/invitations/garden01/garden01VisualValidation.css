@@ -50,7 +50,7 @@
 .garden-validation__gallery-heading h2 { max-width: 21rem; margin: .75rem auto 1rem; font-family: Fraunces, Georgia, serif; font-size: clamp(3rem, 13vw, 4.5rem); font-weight: 320; letter-spacing: -.055em; line-height: .94; }
 .garden-validation__gallery-heading span { color: rgb(247 239 223 / 72%); font-family: Lora, Georgia, serif; font-size: .85rem; font-style: italic; }
 .garden-validation__photo-rows { display: grid; gap: 3.8rem; width: 78%; max-width: 29rem; margin: 0 auto; }
-.garden-validation__photo-row { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding-top: 2.15rem; }
+.garden-validation__photo-row { --garden-photo-gap: 1rem; position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--garden-photo-gap); padding-top: 2.15rem; }
 .garden-validation__photo-row::before,
 .garden-validation__photo-row::after { position: absolute; z-index: 0; width: 8.5rem; height: 9rem; background: url('/images/garden-01/materials/garden-sprig.webp') center / contain no-repeat; content: ''; opacity: .55; pointer-events: none; }
 .garden-validation__photo-row::before { top: -2.5rem; left: -6.2rem; transform: rotate(12deg); }
@@ -66,8 +66,8 @@
 .garden-validation__polaroid .garden-validation__photo { aspect-ratio: 2 / 3; }
 .garden-validation__polaroid figcaption { display: grid; min-width: 0; align-items: center; margin: 0; padding: .38rem .1rem .08rem; overflow-wrap: anywhere; font-family: Beth Ellen, cursive; font-size: clamp(.58rem, 2.55vw, .78rem); line-height: 1.18; text-align: center; }
 .garden-validation__clip { position: absolute; z-index: 3; top: .42rem; width: .68rem; height: 2.1rem; border: 1px solid rgb(87 57 33 / 34%); border-radius: .18rem; background: linear-gradient(90deg, #765438 0%, #c79a62 24%, #dfb879 48%, #a37447 72%, #65452f 100%); box-shadow: .08rem .18rem .34rem rgb(0 0 0 / 43%); transform: translateX(-50%); }
-.garden-validation__clip--left { left: calc((100% - 1rem) / 4); }
-.garden-validation__clip--right { left: calc(75% + .25rem); }
+.garden-validation__clip--left { left: calc((100% - var(--garden-photo-gap)) / 4); }
+.garden-validation__clip--right { left: calc(75% + var(--garden-photo-gap) / 4); }
 .garden-validation__clip::after { position: absolute; inset: .14rem .12rem; border-radius: .08rem; background: linear-gradient(90deg, transparent, rgb(255 230 183 / 32%), transparent); content: ''; }
 .garden-validation .garden-validation__gallery-foot { max-width: 19rem; margin: 3.2rem auto 0; color: rgb(247 239 223 / 82%); font-family: Lora, Georgia, serif; font-size: .78rem; font-style: italic; line-height: 1.6; text-align: center; }
 
@@ -97,7 +97,7 @@
   .garden-validation__hero-copy { right: 2.2rem; left: 2.2rem; }
   .garden-validation__hero-photo { object-position: 45% center; }
   .garden-validation__gallery { padding-right: 2.8rem; padding-left: 2.8rem; }
-  .garden-validation__photo-row { gap: 1.8rem; }
+  .garden-validation__photo-row { --garden-photo-gap: 1.8rem; }
   .garden-validation__event-wrap { padding-right: 2rem; padding-left: 2rem; }
   .garden-validation__event-paper { padding-right: 2rem; padding-left: 2rem; }
   .garden-validation__event-facts strong { font-size: 1.05rem; }
