@@ -89,11 +89,12 @@ export function Garden01VisualValidation() {
             {[0, 1, 2].map((row) => (
               <div className={`garden-validation__photo-row garden-validation__photo-row--${row + 1}`} key={row}>
                 <GardenRope />
+                <span className="garden-validation__clip garden-validation__clip--left" aria-hidden="true" />
+                <span className="garden-validation__clip garden-validation__clip--right" aria-hidden="true" />
                 {photos.slice(row * 2, row * 2 + 2).map((photo, column) => {
                   const index = row * 2 + column
                   return (
                     <figure className={`garden-validation__polaroid garden-validation__polaroid--${index + 1}`} key={photo.caption}>
-                      <span className="garden-validation__clip" aria-hidden="true" />
                       <GardenPhoto index={index} />
                       <figcaption>{photo.caption}</figcaption>
                     </figure>
